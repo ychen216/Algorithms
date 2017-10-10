@@ -1,0 +1,33 @@
+561. Array Partition I
+
+/*
+Given an array of 2n integers, your task is to group these integers into n pairs of integer, say (a1, b1), (a2, b2), ..., (an, bn) which makes sum of min(ai, bi) for all i from 1 to n as large as possible.
+
+Example 1:
+Input: [1,4,3,2]
+
+Output: 4
+Explanation: n is 2, and the maximum sum of pairs is 4 = min(1, 2) + min(3, 4).
+
+*/
+Solution:
+class Solution {
+public:
+    /*尽可能的把数组中大的数加到一起 最理想的情况就是把最大的n个数加起来
+    试想任何一个数x和数组中的最大值max_value分在一组
+    min(x,max_value)=x
+    try max(min(x,max_value))
+    我们能得到的最大情况就是 x=数组中的次大值
+    以此类推：max(min(x,y))(x<=y),当x的是数组中的最接近y的数时,取得最大值
+    所以可以将数组从小到大排序,两两分组,累加每组的第一个数就是想要的解
+    */
+    int arrayPairSum(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int size = nums.size(),sum=0;
+        for(int i=0;i<size;i++){
+            if(i%2==0)
+                sum+=nums[i];
+        }
+        return sum;
+    }
+};
