@@ -1,2 +1,2 @@
 # Algorithms
-algorithms homework and OJ code
+something about algorithms inclding homework , OJ code and so on
