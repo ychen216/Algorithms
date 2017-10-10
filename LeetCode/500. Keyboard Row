@@ -1,0 +1,64 @@
+500. Keyboard Row
+
+/*
+Given a List of words, return the words that can be typed using letters of alphabet on only one row's of 
+American keyboard like the image below.
+
+<image>: find 500.Keyboard Row.png
+
+Example 1:
+Input: ["Hello", "Alaska", "Dad", "Peace"]
+Output: ["Alaska", "Dad"]
+Note:
+You may use one character in the keyboard more than once.
+You may assume the input string will only contain letters of alphabet.
+*/
+
+Solution:
+class Solution {
+public:
+	map<char, int> charToIntMap;
+	void initMap(){
+		char alphbet1[10] = { 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P' };
+		const char alphbet2[9] = { 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L' };
+		char alphbet3[7] = { 'Z', 'X', 'C', 'V', 'B', 'N', 'M' };
+		charToIntMap.clear();
+		for (int i = 0; i<10; i++){
+			charToIntMap[alphbet1[i]] = 1;
+			charToIntMap[alphbet1[i] + 32] = 1;
+		}
+
+		for (int i = 0; i<9; i++){
+			charToIntMap[alphbet2[i]] = 2;
+			charToIntMap[alphbet2[i] + 32] = 2;
+		}
+
+
+		for (int i = 0; i<7; i++){
+			charToIntMap[alphbet3[i]] = 3;
+			charToIntMap[alphbet3[i] + 32] = 3;
+		}
+	}
+	vector<string> findWords(vector<string>& words) {
+		int size = words.size();
+		vector<string> res;
+		initMap();
+		for (int i = 0; i<size; i++){
+			int s = words[i].length();
+			int temp = charToIntMap[words[i][0]];
+			cout << words[i]<<" "<<temp << ":";
+			bool flag = true;
+			for (int j = 1; j<s; j++){
+				if (temp != charToIntMap[words[i][j]]){
+					cout << charToIntMap[words[i][j]];
+					flag = false;
+					break;
+				}
+			}
+			cout << endl;
+			if (flag)
+				res.push_back(words[i]);
+		}
+		return res;
+	}
+};
