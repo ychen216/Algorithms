@@ -1,0 +1,18 @@
+344. Reverse String
+/*
+Write a function that takes a string as input and returns the string reversed.
+
+Example:
+Given s = "hello", return "olleh".
+*/
+Solution:
+class Solution {
+public:
+    string reverseString(string s) {
+        int len=s.length();
+        string res="";
+        for(int i=len-1;i>=0;i--)
+            res+=s[i];
+        return res;
+    }
+};
