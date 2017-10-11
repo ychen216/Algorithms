@@ -1,5 +1,5 @@
 recursion:
   simple:617,669,690
 
-smarter：
-  simple:463,496(try O(n) method)
+trick：
+  simple:463,496(try O(n) method),136
