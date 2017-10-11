@@ -16,4 +16,79 @@ Note:
 The range of node's value is in the range of 32-bit signed integer.
 */
 
-Solution:
+Solution 1: Stupid
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+struct Node{
+    TreeNode * root;
+    int floor;
+    Node(int x,TreeNode *n=NULL):floor(x),root(n){}
+};
+
+class Solution {
+public:
+    vector<double> averageOfLevels(TreeNode* root) {
+        queue<Node*> q;
+        vector<double> res;
+        vector<int> floorNum;
+        int floor=-1;
+        Node *node=new Node(0,root);
+        q.push(node);
+        while(!q.empty()){
+            node=q.front();
+            q.pop();
+            if(floor<node->floor){
+                res.push_back(node->root->val);
+                floorNum.push_back(1);
+                floor++;
+            }
+            else{
+                res[node->floor]+=node->root->val;
+                floorNum[node->floor]++;
+            }
+            Node *temp=NULL;
+            if(node->root->left){
+                temp=new Node(node->floor+1,node->root->left);
+                q.push(temp);
+            }
+            if(node->root->right){
+                temp=new Node(node->floor+1,node->root->right);
+                q.push(temp);
+            }
+        }
+        for(int i=0;i<=floor;i++)
+            res[i]/=floorNum[i];
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    vector<double> averageOfLevels(TreeNode* root) {
+         vector<double> res;
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()) {
+            long temp=0;
+            int s=q.size();
+            for(int i=0;i<s;i++) {
+                TreeNode* t=q.front();
+                q.pop();
+                if(t->left) q.push(t->left);
+                if(t->right) q.push(t->right);
+                temp+=t->val;
+            }
+            res.push_back((double)temp/s);
+        }
+        return res;
+    }
+};
