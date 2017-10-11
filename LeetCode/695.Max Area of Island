@@ -1,0 +1,58 @@
+695. Max Area of Island
+
+/*
+Given a non-empty 2D array grid of 0's and 1's, an island is a group of 1's (representing land) connected 4-directionally (horizontal or vertical.) You may assume all four edges of the grid are surrounded by water.
+
+Find the maximum area of an island in the given 2D array. (If there is no island, the maximum area is 0.)
+
+Example 1:
+[[0,0,1,0,0,0,0,1,0,0,0,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,1,1,0,1,0,0,0,0,0,0,0,0],
+ [0,1,0,0,1,1,0,0,1,0,1,0,0],
+ [0,1,0,0,1,1,0,0,1,1,1,0,0],
+ [0,0,0,0,0,0,0,0,0,0,1,0,0],
+ [0,0,0,0,0,0,0,1,1,1,0,0,0],
+ [0,0,0,0,0,0,0,1,1,0,0,0,0]]
+Given the above grid, return 6. Note the answer is not 11, because the island must be connected 4-directionally.
+Example 2:
+[[0,0,0,0,0,0,0,0]]
+Given the above grid, return 0.
+Note: The length of each dimension in the given grid does not exceed 50.
+*/
+
+Solution:
+class Solution {
+public:
+    bool visit[51][51];
+    int dx[4]={-1,1,0,0};
+    int dy[4]={0,0,-1,1};
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+        int row=grid.size();
+        int col=grid[0].size();
+        if(!row&&!col)
+            return 0;
+        memset(visit,0,sizeof(visit));
+        int maxArea=0;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(grid[i][j]){
+                    int temp=dfs(i,j,row,col,grid);
+                    maxArea=maxArea<temp?temp:maxArea;
+                }
+            }
+        }
+        return maxArea;
+    }
+    int dfs(int i,int j,int r,int c,vector<vector<int>>& grid){
+        int area=1;
+        visit[i][j]=true;
+        for(int k=0;k<4;k++){
+            int x=i+dx[k];
+            int y=j+dy[k];
+            if(x>=0&&x<r&&y>=0&&y<c&&!visit[x][y]&&grid[x][y])
+                area+=dfs(x,y,r,c,grid);
+        }
+        return area;
+    }
+};
