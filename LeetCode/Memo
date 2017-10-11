@@ -1,5 +1,5 @@
 recursion:
   simple:617,669,690
 
-skill：
-  simple:463
+smarter：
+  simple:463,496(try O(n) method)
