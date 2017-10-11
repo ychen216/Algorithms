@@ -1,0 +1,48 @@
+136. Single Number
+
+/*
+Given an array of integers, every element appears twice except for one. Find that single one.
+
+Note:
+Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+*/
+
+Solution 1:
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int size=nums.size();
+        map<int,int> countMap;
+        for(int i=0;i<size;i++){
+            if(countMap.count(nums[i])){
+                countMap[nums[i]]++;
+            }
+            else
+                countMap[nums[i]]=1;
+        }
+        
+        map<int,int>::iterator it=countMap.begin();
+        for(;it!=countMap.end();it++){
+            if(it->second==1)
+                return it->first;
+        }
+    }
+};
+
+Solution 2: trick
+class Solution {
+public:
+    /*
+      Logic: XOR will return 1 only on two different bits. 
+      So if two numbers are the same, XOR will return 0. Finally only one number left.
+      A ^ A = 0 and A ^ B ^ A = B.
+    */
+    int singleNumber(vector<int>& nums) {
+        int size=nums.size();
+        int res=nums[0];
+        for(int i=1;i<size;i++){
+            res=res^nums[i];
+        }
+        return res;
+    }
+};
