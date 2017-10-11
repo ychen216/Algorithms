@@ -1,0 +1,82 @@
+463. Island Perimeter
+
+/*
+You are given a map in form of a two-dimensional integer grid where 1 represents land and 0 represents water.
+Grid cells are connected horizontally/vertically (not diagonally).The grid is completely surrounded by water,
+and there is exactly one island (i.e., one or more connected land cells). 
+The island doesn't have "lakes" (water inside that isn't connected to the water around the island). 
+One cell is a square with side length 1. The grid is rectangular, width and height don't exceed 100. 
+Determine the perimeter of the island.
+
+Example:
+
+[[0,1,0,0],
+ [1,1,1,0],
+ [0,1,0,0],
+ [1,1,0,0]]
+
+Answer: 16
+  Explanation: The perimeter is the 16 yellow stripes in the image below:
+  <image>:463.Island Perimeter.
+
+*/
+
+Solution 1: Math
+class Solution {
+public:
+    /*
+    idea:
+    descriptions of this problem implies there may be an "pattern" in calculating the perimeter of the islands.
+    and the pattern is islands * 4 - neighbours * 2, since every adjacent islands made two sides disappeared(as picture below).
+    +--+     +--+                   +--+--+
+    |  |  +  |  |          ->       |     |
+    +--+     +--+                   +--+--+
+    */
+    int islandPerimeter(vector<vector<int>>& grid) {
+        int row=grid.size();
+        int col=grid[0].size();
+        int islandCell=0,neighbor=0;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(grid[i][j]==1){
+                    islandCell++;
+                    //上下相邻
+                    if(i+1<row&&grid[i+1][j]==1)neighbor++;
+                    //左右相邻
+                    if(j+1<col&&grid[i][j+1]==1)neighbor++;
+                }
+            }
+        }
+        return islandCell*4-neighbor*2;
+    }
+
+};
+
+Solution 2: imitation
+class Solution {
+public:
+    //按照一个cell 上下左右四条边逐个添加
+    int islandPerimeter(vector<vector<int>>& grid) {
+        int row=grid.size();
+        int col=grid[0].size();
+        if(row==0||col==0)
+            return 0;
+        int sum=0;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(grid[i][j]==1){
+                    // top edge
+                    if(i==0||grid[i-1][j]==0)sum++;
+                    // buttom edge
+                    if(i==row-1||grid[i+1][j]==0)sum++;
+                    // left edge
+                    if(j==0||grid[i][j-1]==0)sum++;
+                    // right edge
+                    if(j==col-1||grid[i][j+1]==0)sum++;
+                }
+            }
+        }
+        return sum;
+    }
+
+};
