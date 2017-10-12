@@ -1,5 +1,8 @@
 recursion:
   simple:617,669,690
 
+hard to classification:
+  simple:653
+  
 trick：
   simple:463,496(try O(n) method),136
