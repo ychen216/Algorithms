@@ -1,0 +1,56 @@
+448.Find All Numbers Disappeared in an Array
+
+/*
+Given an array of integers where 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+
+Find all the elements of [1, n] inclusive that do not appear in this array.
+
+Could you do it without extra space and in O(n) runtime? You may assume the returned list does not count as extra space.
+
+Example:
+
+Input:
+[4,3,2,7,8,2,3,1]
+
+Output:
+[5,6]
+*/
+Solution 1:
+class Solution {
+public:
+    vector<int> findDisappearedNumbers(vector<int>& nums) {
+        int size=nums.size();
+        bool flag[size+1];
+        memset(flag,0,sizeof(flag));
+        for(int i=0;i<size;i++){
+            flag[nums[i]]=true;
+        }
+        vector<int> res;
+        for(int i=1;i<=size;i++)
+            if(!flag[i])
+                res.push_back(i);
+        return res;
+    }
+};
+
+Solution 2: trick
+class Solution {
+public:
+    /*
+        idea:因为数组元素大小为[1,n]所以可以将他们的值和数组下标做一个映射 使得空间消耗为O(1)
+    */
+    vector<int> findDisappearedNumbers(vector<int>& nums) {
+        int size=nums.size();
+        int temp;
+        for(int i=0;i<size;i++){
+            temp=abs(nums[i])-1;//数组下标从0开始 
+            if(nums[temp]>0)
+                nums[temp]=-nums[temp];
+        }
+        vector<int> res;
+        for(int i=0;i<size;i++)
+            if(nums[i]>0)
+                res.push_back(i+1);
+        return res;
+    }
+};
