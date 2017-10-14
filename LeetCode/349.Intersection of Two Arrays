@@ -1,0 +1,28 @@
+349. Intersection of Two Arrays
+
+/*
+Given two arrays, write a function to compute their intersection.
+
+Example:
+Given nums1 = [1, 2, 2, 1], nums2 = [2, 2], return [2].
+
+Note:
+  Each element in the result must be unique.
+  The result can be in any order.
+*/
+Solution:
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        set<int> s1(nums1.begin(),nums1.end());
+        set<int> s2;
+        vector<int> res;
+        int size2=nums2.size();
+        for(int i=0;i<size2;i++)
+            if(s1.count(nums2[i]))
+                s2.insert(nums2[i]);
+        for(set<int>::iterator it=s2.begin();it!=s2.end();it++)
+            res.push_back(*it);
+        return res;
+    }
+};
