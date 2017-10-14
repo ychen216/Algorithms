@@ -17,4 +17,34 @@ Output: The root of a Greater Tree like this:
 */
 
 Solution:
-
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+private:
+    int sum;
+public:
+    /*
+    根据二叉搜索树的性质当前节点X 右侧的节点都大于X的值
+    按照右中左的顺序中序遍历树(得到一个递减序列),先遍历到的一定比当前节点值大,并在此过程中记录遍历过的所有节点的和
+    */
+    void travel(TreeNode* root){
+        if(!root)
+            return;
+        travel(root->right);
+        sum+=root->val;
+        root->val=sum;
+        travel(root->left);
+    }
+    TreeNode* convertBST(TreeNode* root) {
+        sum=0;
+        travel(root);
+        return root;
+    }
+};
