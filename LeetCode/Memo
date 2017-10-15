@@ -3,9 +3,13 @@ recursion:
 
 math：
   simple:453,
+  
+data struction:
+  simple:237,
 
 hard to classification:
   simple:653,283
+  
   
 trick：
   simple:463,496(try O(n) method),136,169
