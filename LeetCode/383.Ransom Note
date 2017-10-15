@@ -1,0 +1,27 @@
+383.Ransom Note
+
+/*
+Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
+
+Each letter in the magazine string can only be used once in your ransom note.
+
+Note:
+You may assume that both strings contain only lowercase letters.
+  canConstruct("a", "b") -> false
+  canConstruct("aa", "ab") -> false
+  canConstruct("aa", "aab") -> true
+*/
+Solution:
+class Solution {
+public:
+    bool canConstruct(string ransomNote, string magazine) {
+        int count[26];
+        memset(count,0,sizeof(count));
+        for(int i=0;magazine[i]!='\0';i++)
+            count[magazine[i]-'a']++;
+        for(int i=0;ransomNote[i]!='\0';i++)
+            if(--count[ransomNote[i]-'a']<0)
+                return false;
+        return true;
+    }
+};
