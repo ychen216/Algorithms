@@ -1,0 +1,44 @@
+13. Roman to Integer
+
+/*
+Given a roman numeral, convert it to an integer.
+
+Input is guaranteed to be within the range from 1 to 3999.
+*/
+
+Solution:
+
+class Solution {
+public:
+    /*
+    1~9: {"I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX"};
+
+    10~90: {"X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC"};
+
+    100~900: {"C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM"};
+
+    1000~3000: {"M", "MM", "MMM"}.
+    */
+    int getNum(char i){
+        switch(i){
+            case 'I':return 1;
+            case 'V':return 5;
+            case 'X':return 10;
+            case 'L':return 50;
+            case 'C':return 100;
+            case 'D':return 500;
+            case 'M':return 1000;
+        }
+    }
+    int romanToInt(string s) {
+        int sum=getNum(s[0]);
+        int size=s.size();
+        for(int i=1;i<size;i++){
+            if(getNum(s[i-1])<getNum(s[i]))
+                sum+=getNum(s[i])-2*getNum(s[i-1]);
+            else
+                sum+=getNum(s[i]);
+        }
+        return sum;
+    }
+};
