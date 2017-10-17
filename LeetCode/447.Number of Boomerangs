@@ -1,0 +1,42 @@
+447. Number of Boomerangs
+
+/*
+Given n points in the plane that are all pairwise distinct, a "boomerang" is a tuple of points (i, j, k) such that the distance between i and j equals the distance between i and k (the order of the tuple matters).
+
+Find the number of boomerangs. You may assume that n will be at most 500 and coordinates of points are all in the range [-10000, 10000] (inclusive).
+
+Example:
+Input:
+[[0,0],[1,0],[2,0]]
+
+Output:
+2
+Explanation:
+  The two boomerangs are [[1,0],[0,0],[2,0]] and [[1,0],[2,0],[0,0]]
+*/
+
+Solution:
+class Solution {
+public:
+    int numberOfBoomerangs(vector<pair<int, int>>& points) {
+        int size=points.size();
+        int cnt=0;
+        for(int i=0;i<size;i++){
+            map<int,int> m;
+            for(int j=0;j<size;j++){
+                if(i==j)
+                    continue;
+                int temp=(points[i].first-points[j].first)*(points[i].first-points[j].first)
+                                         +(points[i].second-points[j].second)*(points[i].second-points[j].second); 
+                if(m.count(temp)==0)
+                    m[temp]=1;
+                else
+                    m[temp]++;
+            }
+            for(map<int,int>::iterator it=m.begin();it!=m.end();it++)
+                if(it->second>1)
+                    cnt+=it->second*(it->second-1);//距离相同的点 可以两两组合
+        }
+        return cnt;
+    }
+};
