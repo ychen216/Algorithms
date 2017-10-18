@@ -1,0 +1,35 @@
+541. Reverse String II
+
+/*
+Given a string and an integer k, you need to reverse the first k characters for every 2k characters counting from the start of the string. If there are less than k characters left, reverse all of them. If there are less than 2k but greater than or equal to k characters, then reverse the first k characters and left the other as original.
+Example:
+Input: s = "abcdefg", k = 2
+Output: "bacdfeg"
+Restrictions:
+  The string consists of lower English letters only.
+  Length of the given string and k will in the range [1, 10000]
+*/
+
+Solution:
+class Solution {
+public:
+    string reverse(string &s,int start,int end){
+        for(int i=start,j=end;i<j;i++,j--){
+            char temp=s[i];
+            s[i]=s[j];
+            s[j]=temp;
+        }
+        return s;
+    }
+    string reverseStr(string s, int k) {
+        int step=2*k;
+        int size=s.length();
+        for(int i=0;i<size;i+=step){
+            if(i+k<size)
+                s=reverse(s,i,i+k-1);
+            else
+                s=reverse(s,i,size-1);
+        }
+        return s;
+    }
+};
