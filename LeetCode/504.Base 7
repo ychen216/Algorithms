@@ -1,0 +1,32 @@
+504. Base 7
+
+/*
+Given an integer, return its base 7 string representation.
+
+Example 1:
+Input: 100
+Output: "202"
+Example 2:
+Input: -7
+Output: "-10"
+Note: The input will be in range of [-1e7, 1e7].
+*/
+Solution:
+class Solution {
+    public String convertToBase7(int num) {
+        String res="";
+        boolean isNeg=false;
+        if(num<0){
+            isNeg=true;
+            num=-num;
+        }
+        //考虑num==0所以不用while
+        do{
+            res=(num%7)+res;
+            num/=7;
+        }while(num!=0);
+        if(isNeg)
+            res="-"+res;
+        return res;
+    }
+}
