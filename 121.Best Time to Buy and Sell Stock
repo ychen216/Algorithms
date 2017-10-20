@@ -1,0 +1,49 @@
+121. Best Time to Buy and Sell Stock
+/*
+Say you have an array for which the ith element is the price of a given stock on day i.
+
+If you were only permitted to complete at most one transaction (ie, buy one and sell one share of the stock), design an algorithm to find the maximum profit.
+
+Example 1:
+Input: [7, 1, 5, 3, 6, 4]
+Output: 5
+max. difference = 6-1 = 5 (not 7-1 = 6, as selling price needs to be larger than buying price)
+
+Example 2:
+Input: [7, 6, 4, 3, 1]
+Output: 0
+In this case, no transaction is done, i.e. max profit = 0.
+*/
+Solution 1:
+O(n^2)
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int size=prices.size();
+        int maxPro=0;
+        for(int i=size-1;i>0;i--){
+            for(int j=i-1;j>=0;j--)
+                if(prices[i]>prices[j])
+                    maxPro=max(maxPro,prices[i]-prices[j]);
+        }
+        return maxPro;
+    }
+};
+
+Solution 2: O(n)
+class Solution {
+public:
+    /*
+    对于任意一天i能获得的最大收益 就是与在[0-i]天中价格最低的 价格之差
+    */
+    int maxProfit(vector<int>& prices) {
+        int size=prices.size();
+        int maxPro=0;
+        int minPrice=INT_MAX;
+        for(int i=0;i<size;i++){
+            minPrice=min(minPrice,prices[i]);
+            maxPro=max(maxPro,prices[i]-minPrice);
+        }
+        return maxPro;
+    }
+};
