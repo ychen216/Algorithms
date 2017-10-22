@@ -1,0 +1,78 @@
+107. Binary Tree Level Order Traversal II
+
+/*
+Given a binary tree, return the bottom-up level order traversal of its nodes' values. (ie, from left to right, level by level from leaf to root).
+
+For example:
+Given binary tree [3,9,20,null,null,15,7],
+    3
+   / \
+  9  20
+    /  \
+   15   7
+return its bottom-up level order traversal as:
+[
+  [15,7],
+  [9,20],
+  [3]
+]
+
+*/
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        if(root==NULL)
+            return {};
+        vector<int> floor;
+        vector<vector<int>> res;
+        queue<TreeNode*> q;
+        q.push(root);
+        floor.push_back(0);
+        int curFloor=-1;
+        int cnt=0;
+        while(q.size()){
+            TreeNode *temp=q.front();
+            q.pop();
+            
+            if(curFloor==floor[cnt])
+            res[curFloor].push_back(temp->val);
+            else{
+                res.push_back({});
+                res[floor[cnt]].push_back(temp->val);
+                curFloor=floor[cnt];
+            }
+            cnt++;
+            if(temp->left&&temp->right){
+                floor.push_back(curFloor+1);
+                q.push(temp->left);
+                floor.push_back(curFloor+1);
+                q.push(temp->right);
+            }
+            else if(temp->left||temp->right){
+                floor.push_back(curFloor+1);
+                if(temp->left)
+                    q.push(temp->left);
+                else
+                    q.push(temp->right);
+            }
+            else
+                ;
+            
+            
+        }
+        
+        reverse(res.begin(),res.end());
+        return res;
+    }
+};
