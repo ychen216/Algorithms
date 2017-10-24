@@ -4,8 +4,11 @@ recursion:
 math：
   simple:453,263,
   
+dp:
+  simple:196,
+  
 data struction:
-  simple:237,447
+  simple:237,447,
 
 hard to classification:
   simple:653,283,628,121,405,594
