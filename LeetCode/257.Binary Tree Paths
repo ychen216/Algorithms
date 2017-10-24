@@ -16,3 +16,32 @@ All root-to-leaf paths are:
 */
 
 Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void travel(TreeNode *root,string path,vector<string>&res){
+        stringstream ss;
+        ss<<root->val;
+        string v=ss.str();
+        if(root->left==NULL&&root->right==NULL)
+           res.push_back(path+v);
+        if(root->left)
+            travel(root->left,path+v+"->",res);
+        if(root->right)
+            travel(root->right,path+v+"->",res);
+    }
+    vector<string> binaryTreePaths(TreeNode* root) {
+        vector<string> res;
+        if(root)
+            travel(root,"",res);
+        return res;
+    }
+};
