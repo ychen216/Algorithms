@@ -1,0 +1,49 @@
+101. Symmetric Tree
+
+/*
+Given a binary tree, check whether it is a mirror of itself (ie, symmetric around its center).
+
+For example, this binary tree [1,2,2,3,4,4,3] is symmetric:
+
+    1
+   / \
+  2   2
+ / \ / \
+3  4 4  3
+But the following [1,2,2,null,3,null,3] is not:
+    1
+   / \
+  2   2
+   \   \
+   3    3
+Note:
+Bonus points if you could solve it both recursively and iteratively.
+*/
+
+Solution 1:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSymmetricHelper(TreeNode *lChild,TreeNode *rChild){
+        if(lChild==NULL||rChild==NULL)
+            return lChild==rChild;//只有一个子树 必然是非镜像的
+        if(lChild->val==rChild->val)
+            return isSymmetricHelper(lChild->left,rChild->right)&&isSymmetricHelper(lChild->right,rChild->left);
+        else
+            return false;
+    }
+    
+    bool isSymmetric(TreeNode* root) {
+        if(root)
+            return isSymmetricHelper(root->left,root->right);
+        return true;
+    }
+};
