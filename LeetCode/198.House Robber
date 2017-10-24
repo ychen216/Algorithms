@@ -1,0 +1,49 @@
+198. House Robber
+
+/*
+You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed, 
+the only constraint stopping you from robbing each of them is that adjacent houses have security system connected and 
+it will automatically contact the police if two adjacent houses were broken into on the same night.
+
+Given a list of non-negative integers representing the amount of money of each house, determine the maximum amount of money 
+you can rob tonight without alerting the police.
+
+*/
+
+Solution 1:
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int size=nums.size();
+        if(size==0)
+            return 0;
+        int dp[size];//记录偷得最后一家是i不被发现且能获得的最大利益
+        int maxM=0;
+        for(int i=0;i<size;i++){
+            int tempMax=0;
+            for(int j=0;j<i-1;j++)//偷i之前 可以偷除了i-1之前的任何一家
+                tempMax=max(tempMax,dp[j]);
+            dp[i]=max(tempMax+nums[i],nums[i]);
+            maxM=max(dp[i],maxM);
+        }
+        return maxM;
+    }
+};
+
+Solution 2:
+
+class Solution {
+public:
+    int rob(vector<int>& nums) {
+        int size=nums.size();
+        int rob=0;//max monney can get if rob current house
+        int notrob=0;//max monney can get if not rob current house
+        for(int i=0;i<size;i++){
+            int currob=notrob+nums[i];//if rob current value, previous house must not be robbed
+            notrob=max(notrob,rob);//if not rob ith house, take the max value of robbed (i-1)th house and not rob (i-1)th house
+            rob=currob;
+        }
+        return max(rob,notrob);
+    }
+};
