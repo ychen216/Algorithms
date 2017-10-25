@@ -1,0 +1,104 @@
+501. Find Mode in Binary Search Tree
+
+/*
+Given a binary search tree (BST) with duplicates, find all the mode(s) (the most frequently occurred element) in the given BST.
+
+Assume a BST is defined as follows:
+
+The left subtree of a node contains only nodes with keys less than or equal to the node's key.
+The right subtree of a node contains only nodes with keys greater than or equal to the node's key.
+Both the left and right subtrees must also be binary search trees.
+For example:
+Given BST [1,null,2,2],
+   1
+    \
+     2
+    /
+   2
+return [2].
+
+Note: If a tree has more than one mode, you can return them in any order.
+
+Follow up: Could you do that without using any extra space? 
+(Assume that the implicit stack space incurred due to recursion does not count).
+*/
+
+Solution  1:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+private:
+    int maxCnt;
+public:
+    //遍历树 记录每个节点值出现的次数
+    void inorder(TreeNode *root,map<int,int>&m){
+        if(!root)
+            return;
+        inorder(root->left,m);
+        if(m.count(root->val))
+            m[root->val]++;
+        else
+            m[root->val]=1;
+        maxCnt=max(maxCnt,m[root->val]);
+        inorder(root->right,m);
+    }
+    vector<int> findMode(TreeNode* root) {
+        map<int,int> m;
+        maxCnt=-1;
+        inorder(root,m);
+        vector<int> res;
+        for(map<int,int>::iterator it=m.begin();it!=m.end();it++)
+            if(it->second==maxCnt)
+                res.push_back(it->first);
+        return res;
+    }
+};
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+private:
+    int maxCnt,preVal,tempCnt;
+public:
+    //BST中序遍历得到的是不递减序列 所以多次出现的元素一定是连续出现的 可以利用这个性质
+    void inorder(TreeNode *root,vector<int>&res){
+        if(!root)
+            return;
+        inorder(root->left,res);
+        if(root->val==preVal){
+            tempCnt++;
+        }
+        else{
+            tempCnt=1;
+            preVal=root->val;
+        }
+        if(maxCnt<tempCnt){
+            res.clear();
+            res.push_back(root->val);
+            maxCnt=tempCnt;
+        }else if(maxCnt==tempCnt)
+            res.push_back(root->val);
+        inorder(root->right,res);
+    }
+    vector<int> findMode(TreeNode* root) {
+        vector<int> res;
+        maxCnt=0,preVal=INT_MIN,tempCnt=0;
+        inorder(root,res);
+        return res;
+    }
+};
