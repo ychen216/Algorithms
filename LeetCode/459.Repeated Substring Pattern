@@ -1,0 +1,45 @@
+459. Repeated Substring Pattern
+
+/*
+Given a non-empty string check if it can be constructed by taking a substring of it and appending multiple copies of the substring together. You may assume the given string consists of lowercase English letters only and its length will not exceed 10000.
+
+Example 1:
+Input: "abab"
+Output: True
+Explanation: It's the substring "ab" twice
+
+Example 2:
+Input: "aba"
+Output: False
+
+Example 3:
+Input: "abcabcabcabc"
+Output: True
+
+Explanation: It's the substring "abc" four times. (And the substring "abcabc" twice.)
+
+*/
+
+Solution:
+class Solution {
+    /*
+    s是repeatedSubstring那么他的repeatedSubstringPattern出现的次数至少2次
+    所以repeatedSubstringPattern的长度为1~s.length()/2
+    枚举可能的每一个子串
+    */
+    public boolean repeatedSubstringPattern(String s) {
+        int len=s.length();
+        for(int i=len/2;i>=1;i--){
+            if(len%i==0){
+                int t=len/i;//子串拼接m次形成s
+                String sub=s.substring(0,i);
+                StringBuilder sb=new StringBuilder();
+                for(int j=0;j<t;j++)
+                    sb.append(sub);
+                if(s.equals(sb.toString()))
+                    return true;
+            }
+        }
+        return false;
+    }
+}
