@@ -1,0 +1,28 @@
+172. Factorial Trailing Zeroes
+
+/*
+Given an integer n, return the number of trailing zeroes in n!.
+
+Note: Your solution should be in logarithmic time complexity.
+*/
+
+Solution:
+class Solution {
+public:
+    //0由2*5=10产生 有x个0 说明n!中 因子2和5至少包含x个 而包含因子5的个数一定不多于因子2 所以只计算因子5的个数就行
+    int trailingZeroes(int n) {
+        int cnt5=0;
+        /*
+        int cnt2=0;
+        while(temp>=2){
+            cnt2+=temp/2;
+            temp/=2;
+        }
+        */
+        while(n>=5){
+            cnt5+=n/5;
+            n/=5;
+        }
+        return cnt5;
+    }
+};
