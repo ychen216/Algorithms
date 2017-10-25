@@ -1,0 +1,73 @@
+110. Balanced Binary Tree
+
+/*
+Given a binary tree, determine if it is height-balanced.
+
+For this problem, a height-balanced binary tree is defined as a binary tree in which the depth of the two subtrees of every node
+never differ by more than 1.
+*/
+
+Solution 1:Solution2 是1的简化
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //计算树高
+    int height(TreeNode *root){
+        if(root==NULL)
+            return 0;
+        return max(height(root->right),height(root->left))+1;
+    }
+    bool travel(TreeNode *root){
+        int left=0,right=0;
+        if(root->left)
+            left=height(root->left);
+        if(root->right)
+            right=height(root->right);
+        return abs(right-left)<=1;
+    }
+    bool isBalanced(TreeNode* root) {
+        if(root==NULL)
+            return true;
+        if(travel(root)){
+            return isBalanced(root->right)&&isBalanced(root->left);       
+        }
+        else
+            return false;
+    }
+};
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //计算树高
+    int height(TreeNode *root){
+        if(root==NULL)
+            return 0;
+        return max(height(root->right),height(root->left))+1;
+    }
+    
+    bool isBalanced(TreeNode* root) {
+        if(root==NULL)
+            return true;
+        int left=height(root->left);
+        int right=height(root->right);
+        return abs(left-right)<=1&&isBalanced(root->right)&&isBalanced(root->left);
+    }
+};
