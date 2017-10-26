@@ -31,3 +31,15 @@ Because the 4th row is incomplete, we return 3.
 */
 
 Solution:
+class Solution {
+public:
+    int arrangeCoins(int n) {
+        int i=0;
+        while(n>=i){
+            n-=i;
+            i++;
+        }
+        i--;
+        return i; 
+    }
+};
