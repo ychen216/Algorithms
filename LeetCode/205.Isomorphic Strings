@@ -1,0 +1,43 @@
+205. Isomorphic Strings
+
+/*
+Given two strings s and t, determine if they are isomorphic.
+
+Two strings are isomorphic if the characters in s can be replaced to get t.
+
+All occurrences of a character must be replaced with another character while preserving the order of characters.
+No two characters may map to the same character but a character may map to itself.
+
+For example,
+Given "egg", "add", return true.
+
+Given "foo", "bar", return false.
+
+Given "paper", "title", return true.
+
+Note:
+You may assume both s and t have the same length.
+*/
+
+Solution:
+class Solution {
+public:
+    //就是在两个字符串 s,t中看能不能找到一个一一映射的表
+    bool isIsomorphic(string s, string t) {
+        map<char,char> ms,mt;
+        int len=s.length();
+        for(int i=0;i<len;i++){
+            if(ms.find(s[i])==ms.end()&&mt.find(t[i])==mt.end()){
+                ms[s[i]]=t[i];//s[i]和t[i]互相映射
+                mt[t[i]]=s[i];
+            }
+            else{
+                if(ms.find(s[i])!=ms.end()&&ms.find(s[i])->second!=t[i])
+                    return false;
+                if(mt.find(t[i])!=mt.end()&&mt.find(t[i])->second!=s[i])
+                    return false;
+            }
+        }
+        return true;
+    }
+};
