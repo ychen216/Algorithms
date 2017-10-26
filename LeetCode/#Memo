@@ -15,6 +15,6 @@ hard to classification:
   
   
 trick：
-  simple:463,496(try O(n) method),136,169,661,231,
+  simple:463,496(try O(n) method),136,169,661,231,141,
   
 Runtime Error:661
