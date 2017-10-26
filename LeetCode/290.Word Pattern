@@ -1,0 +1,43 @@
+290. Word Pattern
+
+/*
+Given a pattern and a string str, find if str follows the same pattern.
+
+Here follow means a full match, such that there is a bijection between a letter in pattern and a non-empty word in str.
+
+Examples:
+pattern = "abba", str = "dog cat cat dog" should return true.
+pattern = "abba", str = "dog cat cat fish" should return false.
+pattern = "aaaa", str = "dog cat cat dog" should return false.
+pattern = "abba", str = "dog dog dog dog" should return false.
+Notes:
+You may assume pattern contains only lowercase letters, and str contains lowercase letters separated by a single space.
+*/
+
+Solution:
+class Solution {
+    //一一映射的关系
+    public boolean wordPattern(String pattern, String str) {
+        String []sarray=str.split(" ");
+        int lenp=pattern.length();
+        int lens=sarray.length;
+        if(lenp!=lens)
+            return false;
+        Map<String,String> map1=new HashMap<String,String>();
+        Map<String,String> map2=new HashMap<String,String>();
+        for(int i=0;i<lens;i++){
+            String k=String.valueOf(pattern.charAt(i));
+            if(!map1.containsKey(k)&&!map2.containsKey(sarray[i])){
+                map1.put(k,sarray[i]);
+                map2.put(sarray[i],k);
+            }
+            else{
+                if(map1.containsKey(k)&&map1.get(k).equals(sarray[i])==false)
+                    return false;
+                if(map2.containsKey(sarray[i])&&map2.get(sarray[i]).equals(k)==false)
+                    return false;
+            }
+        }
+        return true;
+    }
+}
