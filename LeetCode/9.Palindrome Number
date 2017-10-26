@@ -1,0 +1,44 @@
+9. Palindrome Number
+
+/*
+Determine whether an integer is a palindrome. Do this without extra space.
+*/
+
+Solution:
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        if(x<0)//有负号
+            return false;
+        if(x<10)//[0,9]
+            return true; 
+        string s="";
+        while(x>0){
+            char c=(x%10)+'0';
+            s=c+s;
+            x/=10;
+        }
+        int left=0,right=s.length()-1;
+        while(left<right){
+            if(s[left++]!=s[right--])
+                return false;
+        }
+        return true;
+    }
+};
+Solution 2:
+class Solution {
+public:
+    bool isPalindrome(int x) {
+        if(x<0)//有负号
+            return false;
+        if(x<10)//[0,9]
+            return true; 
+       int a=0,b=x;//求出x的倒置数 a=12334 b=43321
+        while(b>0){
+            a=a*10+b%10;
+            b/=10;
+        }
+        return a==x;
+    }
+};
