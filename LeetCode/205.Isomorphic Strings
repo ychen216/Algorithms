@@ -22,7 +22,7 @@ You may assume both s and t have the same length.
 Solution:
 class Solution {
 public:
-    //就是在两个字符串 s,t中看能不能找到一个一一映射的表
+    //就是在两个字符串 s,t中看能不能找到一个一一映射的表 并且要保持先后顺序 先出现的先映射
     bool isIsomorphic(string s, string t) {
         map<char,char> ms,mt;
         int len=s.length();
