@@ -1,0 +1,36 @@
+14. Longest Common Prefix
+
+/*
+Write a function to find the longest common prefix string amongst an array of strings.
+*/
+
+Solution:
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        int snum=strs.size();
+        if(snum==0)
+            return "";
+        if(snum==1)
+            return strs[0];
+        //最长前缀不超过任意一个字符串的长度 这里随意取第一个字符串
+        int len=strs[0].length(),p=0;
+        string prefix="";
+        //标志是否不应该继续增加前缀的长度 1.p超过最短字符串的长度 2 第p的字符不是所有字符串共享的前缀
+        bool flag=true;
+        while(p<len&&flag){
+            //与1~snum-1的字符串对比
+            for(int i=1;i<snum;i++){
+                //目前的前缀已经超过最短字符串的长度
+                if(strs[i].length()<p||strs[i][p]!=strs[0][p]){
+                    flag=false;
+                    break;
+                }
+            }
+            if(flag)
+                prefix+=strs[0][p++];
+        }
+        return prefix;
+        
+    }
+};
