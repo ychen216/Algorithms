@@ -1,0 +1,68 @@
+581. Shortest Unsorted Continuous Subarray
+/*
+Given an integer array, you need to find one continuous subarray that if you only sort this subarray in ascending order,
+then the whole array will be sorted in ascending order, too.
+
+You need to find the shortest such subarray and output its length.
+
+Example 1:
+Input: [2, 6, 4, 8, 10, 9, 15]
+Output: 5
+Explanation: You need to sort [6, 4, 8, 10, 9] in ascending order to make the whole array sorted in ascending order.
+Note:
+Then length of the input array is in range [1, 10,000].
+The input array may contain duplicates, so ascending order here means <=.
+*/
+
+Solution 1:naive sort
+class Solution {
+public:
+    //与排序好的数组比较看相异的元素有几个
+    int findUnsortedSubarray(vector<int>& nums) {
+        vector<int> sortV(nums.begin(),nums.end());
+        sort(sortV.begin(),sortV.end());
+        int i=0,j=nums.size()-1;
+        while(i<j&&nums[i]==sortV[i]){
+            i++;
+        }
+        if(i==j)
+            return 0;
+        while(j>i&&nums[j]==sortV[j]){
+            j--;
+        }
+        return j-i+1;
+    }
+};
+
+Solution 2：
+class Solution {
+public:
+    /*O(n)
+    利用三个性质
+    nums[0, i - 1] and nums[j + 1, n - 1] are both sorted.
+    nums[i] != nums_sorted[i] and nums[j] != nums_sorted[j].
+    nums[i - 1] <= min and max <= nums[j + 1], where min and max are the minimum and maximum values of subarray nums[i, j].
+    */
+    int findUnsortedSubarray(vector<int>& nums) {
+        int size=nums.size();
+        int i=0,j=size-1;
+        while(i<j&&nums[i+1]>=nums[i])
+            i++;
+        
+        if(i>=j)
+            return 0;
+        while(j>0&&nums[j]>=nums[j-1])
+            j--;
+
+        int maxV=INT_MIN,minV=INT_MAX;
+        for(int k=i;k<=j;k++){
+            maxV=max(maxV,nums[k]);
+            minV=min(minV,nums[k]);
+        }
+        while(i>=0&&nums[i]>minV)
+            i--;
+        while(j<size&&nums[j]<maxV)
+            j++;
+        return j-i-1;
+    }
+};
