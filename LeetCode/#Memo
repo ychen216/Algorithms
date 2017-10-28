@@ -7,13 +7,16 @@ math：
 dp:
   simple:198,
   
+string:
+  simple:686,
+  
 data struction:
   simple:237,447,501,
 
 hard to classification:
   simple:653,283,628,121,405,594,459,643,9,205,88,680,
   
-  
+
 trick：
   simple:463,496(try O(n) method),136,169,661,231,141,
   
