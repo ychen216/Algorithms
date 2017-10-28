@@ -1,0 +1,54 @@
+160. Intersection of Two Linked Lists
+
+/*
+Write a program to find the node at which the intersection of two singly linked lists begins.
+
+
+For example, the following two linked lists:
+
+A:          a1 → a2
+                   ↘
+                     c1 → c2 → c3
+                   ↗            
+B:     b1 → b2 → b3
+begin to intersect at node c1.
+
+
+Notes:
+  If the two linked lists have no intersection at all, return null.
+  The linked lists must retain their original structure after the function returns.
+  You may assume there are no cycles anywhere in the entire linked structure.
+  Your code should preferably run in O(n) time and use only O(1) memory.
+*/
+
+Solution:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //考虑A和B一样长 那么只要一步一步比较两个链的每一个节点 看是否存在交集即可
+    //AB长度不一样的情况，假设B.len-A.len=2 那么A先走到链尾 这时使A的指针指向B的头指针
+    //那么B走到链尾时 A指向B的第二个节点，B指向A的头指针 此时AB所指向的链长度相等 按照一步一步比较即可
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if(headA&&headB){
+            ListNode *p=headA;
+            ListNode *q=headB;
+            while(p&&q&&p!=q){
+                p=p->next;
+                q=q->next;
+                if(p==q)
+                    return p;
+                if(p==NULL)p=headB;
+                if(q==NULL)q=headA;
+            }
+            return p;
+        }
+        return NULL;
+    }
+};
