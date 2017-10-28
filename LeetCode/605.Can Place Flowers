@@ -1,0 +1,54 @@
+605. Can Place Flowers
+
+/*
+Suppose you have a long flowerbed in which some of the plots are planted and some are not. However, 
+flowers cannot be planted in adjacent plots - they would compete for water and both would die.
+
+Given a flowerbed (represented as an array containing 0 and 1, where 0 means empty and 1 means not empty), 
+and a number n, return if n new flowers can be planted in it without violating the no-adjacent-flowers rule.
+
+Example 1:
+Input: flowerbed = [1,0,0,0,1], n = 1
+Output: True
+Example 2:
+Input: flowerbed = [1,0,0,0,1], n = 2
+Output: False
+Note:
+The input array won't violate no-adjacent-flowers rule.
+The input array size is in the range of [1, 20000].
+n is a non-negative integer which won't exceed the input array size.
+*/
+
+Solution 1: 模拟法 Memory Limit Exceeded 
+class Solution {
+    public int findNthDigit(int n) {
+        StringBuilder s=new StringBuilder();
+        int i=1;
+        while(s.length()<n){
+            s.append(String.valueOf(i));
+            i++;
+        }
+        return Character.getNumericValue(s.toString().charAt(n-1));
+    }
+}
+
+Solution 2：
+class Solution {
+    public int findNthDigit(int n) {
+        int digit=1;//一位数
+        long count=9;// 必须是long类型 有9个一位数
+        int start=1;//一位数的第一个数
+        
+        //找到第n位数 是几位数
+        while(n>digit*count){
+            n-=digit*count;
+            count*=10;
+            start*=10;
+            digit++;
+        }
+        //找到第n位在哪个数上
+        int num=start+(n-1)/digit;
+        String targetNum=Integer.toString(num);
+        return Character.getNumericValue(targetNum.charAt((n-1)%digit));
+    }
+}
