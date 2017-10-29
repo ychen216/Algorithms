@@ -7,6 +7,9 @@ math：
 dp:
   simple:198,
   
+greedy:
+  simple:665,
+  
 string:
   simple:686,
   
