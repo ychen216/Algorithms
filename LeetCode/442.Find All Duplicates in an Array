@@ -1,0 +1,53 @@
+442. Find All Duplicates in an Array
+/*
+Given an array of integers, 1 ≤ a[i] ≤ n (n = size of array), some elements appear twice and others appear once.
+
+Find all the elements that appear twice in this array.
+
+Could you do it without extra space and in O(n) runtime?
+
+Example:
+Input:
+[4,3,2,7,8,2,3,1]
+Output:
+[2,3]
+*/
+
+Solution 1:
+class Solution {
+public:
+    vector<int> findDuplicates(vector<int>& nums) {
+        set<int> s;
+        set<int> twice;//记录重复出现的元素
+        int size=nums.size();
+        for(int i=0;i<size;i++){
+            if(s.count(nums[i]))
+                twice.insert(nums[i]);
+            else
+                s.insert(nums[i]);
+        }
+        vector<int> v(twice.begin(),twice.end());
+        return v;
+        
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //数值的变化范围为[1,n],利用数值和下标的关系
+    //当i第一次出现时 令nums[i-1]=-nums[i-1]
+    //当i多次出现时 发现nums[i-1]已经是负数 将i加入结果集
+    vector<int> findDuplicates(vector<int>& nums) {
+        int size=nums.size();
+        vector<int> res;
+        for(int i=0;i<size;i++){
+            int index=abs(nums[i])-1;
+            if(nums[index]<0)
+                res.push_back(index+1);
+            else
+                nums[index]=-nums[index];
+        }
+        return res;
+    }
+};
