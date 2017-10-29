@@ -1,0 +1,22 @@
+7. Reverse Integer
+/*
+Reverse digits of an integer.
+
+Example1: x = 123, return 321
+Example2: x = -123, return -321
+*/
+
+Solution:
+class Solution {
+public:
+    int reverse(int x) {
+        long reverseNum=0;
+        while(x!=0){   
+            reverseNum=reverseNum*10+(x%10);
+            if(reverseNum>INT_MAX||reverseNum<INT_MIN)
+                return 0;
+            x/=10;
+        }
+        return reverseNum;
+    }
+};
