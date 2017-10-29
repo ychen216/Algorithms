@@ -1,0 +1,44 @@
+665. Non-decreasing Array
+
+/*
+Given an array with n integers, your task is to check if it could become non-decreasing by modifying at most 1 element.
+
+We define an array is non-decreasing if array[i] <= array[i + 1] holds for every i (1 <= i < n).
+
+Example 1:
+Input: [4,2,3]
+Output: True
+Explanation: You could modify the first 
+4 to 1 
+to get a non-decreasing array.
+Example 2:
+Input: [4,2,1]
+Output: False
+Explanation: You can't get a non-decreasing array by modify at most one element.
+Note: The n belongs to [1, 10,000].
+*/
+
+Solution:
+
+class Solution {
+public:
+    //贪心思想
+    //遇到num[i-1]>num[i]时 需要改变一个数这时候我们希望改小num[i-1]因为改大num[i]会使得后面的数组有更大的可能是非递减的
+    //但是如果改小num[i-1]使得前面的数组不是非递减时(当num[i-2]>num[i]) 我们应该改大num[i]，否则至少需要改变num[i-1]和num[i-2]两个数字
+    bool checkPossibility(vector<int>& nums) {
+        int size=nums.size();
+        if(size<=1)
+            return true;
+        int modify=0;
+        for(int i=1;modify<=1&&i<size;i++){
+            if(nums[i-1]>nums[i]){
+                modify++;
+                if(i-2>=0&&nums[i-2]>nums[i])
+                    nums[i]=nums[i-1];
+                else
+                    nums[i-1]=nums[i];
+            }
+        }
+        return modify<=1;
+    }
+};
