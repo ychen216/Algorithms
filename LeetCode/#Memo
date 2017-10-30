@@ -3,7 +3,8 @@ recursion:
   medium:526,
 
 math：
-  simple:453,263,367,400,
+  simple:453,263,367,400
+  medium:260,
   
 dp:
   simple:198,
@@ -24,5 +25,6 @@ hard to classification:
 
 trick：
   simple:463,496(try O(n) method),136,169,661,231,141,581,338,442,
+  medium:462,
   
 Runtime Error:661
