@@ -1,0 +1,67 @@
+647. Palindromic Substrings
+/*
+Given a string, your task is to count how many palindromic substrings in this string.
+
+The substrings with different start indexes or end indexes are counted as different substrings even they consist of same characters.
+
+Example 1:
+Input: "abc"
+Output: 3
+Explanation: Three palindromic strings: "a", "b", "c".
+Example 2:
+Input: "aaa"
+Output: 6
+Explanation: Six palindromic strings: "a", "a", "a", "aa", "aa", "aaa".
+Note:
+The input string length won't exceed 1000.
+
+*/
+
+Solution 1：naive
+class Solution {
+public:
+    int countSubstrings(string s) {
+        if(s=="")
+            return 0;
+        int sLen=s.length();
+        int sum=sLen;//长度为1的串都是回文串
+        for(int len=2;len<=sLen;len++){
+            for(int i=0;i<=sLen-len;i++){
+                int k=i,j=i+len-1;
+                while(k<j&&s[k]==s[j]){
+                    k++;
+                    j--;
+                }
+                if(k>=j)
+                    sum++;
+            }
+        }
+        return sum;
+    }
+};
+
+Solution 2:trick
+class Solution {
+public:
+    //选定回文串的中心点 向两侧扩展
+    int cnt=0;
+    int countSubstrings(string s) {
+        if(s=="")
+            return 0;
+        int sLen=s.length();
+        cnt=0;
+        for(int i=0;i<sLen;i++){
+            extendPalindrome(s,i,i);//回文串长度为奇数
+            extendPalindrome(s,i,i+1);//回文串长度为偶数
+        }
+        return cnt;
+    }
+    void extendPalindrome(string &s,int left,int right){
+        int slen=s.length();
+        while(left>=0&&right<slen&&s[left]==s[right]){
+            cnt++;
+            left--;
+            right++;
+        }
+    }
+};
