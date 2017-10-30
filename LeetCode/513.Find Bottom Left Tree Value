@@ -1,0 +1,61 @@
+513. Find Bottom Left Tree Value
+
+/*
+Given a binary tree, find the leftmost value in the last row of the tree.
+
+Example 1:
+Input:
+
+    2
+   / \
+  1   3
+
+Output:
+1
+Example 2: 
+Input:
+
+        1
+       / \
+      2   3
+     /   / \
+    4   5   6
+       /
+      7
+
+Output:
+7
+Note: You may assume the tree (i.e., the given root node) is not NULL.
+*/
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+class Solution {
+public:
+    //BFS 从右到左扫描 则队列里的最后一个元素就是所求的
+    int findBottomLeftValue(TreeNode* root) {
+        if(root==NULL)
+            return NULL;
+        queue<TreeNode*> q;
+        TreeNode *node=NULL;
+        q.push(root);
+        while(!q.empty()){
+            node=q.front();
+            q.pop();
+            if(node->right)
+                q.push(node->right);
+            if(node->left)
+                q.push(node->left);
+        }
+        return node->val;
+    }
+};
