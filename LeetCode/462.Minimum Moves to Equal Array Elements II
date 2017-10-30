@@ -1,0 +1,71 @@
+462. Minimum Moves to Equal Array Elements II
+
+/*
+Given a non-empty integer array, find the minimum number of moves required to make all array elements equal, 
+where a move is incrementing a selected element by 1 or decrementing a selected element by 1.
+
+You may assume the array's length is at most 10,000.
+
+Example:
+Input:
+[1,2,3]
+Output:
+2
+Explanation:
+Only two moves are needed (remember each move increments or decrements one element):
+[1,2,3]  =>  [2,2,3]  =>  [2,2,2]
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+    首先给数组排序，那么我们最终需要变成的相等的数字就是中间的数，如果数组有奇数个，那么就是最中间的那个数字
+    如果是偶数个，那么就是中间两个数的区间中的任意一个数字
+    而两端的数字变成中间的一个数字需要的步数实际上就是两端数字的距离
+    */
+    int minMoves2(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int i=0,j=nums.size()-1;
+        int cnt=0;
+        while(i<j)
+            cnt+=nums[j--]-nums[i++];
+        return cnt;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+    实际上最后相等的数字就是数组的最中间的那个数字
+    数组排序后直接利用坐标定位到中间的数字，然后算数组中每个数组与其的差的绝对值累加即可
+    */
+    int minMoves2(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int mid=nums[nums.size()/2];
+        int cnt=0;
+        for(auto num:nums)
+            cnt+=abs(num-mid);
+        return cnt;
+    }
+};
+Solution 3:
+class Solution {
+public:
+    /*
+    实际上最后相等的数字就是数组的最中间的那个数字
+    不需要给所有的数字排序，我们只关心最中间的数字
+    stl中自带的函数nth_element(start, start+n, end)可以使第n大元素处于第n位置（从0开始,其位置是下标为n的元素）
+    并且比这个元素小的元素都排在这个元素之前，比这个元素大的元素都排在这个元素之后
+    只要给出我们想要数字的位置，它就能在O(n)的时间内返回正确的数字，然后算数组中每个数组与其的差的绝对值累加即可
+    */
+    int minMoves2(vector<int>& nums) {
+        int mid=nums.size()/2;
+        nth_element(nums.begin(),nums.begin()+mid,nums.end());
+        int cnt=0;
+        for(auto num:nums)
+            cnt+=abs(num-nums[mid]);
+        return cnt;
+    }
+};
