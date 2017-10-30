@@ -1,0 +1,104 @@
+515. Find Largest Value in Each Tree Row
+
+/*
+You need to find the largest value in each row of a binary tree.
+
+Example:
+Input: 
+
+          1
+         / \
+        3   2
+       / \   \  
+      5   3   9 
+
+Output: [1, 3, 9]
+
+*/
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+struct Node{
+    TreeNode *root;
+    int floor;
+    Node(TreeNode *r,int f):root(r),floor(f){}
+};
+class Solution {
+public:
+    vector<int> largestValues(TreeNode* root) {
+        if(root==NULL)
+            return {};
+        queue<Node> q;
+        Node node(root,0);
+        q.push(node);
+        int maxFloor=-1;
+        vector<int> res;
+        while(!q.empty()){
+            node=q.front();
+            q.pop();
+            if(node.floor>maxFloor){
+                maxFloor=node.floor;
+                res.push_back(node.root->val);
+            }
+            else{
+                res[node.floor]=max(res[node.floor],node.root->val);
+            }
+            if(node.root->left){
+                Node n1(node.root->left,node.floor+1);
+                q.push(n1);
+            }
+            if(node.root->right){
+                Node n1(node.root->right,node.floor+1);
+                q.push(n1);
+            }
+        }
+        return res;
+    }
+};
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+
+class Solution {
+public:
+    vector<int> largestValues(TreeNode* root) {
+        if(root==NULL)
+            return {};
+        queue<TreeNode*> q;
+        q.push(root);
+        int qSize=1;
+        vector<int> res;
+        while(qSize>0){
+            int maxV=INT_MIN;
+            TreeNode *node=NULL;
+            for(int i=0;i<qSize;i++){
+                node=q.front();
+                q.pop();
+                maxV=max(maxV,node->val);
+                if(node->left)q.push(node->left);
+                if(node->right)q.push(node->right);
+            }
+            
+            res.push_back(maxV);
+            qSize=q.size();
+        }
+        return res;
+    }
+};
