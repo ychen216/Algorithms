@@ -31,6 +31,7 @@ public:
     vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) {
         sort(people.begin(),people.end(),cmp);
         vector<pair<int,int>>res;
+        //res数组中存的人都不低于当前要加入的人的身高
         for(auto & p:people)
             res.insert(res.begin()+p.second,p);
         return res;
