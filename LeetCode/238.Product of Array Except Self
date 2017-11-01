@@ -1,0 +1,97 @@
+238. Product of Array Except Self
+/*
+Given an array of n integers where n > 1, nums, return an array output such that output[i] is equal to the product of 
+all the elements of nums except nums[i].
+
+Solve it without division and in O(n).
+For example, given [1,2,3,4], return [24,12,8,6].
+
+Follow up:
+Could you solve it with constant space complexity? (Note: The output array does not count as extra space for the purpose of space complexity analysis.)
+
+*/
+
+Solution:
+class Solution {
+public:
+    //考虑可能有0 只有一个0那么只有该位置的值不为0
+    //多于一个0 所有位置都为0
+    //没有0 每一位的值为 所有元素的乘积/该数的值
+    vector<int> productExceptSelf(vector<int>& nums) {
+        int product=1;
+        int size=nums.size();
+        bool haszero=false;
+        int zeropos;
+        int zeroCnt=0;
+        vector<int>res;
+        for(int i=0;i<size;i++){
+            if(nums[i]==0){
+                haszero=true;
+                zeroCnt++;
+                zeropos=i;
+            }
+            else
+                product*=nums[i];
+        }
+        if(haszero){
+            if(zeroCnt==1){
+                for(int i=0;i<size;i++){
+                    if(zeropos==i)
+                        res.push_back(product);
+                    else
+                        res.push_back(0);
+                }
+            }else{//>1
+                for(int i=0;i<size;i++)
+                     res.push_back(0);
+            }
+            
+        }
+        else{
+            for(int i=0;i<size;i++)
+                res.push_back(product/nums[i]);
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //分别记录nums[i]左边的元素的乘积L 和右边元素的乘积R 最后返回L*R就是该位的结果 
+    vector<int> productExceptSelf(vector<int>& nums) {
+        int count = nums.size();  
+        vector<int> result(count, 1);  
+        vector<int> left(count, 1);  
+        vector<int> right(count, 1); 
+  
+        for (int i = 1; i < count; ++i)  
+            left[i] = left[i-1] * nums[i-1];  
+         
+        for (int i = count -2; i >= 0; --i)   
+            right [i]= right[i+1] * nums[i+1];  
+        for (int i = 0; i < count; ++i)  
+            result[i] = left[i] * right[i];  
+        return result;  
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    //分别记录nums[i]左边的元素的乘积L 和右边元素的乘积R 最后返回L*R就是该位的结果 
+    //为了使空间O(1) 直接在result中保存left值 right 值用变量代替
+    vector<int> productExceptSelf(vector<int>& nums) {
+        int count = nums.size();  
+        vector<int> result(count, 1);
+  
+        for (int i = 1; i < count; ++i)  
+            result[i] = result[i-1] * nums[i-1];  
+        int right=1;
+        for (int i = count -2; i >= 0; --i){
+            right*=nums[i+1];
+            result[i]*=right;
+        }  
+        return result;  
+    }
+};
