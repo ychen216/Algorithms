@@ -1,0 +1,55 @@
+503. Next Greater Element II
+
+/*
+Given a circular array (the next element of the last element is the first element of the array), print the Next Greater Number 
+for every element. The Next Greater Number of a number x is the first greater number to its traversing-order next in the array,
+which means you could search circularly to find its next greater number. If it doesn't exist, output -1 for this number.
+Example 1:
+Input: [1,2,1]
+Output: [2,-1,2]
+Explanation: The first 1's next greater number is 2; 
+  The number 2 can't find next greater number; 
+  The second 1's next greater number needs to search circularly, which is also 2.
+Note: The length of given array won't exceed 10000.
+*/
+
+Solution:
+class Solution {
+public:
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        int size=nums.size();
+        vector<int> res;
+        for(int i=0;i<size;i++){
+            int j=i+1;
+            while(j%size!=i&&nums[j%size]<=nums[i])
+                j++;
+            if(nums[j%size]>nums[i])
+                res.push_back(nums[j%size]);
+            else
+                res.push_back(-1);
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //利用栈结构 栈里保存小于当前元素的值 当前元素就是栈里所有元素的next greater element
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        int size=nums.size();
+        stack<int> st;//保存元素下标
+        vector<int> res(n,-1);
+        //循环数组
+        for(int i=0;i<size*2;i++){
+            int num=nums[i%size];
+            while(!st.empty()&&num>nums[st.top()]){
+                res[st.top()]=num;
+                st.pop();
+            }
+            if(i<size)
+                st.push(i);
+        }
+        return res;
+    }
+};
