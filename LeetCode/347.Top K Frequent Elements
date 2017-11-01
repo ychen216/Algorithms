@@ -1,0 +1,42 @@
+347. Top K Frequent Elements
+
+/*
+Given a non-empty array of integers, return the k most frequent elements.
+
+For example,
+Given [1,1,1,2,2,3] and k = 2, return [1,2].
+
+Note: 
+  You may assume k is always valid, 1 ≤ k ≤ number of unique elements.
+  Your algorithm's time complexity must be better than O(n log n), where n is the array's size.
+*/
+
+Solution:
+class Solution {
+public:
+    //桶排序
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        int size=nums.size();
+        vector<vector<int>> bucket(size+1);//桶的大小应该为0-n n+1个
+        map<int,int> m;
+        for(int i=0;i<size;i++){
+            if(m.count(nums[i]))
+                m[nums[i]]++;
+            else
+                m[nums[i]]=1;
+        }
+        //按照出现频率加入元素
+        for(auto p:m){
+            bucket[p.second].push_back(p.first);
+        }
+        vector<int> res;
+        for(int i=size;i>=0;i--){
+            for(int j=0;j<bucket[i].size();j++){
+                res.push_back(bucket[i][j]);
+                if(res.size()==k)
+                    return res;
+            }
+        }
+        return res;
+    }
+};
