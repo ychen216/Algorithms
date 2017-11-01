@@ -1,0 +1,111 @@
+451. Sort Characters By Frequency
+/*
+Given a string, sort it in decreasing order based on the frequency of characters.
+
+Example 1:
+Input:
+"tree"
+Output:
+"eert"
+Explanation:
+'e' appears twice while 'r' and 't' both appear once.
+So 'e' must appear before both 'r' and 't'. Therefore "eetr" is also a valid answer.
+Example 2:
+
+Input:
+"cccaaa"
+Output:
+"cccaaa"
+Explanation:
+Both 'c' and 'a' appear three times, so "aaaccc" is also a valid answer.
+Note that "cacaca" is incorrect, as the same characters must be together.
+Example 3:
+Input:
+"Aabb"
+Output:
+"bbAa"
+Explanation:
+"bbaA" is also a valid answer, but "Aabb" is incorrect.
+Note that 'A' and 'a' are treated as two different characters.
+*/
+
+Solution 1：
+struct Letter{
+    char c;
+    int pos;
+    int cnt;
+    Letter(char cc,int p,int cntt):c(cc),pos(p),cnt(cntt){}
+};
+class Solution {
+public:
+    //按照出现次数 降序排 次数一样的按照出现顺序先后
+    static bool cmp(const Letter&a,const Letter&b){
+        if(a.cnt!=b.cnt)
+            return a.cnt>b.cnt;
+        else
+            return a.pos<b.pos;
+    }
+    string frequencySort(string s) {
+        int len=s.length();
+        map<char,int> charPos;//记录char在vector中的位置
+        vector<Letter> v;
+        for(int i=0;i<len;i++){
+            if(charPos.count(s[i])==0){
+                charPos[s[i]]=v.size();
+                Letter le(s[i],i,1);
+                v.push_back(le);
+            }
+            else{
+                v[charPos[s[i]]].cnt++;
+            }
+        }
+        sort(v.begin(),v.end(),cmp);
+        string res="";
+        for(auto le:v){
+            for(int i=0;i<le.cnt;i++)
+                res+=le.c;
+        }
+        return res;
+    }
+};
+
+Solution 2:
+
+class Solution {
+public:
+    string frequencySort(string s) {
+        unordered_map<char,int> freq;
+        vector<string> bucket(s.size()+1, "");
+        string res;
+        
+        //count frequency of each character
+        for(char c:s) freq[c]++;
+        //put character into frequency bucket
+        for(auto& it:freq) {
+            int n = it.second;
+            char c = it.first;
+            bucket[n].append(n, c);
+        }
+        //form descending sorted string
+        for(int i=s.size(); i>0; i--) {
+            if(!bucket[i].empty())
+                res.append(bucket[i]);
+        }
+        return res;
+    }
+};
+
+Solution 3:
+
+class Solution {
+public:
+    string frequencySort(string s) {
+        int counts[256] = {0};
+        for (char ch : s)
+            ++counts[ch];
+        sort(s.begin(), s.end(), [&](char a, char b) { 
+            return counts[a] > counts[b] || (counts[a] == counts[b] && a < b); 
+        });
+        return s;
+    }
+};
