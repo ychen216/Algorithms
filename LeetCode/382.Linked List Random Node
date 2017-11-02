@@ -48,13 +48,9 @@ class Solution {
     private ArrayList<Integer> list;
 }
 
-/**
- * Your Solution object will be instantiated and called as such:
- * Solution obj = new Solution(head);
- * int param_1 = obj.getRandom();
- */
- 
- Solution 2:
+
+ Solution 2:  
+ 参考http://blog.jobbole.com/42550/
 /**
  * Definition for singly-linked list.
  * public class ListNode {
@@ -71,7 +67,7 @@ class Solution {
     public Solution(ListNode head) {
         node=head;
     }
-    
+    //要求任何一个元素被留下的概率为 1/n 用到了蓄水池算法
     /** Returns a random node's value. */
     public int getRandom() {
         Random r=new Random();
@@ -87,8 +83,3 @@ class Solution {
     }
 }
 
-/**
- * Your Solution object will be instantiated and called as such:
- * Solution obj = new Solution(head);
- * int param_1 = obj.getRandom();
- */
