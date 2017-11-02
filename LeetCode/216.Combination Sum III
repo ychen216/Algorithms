@@ -1,0 +1,86 @@
+216. Combination Sum III
+
+/*
+Find all possible combinations of k numbers that add up to a number n, 
+given that only numbers from 1 to 9 can be used and each combination should be a unique set of numbers.
+
+
+Example 1:
+Input: k = 3, n = 7
+Output:
+[[1,2,4]]
+
+Example 2:
+Input: k = 3, n = 9
+Output:
+[[1,2,6], [1,3,5], [2,3,4]]
+*/
+
+Solution:
+class Solution {
+public:
+    void helper(vector<vector<int>> &res,bool*visit,vector<int> temp,int pos,int k,int n){
+        if(pos>=k){
+            if(n==0)
+                res.push_back(temp);
+            return;
+        }
+        if(n<=0)
+            return;
+        for(int i=1;i<=9;i++){
+            if(!visit[i]){
+                if(i<=n){
+                    //避免出现重复的数组 也就是保证数组元素从小到大 eg.[1,2,3][3,2,1]
+                    if(pos==0||pos>0&&i>temp[pos-1]){
+                        visit[i]=true;
+                        temp[pos]=i;
+                        helper(res,visit,temp,pos+1,k,n-i);
+                        visit[i]=false;
+                    }   
+                }
+            }
+        }
+    }
+    vector<vector<int>> combinationSum3(int k, int n) {
+        if(n<=0||n>45)
+            return {};
+        vector<vector<int>> res;
+        vector<int> temp(k,0);
+        bool visit[10]={0};
+        helper(res,visit,temp,0,k,n);
+        return res;
+    }
+};
+
+Solution 2: 改写了一下方法1 增加start 解决重复解的问题
+class Solution {
+public:
+    void helper(vector<vector<int>> &res,bool*visit,vector<int> temp,int pos,int start,int k,int n){
+        if(pos>=k){
+            if(n==0)
+                res.push_back(temp);
+            return;
+        }
+        if(n<=0)
+            return;
+        for(int i=start;i<=9;i++){
+            if(!visit[i]){
+                if(i<=n){
+                    visit[i]=true;
+                    temp[pos]=i;
+                    helper(res,visit,temp,pos+1,i+1,k,n-i);
+                    visit[i]=false;   
+                }
+            }
+        }
+    }
+    vector<vector<int>> combinationSum3(int k, int n) {
+        if(n<=0||n>45)
+            return {};
+        vector<vector<int>> res;
+        vector<int> temp(k,0);
+        bool visit[10]={0};
+        helper(res,visit,temp,0,1,k,n);
+        return res;
+    }
+};
