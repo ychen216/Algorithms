@@ -1,0 +1,38 @@
+539. Minimum Time Difference
+/*
+Given a list of 24-hour clock time points in "Hour:Minutes" format, find the minimum minutes difference between 
+any two time points in the list.
+
+Example 1:
+Input: ["23:59","00:00"]
+Output: 1
+Note:
+The number of time points in the given list is at least 2 and won't exceed 20000.
+The input time is legal and ranges from 00:00 to 23:59.
+*/
+
+Solution:
+class Solution {
+public:
+    int findMinDifference(vector<string>& timePoints) {
+        sort(timePoints.begin(),timePoints.end());
+        int size=timePoints.size();
+        int time[size];
+        for(int i=0;i<size;i++)
+            time[i]=getTime(timePoints[i]);
+        int minDiff=INT_MAX;
+        for(int i=1;i<timePoints.size();i++){
+            int diff=time[i]-time[i-1];
+            minDiff=min(diff,minDiff);
+        }
+        //处理 类似 00:00和23:55之间的比较
+        minDiff=min(minDiff,1440-time[size-1]+time[0]);
+        return minDiff;
+    }
+private:
+    int getTime(string &s){
+        int h=stoi(s.substr(0,2));
+        int m=stoi(s.substr(3,2));
+        return h*60+m;
+    }
+};
