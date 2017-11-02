@@ -1,0 +1,55 @@
+421. Maximum XOR of Two Numbers in an Array
+
+/*
+Given a non-empty array of numbers, a0, a1, a2, … , an-1, where 0 ≤ ai < 231.
+Find the maximum result of ai XOR aj, where 0 ≤ i, j < n.
+Could you do this in O(n) runtime?
+
+Example:
+Input: [3, 10, 5, 25, 2, 8]
+Output: 28
+Explanation: The maximum result is 5 ^ 25 = 28.
+*/
+
+Solution 1: O(n^2) TLE
+class Solution {
+public:
+    int findMaximumXOR(vector<int>& nums) {
+        int len=nums.size();
+        int res=0;//i,j可以相等 任意一个数与自己的异或操作等于0
+        for(int i=0;i<len;i++){
+            for(int j=i+1;j<len;j++)
+                res=max(res,nums[i]^nums[j]);
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+    /*
+    利用XOR的性质，a^b = c, 则有 a^c = b，且 b^c = a;
+    所以每次从高位开始，到某一位为止，所能获得的最大的数。设置变量mask用来表示能形成的值，每一次将mask和其他的num相与得到的值加入set，表示在当前这一位上， 
+    数组里有这么多prefix。
+    假定在某一位上的任意两数xor能得到的最大值是tmp,那么他一定满足a(xor)b = tmp,其中set.contains(a) && set.contains(b).
+    所以只需要判断b(xor)tmp的结果是不是在当前这一位下的set内，就可以知道这个tmp能不能又这个set中的任意两个数组成。
+    */
+    public int findMaximumXOR(int[] nums) {
+        int res=0;//最小值就是0 任意数和自己的XOR都等于0
+        int mask=0;
+        for(int i=31;i>=0;i--){
+            mask=mask|(1<<i);//能形成的最大值
+            Set<Integer> set=new HashSet<>();//保存每个数到该位能形成的前缀
+            for(int num:nums)
+                set.add(num&mask);
+            int temp=res|(1<<i);
+            for(Integer prefix:set){
+                if(set.contains(prefix^temp)){
+                    res=temp;
+                    break;
+                }
+            }
+        }
+        return res;
+    }
+}
