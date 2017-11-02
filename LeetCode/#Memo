@@ -4,10 +4,11 @@ recursion:
 
 math：
   simple:453,263,367,400
-  medium:260,672,
+  medium:260,672,343,
   
 dp:
   simple:198,
+  medium:343,
   
 greedy:
   simple:665,
