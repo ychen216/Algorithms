@@ -1,0 +1,73 @@
+144. Binary Tree Preorder Traversal
+/*
+Given a binary tree, return the preorder traversal of its nodes' values.
+
+For example:
+Given binary tree {1,#,2,3},
+   1
+    \
+     2
+    /
+   3
+return [1,2,3].
+Note: Recursive solution is trivial, could you do it iteratively?
+*/
+
+Solution 1:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void preorder(TreeNode *root,vector<int>&res){
+        res.push_back(root->val);
+        if(root->left)preorder(root->left,res);
+        if(root->right)preorder(root->right,res);
+    }
+    vector<int> preorderTraversal(TreeNode* root) {
+        if(root==NULL)
+            return {};
+        vector<int> res;
+        preorder(root,res);
+        return res;
+    }
+};
+
+Solution 2:iterative
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> preorderTraversal(TreeNode* root) {
+        if(root==NULL)
+            return {};
+        vector<int> res;
+        stack<TreeNode *> st;
+        while(root||!st.empty()){
+            if(root!=NULL){
+                res.push_back(root->val);
+                if(root->right)
+                    st.push(root->right);
+                root=root->left;
+            }
+            else{
+                root=st.top();
+                st.pop();
+            }
+        }
+        return res;
+    }
+};
