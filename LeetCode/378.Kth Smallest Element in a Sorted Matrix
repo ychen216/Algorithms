@@ -1,0 +1,72 @@
+378. Kth Smallest Element in a Sorted Matrix
+/*
+Given a n x n matrix where each of the rows and columns are sorted in ascending order, find the kth smallest element in the matrix.
+
+Note that it is the kth smallest element in the sorted order, not the kth distinct element.
+
+Example:
+
+matrix = [
+   [ 1,  5,  9],
+   [10, 11, 13],
+   [12, 13, 15]
+],
+k = 8,
+
+return 13.
+Note: 
+You may assume k is always valid, 1 ≤ k ≤ n2.
+*/
+
+Solution:
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        int n=matrix.size();
+        int first[n]={0};//表示每一行还未选中且最小的元素的下标
+        int min_value;
+        //寻找k次
+        for(int i=0;i<k;i++){
+            min_value=INT_MAX;
+            int targetRow=-1;
+            //只要比较每一行最小的元素
+            for(int j=0;j<n;j++){
+                if(first[j]<n&&matrix[j][first[j]]<min_value){
+                    targetRow=j;
+                    min_value=matrix[j][first[j]];
+                }
+            }
+            //更新选中行的最小元素下标
+            first[targetRow]++;
+        }
+        return min_value;
+    }
+};
+
+Solution 2: Heap
+class Solution {
+public:
+    /*
+    用大根堆来存储当前最小的k个数字，然后遍历矩阵
+    如果遍历位置数字大于等于堆顶元素，跳过该行继续遍历,否则将数字存入堆中并删除堆顶数字（保证堆中有k个数字）
+    最终堆顶数字即是第k小的数字
+    */
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        int n=matrix.size();
+        priority_queue<int> pq;
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                if(pq.size()<k)pq.push(matrix[i][j]);
+                else{
+                    if(pq.top()<=matrix[i][j])
+                        break;
+                    else{
+                        pq.push(matrix[i][j]);
+                        pq.pop();
+                    }
+                }
+            }
+        }
+        return pq.top();
+    }
+};
