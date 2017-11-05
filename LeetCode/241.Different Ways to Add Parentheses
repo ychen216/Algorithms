@@ -48,7 +48,7 @@ public:
         }
         // if the input string contains only number
         if (res.empty())
-            res.push_back(atoi(input.c_str()));
+            res.push_back(stoi(input));
         return res;
     }
 };
