@@ -1,0 +1,68 @@
+318. Maximum Product of Word Lengths
+/*
+Given a string array words, find the maximum value of length(word[i]) * length(word[j]) where the two words do not share common letters. 
+You may assume that each word will contain only lower case letters. If no such two words exist, return 0.
+
+Example 1:
+Given ["abcw", "baz", "foo", "bar", "xtfn", "abcdef"]
+Return 16
+The two words can be "abcw", "xtfn".
+
+Example 2:
+Given ["a", "ab", "abc", "d", "cd", "bcd", "abcd"]
+Return 4
+The two words can be "ab", "cd".
+
+Example 3:
+Given ["a", "aa", "aaa", "aaaa"]
+Return 0
+No such pair of words.
+*/
+
+Solution 1: Brute
+class Solution {
+public:
+    int maxProduct(vector<string>& words) {
+        int n=words.size();
+        int max_pro=0;
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                bool flag=true;
+                for(int c='a';c<='z';c++){
+                    if(words[i].find(c)!=string::npos&&words[j].find(c)!=string::npos){
+                        flag=false;
+                        break;
+                    }
+                }
+                if(flag)
+                    max_pro=max(max_pro,(int)words[i].length()*(int)words[j].length());
+            }
+        }
+        
+        return max_pro;
+    }
+};
+
+Solution:
+class Solution {
+public:
+    //利用bit表示一个字符串所包含的字符类型
+    int maxProduct(vector<string>& words) {
+        int n=words.size();
+        int max_pro=0;
+        int value[n]={0};
+        for(int i=0;i<n;i++){
+            int len=words[i].length();
+            for(int j=0;j<len;j++)
+                value[i]|=(1<<(words[i][j]-'a'));
+        }
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                if((value[i]&value[j])==0)
+                    max_pro=max(max_pro,(int)(words[i].length()*words[j].length()));
+            }
+        }
+        
+        return max_pro;
+    }
+};
