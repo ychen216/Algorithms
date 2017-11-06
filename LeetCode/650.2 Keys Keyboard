@@ -1,0 +1,45 @@
+650. 2 Keys Keyboard
+
+/*
+Initially on a notepad only one character 'A' is present. You can perform two operations on this notepad for each step:
+
+Copy All: You can copy all the characters present on the notepad (partial copy is not allowed).
+Paste: You can paste the characters which are copied last time.
+Given a number n. You have to get exactly n 'A' on the notepad by performing the minimum number of steps permitted. 
+Output the minimum number of steps to get n 'A'.
+
+Example 1:
+Input: 3
+Output: 3
+Explanation:
+Intitally, we have one character 'A'.
+In step 1, we use Copy All operation.
+In step 2, we use Paste operation to get 'AA'.
+In step 3, we use Paste operation to get 'AAA'.
+Note:
+The n will be in the range [1, 1000].
+*/
+
+Solution :DP
+class Solution {
+public:
+    /*DP
+    先把dp的最小步骤都设置为无穷大（0x7FFFFFFF）, 初始化条件为：dp[0]=dp[1]=0 ，状态转移方程为： 
+    dp[i]=min(dp[i],dp[j]+i/j),i>1,j<i且i是j的整数倍 
+    上述状态转移方程表示：如果i是j的倍数，那么i可以通过粘贴(i/j-1)次j 得到, 再加上一次复制操作，那么可以通过dp[j]+i/j 次操作得到dp[i] .
+    */
+    int minSteps(int n) {
+        int dp[n+1];
+        dp[0]=dp[1]=0;
+        for(int i=2;i<=n;i++){
+            dp[i]=i;//最多一个一个复制
+            for(int j=i-1;j>2;j--){
+                if(i%j==0)
+                    dp[i]=min(dp[i],dp[j]+i/j);
+            }
+        }
+        return dp[n];
+    }
+};
+
+
