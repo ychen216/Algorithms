@@ -42,6 +42,7 @@ public:
         int left=0,nextleft=0,right=0,nextright=0;
         if(root->left){
             left=rob(root->left);
+            //包含root 那么只能往 root的下下层选择
             nextleft=rob(root->left->left)+rob(root->left->right);
         }
         if(root->right){
