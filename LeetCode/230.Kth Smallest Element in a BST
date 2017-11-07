@@ -1,0 +1,63 @@
+230. Kth Smallest Element in a BST
+
+/*
+Given a binary search tree, write a function kthSmallest to find the kth smallest element in it.
+
+Note: 
+You may assume k is always valid, 1 ≤ k ≤ BST's total elements.
+
+Follow up:
+What if the BST is modified (insert/delete operations) often and you need to find the kth smallest frequently? 
+How would you optimize the kthSmallest routine?
+*/
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //中序遍历得到的是从小到大排列的顺序
+    void travel(TreeNode *root,vector<int>&v){
+        if(root->left)travel(root->left,v);
+        v.push_back(root->val);
+        if(root->right)travel(root->right,v);
+    }
+    
+    int kthSmallest(TreeNode* root, int k) {
+        if(root==NULL)
+            return NULL;
+        vector<int> res;
+        travel(root,res);
+        return res[k-1];
+    }
+};
+
+Solution 2:
+
+class Solution {
+public:
+    //改进 找到第k个就返回
+    int cnt,ksmall;
+    void travel(TreeNode *root){
+        if(root->left)travel(root->left);
+        cnt--;
+        if(cnt==0){
+            ksmall=root->val;
+            return;
+        }
+        if(root->right)travel(root->right);
+    }
+    
+    int kthSmallest(TreeNode* root, int k) {
+        cnt=k;
+        travel(root);
+        return ksmall;
+    }
+};
