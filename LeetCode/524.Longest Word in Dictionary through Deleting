@@ -1,0 +1,95 @@
+524. Longest Word in Dictionary through Deleting
+/*
+Given a string and a string dictionary, find the longest string in the dictionary that can be formed by deleting some characters
+of the given string. If there are more than one possible results, return the longest word with the smallest lexicographical order. 
+If there is no possible result, return the empty string.
+
+Example 1:
+Input:
+s = "abpcplea", d = ["ale","apple","monkey","plea"]
+Output: 
+"apple"
+Example 2:
+Input:
+s = "abpcplea", d = ["a","b","c"]
+
+Output: 
+"a"
+Note:
+All the strings in the input will only contain lower-case letters.
+The size of the dictionary won't exceed 1,000.
+The length of all the strings in the input won't exceed 1,000.
+*/
+
+Solution: TLE 利用最长公共子序列
+class Solution {
+public:
+    
+    string findLongestWord(string s, vector<string>& d) {
+        int size=d.size();
+        int maxCom=0;
+        string maxComString="";
+        int lens=s.length();
+        //分别求最长公共子序列
+        for(int i=0;i<size;i++){
+            int lent=d[i].length();
+            if(lent>lens)
+                continue;
+            int dp[lens+1][lent+1];
+            //初始化
+            for(int x=0;x<=lent;x++)
+                dp[0][x]=0;
+            for(int y=0;y<=lens;y++)
+                dp[y][0]=0;
+            for(int j=1;j<=lens;j++){
+                for(int k=1;k<=lent;k++){
+                    if(s[j-1]==d[i][k-1])
+                        dp[j][k]=max(dp[j-1][k-1]+1,min(dp[j-1][k],dp[j][k-1]));
+                    else
+                        dp[j][k]=max(dp[j-1][k],dp[j][k-1]);
+                }
+            }
+            if(dp[lens][lent]==lent){
+                if(maxCom==dp[lens][lent])
+                    maxComString=maxComString<=d[i]?maxComString:d[i];
+                else if(maxCom<dp[lens][lent]){
+                    maxCom=dp[lens][lent];
+                    maxComString=d[i];
+                }
+            }
+        }
+        return maxComString;
+    }
+};
+
+Solution 2:
+
+class Solution {
+public:
+    
+    string findLongestWord(string s, vector<string>& d) {
+        int size=d.size();
+        int maxLen=0;
+        string res="";
+        int lens=s.length();
+        for(int i=0;i<size;i++){
+            int lent=d[i].length();
+            if(lens<lent)
+                continue;
+            int ps,pd;
+            for(ps=0,pd=0;ps<lens&&pd<lent;ps++)
+                if(s[ps]==d[i][pd])
+                    pd++;
+            //删除s的元素可以获得d[i]
+            if(pd==lent){
+                if(maxLen<lent){
+                    maxLen=lent;
+                    res=d[i];
+                }
+                else if(maxLen==lent)
+                    res=res<=d[i]?res:d[i];
+            }
+        }
+        return res;
+    }
+};
