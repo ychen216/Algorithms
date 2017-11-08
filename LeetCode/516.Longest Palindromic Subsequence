@@ -1,0 +1,42 @@
+516. Longest Palindromic Subsequence
+
+/*
+Given a string s, find the longest palindromic subsequence's length in s. You may assume that the maximum length of s is 1000.
+
+Example 1:
+Input:
+"bbbab"
+Output:
+4
+One possible longest palindromic subsequence is "bbbb".
+Example 2:
+Input:
+"cbbd"
+Output:
+2
+One possible longest palindromic subsequence is "bb".
+*/
+
+Solution：
+class Solution {
+public:
+    //求 S和S的逆转S'的最长公共子序列
+    int longestPalindromeSubseq(string s) {
+        string ss=s;
+        reverse(s.begin(),s.end());//s 现在是反转的
+        int len=s.length();
+        int dp[len+1][len+1];
+        for(int i=0;i<=len;i++)
+            dp[i][0]=dp[0][i]=0;
+        
+        for(int i=1;i<=len;i++){
+            for(int j=1;j<=len;j++){
+                if(s[i-1]==ss[j-1])
+                    dp[i][j]=max(dp[i-1][j-1]+1,max(dp[i-1][j],dp[i][j-1]));
+                else
+                    dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
+            }
+        }
+        return dp[len][len];
+    }
+};
