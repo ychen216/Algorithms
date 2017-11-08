@@ -1,0 +1,54 @@
+287. Find the Duplicate Number
+/*
+Given an array nums containing n + 1 integers where each integer is between 1 and n (inclusive), 
+prove that at least one duplicate number must exist. Assume that there is only one duplicate number, find the duplicate one.
+
+Note:
+  You must not modify the array (assume the array is read only).
+  You must use only constant, O(1) extra space.
+  Your runtime complexity should be less than O(n2).
+  There is only one duplicate number in the array, but it could be repeated more than once.
+*/
+
+Solution 1: O(n)
+class Solution {
+public:
+    //利用值的范围为 [1,n] 与下标的关系
+    int findDuplicate(vector<int>& nums) {
+        int size=nums.size();
+        int target=-1;
+        for(int i=0;i<size;i++){
+            int index=abs(nums[i]);
+            //index这个数已经出现过
+            if(nums[index-1]<0){
+                target=index;
+                break;
+            }
+            else
+                nums[index-1]=-nums[index-1];
+        }
+        return target;
+    }
+};
+
+Solution 2:O(nlgn)
+class Solution {
+public:
+    //利用二分搜索
+    int findDuplicate(vector<int>& nums) {
+        int size=nums.size();
+        int low=1,high=size;//可能出现的最小值和最大值
+        while(low<high){
+            int mid=low+(high-low)/2;
+            int cnt=0;
+            for(auto p:nums)
+                if(p<=mid)
+                    cnt++;
+            if(cnt>mid)
+                high=mid;
+            else
+                low=mid+1;
+        }
+        return low;
+    }
+};
