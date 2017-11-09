@@ -1,0 +1,51 @@
+137. Single Number II
+
+/*
+Given an array of integers, every element appears three times except for one, which appears exactly once. Find that single one.
+
+Note:
+Your algorithm should have a linear runtime complexity. Could you implement it without using extra memory?
+*/
+
+Solution 1:
+class Solution {
+public:
+    int singleNumber(vector<int>& nums) {
+        int size=nums.size();
+        map<int,int> mmap;
+        for(int i=0;i<size;i++){
+            if(mmap.count(nums[i])==0)
+                mmap[nums[i]]=1;
+            else
+                mmap[nums[i]]++;
+        }
+        for(auto p:mmap){
+            if(p.second==1)
+                return p.first;
+        }
+    }
+};
+
+Solution2:
+class Solution {
+public:
+    /*
+    假设输入中没有single number，那么输入中的每个数字都重复出现了数字，也就是说，对这32位中的每一位i而言，所有的输入加起来之后，第i位一定是3的倍数。
+    现在增加了single number，那么对这32位中的每一位做相同的处理，也就是说，逐位把所有的输入加起来，并且看看第i位的和除以3的余数，这个余数就是single 
+    nubmer在第i位的取值。这样就得到了single number在第i位的取值。这等价于一个模拟的二进制，接着只需要把这个模拟的二进制转化为十进制输出即可。
+    另外，这个做法可以扩展，如果有一堆输入，其中1个数字出现了1次，剩下的数字出现了K次，这样的问题全部可以使用这样的办法来做。
+    */
+    int singleNumber(vector<int>& nums) {
+        int size=nums.size();
+        int cnt[32]={0};
+        int res=0;
+        for(int i=0;i<32;i++){
+            for(int j=0;j<size;j++){
+                cnt[i]+=((nums[j]>>i)&1);
+                cnt[i]%=3;
+            }
+            res|=(cnt[i]<<i);
+        }
+        return res;
+    }
+};
