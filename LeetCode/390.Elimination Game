@@ -1,0 +1,48 @@
+390. Elimination Game
+
+/*
+There is a list of sorted integers from 1 to n. Starting from left to right, remove the first number and every other number 
+afterward until you reach the end of the list.
+
+Repeat the previous step again, but this time from right to left, remove the right most number and every other number 
+from the remaining numbers.
+
+We keep repeating the steps again, alternating left to right and right to left, until a single number remains.
+
+Find the last number that remains starting with a list of length n.
+
+Example:
+Input:
+n = 9,
+1 2 3 4 5 6 7 8 9
+2 4 6 8
+2 6
+6
+Output:
+6
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+    关键在于维护一个boolean变量left2right来表明当前这一轮elimination是否为从左往右
+    对于当前这一step来说，如果所剩的元素个数为奇数，那么头尾元素都会被去掉，否则的话头元素被去掉，但是尾元素不变
+    相邻元素的距离随着每一步都会放大两倍
+    */
+    int lastRemaining(int n) {
+        int remain=n;
+        int head=1;
+        int step=1;
+        bool left2right=true;
+        while(remain>1){
+            if(left2right||remain%2==1){
+                head+=step;
+            }
+            remain/=2;
+            step*=2;
+            left2right=!left2right;
+        }
+        return head;
+    }
+};
