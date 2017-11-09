@@ -1,0 +1,39 @@
+621. Task Scheduler
+/*
+Given a char array representing tasks CPU need to do. It contains capital letters A to Z where different letters represent different tasks.
+Tasks could be done without original order. Each task could be done in one interval. For each interval,
+CPU could finish one task or just be idle.
+
+However, there is a non-negative cooling interval n that means between two same tasks, there must be at least n intervals that 
+CPU are doing different tasks or just be idle.
+You need to return the least number of intervals the CPU will take to finish all the given tasks.
+
+Example 1:
+Input: tasks = ["A","A","A","B","B","B"], n = 2
+Output: 8
+Explanation: A -> B -> idle -> A -> B -> idle -> A -> B.
+Note:
+  The number of tasks is in the range [1, 10000].
+  The integer n is in the range [0, 100].
+*/
+
+Solution:
+class Solution {
+public:
+    /*考虑出现频率最高的task，假设为A，出现的频率为x，要满足A的时间需求，我们至少应该有 x-1个n的间隔。
+    对于频率小于x的任务，假设为B，按序插入任务B，可以发现，这样的插入也是满足要求的
+    满足A的最小安排，最终所有的任务安排都是满足要求的 出现频率最高的元素可能不止一个
+    若出现上述序列完全插满的情况,还有任务没有安排时,这时候的时间需求显然就是整个数组的大小了。
+    */
+    int leastInterval(vector<char>& tasks, int n) {
+        int cnt[26]={0};
+        int size=tasks.size();
+        for(int i=0;i<size;i++)
+            cnt[tasks[i]-'A']++;
+        sort(cnt,cnt+26);
+        int i=25;
+        while(i>=0&&cnt[i]==cnt[25])i--;
+        //前cnt[25]-1个槽的总时长(包含最频繁元素A)+最后一个槽中的元素
+        return max((cnt[25]-1)*(n+1)+25-i,size);
+    }
+};
