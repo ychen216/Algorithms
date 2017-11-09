@@ -26,8 +26,8 @@ hard to classification:
   medium:419,406,667,382,384(like 382),287,424,390,
   
 
-trick：
+trick：many use bit operation
   simple:463,496(try O(n) method),136,169,661,231,141,581,338,442,
-  medium:462,477,421,318,516,
+  medium:462,477,421,318,516,137,
   
 Runtime Error:661
