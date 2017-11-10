@@ -16,10 +16,11 @@ greedy:
   
 string:
   simple:686,647,
+  medium:394,
   
 data struction:
   simple:237,447,501,160,513,
-  medium:503,445,378,328,636,
+  medium:503,445,378,328,636,394,
 
 hard to classification:
   simple:653,283,628,121,405,594,459,643,9,205,88,680,190,475,532
