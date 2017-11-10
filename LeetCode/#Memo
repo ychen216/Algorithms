@@ -18,6 +18,9 @@ string:
   simple:686,647,
   medium:394,
   
+graph:
+  mediun:399,
+  
 data struction:
   simple:237,447,501,160,513,
   medium:503,445,378,328,636,394,
