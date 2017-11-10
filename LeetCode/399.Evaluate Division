@@ -1,0 +1,87 @@
+399. Evaluate Division
+
+/*
+Equations are given in the format A / B = k, where A and B are variables represented as strings, and k is a real number 
+(floating point number). Given some queries, return the answers. If the answer does not exist, return -1.0.
+
+Example:
+Given a / b = 2.0, b / c = 3.0. 
+queries are: a / c = ?, b / a = ?, a / e = ?, a / a = ?, x / x = ? . 
+return [6.0, 0.5, -1.0, 1.0, -1.0 ].
+The input is: vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries , 
+where equations.size() == values.size(), and the values are positive. This represents the equations. Return vector<double>.
+
+According to the example above:
+equations = [ ["a", "b"], ["b", "c"] ],
+values = [2.0, 3.0],
+queries = [ ["a", "c"], ["b", "a"], ["a", "e"], ["a", "a"], ["x", "x"] ]. 
+The input is always valid. You may assume that evaluating the queries will result in no division by zero and there is no contradiction.
+*/
+
+Solution:
+class Solution {
+public:
+    double bfs(vector<vector<pair<int,double>>>&graph,int s,int e){
+        int pnum=graph.size();
+        vector<bool> visit(pnum,0);
+        queue<int> q;
+        vector<double> dis(pnum,1);//s点到key点的值
+        q.push(s);
+        visit[s]=1;
+        while(!q.empty()){
+            int p1=q.front();
+            q.pop();
+            for(int i=0;i<graph[p1].size();i++){
+                int p2=graph[p1][i].first;
+                double d=graph[p1][i].second;
+                if(!visit[p2]){
+                    visit[p2]=1;
+                    dis[p2]=dis[p1]*d;
+                    if(p2==e)
+                        return dis[p2];
+                    q.push(p2);
+                }
+            }
+        }
+        return -1.0;
+    }
+    
+    vector<double> calcEquation(vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries) {
+        map<string,int> dmap;//节点分配map
+        vector<vector<pair<int,double>>> linkGraph;//邻接链表
+        int n=values.size();
+        //分配节点并构造图
+        for(int i=0;i<n;i++){
+            string a=equations[i].first;
+            string b=equations[i].second;
+            if(dmap.count(a)==0){
+                dmap[a]=linkGraph.size();
+                linkGraph.push_back(vector<pair<int,double>>());
+            }
+            if(dmap.count(b)==0){
+                dmap[b]=linkGraph.size();
+                linkGraph.push_back(vector<pair<int,double>>());
+            }
+            int pa=dmap[a],pb=dmap[b];
+            linkGraph[pa].push_back(make_pair(pb,values[i]));
+            linkGraph[pb].push_back(make_pair(pa,1.0/values[i]));
+        }
+        
+        vector<double> res;
+        int qn=queries.size();
+        for(auto &q:queries){
+            string a=q.first;
+            string b=q.second;
+            if(dmap.count(a)==0||dmap.count(b)==0)
+                res.push_back(-1.0);
+            else{
+                int pa=dmap[a],pb=dmap[b];
+                if(pa==pb)
+                    res.push_back(1.0);
+                else
+                    res.push_back(bfs(linkGraph,pa,pb));
+            }
+        }
+        return res;
+    }
+};
