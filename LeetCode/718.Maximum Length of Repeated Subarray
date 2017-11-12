@@ -16,7 +16,6 @@ Note:
 */
 
 Solution:
-
 class Solution {
 public:
     //与最长公共子序列类似 dp[i][j]保存以A[i]B[j]结尾的最长公共子串长度
@@ -29,7 +28,7 @@ public:
         for(int i=0;i<=lenA;i++)
             dp[i][0]=0;
         for(int i=0;i<=lenB;i++)
-            dp[0][j]=0;
+            dp[0][i]=0;
         int maxLen=0;
         for(int i=1;i<=lenA;i++){
             for(int j=1;j<=lenB;j++){
@@ -39,6 +38,7 @@ public:
                 }
             }
         }
+        
+        return maxLen;
     }
-    return maxLen;
 };
