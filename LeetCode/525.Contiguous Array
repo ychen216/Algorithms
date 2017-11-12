@@ -1,0 +1,40 @@
+525. Contiguous Array
+
+/*
+Given a binary array, find the maximum length of a contiguous subarray with equal number of 0 and 1.
+Example 1:
+Input: [0,1]
+Output: 2
+Explanation: [0, 1] is the longest contiguous subarray with equal number of 0 and 1.
+Example 2:
+Input: [0,1,0]
+Output: 2
+Explanation: [0, 1] (or [1, 0]) is a longest contiguous subarray with equal number of 0 and 1.
+*/
+
+Solution:
+class Solution {
+public:
+    //nums中值为0的元素 转化为-1,那么就转化为sum[i,j]=0的问题
+    //利用map记录sum出现的下标i，如果在j处sum继续出现 那么说明sum[i+1,j]=0 
+    int findMaxLength(vector<int>& nums) {
+        int size=nums.size();
+        if(size<2)
+            return 0;
+        int sum=0,maxLen=0;
+        map<int,int> mmap;
+        mmap[0]=-1;//初始化必须
+        for(int i=0;i<size;i++){
+            if(nums[i]==0)
+                sum--;
+            else
+                sum++;
+            if(mmap.count(sum)==0)
+                mmap[sum]=i;
+            else
+                maxLen=max(maxLen,i-mmap[sum]);
+        }
+        return maxLen;
+    
+    }
+};
