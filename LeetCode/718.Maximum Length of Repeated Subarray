@@ -36,6 +36,8 @@ public:
                     dp[i][j]=dp[i-1][j-1]+1;
                     maxLen=max(maxLen,dp[i][j]);
                 }
+                else
+                    dp[i][j]=0;
             }
         }
         
