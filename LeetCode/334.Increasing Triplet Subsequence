@@ -1,0 +1,57 @@
+334. Increasing Triplet Subsequence
+
+/*
+Given an unsorted array return whether an increasing subsequence of length 3 exists or not in the array.
+Formally the function should:
+Return true if there exists i, j, k 
+such that arr[i] < arr[j] < arr[k] given 0 ≤ i < j < k ≤ n-1 else return false.
+Your algorithm should run in O(n) time complexity and O(1) space complexity.
+
+Examples:
+Given [1, 2, 3, 4, 5],
+return true.
+Given [5, 4, 3, 2, 1],
+return false.
+*/
+
+Solution:TLE 最长不递减子序列
+class Solution {
+public:
+    bool increasingTriplet(vector<int>& nums) {
+        int size=nums.size();
+        if(size<3)
+            return false;
+        int dp[size]={0};
+        for(int i=0;i<size;i++){
+            int maxLen=0;
+            for(int j=0;j<i;j++)
+                if(nums[j]<nums[i])
+                    maxLen=max(maxLen,dp[j]);
+            dp[i]=maxLen+1;
+            if(dp[i]>=3)
+                return true;
+        }
+        return false;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //用两个变量记录较小的两个数
+    bool increasingTriplet(vector<int>& nums) {
+        int size=nums.size();
+        if(size<3)
+            return false;
+        int m1=INT_MAX,m2=INT_MAX;
+        for(int i=0;i<size;i++){
+            if(nums[i]<=m1){
+                m1=nums[i];
+            }else if(nums[i]<=m2){
+                m2=nums[i];
+            }else
+                return true;
+        }
+        return false;
+    }
+};
