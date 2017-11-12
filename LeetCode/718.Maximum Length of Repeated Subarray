@@ -1,0 +1,44 @@
+718. Maximum Length of Repeated Subarray
+
+/*
+Given two integer arrays A and B, return the maximum length of an subarray that appears in both arrays.
+
+Example 1:
+Input:
+A: [1,2,3,2,1]
+B: [3,2,1,4,7]
+Output: 3
+Explanation: 
+The repeated subarray with maximum length is [3, 2, 1].
+Note:
+  1 <= len(A), len(B) <= 1000
+  0 <= A[i], B[i] < 100
+*/
+
+Solution:
+
+class Solution {
+public:
+    //与最长公共子序列类似 dp[i][j]保存以A[i]B[j]结尾的最长公共子串长度
+    int findLength(vector<int>& A, vector<int>& B) {
+        int lenA=A.size();
+        int lenB=B.size();
+        if(lenA==0||lenB==0)
+            return 0;
+        int dp[lenA+1][lenB+1];
+        for(int i=0;i<=lenA;i++)
+            dp[i][0]=0;
+        for(int i=0;i<=lenB;i++)
+            dp[0][j]=0;
+        int maxLen=0;
+        for(int i=1;i<=lenA;i++){
+            for(int j=1;j<=lenB;j++){
+                if(A[i-1]==B[j-1]){
+                    dp[i][j]=dp[i-1][j-1]+1;
+                    maxLen=max(maxLen,dp[i][j]);
+                }
+            }
+        }
+    }
+    return maxLen;
+};
