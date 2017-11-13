@@ -1,0 +1,37 @@
+491. Increasing Subsequences
+
+/*
+Given an integer array, your task is to find all the different possible increasing subsequences of the given array, 
+and the length of an increasing subsequence should be at least 2 .
+
+Example:
+Input: [4, 6, 7, 7]
+Output: [[4, 6], [4, 7], [4, 6, 7], [4, 6, 7, 7], [6, 7], [6, 7, 7], [7,7], [4,7,7]]
+Note:
+  The length of the given array will not exceed 15.
+  The range of integer in the given array is [-100,100].
+  The given array may contain duplicates, and two equal integers should also be considered as a special case of increasing sequence.
+*/
+
+Solution:
+class Solution {
+public:
+    void helper(set<vector<int>>&res,vector<int>&nums,vector<int> temp,int start,int pos){
+        if(pos>1)
+            res.insert(temp);
+        for(int i=start;i<nums.size();i++){
+            if(pos==0||(pos>0&&temp[pos-1]<=nums[i])){
+                temp.push_back(nums[i]);
+                helper(res,nums,temp,i+1,pos+1);
+                temp.pop_back();
+            }
+        }
+    }
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        if(nums.size()==0)
+            return {};
+        set<vector<int>> res;//因为num中可能有重复元素 所以要用set避免有重复vector
+        helper(res,nums,vector<int>(),0,0);
+        return vector<vector<int>>(res.begin(),res.end());
+    }
+};
