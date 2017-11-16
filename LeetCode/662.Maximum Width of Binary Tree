@@ -94,3 +94,47 @@ public:
         return max(rightmost[depth]-leftmost[depth]+1,max(left,right));
     }
 };
+
+
+Solution 2：
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+    相同思路利用节点i的孩子标号为2*i和2*i+1 利用bfs 
+    */
+    int widthOfBinaryTree(TreeNode* root) {
+        if(root==NULL)
+            return 0;
+        queue<pair<TreeNode*,int>>q;
+        int maxWidth=1;
+        q.push({root,1});
+        while(!q.empty()){
+            //对每一层最左边的节点进行操作,记录mostleft mostright
+            pair<TreeNode *,int> node=q.front();
+            q.pop();
+            int size=q.size();
+            int mostleft=node.second,mostright=node.second;
+            if(node.first->left)q.push({node.first->left,node.second*2});
+            if(node.first->right)q.push({node.first->right,node.second*2+1});
+            for(int i=0;i<size;i++){
+                node=q.front();
+                q.pop();
+                mostright=node.second;
+                if(node.first->left)q.push({node.first->left,node.second*2});
+                if(node.first->right)q.push({node.first->right,node.second*2+1});
+            }
+            maxWidth=max(maxWidth,mostright-mostleft+1);
+        }
+        return maxWidth;
+    }
+    
+};
