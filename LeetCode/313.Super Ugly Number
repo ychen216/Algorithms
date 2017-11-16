@@ -1,0 +1,41 @@
+313. Super Ugly Number
+
+/*
+Write a program to find the nth super ugly number.
+
+Super ugly numbers are positive numbers whose all prime factors are in the given prime list primes of size k. For example, 
+[1, 2, 4, 7, 8, 13, 14, 16, 19, 26, 28, 32] is the sequence of the first 12 super ugly numbers given primes = [2, 7, 13, 19] of size 4.
+
+Note:
+(1) 1 is a super ugly number for any given primes.
+(2) The given numbers in primes are in ascending order.
+(3) 0 < k ≤ 100, 0 < n ≤ 106, 0 < primes[i] < 1000.
+(4) The nth super ugly number is guaranteed to fit in a 32-bit signed integer.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+    一个新丑数由前一个丑数和一个质数相乘得到
+    index[i]表示第i个质数应该跟第index[i]个丑数相乘有可能得到下一个最小的丑数
+    求解图可以参考http://blog.csdn.net/zly9923218/article/details/51010348
+    */
+    int nthSuperUglyNumber(int n, vector<int>& primes) {
+        int size=primes.size();
+        int ugly[n];
+        int index[size]={0};//初始化全部指向第0个丑数
+        ugly[0]=1;
+        for(int i=1;i<n;i++){
+            ugly[i]=INT_MAX;
+            for(int j=0;j<size;j++){
+                ugly[i]=min(ugly[i],primes[j]*ugly[index[j]]);
+            }
+            
+            //更新index 避免后续生成的丑数已经出现的情况
+            for(int j=0;j<size;j++)
+                while(ugly[i]>=ugly[index[j]]*primes[j])index[j]++;
+        }
+        return ugly[n-1];
+    }
+};
