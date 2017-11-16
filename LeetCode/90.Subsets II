@@ -1,0 +1,62 @@
+90. Subsets II
+/*
+Given a collection of integers that might contain duplicates, nums, return all possible subsets (the power set).
+
+Note: The solution set must not contain duplicate subsets.
+
+For example,
+If nums = [1,2,2], a solution is:
+
+[
+  [2],
+  [1],
+  [1,2,2],
+  [2,2],
+  [1,2],
+  []
+]
+*/
+
+Solution: dfs
+class Solution {
+public:
+    void dfs(set<vector<int>>&res,vector<int>&nums,vector<int> temp,int start){
+        res.insert(temp);
+        for(int i=start;i<nums.size();i++){
+            temp.push_back(nums[i]);
+            dfs(res,nums,temp,i+1);
+            temp.pop_back();
+        }
+    }
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        set<vector<int>> res;
+        sort(nums.begin(),nums.end());//避免出现{4,4,1,4}出现{4,1}{1,4}重复
+        dfs(res,nums,vector<int>()={},0);
+        return vector<vector<int>>(res.begin(),res.end());
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //遇到一个元素就在之前生成的子集的基础上再加上这个元素生成新的子集
+    //考虑到重复元素的问题 不能直接加上新元素
+    //如果该元素和前一个元素一样 那么就要在增加过前一个元素之后的子集中加上该元素
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        sort(nums.begin(),nums.end());//避免出现{4,4,1,4}出现{4,1}{1,4}重复
+        vector<vector<int>> res;
+        res.push_back({});//加入空集
+        int n=nums.size();
+        int startIndex=0,size=0;
+        for(int i=0;i<n;i++){
+            startIndex= i>=1&&nums[i]==nums[i-1]?size:0;
+            size=res.size();
+            for(int j=startIndex;j<size;j++){
+                vector<int> temp=res[j];
+                temp.push_back(nums[i]);
+                res.push_back(temp);
+            }
+        }
+        return res;
+    }
+};
