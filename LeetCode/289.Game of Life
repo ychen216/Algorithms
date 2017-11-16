@@ -1,0 +1,66 @@
+289. Game of Life
+
+/*
+mathematician John Horton Conway in 1970."
+
+Given a board with m by n cells, each cell has an initial state live (1) or dead (0). 
+Each cell interacts with its eight neighbors (horizontal, vertical, diagonal) 
+using the following four rules (taken from the above Wikipedia article):
+    Any live cell with fewer than two live neighbors dies, as if caused by under-population.
+    Any live cell with two or three live neighbors lives on to the next generation.
+    Any live cell with more than three live neighbors dies, as if by over-population..
+    Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
+Write a function to compute the next state (after one update) of the board given its current state.
+
+Follow up: 
+Could you solve it in-place? Remember that the board needs to be updated at the same time: You cannot update some cells first and then use their updated values to update other cells.
+In this question, we represent the board using a 2D array. In principle, the board is infinite, which would cause problems when the active area encroaches the border of the array. How would you address these problems?
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        1、周围存活细胞小于2个，则死亡。
+        2、周围存活细胞2个或3个，则存活到下一次更新。
+        3、周围存活细胞3个以上，则死亡。
+        4、周围存活细胞3个的死细胞，将会成为一个活细胞。
+        用一个两位数表示更新前后的状态 1:存活 2:死亡 eg.xy=10 代表更新前为死细胞 更新后为活细胞
+    */
+    void gameOfLife(vector<vector<int>>& board) {
+        int row=board.size();
+        if(row==0)
+            return;
+        int col=board[0].size();
+        if(col==0)
+            return;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                int alive=getAlive(board,i,j,row,col);
+                //初始时 更新状态都为0 只要考虑更新后变为1的即可
+                if(board[i][j]==0){
+                    if(alive==3)
+                        board[i][j]+=10;//更新为活细胞
+                }else{
+                    if(alive==2||alive==3)
+                        board[i][j]+=10;
+                }
+            }
+        }
+        for(int i=0;i<row;i++)
+            for(int j=0;j<col;j++)
+                board[i][j]/=10;
+    }
+    int getAlive(vector<vector<int>>&board,int x,int y,int row,int col){
+        int alive=0;
+        for(int i=x-1;i<=x+1;i++){
+            for(int j=y-1;j<=y+1;j++){
+                if(i<0||i>=row||j<0||j>=col||(i==x&&j==y))
+                    continue;
+                if(board[i][j]%10==1)
+                    alive++;
+            }
+        }
+        return alive;
+    }
+};
