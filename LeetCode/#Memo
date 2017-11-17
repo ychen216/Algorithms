@@ -16,7 +16,7 @@ greedy:
   
 string:
   simple:686,647,
-  medium:394,640,
+  medium:394,640,567,
   
 graph:
   mediun:399,684,
@@ -35,6 +35,6 @@ hard to classification:
 
 trick：many use bit operation
   simple:463,496(try O(n) method),136,169,661,231,141,581,338,442,
-  medium:462,477,421,318,516,137,525,334,313,289,
+  medium:462,477,421,318,516,137,525,334,313,289,567,
   
 Runtime Error:661
