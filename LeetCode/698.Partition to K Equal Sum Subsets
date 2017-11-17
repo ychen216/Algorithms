@@ -1,0 +1,57 @@
+698. Partition to K Equal Sum Subsets
+
+/*
+Given an array of integers nums and a positive integer k, find whether it's possible to divide this array into 
+k non-empty subsets whose sums are all equal.
+
+Example 1:
+Input: nums = [4, 3, 2, 3, 5, 2, 1], k = 4
+Output: True
+Explanation: It's possible to divide it into 4 subsets (5), (1, 4), (2,3), (2,3) with equal sums.
+Note:
+
+1 <= k <= len(nums) <= 16.
+0 < nums[i] < 10000.
+*/
+
+Solution:
+class Solution {
+public:
+    //cur_sum指集合中的元素个数 因为每个集合不能为空 所以cur_num要大于零
+    //要增加 start变量 否则会超时 对于每一个子集每次添加的数字都是从当前位置之后的数字
+    //对于新的一个子集要从头开始扫描可以加入的数字所以start=0
+    bool helper(vector<int>&nums,bool*visit,int cur_sum,int target_sum,int cur_num,int k,int start){
+        if(k==0)
+            return true;
+        if(target_sum==cur_sum&&cur_num>0)
+            return helper(nums,visit,0,target_sum,0,k-1,0);
+        for(int i=start;i<nums.size();i++){
+            if(!visit[i]){
+                visit[i]=1;
+                if(helper(nums,visit,cur_sum+nums[i],target_sum,cur_num+1,k,i+1))
+                    return true;
+                visit[i]=0;
+            }
+        }
+        return false;
+        
+    }
+    
+    bool canPartitionKSubsets(vector<int>& nums, int k) {
+        int size=nums.size();
+        if(size==0)
+            return false;
+        if(k==1)
+            return true;
+        if(k<=0)
+            return false;
+        int sum=0;
+        for(auto &num:nums)
+            sum+=num;
+        if(sum%k!=0)
+            return false;
+        bool visit[size]={0};
+        return helper(nums,visit,0,sum/k,0,k,0);
+        
+    }
+};
