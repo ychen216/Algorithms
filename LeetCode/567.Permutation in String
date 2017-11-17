@@ -34,3 +34,71 @@ public:
         return false;
     }
 };
+
+Solution 2: slide window
+class Solution {
+public:
+    //s1的一个全排列 即一个字符串s,s中每个字母出现的次数和s1中每个字母出现的次数一致
+    //所以只需要在s2中找到一个子串x的长度和s1相同 且x中每个字母出现的次数和s1相同
+    //利用一个长度为len(s1)的滑动窗口，在s2上滑动,在这个滑动窗口中的字符及其个数是否刚好等于s1中的字符及其个数
+    bool checkInclusion(string s1, string s2) {
+        int len1=s1.length();
+        int len2=s2.length();
+        if(len1>len2)
+            return false;
+        if(len1==0||len2==0)
+            return false;
+        vector<int> maps1(26,0),maps2(26,0);
+        for(int i=0;i<len1;i++){
+            maps1[s1[i]-'a']++;
+            maps2[s2[i]-'a']++;
+        }
+        if(maps1==maps2)
+            return true;
+        for(int i=0;i+len1<len2;i++){
+            maps2[s2[i]-'a']--;
+            maps2[s2[i+len1]-'a']++;
+            if(maps1==maps2)
+                return true;
+        }
+        return false;
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    //s1的一个全排列 即一个字符串s,s中每个字母出现的次数和s1中每个字母出现的次数一致
+    //所以只需要在s2中找到一个子串x的长度和s1相同 且x中每个字母出现的次数和s1相同
+    //利用一个长度为len(s1)的滑动窗口，在s2上滑动,在这个滑动窗口中的字符及其个数是否刚好等于s1中的字符及其个数
+    //改进 只用一个数组存储字母出现的次数
+    bool checkInclusion(string s1, string s2) {
+        int len1=s1.length();
+        int len2=s2.length();
+        if(len1>len2)
+            return false;
+        if(len1==0||len2==0)
+            return false;
+        vector<int> map(26,0)
+        for(int i=0;i<len1;i++){
+            map[s1[i]-'a']++;
+            map[s2[i]-'a']--;
+        }
+        if(allZero(map))
+            return true;
+        for(int i=len1;i<len2;i++){
+            map[s2[i]-'a']--;//增加新元素
+            map[s2[i-len1]-'a']++;//还原
+            if(allZero(map))
+                return true;
+        }
+        return false;
+    }
+    
+    bool allZero(vector<int>&map){
+        for(int i=0;i<26;i++)
+            if(map[i]!=0)
+                return false;
+        return true;
+    }
+};
