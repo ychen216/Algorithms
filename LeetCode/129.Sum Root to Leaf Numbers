@@ -29,7 +29,7 @@ Solution:
 class Solution {
 public:
     //sum代表上层节点之和
-    int hepler(TreeNode*root,int sum){
+    int helper(TreeNode*root,int sum){
         if(root==NULL)
             return 0;
         else if(!root->left&&!root->right)
