@@ -1,0 +1,89 @@
+395. Longest Substring with At Least K Repeating Characters
+
+/*
+Find the length of the longest substring T of a given string (consists of lowercase letters only) such that every character 
+in T appears no less than k times.
+
+Example 1:
+
+Input:
+s = "aaabb", k = 3
+Output:
+3
+The longest substring is "aaa", as 'a' is repeated 3 times.
+
+Example 2:
+Input:
+s = "ababbc", k = 2
+Output:
+5
+
+The longest substring is "ababb", as 'a' is repeated 2 times and 'b' is repeated 3 times.
+*/
+
+Solution:TLE
+class Solution {
+public:
+    int longestSubstring(string s, int k) {
+        int len=s.length();
+        if(len==0||len<k)
+            return 0;
+        if(k==0)
+            return len;
+        //每个字符出现的次数
+        unordered_map<char,int> cnt;
+        for(int i=0;i<len;i++)
+            cnt[s[i]]++;
+        int index=0;
+        while(index<len&&cnt[s[index]]>=k)index++;
+        if(index==len)
+            return len;
+        int left=longestSubstring(s.substr(0,index),k);
+        int right=longestSubstring(s.substr(index+1),k);
+        return max(left,right);
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+    先遍历整个string，并记录每个不同的character的出现次数。
+    如果所有character出现次数都不小于k，那么说明整个string就是满足条件的longest substring，返回原string的长度即可
+    如果有character的出现次数小于k，假设这个character是c，因为满足条件的substring永远不会包含c，所以满足条件的substring一定是在以c为分割参考下的某个substring中。
+    所以我们需要做的就是把c当做是split的参考，在得到的String[]中再次调用我们的method，找到最大的返回值即可
+    */
+    int longestSubstring(string s, int k) {
+        int len=s.length();
+        if(len==0||len<k)
+            return 0;
+        if(k==0)
+            return len;
+        //每个字符出现的次数
+        int cnt[26]={0};
+        bool isValid[26],fullValid=true;
+        for(int i=0;i<len;i++)
+            cnt[s[i]-'a']++;
+        for(int i=0;i<26;i++){
+            if(cnt[i]>0&&cnt[i]<k){
+                fullValid=false;
+                isValid[i]=false;
+            }
+            else
+                isValid[i]=true;
+        }
+        if(fullValid==true)
+            return len;
+        int res=0,begin=0;
+        //在所有分割中找最大的符合条件的子串
+        for(int i=0;i<len;i++){
+            if(isValid[s[i]-'a']==false){
+                res=max(res,longestSubstring(s.substr(begin,i-begin),k));
+                begin=i+1;
+            }
+        }
+        //不能漏 最后一个有效的字符串
+        res=max(res,longestSubstring(s.substr(begin,len-begin),k));
+        return res;
+    }
+};
