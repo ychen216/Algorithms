@@ -1,0 +1,27 @@
+73. Set Matrix Zeroes
+
+/*
+Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
+*/
+
+Solution:
+class Solution {
+public:
+    //用行列数组记录 该行列是否在更新后需要变成零
+    void setZeroes(vector<vector<int>>& matrix) {
+        int row=matrix.size();
+        if(row==0)
+            return;
+        int col=matrix[0].size();
+        bool rowIsZero[row]={0},colIsZero[col]={0};
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++)
+                if(matrix[i][j]==0)
+                    rowIsZero[i]=colIsZero[j]=1;
+        }
+        for(int i=0;i<row;i++)
+            for(int j=0;j<col;j++)
+                if(rowIsZero[i]||colIsZero[j])
+                    matrix[i][j]=0;
+    }
+};
