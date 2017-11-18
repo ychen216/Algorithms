@@ -1,0 +1,64 @@
+49. Group Anagrams
+/*
+Given an array of strings, group anagrams together.
+
+For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"], 
+Return:
+[
+  ["ate", "eat","tea"],
+  ["nat","tan"],
+  ["bat"]
+]
+Note: All inputs will be in lower-case.
+*/
+
+Solution:map
+class Solution {
+public:
+    //相似的字符串 就是组成的字母类型和个数一样
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        int size=strs.size();
+        map<map<char,int>,vector<string>> mmap;//有相同字符组成的字符串在 strs中的下标
+        for(int i=0;i<size;i++){
+            map<char,int> m;
+            for(auto &c:strs[i]){
+                if(m.count(c)==0)
+                    m[c]=1;
+                else
+                    m[c]++;
+            }
+            if(mmap.count(m)==0)
+                mmap[m]=vector<string>(1,strs[i]);
+            else
+                mmap[m].push_back(strs[i]);
+        }
+        vector<vector<string>>res;
+        for(auto &it:mmap){
+            res.push_back(it.second);
+        }
+        return res;
+    }
+};
+
+Solution 2:利用排序 相似的字符串排序后是一样的
+class Solution {
+public:
+    //相似的字符串 就是组成的字母类型和个数一样
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        int size=strs.size();
+        map<string,vector<string>> mmap;//有相同字符组成的字符串在 strs中的下标
+        for(int i=0;i<size;i++){
+            string s=strs[i];
+            sort(s.begin(),s.end());
+            if(mmap.count(s)==0)
+                mmap[s]=vector<string>(1,strs[i]);
+            else
+                mmap[s].push_back(strs[i]);
+        }
+        vector<vector<string>>res;
+        for(auto &it:mmap){
+            res.push_back(it.second);
+        }
+        return res;
+    }
+};
