@@ -59,14 +59,17 @@ public:
         int size=nums.size();
         if(size<=1)
             return size;
+        bool begin=false;
         bool prePos=false;//前一个序列是正
         int res=1;
         for(int i=1;i<size;i++){
-            if(nums[i]>nums[i-1]&&(i==1||!prePos)){
+            if(nums[i]>nums[i-1]&&(!begin||!prePos)){
                 prePos=true;
+                begin=true;
                 res++;
-            }else if(nums[i]<nums[i-1]&&(i==1||prePos)){
+            }else if(nums[i]<nums[i-1]&&(!begin||prePos)){
                 prePos=false;
+                begin=true;
                 res++;
             }
         }
