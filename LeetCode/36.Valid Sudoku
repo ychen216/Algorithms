@@ -1,0 +1,30 @@
+36. Valid Sudoku
+/*
+Determine if a Sudoku is valid, according to: Sudoku Puzzles - The Rules.
+The Sudoku board could be partially filled, where empty cells are filled with the character '.'.
+A partially filled sudoku which is valid.
+Note:
+A valid Sudoku board (partially filled) is not necessarily solvable. Only the filled cells need to be validated.
+*/
+
+Solution:
+class Solution {
+public:
+    //逐行  逐列 逐单元检查是否有效
+    //每行,列,块中1-9最多只能出现一次
+    bool isValidSudoku(vector<vector<char>>& board) {
+        int rowValid[9][10]={0},colValid[9][10]={0},blockValid[9][10]={0};//记录不同行,列,块出现的数字 从1-9
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                if(board[i][j]!='.'){
+                    int num=board[i][j]-'0';
+                    int k=i/3*3+j/3;//是第几块
+                    if(rowValid[i][num]||colValid[j][num]||blockValid[k][num])
+                        return false;
+                    rowValid[i][num]=colValid[j][num]=blockValid[k][num]=1;
+                }   
+            }
+        }
+        return true;
+    }
+};
