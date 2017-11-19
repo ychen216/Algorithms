@@ -1,0 +1,90 @@
+114. Flatten Binary Tree to Linked List
+
+/*
+Given a binary tree, flatten it to a linked list in-place.
+
+For example,
+Given
+
+         1
+        / \
+       2   5
+      / \   \
+     3   4   6
+The flattened tree should look like:
+   1
+    \
+     2
+      \
+       3
+        \
+         4
+          \
+           5
+            \
+             6
+*/
+
+Solution 1:Stack
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //类似非递归前序遍历 利用栈
+    void flatten(TreeNode* root) {
+        if(root==NULL)
+            return;
+        stack<TreeNode *>st;
+        st.push(root);
+        while(!st.empty()){
+            TreeNode *cur=st.top();
+            st.pop();
+            if(cur->right)
+                st.push(cur->right);
+            if(cur->left)
+                st.push(cur->left);
+            if(!st.empty())
+                cur->right=st.top();
+            cur->left=NULL;
+        }
+    }
+};
+
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //参考https://www.cnblogs.com/nashiyue/p/5313767.html
+    //按照前序遍历 将左子树挂在根节点的右子树 原根节点的右子树挂在 原左子树的最右孩子上
+    void flatten(TreeNode* root) {
+        if(root==NULL)
+            return;
+        while(root){
+            if(root->left){
+                TreeNode *cur=root->left;
+                while(cur->right!=NULL)
+                    cur=cur->right;
+                cur->right=root->right;
+                root->right=root->left;
+                root->left=NULL;
+            }
+            root=root->right;
+        }
+    }
+};
