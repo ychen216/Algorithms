@@ -12,7 +12,7 @@ dp:
   
 greedy:
   simple:665,
-  mediun:452,621,435,376,
+  mediun:452,621,435,376,649,
   
 string:
   simple:686,647,
@@ -28,6 +28,9 @@ data struction:
 two-pointer:
   medium:75,
 
+imitation:
+  medium:649,
+  
 hard to classification:
   simple:653,283,628,121,405,594,459,643,9,205,88,680,190,475,532
   medium:419,406,667,382,384(like 382),287,424,390,386,153,596,670,162,659,
