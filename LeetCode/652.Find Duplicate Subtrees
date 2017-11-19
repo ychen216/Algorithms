@@ -22,8 +22,7 @@ and
     4
 Therefore, you need to return above trees' root in the form of a list.
 */
-Solution:
-/**
+Solution:/**
  * Definition for a binary tree node.
  * struct TreeNode {
  *     int val;
@@ -44,7 +43,7 @@ public:
             return "#";
         string order=to_string(root->val)+","+helper(root->left,mmap,res)+","+helper(root->right,mmap,res);
         //相同的重复子树 只加入第一个
-        if(mmap.count(order)==1)
+        if(mmap.count(order)&&mmap[order]==1)
             res.push_back(root);
         mmap[order]++;
         return order;
