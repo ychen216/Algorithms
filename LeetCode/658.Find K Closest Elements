@@ -1,0 +1,68 @@
+658. Find K Closest Elements
+
+/*
+Given a sorted array, two integers k and x, find the k closest elements to x in the array.
+The result should also be sorted in ascending order. If there is a tie, the smaller elements are always preferred.
+
+Example 1:
+Input: [1,2,3,4,5], k=4, x=3
+Output: [1,2,3,4]
+Example 2:
+Input: [1,2,3,4,5], k=4, x=-1
+Output: [1,2,3,4]
+Note:
+The value k is positive and will always be smaller than the length of the sorted array.
+Length of the given array is positive and will not exceed 104
+Absolute value of elements in the array and x will not exceed 104
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+    由于数组是有序的，所以最后返回的k个元素也一定是有序的，那么其实就是返回了原数组的一个长度为k的子数组，转化一下，
+    实际上相当于在长度为n的数组中去掉n-k个数字，而且去掉的顺序肯定是从两头开始去，应为距离x最远的数字肯定在首尾出现。
+    那么问题就变的明朗了，我们每次比较首尾两个数字跟x的距离，将距离大的那个数字删除，直到剩余的数组长度为k为止
+    */
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+        
+        int size=arr.size();
+        int low=0,high=size-1;
+        while(high-low+1>k){
+            if(x-arr[low]<=arr[high]-x)
+                high--;
+            else
+                low++;
+        }
+        vector<int> res;
+        for(int i=low;i<=high;i++)
+            res.push_back(arr[i]);
+        return res;
+    }
+};
+
+
+Solution 2:二分查找
+
+class Solution {
+public:
+    /*
+    利用二分查找 定位k个元素的起始位置
+    */
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+        
+        int size=arr.size();
+        int low=0,high=size-k;//k个元素的起始位置范围[low,high]
+        while(low<high){
+            int mid=low+(high-low)/2;
+            if(x-arr[mid]<=arr[mid+k]-x)
+                high=mid;
+            else
+                low=mid+1;
+        }
+        vector<int> res;
+        for(int i=low;i<low+k;i++)
+            res.push_back(arr[i]);
+        return res;
+    }
+};
