@@ -1,0 +1,36 @@
+201. Bitwise AND of Numbers Range
+/*
+Given a range [m, n] where 0 <= m <= n <= 2147483647, return the bitwise AND of all numbers in this range, inclusive.
+
+For example, given the range [5, 7], you should return 4.
+*/
+
+Solution 1：
+class Solution {
+public:
+    //当m!=n，那么最末位必定等0，因为[m,n]必定包含奇偶数，相与最末位等0
+    //m!=n 就不断对对m,n进行右移操作  当m=n的时候，后面都是0，前面的就是这个范围内的数按位相与的相同部分。
+    int rangeBitwiseAnd(int m, int n) {
+        int offset=0;
+        while(m!=n){
+            m>>=1;
+            n>>=1;
+            offset++;
+        }
+        return m<<offset;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+    The idea is to use a mask to find the leftmost common digits of m and n.
+    Example: m=1110001, n=1110111, and you just need to find 1110000 and it will be the answer.
+    */
+    int rangeBitwiseAnd(int m, int n) {
+        int mask=INT_MAX;
+        while((m&mask)!=(n&mask))mask<<=1;
+        return mask&n;
+    }
+};
