@@ -1,0 +1,91 @@
+17. Letter Combinations of a Phone Number
+/*
+Given a digit string, return all possible letter combinations that the number could represent.
+
+A mapping of digit to letters (just like on the telephone buttons) is given below.
+mapping 就是电话键盘中数字对应的字母
+
+Input:Digit string "23"
+Output: ["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
+Note:
+Although the above answer is in lexicographical order, your answer could be in any order you want.
+*/
+
+Solution 1：
+class Solution {
+public:
+    //利用queue
+    vector<string> letterCombinations(string digits) {
+        int len=digits.length();
+        if(len==0)
+            return {};
+        map<char,vector<char>> mmap;
+        mmap['1']={'1'};
+        mmap['2']={'a','b','c'};
+        mmap['3']={'d','e','f'};
+        mmap['4']={'g','h','i'};
+        mmap['5']={'j','k','l'};
+        mmap['6']={'m','n','o'};
+        mmap['7']={'p','q','r','s'};
+        mmap['8']={'t','u','v'};
+        mmap['9']={'w','x','y','z'};
+        mmap['0']={'0'};
+        queue<string> q;
+        q.push("");
+        for(int i=0;i<len;i++){
+            vector<char> v=mmap[digits[i]];//第i个数字可能对应的字母
+            int qsize=q.size();
+            for(int j=0;j<qsize;j++){
+                string base=q.front();
+                q.pop();
+                for(auto&c:v){
+                    string temp=base+c;
+                    q.push(temp);
+                }
+            }
+        }
+        vector<string> res;
+        while(!q.empty()){
+            res.push_back(q.front());
+            q.pop();
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //直接利用vector 模拟queue的效果
+    vector<string> letterCombinations(string digits) {
+        int len=digits.length();
+        if(len==0)
+            return {};
+        map<char,vector<char>> mmap;
+        mmap['1']={'1'};
+        mmap['2']={'a','b','c'};
+        mmap['3']={'d','e','f'};
+        mmap['4']={'g','h','i'};
+        mmap['5']={'j','k','l'};
+        mmap['6']={'m','n','o'};
+        mmap['7']={'p','q','r','s'};
+        mmap['8']={'t','u','v'};
+        mmap['9']={'w','x','y','z'};
+        mmap['0']={'0'};
+        vector<string> res;
+        res.push_back("");
+        for(int i=0;i<len;i++){
+            vector<char> v=mmap[digits[i]];//第i个数字可能对应的字母
+            int rsize=res.size();
+            vector<string> temp;
+            for(int j=0;j<rsize;j++){
+                for(auto&c:v){
+                    temp.push_back(res[j]+c);
+                }
+            }
+            res=temp;
+        }
+        
+        return res;
+    }
+};
