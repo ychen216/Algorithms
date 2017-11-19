@@ -1,0 +1,48 @@
+40. Combination Sum II
+/*
+Given a collection of candidate numbers (C) and a target number (T), find all unique combinations in C where the candidate numbers sums to T.
+
+Each number in C may only be used once in the combination.
+
+Note:
+All numbers (including target) will be positive integers.
+The solution set must not contain duplicate combinations.
+For example, given candidate set [10, 1, 2, 7, 6, 1, 5] and target 8, 
+A solution set is: 
+[
+  [1, 7],
+  [1, 2, 5],
+  [2, 6],
+  [1, 1, 6]
+]
+*/
+
+Solution :
+class Solution {
+public:
+    //因为有重复元素 所以要排序 避免[1,7][7,1]这样都满足条件的相同集合
+    void dfs(vector<vector<int>>&res,vector<int>&nums,vector<int> temp,int start,int target){
+        if(target==0){
+            res.push_back(temp);
+            return;
+        }
+        else if(target<0)
+            return;
+        for(int i=start;i<nums.size();i++){
+            if(i>start&&nums[i]==nums[i-1])continue;//相同元素可能组成的结果都已经加入结果集了
+            temp.push_back(nums[i]);
+            dfs(res,nums,temp,i+1,target-nums[i]);
+            temp.pop_back();
+        }
+    } 
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        int size=candidates.size();
+        if(size==0)
+            return {};
+        sort(candidates.begin(),candidates.end());
+        vector<vector<int>> res;
+        vector<int> temp;
+        dfs(res,candidates,temp,0,target);
+        return res;
+    }
+};
