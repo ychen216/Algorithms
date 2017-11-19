@@ -1,0 +1,59 @@
+652.Find Duplicate Subtrees
+
+/*
+Given a binary tree, return all duplicate subtrees. For each kind of duplicate subtrees, 
+you only need to return the root node of any one of them.
+
+Two trees are duplicate if they have the same structure with same node values.
+
+Example 1: 
+        1
+       / \
+      2   3
+     /   / \
+    4   2   4
+       /
+      4
+The following are two duplicate subtrees:
+      2
+     /
+    4
+and
+    4
+Therefore, you need to return above trees' root in the form of a list.
+*/
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+    利用map记录每一棵子树的前序或后序遍历结果
+    为了避免NULL造成不同的子树的遍历输出是相同的,遍历到空树时用#代替该树 那么这样对树遍历的结果可以唯一确定一棵树
+    如果已经出现过那么这棵树是重复的子树
+    */
+    string helper(TreeNode *root,map<string,int>&mmap,vector<TreeNode *>&res){
+        if(root==NULL)
+            return "#";
+        string order=to_string(root->val)+","+helper(root->left,mmap,res)+","+helper(root->right,mmap,res);
+        //相同的重复子树 只加入第一个
+        if(mmap.count(order)==1)
+            res.push_back(root);
+        mmap[order]++;
+        return order;
+    }
+    
+    vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
+        map<string,int> mmap;
+        vector<TreeNode *> res;
+        helper(root,mmap,res);
+        return res;
+    }
+};
