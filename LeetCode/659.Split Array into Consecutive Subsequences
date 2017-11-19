@@ -1,0 +1,62 @@
+659. Split Array into Consecutive Subsequences
+
+/*
+You are given an integer array sorted in ascending order (may contain duplicates), you need to split them into several subsequences,
+where each subsequences consist of at least 3 consecutive integers. Return whether you can make such a split.
+
+Example 1:
+Input: [1,2,3,3,4,5]
+Output: True
+Explanation:
+You can split them into two consecutive subsequences : 
+1, 2, 3
+3, 4, 5
+Example 2:
+Input: [1,2,3,3,4,4,5,5]
+Output: True
+Explanation:
+You can split them into two consecutive subsequences : 
+1, 2, 3, 4, 5
+3, 4, 5
+Example 3:
+Input: [1,2,3,4,4,5]
+Output: False
+Note:
+The length of the input is in range of [1, 10000]
+
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+    一个数要么加到一个已经形成的队列里，要么新开辟一个队列
+   如果再加到已经形成的队列的element的个数超过3个，就一定能形成新的队列
+   而如果少于3个，就只能加到原有队列，所以是优先加到已经形成的队列
+   如果都不行就说明不能形成，return false
+   前提是数组是有序的
+    */
+    bool isPossible(vector<int>& nums) {
+        unordered_map<int,int>unuse_freq,need_freq;//每个数字还未使用的次数,在已有的队列中需要的数字个数
+        for(auto &n:nums)
+            unuse_freq[n]=unuse_freq.count(n)?unuse_freq[n]+1:1;
+        for(auto &n:nums){
+            if(unuse_freq[n]==0)continue;//已经用完
+            //加入已有队列
+            if(need_freq.count(n)&&need_freq[n]>0){
+                need_freq[n]--;
+                need_freq[n+1]=need_freq.count(n+1)?need_freq[n+1]+1:1;
+            }//新建一个队列
+            else if(unuse_freq.count(n+1)&&unuse_freq[n+1]>0
+                     &&unuse_freq.count(n+2)&&unuse_freq[n+2]>0){
+                unuse_freq[n+1]--;
+                unuse_freq[n+2]--;
+                need_freq[n+3]=need_freq.count(n+3)?need_freq[n+3]+1:1;
+            }
+            else
+                return false;
+            unuse_freq[n]--;
+        }
+        return true;
+    }
+};
