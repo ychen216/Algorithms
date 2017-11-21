@@ -1,0 +1,62 @@
+368. Largest Divisible Subset
+
+/*
+Given a set of distinct positive integers, find the largest subset such that every pair (Si, Sj) of elements 
+in this subset satisfies: Si % Sj = 0 or Sj % Si = 0.
+
+If there are multiple solutions, return any subset is fine.
+
+Example 1:
+
+nums: [1,2,3]
+
+Result: [1,2] (of course, [1,3] will also be ok)
+Example 2:
+
+nums: [1,2,4,8]
+
+Result: [1,2,4,8]
+*/
+
+Solution:
+class Solution {
+public:
+    //满足情况的子集 按照从小到大排序后 一定是后一个元素是前一个元素的倍数
+    //利用DP 并用数组记录前一个元素的位置
+    //dp[i]=max(dp[i],dp[j]+1) 0<=j<i nums[i]%nums[j]==0
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        int size=nums.size();
+        if(size==0)
+            return {};
+        sort(nums.begin(),nums.end());
+        int dp[size];
+        int parent[size];
+        int lastindex=-1,maxLen=-1;//最长子集的最后一个元素id和最长子集的长度
+        for(int i=0;i<size;i++){
+            dp[i]=1;
+            parent[i]=i;
+            int tempmax=0;
+            for(int j=0;j<i;j++){
+                if(nums[i]%nums[j]==0){
+                    if(dp[j]>tempmax){
+                        tempmax=dp[j];
+                        parent[i]=j;
+                    }
+                }
+            }
+            dp[i]=tempmax+1;
+            if(dp[i]>maxLen){
+                maxLen=dp[i];
+                lastindex=i;
+            }
+        }
+        vector<int> res;
+        while(parent[lastindex]!=lastindex){
+            res.push_back(nums[lastindex]);
+            lastindex=parent[lastindex];
+        }
+        //不要忘了最后一个元素
+        res.push_back(nums[lastindex]);
+        return res;
+    }
+};
