@@ -1,0 +1,49 @@
+47. Permutations II
+
+/*
+Given a collection of numbers that might contain duplicates, return all possible unique permutations.
+
+For example,
+[1,1,2] have the following unique permutations:
+[
+  [1,1,2],
+  [1,2,1],
+  [2,1,1]
+]
+*/
+
+Solution:
+class Solution {
+public:
+    //DFS 重点在于如何去重 先排序
+    //对于首次dfs每一个元素 是寻找以该元素为起始的permutation 
+    //如果在后续过程中遇到与前一个元素相同 但是前一个元素还未访问过 
+    //说明前一个元素的回溯已经结束 该元素dfs的结果以前一个元素相同 需要跳过 
+    void dfs(vector<int> temp,vector<bool>&visit,vector<int>&nums,vector<vector<int>>&res){
+        if(temp.size()==nums.size()){
+            res.push_back(temp);
+            return;
+        }
+        for(int i=0;i<nums.size();i++){
+            if(i>0&&nums[i]==nums[i-1]&&!visit[i-1])continue;
+            if(!visit[i]){
+                visit[i]=true;
+                temp.push_back(nums[i]);
+                dfs(temp,visit,nums,res);
+                visit[i]=false;
+                temp.pop_back();
+            }
+        }
+    }
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        int size=nums.size();
+        if(size==0)
+            return {};
+        sort(nums.begin(),nums.end());
+        vector<vector<int>>res;
+        vector<int> temp;
+        vector<bool> visit(size,0);
+        dfs(temp,visit,nums,res);
+        return res;
+    }
+};
