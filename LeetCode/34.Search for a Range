@@ -1,0 +1,41 @@
+34. Search for a Range
+/*
+Given an array of integers sorted in ascending order, find the starting and ending position of a given target value.
+
+Your algorithm's runtime complexity must be in the order of O(log n).
+
+If the target is not found in the array, return [-1, -1].
+
+For example,
+Given [5, 7, 7, 8, 8, 10] and target value 8,
+return [3, 4].
+*/
+
+Solution:
+class Solution {
+public:
+    //二分找到目标值 再向两侧扩展
+    vector<int> searchRange(vector<int>& nums, int target) {
+        int size=nums.size();
+        int low=0,high=size-1;
+        int leftIndex=-1,rightIndex=-1;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(target==nums[mid]){
+                leftIndex=rightIndex=mid;
+                break;
+            }
+            if(target<nums[mid])
+                high=mid-1;
+            else
+                low=mid+1;
+        }
+        if(leftIndex==-1)
+            return{-1,-1};
+        while(leftIndex>0&&nums[leftIndex-1]==target)
+            leftIndex--;
+        while(rightIndex<size-1&&nums[rightIndex+1]==target)
+            rightIndex++;
+        return {leftIndex,rightIndex};
+    }
+};
