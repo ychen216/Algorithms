@@ -1,0 +1,47 @@
+673. Number of Longest Increasing Subsequence
+/*
+Given an unsorted array of integers, find the number of longest increasing subsequence.
+
+Example 1:
+Input: [1,3,5,4,7]
+Output: 2
+Explanation: The two longest increasing subsequence are [1, 3, 4, 7] and [1, 3, 5, 7].
+Example 2:
+Input: [2,2,2,2,2]
+Output: 5
+Explanation: The length of longest continuous increasing subsequence is 1, and there are 5 subsequences' length is 1, so output 5.
+Note: Length of the given array will be not exceed 2000 and the answer is guaranteed to be fit in 32-bit signed int.
+*/
+
+Solution:
+class Solution {
+public:
+    //DP 用两个数组len[i],cnt[i]分别记录以nums[i]为结尾的最长子序列长度,机最长子序列个数
+    int findNumberOfLIS(vector<int>& nums) {
+        int size=nums.size();
+        if(size==0)
+            return 0;
+        int len[size],cnt[size];
+        int maxLen=0;
+        for(int i=0;i<size;i++){
+            len[i]=1;
+            cnt[i]=1;
+            for(int j=0;j<i;j++){
+                if(nums[j]<nums[i]){
+                    if(len[j]+1>len[i]){
+                        len[i]=len[j]+1;
+                        cnt[i]=cnt[j];
+                    }
+                    else if(len[j]+1==len[i])
+                        cnt[i]+=cnt[j];
+                }
+            }
+            maxLen=max(maxLen,len[i]);
+        }
+        int res=0;
+        for(int i=0;i<size;i++)
+            if(len[i]==maxLen)
+                res+=cnt[i];
+        return res;
+    }
+};
