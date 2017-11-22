@@ -1,0 +1,67 @@
+207. Course Schedule
+/*
+There are a total of n courses you have to take, labeled from 0 to n - 1.
+
+Some courses may have prerequisites, for example to take course 0 you have to first take course 1, which is expressed as a pair: [0,1]
+
+Given the total number of courses and a list of prerequisite pairs, is it possible for you to finish all courses?
+
+For example:
+
+2, [[1,0]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0. So it is possible.
+
+2, [[1,0],[0,1]]
+There are a total of 2 courses to take. To take course 1 you should have finished course 0, and to take course 0 you should also have finished course 1. So it is impossible.
+
+Note:
+The input prerequisites is a graph represented by a list of edges, not adjacency matrices. Read more about how a graph is represented.
+You may assume that there are no duplicate edges in the input prerequisites.
+*/
+
+Solution:
+class Solution {
+public:
+    //所有节点的入度为0即可 看是否形成一个拓扑排序
+    bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
+        if(numCourses<=1)
+            return true;
+        int depend=prerequisites.size();
+        int degree[numCourses]={0};//每个节点的入度
+        map<int,vector<int>> mmap;//记录每个节点指向的节点集合
+        //记录每个节点的入度 并记录每个节点为起点的边集合
+        for(pair<int,int> &edge:prerequisites){
+            degree[edge.second]++;
+            if(mmap.count(edge.first)==0){
+                vector<int> v;
+                mmap[edge.first]=v;
+            }
+            mmap[edge.first].push_back(edge.second);
+        }
+        int indegree0=0;
+        queue<int> q;//入度为0的点
+        for(int i=0;i<numCourses;i++){
+            if(degree[i]==0){
+                q.push(i);
+                indegree0++;
+            }
+        }
+        while(!q.empty()){
+            int startPoint=q.front();
+            q.pop();
+            if(mmap.count(startPoint)!=0){
+                vector<int>& link=mmap[startPoint];
+                //删除起始节点 以及以他为起始的边 更新边终点的入度
+                for(int i=0;i<link.size();i++){
+                    int endPoint=link[i];
+                    degree[endPoint]--;
+                    if(degree[endPoint]==0){
+                        indegree0++;
+                        q.push(endPoint);
+                    }
+                }
+            }
+        }
+        return indegree0==numCourses;
+    }
+};
