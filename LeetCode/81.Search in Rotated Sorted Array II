@@ -1,0 +1,53 @@
+81. Search in Rotated Sorted Array II
+/*
+Follow up for "Search in Rotated Sorted Array":
+What if duplicates are allowed?
+
+Would this affect the run-time complexity? How and why?
+Suppose an array sorted in ascending order is rotated at some pivot unknown to you beforehand.
+
+(i.e., 0 1 2 4 5 6 7 might become 4 5 6 7 0 1 2).
+
+Write a function to determine if a given target is in the array.
+
+The array may contain duplicates.
+*/
+
+Solution:
+class Solution {
+public:
+    /*因为存在重复元素
+    A[start] <= A[mid] 条件就不能确定[start mid]区间为递增有序序列，我们就把该条件分成两个子条件：
+    A[start] < A[mid] 则 [start mid]区间为递增有序序列
+    A[start] = A[mid] 则[start mid]区间不能确定，那就start++，往下一步看看即可。
+    */
+    bool search(vector<int>& nums, int target) {
+        int high=nums.size()-1,low=0;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(nums[mid]==target)
+                return true;
+            //左边是有序递增序列
+            if(nums[low]<nums[mid]){
+                //目标存在于左边
+                if(target>=nums[low]&&target<nums[mid])
+                    high=mid-1;
+                else
+                    low=mid+1;
+            }
+            //右边是有序递增序列
+            else if(nums[low]>nums[mid]){
+                //目标存在于右边
+                if(target>nums[mid]&&target<=nums[high])
+                    low=mid+1;
+                else
+                    high=mid-1;
+            }
+            else{
+                //nums[low]==nums[mid]
+                low++;
+            }
+        }
+        return false;
+    }
+};
