@@ -1,0 +1,59 @@
+95. Unique Binary Search Trees II
+/*
+Given an integer n, generate all structurally unique BST's (binary search trees) that store values 1...n.
+
+For example,
+Given n = 3, your program should return all 5 unique BST's shown below.
+
+   1         3     3      2      1
+    \       /     /      / \      \
+     3     2     1      1   3      2
+    /     /       \                 \
+   2     1         2                 3
+*/
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+    1. 选出根结点后应该先分别求解该根的左右子树集合，也就是根的左子树有若干种，它们组成左子树集合，根的右子树有若干种，它们组成右子树集合
+    2. 然后将左右子树相互配对，每一个左子树都与所有右子树匹配，每一个右子树都与所有的左子树匹配。然后将两个子树插在根结点上
+    3. 最后，把根结点放入链表中
+    */
+    
+    vector<TreeNode *> helper(int start,int end){
+        vector<TreeNode *> res;
+        if(start>end){
+            res.push_back(NULL);
+            return res;
+        }
+        for(int i=start;i<=end;i++){
+            vector<TreeNode *> leftTree=helper(start,i-1);
+            vector<TreeNode *> rightTree=helper(i+1,end);
+            for(auto &leftchild:leftTree){
+                for(auto& rightchild:rightTree){
+                    TreeNode *root=new TreeNode(i);
+                    root->left=leftchild;
+                    root->right=rightchild;
+                    res.push_back(root);
+                }
+            }
+        }
+        return res;
+    }
+    
+    vector<TreeNode*> generateTrees(int n) {
+        if(n==0)
+            return {};
+        return helper(1,n);
+    }
+};
