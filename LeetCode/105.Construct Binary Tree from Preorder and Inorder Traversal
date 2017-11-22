@@ -1,0 +1,36 @@
+105. Construct Binary Tree from Preorder and Inorder Traversal
+//Given preorder and inorder traversal of a tree, construct the binary tree.
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode *helper(vector<int>& preorder, vector<int>& inorder,int ps,int pe,int is,int ie){
+        //前序的第一个节点就是根节点 在中序中找到该节点
+        if(is>ie)
+            return NULL;
+        TreeNode *root=new TreeNode(preorder[ps]);
+        int rootid=is;
+        for(rootid=is;rootid<=ie;rootid++){
+            if(inorder[rootid]==root->val)
+                break;
+        }
+        root->left=helper(preorder,inorder,ps+1,ps+rootid-is,is,rootid-1);
+        root->right=helper(preorder,inorder,ps+rootid-is+1,pe,rootid+1,ie);
+        return root;
+    }
+    TreeNode* buildTree(vector<int>& preorder, vector<int>& inorder) {
+        int len=preorder.size();
+        if(len==0)
+            return NULL;
+        return helper(preorder,inorder,0,len-1,0,len-1);
+    }
+};
