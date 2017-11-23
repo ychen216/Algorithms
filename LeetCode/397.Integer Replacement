@@ -1,0 +1,81 @@
+397. Integer Replacement
+
+/*
+Given a positive integer n and you can do operations as follow:
+
+If n is even, replace n with n/2.
+If n is odd, you can replace n with either n + 1 or n - 1.
+What is the minimum number of replacements needed for n to become 1?
+
+Example 1:
+Input:
+8
+Output:
+3
+
+Explanation:
+8 -> 4 -> 2 -> 1
+Example 2:
+Input:
+7
+Output:
+4
+Explanation:
+7 -> 8 -> 4 -> 2 -> 1
+or
+7 -> 6 -> 3 -> 2 -> 1
+*/
+
+Solution 1: TLE
+class Solution {
+public:
+    int integerReplacement(int n) {
+        if(n == 1) return 0;
+        int res = 0;
+        while(n != 1)
+        {
+            if(n % 2 == 0)
+            {
+                n/=2;
+                res++;
+            }
+            else return res + odd(n);
+            
+        }
+        
+        return res;
+    }
+    
+    int odd(int n){
+        return min(integerReplacement(n+1),integerReplacement(n-1))+1;
+    }
+};
+
+
+Solution 2: Bit Operation
+class Solution {
+     /*
+    不管是/2 +1 -1都是1 bit操作，从bit上入手。
+    8 = 1 0 0 0 需要右移3次。
+    9 = 1 0 0 1 -1 /2 /2 /2
+
+    基本思路是；
+    如果是偶数，最右位(RMB)是0，直接/2；
+    如果是奇数，通过+ -去掉RMB的1. 但是+ -还是有学问的， 比如 1111 和 1001，第一个明显是+1好，第二个是-1好。
+    这里+1 -1的目的是为了shift right服务的，所以标准就是通过+1还是-1去掉的1越多越好。用brute-force就是都试试，然后计算机替你选择一个。作为人类，我们要发现规律。。。
+    所以就是能/2就/2，不能就数+1 -1哪个划算；哪个划算通过看哪个去掉1的个数多决定。其实-1只有在右起第二位是0的情况下划算（还有11的时候，这他妈是个大坑）。
+    */
+    public int integerReplacement(int n) {
+        int res = 0;
+        while(n != 1){
+            if((n&1)==0)
+                n>>>=1;
+            else if(n==3||((n>>>1)&1)==0)
+                n--;
+            else
+                n++;
+            res++;
+        }
+        return res;
+    }
+}
