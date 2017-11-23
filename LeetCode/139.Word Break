@@ -1,0 +1,34 @@
+139. Word Break
+
+/*
+Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, determine if s can be segmented into a space-separated sequence of one or more dictionary words. You may assume the dictionary does not contain duplicate words.
+
+For example, given
+s = "leetcode",
+dict = ["leet", "code"].
+
+Return true because "leetcode" can be segmented as "leet code".
+*/
+Solution:
+class Solution {
+public:
+    /*
+    DP dp[i]表示前i个字符能不能被dict完美划分
+    判断dp[i]，则需要遍历0~i中是否存在一个j，使得dp[j]=true而且j+1~i存在于dict中
+    */
+    bool wordBreak(string s, vector<string>& wordDict) {
+        int len=s.length();
+        set<string> wordset(wordDict.begin(),wordDict.end());
+        vector<bool> dp(len+1,false);
+        dp[0]=true;//初始化 空字符串可以被划分
+        for(int i=1;i<=len;i++){
+            for(int j=i-1;j>=0;j--){
+                if(dp[j]&&wordset.find(s.substr(j,i-j))!=wordset.end()){
+                    dp[i]=true;
+                    break;
+                }
+            }
+        }
+        return dp[len];
+    }
+};
