@@ -1,0 +1,49 @@
+92. Reverse Linked List II
+
+/*
+reverse a linked list from position m to n. Do it in-place and in one-pass.
+
+For example:
+Given 1->2->3->4->5->NULL, m = 2 and n = 4,
+
+return 1->4->3->2->5->NULL.
+
+Note:
+Given m, n satisfy the following condition:
+1 ≤ m ≤ n ≤ length of list.
+*/
+Solution:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //参考http://blog.csdn.net/sunnyyoona/article/details/18821017
+    //前m-1个不变，从第m+1个到第n个，依次删除，用尾插法插入到第m-1个节点后面。
+    ListNode* reverseBetween(ListNode* head, int m, int n) {
+        ListNode *dummy=new ListNode(0);//作为虚拟节点 指向头指针
+        dummy->next=head;
+        
+        ListNode *tail=dummy,*pre=NULL;//pre 要删除节点的前驱 
+        //找到第m-1个节点
+        for(int i=1;i<m;i++){
+            tail=tail->next;
+        }
+        //tail指向第m-1个节点
+        pre=tail->next;
+        //尾插法
+        for(int i=m+1;i<=n;i++){
+            ListNode *d=pre->next;
+            pre->next=d->next;
+            d->next=tail->next;
+            tail->next=d;
+            
+        }
+        return dummy->next;
+    }
+};
