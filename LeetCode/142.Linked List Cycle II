@@ -1,0 +1,46 @@
+142. Linked List Cycle II
+/*
+Given a linked list, return the node where the cycle begins. If there is no cycle, return null.
+
+Note: Do not modify the linked list.
+
+Follow up:
+Can you solve it without using extra space?
+*/
+
+Solution:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //快慢指针 快慢指针相遇 说明有环 
+    //此时让慢指针指向头结点 并让两个指针的步长变为1 相遇的地方就是环的起始位置
+    ListNode *detectCycle(ListNode *head) {
+        if(head==NULL||head->next==NULL)
+            return NULL;
+        ListNode *fp=head,*sp=head;
+        //判断是否有环 找相遇点
+        while(fp!=NULL&&fp->next!=NULL){
+            sp=sp->next;
+            fp=fp->next->next;
+            if(sp==fp)
+                break;
+        }
+        //无环
+        if(fp==NULL||fp->next==NULL)
+            return NULL;
+        //有环 
+        sp=head;
+        while(sp!=fp){
+            sp=sp->next;
+            fp=fp->next;
+        }
+        return sp;
+    }
+};
