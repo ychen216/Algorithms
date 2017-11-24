@@ -1,0 +1,48 @@
+332. Reconstruct Itinerary
+/*
+Given a list of airline tickets represented by pairs of departure and arrival airports [from, to], reconstruct the itinerary in order. All of the tickets belong to a man who departs from JFK. Thus, the itinerary must begin with JFK.
+
+Note:
+If there are multiple valid itineraries, you should return the itinerary that has the smallest lexical order when read as a single string. For example, the itinerary ["JFK", "LGA"] has a smaller lexical order than ["JFK", "LGB"].
+All airports are represented by three capital letters (IATA code).
+You may assume all tickets form at least one valid itinerary.
+Example 1:
+tickets = [["MUC", "LHR"], ["JFK", "MUC"], ["SFO", "SJC"], ["LHR", "SFO"]]
+Return ["JFK", "MUC", "LHR", "SFO", "SJC"].
+Example 2:
+tickets = [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"],["ATL","SFO"]]
+Return ["JFK","ATL","JFK","SFO","ATL","SFO"].
+Another possible reconstruction is ["JFK","SFO","ATL","JFK","ATL","SFO"]. But it is larger in lexical order.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+    * 这道题给我们一堆飞机票，让我们建立一个行程单，如果有多种方法，取其中字母顺序小的那种方法。
+    * 是关于有向图的边的遍历,每张机票都是有向图的一条边，我们需要找出一条经过所有边的路径，那么DFS是我们的不二选择。
+    *就是找出欧拉路径  dfs每个结点 访问时节点入栈 如果一个节点已经访问结束出栈 则出栈的序列就是欧拉路径的序列Hierholzer's algorithm
+    *同一个地点可以飞往另一个地点多次 所以存储的时候用muitiset 保持字母序的前提下还能有重复
+    */
+    map<string,multiset<string>> edges;
+    vector<string> route;
+    vector<string> findItinerary(vector<pair<string, string>> tickets) {
+        edges.clear();
+        route.clear();
+        for(auto &p:tickets){
+            edges[p.first].insert(p.second);
+        }
+        dfs("JFK");
+        return vector<string>(route.rbegin(),route.rend());
+    }
+    
+    void dfs(string from){
+        while(edges[from].size()>0){
+            auto it=edges[from].begin();
+            string to=*it;
+            edges[from].erase(it);
+            dfs(to);
+        }
+        route.push_back(from);
+    }
+};
