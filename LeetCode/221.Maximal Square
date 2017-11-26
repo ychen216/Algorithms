@@ -1,0 +1,96 @@
+221. Maximal Square
+/*
+Given a 2D binary matrix filled with 0's and 1's, find the largest square containing only 1's and return its area.
+
+For example, given the following matrix:
+
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+Return 4.
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*DP
+    dp[i][j]代表以matrix[i][j]为矩阵右下角的正方形的最大边长
+    第一行和第一列元素的dp[i][j]值为matrix[i][j] 初始化dp
+    dp[0][j]=matrix[0][j] i=0
+    dp[i][0]=matrix[i][0] j=0
+    dp[i][j]=min(dp[i-1][j-1],dp[i-1][j],dp[i][j-1])+1 i>0&&j>0 
+    */
+    int maximalSquare(vector<vector<char>>& matrix) {
+        int row=matrix.size();
+        if(row==0)
+            return 0;
+        int col=matrix[0].size();
+        if(col==0)
+            return 0;
+        int dp[row][col]={0};
+        int maxSize=0;
+        //初始化
+        for(int j=0;j<col;j++){
+            dp[0][j]=matrix[0][j]-'0';
+            maxSize=max(maxSize,dp[0][j]);
+        }
+        for(int i=0;i<row;i++){
+            dp[i][0]=matrix[i][0]-'0';
+            maxSize=max(maxSize,dp[i][0]);
+        }
+        
+        for(int i=1;i<row;i++){
+            for(int j=1;j<col;j++)
+                if(matrix[i][j]=='1'){
+                    dp[i][j]=min(dp[i-1][j-1],min(dp[i-1][j],dp[i][j-1]))+1;
+                    maxSize=max(maxSize,dp[i][j]);
+                }
+        }
+        return maxSize*maxSize;
+    }
+};
+
+Solution 2:在空间上改进Solution1
+class Solution {
+public:
+    /*DP
+    dp[i][j]代表以matrix[i][j]为矩阵右下角的正方形的最大边长
+    第一行和第一列元素的dp[i][j]值为matrix[i][j] 初始化dp
+    dp[0][j]=matrix[0][j] i=0
+    dp[i][0]=matrix[i][0] j=0
+    dp[i][j]=min(dp[i-1][j-1],dp[i-1][j],dp[i][j-1])+1 i>0&&j>0 
+    i>0&&j>0时 dp[i][j]只与当前行和前一行的状态有关 用两行保存状态
+    */
+    int maximalSquare(vector<vector<char>>& matrix) {
+        int row=matrix.size();
+        if(row==0)
+            return 0;
+        int col=matrix[0].size();
+        if(col==0)
+            return 0;
+        int cur[col]={0},pre[col]={0};
+        int maxSize=0;
+        //初始化
+        for(int j=0;j<col;j++){
+            pre[j]=matrix[0][j]-'0';
+            maxSize=max(maxSize,pre[j]);
+        }
+       
+        for(int i=1;i<row;i++){
+            //第一列
+            cur[0]=matrix[i][0]-'0';
+            maxSize=max(maxSize,cur[0]);
+            for(int j=1;j<col;j++)
+                if(matrix[i][j]=='1'){
+                    cur[j]=min(pre[j-1],min(pre[j],cur[j-1]))+1;
+                    maxSize=max(maxSize,cur[j]);
+                }
+            for(int k=0;k<col;k++){
+                pre[k]=cur[k];
+                cur[k]=0;
+            }
+        }
+        return maxSize*maxSize;
+    }
+};
