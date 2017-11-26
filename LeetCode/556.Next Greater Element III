@@ -1,0 +1,66 @@
+556. Next Greater Element III
+
+/*
+Given a positive 32-bit integer n, you need to find the smallest 32-bit integer which has exactly the same digits
+existing in the integer n and is greater in value than n. If no such positive 32-bit integer exists, you need to return -1.
+
+Example 1:
+Input: 12
+Output: 21
+Example 2:
+Input: 21
+Output: -1
+*/
+
+Solution 1:
+class Solution {
+public:
+    //找出给定数x的一个排列y 使得y是比x大的最小的x的排列
+    //利用next_permutation 
+    //注意排列后可能得到超过int的数
+    int nextGreaterElement(int n) {
+        string sNum=to_string(n);
+        int orignNum=n;
+        sort(sNum.begin(),sNum.end());
+        long ans=INT_MAX+1L;
+        do{
+            long temp=stol(sNum);
+            if(temp>orignNum)
+                ans=min(ans,temp);
+        }while(next_permutation(sNum.begin(),sNum.end()));
+        return ans>INT_MAX?-1:ans;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //找出给定数x的一个排列y 使得y是比x大的最小的x的排列
+    //1.从右向左找第一个不符合升序的数，位置记为index，如果index为-1，返回-1
+    //2.从右向index找第一个比他大的数，交换index位置的数和这个比他大的数
+    //3.从index+1到末尾进行升序排列  
+    //需要防止int溢出，所以用long保存结果。
+    int nextGreaterElement(int n) {
+        string sNum=to_string(n);
+        int len=sNum.length();
+        int index=-1;
+        //找到不升序的数
+        for(int i=len-1;i>0;i--){
+            if(sNum[i-1]<sNum[i]){
+                index=i-1;
+                break;
+            }
+        }
+        //n已经是最大排列
+        if(index==-1)
+            return -1;
+        //找到升序序列中比index大的最小的数
+        int small=len-1;
+        while(sNum[small]<=sNum[index])
+            small--;
+        swap(sNum[small],sNum[index]);
+        sort(sNum.begin()+index+1,sNum.end());
+        long res=stol(sNum);
+        return res>INT_MAX?-1:res;
+    }
+};
