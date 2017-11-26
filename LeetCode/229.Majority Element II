@@ -1,0 +1,73 @@
+229. Majority Element II
+/*
+Given an integer array of size n, find all elements that appear more than ⌊ n/3 ⌋ times. 
+The algorithm should run in linear time and in O(1) space.
+*/
+
+Solution 1: map
+class Solution {
+public:
+    vector<int> majorityElement(vector<int>& nums) {
+        int len=nums.size();
+        unordered_map<int,int> mmap;
+        for(int i=0;i<len;i++){
+            if(mmap.find(nums[i])==mmap.end())
+                mmap[nums[i]]=1;
+            else
+                mmap[nums[i]]++;
+        }
+        vector<int> res;
+        for(unordered_map<int,int>::iterator it=mmap.begin();it!=mmap.end();it++)
+            if(it->second>len/3)
+                res.push_back(it->first);
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+    借助于Majority Element中的Boyer Moore算法，可以在O(1)的空间和线性时间内求解问题。
+    因为出现次数大于n/3的元素最多只有两个，所以最开始可以维护两个数字(num1,num2)和两个计数器(counter1,counter2)。
+    遍历数组，当数组中元素和num1或者num2相同，对应的counter1或者counter2加1；
+    如果counter1或counter2为0，将遍历到的该元素赋给num1或者nums2；
+    否则counter1和counter2都减1。
+    其中第3步是算法的核心，就是每次删除三个不相同的数，最后留下的一定是出现次数超过1/3的数，这个思想可以推广到出现次数超过1/k次的元素有哪些。
+    */
+    vector<int> majorityElement(vector<int>& nums) {
+        int len=nums.size();
+        int num1=0,num2=0,counter1=0,counter2=0;
+        for(int i=0;i<len;i++){
+            if(nums[i]==num1)
+                counter1++;
+            else if(nums[i]==num2)
+                counter2++;
+            else if(counter1==0){
+                num1=nums[i];
+                counter1=1;
+            }
+            else if(counter2==0){
+                num2=nums[i];
+                counter2=1;
+            }else{
+                counter1--;
+                counter2--;
+            }
+        }
+        vector<int> res;
+        counter1=counter2=0;
+        //验证众数是否存在
+        for(int i=0;i<len;i++){
+            if(nums[i]==num1)
+                counter1++;
+            else if(nums[i]==num2)
+                counter2++;
+        }
+        if(counter1>len/3)
+            res.push_back(num1);
+        if(counter2>len/3)
+            res.push_back(num2);
+        return res;
+    }
+};
