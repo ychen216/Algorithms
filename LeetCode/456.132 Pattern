@@ -1,0 +1,79 @@
+456. 132 Pattern
+/*
+Given a sequence of n integers a1, a2, ..., an, a 132 pattern is a subsequence ai, aj, ak such that i < j < k and ai < ak < aj. 
+Design an algorithm that takes a list of n numbers as input and checks whether there is a 132 pattern in the list.
+
+Note: n will be less than 15,000.
+
+Example 1:
+Input: [1, 2, 3, 4]
+
+Output: False
+
+Explanation: There is no 132 pattern in the sequence.
+Example 2:
+Input: [3, 1, 4, 2]
+
+Output: True
+
+Explanation: There is a 132 pattern in the sequence: [1, 4, 2].
+Example 3:
+Input: [-1, 3, 2, 0]
+
+Output: True
+
+Explanation: There are three 132 patterns in the sequence: [-1, 3, 2], [-1, 3, 0] and [-1, 2, 0].
+*/
+
+Solution 1:
+class Solution {
+public:
+    //暴力
+    bool find132pattern(vector<int>& nums) {
+        int len=nums.size();
+        if(len<3)
+            return false;
+        bool flag=false;
+        int minNum=nums[0];
+        for(int j=1;j<len;j++){
+            //遍历j 找最大的数  tempMax=nums[j];
+            for(int k=j+1;k<len;k++){//找符合要求的k
+                if(nums[j]>nums[k]&&nums[k]>minNum){
+                    flag=true;
+                    break;
+                }
+            }
+            if(flag)
+                return true;
+            minNum=min(minNum,nums[j]);
+        }
+        return false;
+    }
+};
+
+
+Solution 2:  不是很理解
+class Solution {
+public:
+    //设132分别为 s1, s2, s3，且满足 s1<s3<s2。
+    //每次找到符合条件的s3，即右侧有比它小的元素，然后判断下一个数是否比s3小，如果存在，则返回true。
+    bool find132pattern(vector<int>& nums) {
+        int len=nums.size();
+        if(len<3)
+            return false;
+        stack<int> s2;
+        int s3=INT_MIN;
+        for(int i=len-1;i>=0;i--){
+           if(nums[i]<s3)
+               return true;
+            else{
+                while(!s2.empty()&&s2.top()<nums[i]){// top is candidate for s3
+                    s3=s2.top();
+                    s2.pop();
+                }
+            }
+            s2.push(nums[i]);
+        }
+        return false;
+    }
+};
