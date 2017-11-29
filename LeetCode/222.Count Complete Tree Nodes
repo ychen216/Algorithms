@@ -1,0 +1,64 @@
+222. Count Complete Tree Nodes
+
+/*
+Given a complete binary tree, count the number of nodes.
+*/
+Solution 1:直接递归 TLE
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if(root==NULL)
+            return 0;
+        int left=0,right=0;
+        if(root->left)
+            left=countNodes(root->left);
+        if(root->right)
+            right=countNodes(root->right);
+        return 1+left+right;
+    }
+};
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+    如果从某节点一直向左的高度 = 一直向右的高度, 那么以该节点为root的子树一定是complete binary tree. 
+    complete binary tree的节点数,可以用公式算出 2^h - 1. 
+    如果高度不相等, 则递归调用 return countNode(left) + countNode(right) + 1.  复杂度为O(h^2)  
+    */
+    int countNodes(TreeNode* root) {
+        if(root==NULL)
+            return 0;
+        TreeNode *leftchild=root,*rightchild=root;
+        int hl=0,hr=0;
+        while(leftchild){
+            hl++;
+            leftchild=leftchild->left;
+        }
+        while(rightchild){
+            hr++;
+            rightchild=rightchild->right;
+        }
+        if(hr==hl)
+            return pow(2,hl)-1;
+        return 1+countNodes(root->left)+countNodes(root->right);
+    }
+};
