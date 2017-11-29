@@ -12,6 +12,7 @@ Note:
 Solution :
 class Solution {
 public:
+// 长度为m,n的两个数的乘积最长为 m+n
     string multiply(string num1, string num2) {
         string res(num1.size()+num2.size(),'0');
         for(int i=num1.size()-1;i>=0;i--){
