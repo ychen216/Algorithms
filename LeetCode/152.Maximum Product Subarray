@@ -1,0 +1,32 @@
+152. Maximum Product Subarray
+/*
+Find the contiguous subarray within an array (containing at least one number) which has the largest product.
+
+For example, given the array [2,3,-2,4],
+the contiguous subarray [2,3] has the largest product = 6.
+*/
+Solution:
+class Solution {
+public:
+    //DP dp[i]=max(nums[i],dp[i-1]*nums[i]); dp[0]=nums[0];
+    //上面的方法 只考虑了数组元素全为非负的情况 WA
+    //考虑到元素值可能为负 两个负数的乘积可能是最大的 要维护一个最小值状态
+    //记maxLast/minLast为连乘到上个元素的最大/小乘积
+    //记maxCur/minCur为连乘到当前元素的最大/小乘积
+    //记maxAll为全局最大乘积
+    int maxProduct(vector<int>& nums) {
+        int len=nums.size();
+        if(len==0)
+            return 0;
+        int maxAll=nums[0];
+        int maxLast=nums[0],minLast=nums[0],minCur,maxCur;
+        for(int i=1;i<len;i++){
+            maxCur=max(nums[i],max(maxLast*nums[i],minLast*nums[i]));
+            minCur=min(nums[i],min(maxLast*nums[i],minLast*nums[i]));
+            maxAll=max(maxAll,maxCur);
+            maxLast=maxCur;
+            minLast=minCur;
+        }
+        return maxAll;
+    }
+};
