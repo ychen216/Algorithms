@@ -1,0 +1,76 @@
+523. Continuous Subarray Sum
+
+/*
+Given a list of non-negative numbers and a target integer k, write a function to check if the array has a continuous subarray of size at least 2 that sums up to the multiple of k, that is, sums up to n*k where n is also an integer.
+
+Example 1:
+Input: [23, 2, 4, 6, 7],  k=6
+Output: True
+Explanation: Because [2, 4] is a continuous subarray of size 2 and sums up to 6.
+Example 2:
+Input: [23, 2, 6, 4, 7],  k=6
+Output: True
+Explanation: Because [23, 2, 6, 4, 7] is an continuous subarray of size 5 and sums up to 42.
+Note:
+The length of the array won't exceed 10,000.
+You may assume the sum of all the numbers is in the range of a signed 32-bit integer.
+*/
+Solution 1:
+class Solution {
+public:
+    bool checkSubarraySum(vector<int>& nums, int k) {
+        int len=nums.size();
+        vector<int> sum(len,0);
+        sum[0]=nums[0];
+        for(int i=1;i<len;i++)
+            sum[i]=sum[i-1]+nums[i];
+        //数组长度至少为2
+        for(int l=2;l<=len;l++){
+            for(int start=0;start<=len-l;start++){
+                int end=start+l-1;
+                int tempSum;
+                if(start==0)
+                    tempSum=sum[end];
+                else
+                    tempSum=sum[end]-sum[start-1];
+                if(k==0){
+                    if(tempSum==0)
+                        return true;
+                }
+                else{
+                    if(tempSum%k==0)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
+Solution 2:trick
+class Solution {
+public:
+    /*
+    遍历整个数组，依次加当前数组元素并将相加和求余k，求余结果只有0~k-1这k中情况，将求余结果存入Hash Table中。
+    如果遍历到当前位置求余结果已经在Hash Table中，表明从上一求余结果相同的位置到当前位置的子数组相加和是k的倍数，否则将求余结果存入Hash Table。
+    这里需要注意边界情况，代码中hash[0] = -1这行即为了便于边界情况的处理。k=0 子数组长度至少为2
+    */
+    bool checkSubarraySum(vector<int>& nums, int k) {
+        int sum=0;
+        unordered_map<int,int> m;//存储得到余数的对应下标
+        m[0]=-1;
+        int len=nums.size();
+        for(int i=0;i<len;i++){
+            sum+=nums[i];
+            if(k!=0)
+                sum%=k;
+            if(m.find(sum)!=m.end()){
+                if(i-m[sum]>1)
+                    return true;
+            }
+            else
+                m[sum]=i;
+        }
+        return false;
+    }
+};
