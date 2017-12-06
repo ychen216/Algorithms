@@ -1,0 +1,53 @@
+127. Word Ladder
+/*
+Given two words (beginWord and endWord), and a dictionary's word list, find the length of shortest transformation sequence from beginWord to endWord, such that:
+
+Only one letter can be changed at a time.
+Each transformed word must exist in the word list. Note that beginWord is not a transformed word.
+For example,
+
+Given:
+beginWord = "hit"
+endWord = "cog"
+wordList = ["hot","dot","dog","lot","log","cog"]
+As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
+return its length 5.
+*/
+Solution: TLE
+class Solution {
+public:
+    //利用BFS的思想找到一条begin到end的最短路径 与路径中上一个节点相邻的词语是在词典中与他只差一个字母的词
+    //为了便于实现 将endword加入到wordList
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        if(find(wordList.begin(),wordList.end(),endWord)==wordList.end())
+            return 0;
+        queue<string> q;
+        //初始化q
+        q.push(beginWord);
+        int res=1;
+        while(!q.empty()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                string cur=q.front();
+                q.pop();
+                //找只差一个字母的邻居节点
+                for(int j=0;j<cur.length();j++){
+                    char letter=cur[j];
+                    for(int k=0;k<26;k++){
+                        cur[j]=k+'a';             
+                        auto it=find(wordList.begin(),wordList.end(),cur);
+                        if(it!=wordList.end()){
+                            if(*it==endWord)
+                                return res+1;
+                            q.push(cur);
+                            wordList.erase(it);
+                        }
+                    }
+                    cur[j]=letter;
+                }
+            }
+            res++;
+        }
+        return 0;
+    }
+};
