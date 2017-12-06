@@ -1,0 +1,43 @@
+220. Contains Duplicate III
+/*
+Given an array of integers, find out whether there are two distinct indices i and j in the array such that the absolute 
+difference between nums[i] and nums[j] is at most t and the absolute difference between i and j is at most k.
+*/
+Solution 1:暴力TLE
+class Solution {
+public:
+    //检查子数组长度在[2,k+1]之间是否有满足条件的
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+        int len=nums.size();
+        if(k<=0||t<0||len==0)
+            return false;
+        int l=(k+1)>len?len:k+1;
+        for(;l>=2;l--){
+            for(int begin=0;begin<=len-l;begin++){
+                int end=l+begin-1;
+                if(labs((long)nums[begin]-(long)nums[end])<=t)
+                    return true;
+            }
+        }
+        return false;
+            
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //暴力超时  边界 包含测试数据[-1,INT_MIN]要用long
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+        set<long> window; // set is ordered automatically 
+        for (int i = 0; i < nums.size(); i++) {
+            if (i > k) window.erase(nums[i-k-1]); // keep the set contains nums i j at most k
+            // |x - nums[i]| <= t  ==> -t <= x - nums[i] <= t;
+            auto pos = window.lower_bound((long)nums[i] - t); // x-nums[i] >= -t ==> x >= nums[i]-t 
+            // x - nums[i] <= t ==> |x - nums[i]| <= t    
+            if (pos != window.end() && *pos - nums[i] <= t) return true;
+            window.insert(nums[i]);
+        }
+        return false;
+    }
+};
