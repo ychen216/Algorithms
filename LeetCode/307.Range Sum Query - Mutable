@@ -1,0 +1,49 @@
+307. Range Sum Query - Mutable
+/*
+Given an integer array nums, find the sum of the elements between indices i and j (i ≤ j), inclusive.
+
+The update(i, val) function modifies nums by updating the element at index i to val.
+Example:
+  Given nums = [1, 3, 5]
+
+  sumRange(0, 2) -> 9
+  update(1, 2)
+  sumRange(0, 2) -> 8
+Note:
+The array is only modifiable by the update function.
+You may assume the number of calls to update and sumRange function is distributed evenly.
+*/
+Solution 1:TLE
+class NumArray {
+public:
+    NumArray(vector<int> nums) {
+        int len=nums.size();
+        sum=vector<int>(len+1,0);
+        for(int i=1;i<=len;i++)
+            sum[i]=nums[i-1]+sum[i-1];
+    }
+    
+    void update(int i, int val) {
+        int len=sum.size();
+        int orign=sum[i+1]-sum[i];//未改变的前的nums[i]
+        int change=val-orign;
+        for(int j=i+1;j<len;j++)
+            sum[j]=sum[j]+change;
+    }
+    
+    int sumRange(int i, int j) {
+        return sum[j+1]-sum[i];
+    }
+private:
+    vector<int> sum;
+};
+
+/**
+ * Your NumArray object will be instantiated and called as such:
+ * NumArray obj = new NumArray(nums);
+ * obj.update(i,val);
+ * int param_2 = obj.sumRange(i,j);
+ */
+ 
+ Solution 2:
+ 
