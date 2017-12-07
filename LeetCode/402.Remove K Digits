@@ -1,0 +1,54 @@
+402. Remove K Digits
+/*
+Given a non-negative integer num represented as a string, remove k digits from the number so that the new number is the smallest possible.
+
+Note:
+The length of num is less than 10002 and will be ≥ k.
+The given num does not contain any leading zero.
+Example 1:
+
+Input: num = "1432219", k = 3
+Output: "1219"
+Explanation: Remove the three digits 4, 3, and 2 to form the new number 1219 which is the smallest.
+Example 2:
+
+Input: num = "10200", k = 1
+Output: "200"
+Explanation: Remove the leading 1 and the number is 200. Note that the output must not contain leading zeroes.
+Example 3:
+
+Input: num = "10", k = 2
+Output: "0"
+Explanation: Remove all the digits from the number and it is left with nothing which is 0.
+*/
+Solution:
+class Solution {
+public:
+    /*
+    首先这是一个贪心问题，即我们可以将问题转化为，一个长度为N的数字里面，删除哪个数可以使得数变得最小： 
+    如何删除: 
+    1、因为数字开头不允许是0，当第二位是0的情况下下，这时候我们删除了第一位数，那么至少可以使数字小两个量级，而其他位置最多也就是小一个数量级，所以这种情况毫无疑问删除第一个，后面打头的0也自动消解 
+    2、否则，我们从头开始找，找到第一个下降的数，如 1234553，那么最后一个3前面的5就是，删除它得到的数字是最小的。
+    如果在递增序列里删除字符，删除后，后续字符代替被删除字符会使得在缩小一位的条件下更大
+    */
+    string removeKdigits(string num, int k) {
+        int len=num.size();
+        int newLen=len-k;
+        char st[len];
+        int stLen=0;
+        for(int i=0;i<len;i++){
+            //递减情况的前一个数 从栈中移除
+            while(stLen>0&&st[stLen-1]>num[i]&&k>0){
+                stLen--;
+                k--;
+            }
+            st[stLen++]=num[i];
+        }
+        //删除前导0
+        int p=0;
+        while(p<newLen&&st[p]=='0')p++;
+        if(p==newLen)
+            return "0";
+        return string(st+p,st+newLen);
+    }
+};
