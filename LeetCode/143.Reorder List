@@ -1,0 +1,60 @@
+143. Reorder List
+/*
+Given a singly linked list L: L0→L1→…→Ln-1→Ln,
+reorder it to: L0→Ln→L1→Ln-1→L2→Ln-2→…
+
+You must do this in-place without altering the nodes' values.
+
+For example,
+Given {1,2,3,4}, reorder it to {1,4,2,3}.
+*/
+
+Solution :
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //先使用快慢指针将链表从中间分割成两段，然后后半段就地逆置．之后合并插入到前半段链表
+    void reorderList(ListNode* head) {
+        if(head==NULL||head->next==NULL)
+            return;
+        ListNode *ps=head,*pf=head->next;
+        //找到中点
+        while(pf!=NULL&&pf->next!=NULL){
+            ps=ps->next;
+            pf=pf->next->next;
+        }
+        //链表截成两段 后半段原地逆置
+        ListNode *head2=ps->next;
+        ps->next=NULL;//前半段尾指针next置为NULL
+        ListNode *head1=head;
+        //倒插法
+        ListNode *p=head2->next;
+        ListNode *p2=NULL;
+        head2->next=NULL;
+        while(p!=NULL){
+            p2=p->next;
+            p->next=head2;
+            head2=p;
+            p=p2;
+        }
+        
+        //合并 两个链表
+        p=head,p2=head2;
+        while(p!=NULL&&p2!=NULL){
+            ListNode *temp=p->next;
+            p->next=p2;
+            ListNode *temp2=p2->next;
+            p2->next=temp;
+            p=temp;
+            p2=temp2;
+        }
+        
+    }
+};
