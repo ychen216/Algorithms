@@ -1,0 +1,57 @@
+138. Copy List with Random Pointer
+
+/*
+A linked list is given such that each node contains an additional random pointer which could point to any node in the list or null.
+
+Return a deep copy of the list.
+
+
+*/
+
+Solution：
+/**
+ * Definition for singly-linked list with a random pointer.
+ * struct RandomListNode {
+ *     int label;
+ *     RandomListNode *next, *random;
+ *     RandomListNode(int x) : label(x), next(NULL), random(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+    按照原链表next的顺序依次创建节点，并处理好新链表的next指针
+    同时把原节点与新节点的对应关系保存到一个hash_map中
+    第二次循环将random指针处理好。
+    */
+    RandomListNode *copyRandomList(RandomListNode *head) {
+        if(head==NULL)
+            return NULL;
+        unordered_map<RandomListNode*,RandomListNode*>mp;
+        //处理新链表的头指针
+        RandomListNode *newHead=new RandomListNode(head->label);
+        RandomListNode *p1=head,*p2=newHead;
+        /**
+         * 按照原链表的结构不断创建新的节点，并维护好next指针，将node1与node2的对应关系保存到hash_map中，
+         * 以备后面维护random指针的时候，可以通过node1找到对应的node2。
+         */
+        while(p1->next){
+            mp[p1]=p2;
+            p1=p1->next;
+            p2->next=new RandomListNode(p1->label);
+            p2=p2->next;
+        }
+        //处理尾节点的对应关系
+        mp[p1]=p2;
+        p1=head,p2=newHead;
+        //处理random指针
+        while(p1->next){
+            p2->random=mp[p1->random];
+            p1=p1->next;
+            p2=p2->next;
+        }
+        //处理尾节点的random指针
+        p2->random=mp[p1->random];
+        return newHead;
+    }
+};
