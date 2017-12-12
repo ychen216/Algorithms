@@ -1,0 +1,58 @@
+306. Additive Number
+
+/*
+Additive number is a string whose digits can form additive sequence.
+A valid additive sequence should contain at least three numbers.
+Except for the first two numbers, each subsequent number in the sequence must be the sum of the preceding two.
+
+For example:
+"112358" is an additive number because the digits can form an additive sequence: 1, 1, 2, 3, 5, 8.
+1 + 1 = 2, 1 + 2 = 3, 2 + 3 = 5, 3 + 5 = 8
+
+"199100199" is also an additive number, the additive sequence is: 1, 99, 100, 199.
+1 + 99 = 100, 99 + 100 = 199
+Note: Numbers in the additive sequence cannot have leading zeros, so sequence 1, 2, 03 or 1, 02, 3 is invalid.
+
+Given a string containing only digits '0'-'9', write a function to determine if it's an additive number.
+
+Follow up:
+How would you handle overflow for very large input integers?
+*/
+
+Solution:
+import java.math.BigInteger;
+class Solution {
+    /*
+    关键在于寻找前两个数 x1,x2,x1+x2
+    寻找第一个数和第二个数的长度len1,len2 验证第三个数是否是两数之和
+    len1<=n/2 两数和的长度不小于任何一个数的位数
+    max(len1,len2)<=n-len1-len2
+    */
+    public boolean isAdditiveNumber(String num) {
+        int len=num.length();
+        for(int len1=1;len1<=len/2;len1++)
+            for(int len2=1;Math.max(len1,len2)<=len-len1-len2;len2++)
+                if(isVaild(len1,len2,num))
+                    return true;
+        return false;
+    }
+    
+    private boolean isVaild(int len1,int len2,String num){
+        //有前导0
+        if(num.charAt(0)=='0'&&len1>1)return false;
+        if(num.charAt(len1)=='0'&&len2>1)return false;
+        //前两个数
+        BigInteger x1=new BigInteger(num.substring(0,len1));
+        BigInteger x2=new BigInteger(num.substring(len1,len1+len2));
+        String sum;
+        //依次判断后面的数 是否符合要求
+        for(int start=len1+len2;start<num.length();start+=sum.length()){
+            x2=x2.add(x1);
+            sum=x2.toString();
+            x1=x2.subtract(x1);
+            if(!num.startsWith(sum,start))
+                return false;
+        }
+        return true;
+    }
+}
