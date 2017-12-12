@@ -1,0 +1,52 @@
+166. Fraction to Recurring Decimal
+/*
+Given two integers representing the numerator and denominator of a fraction, return the fraction in string format.
+
+If the fractional part is repeating, enclose the repeating part in parentheses.
+
+For example,
+  Given numerator = 1, denominator = 2, return "0.5".
+  Given numerator = 2, denominator = 1, return "2".
+  Given numerator = 2, denominator = 3, return "0.(6)".
+*/
+
+Solution:
+class Solution {
+    //注意边界溢出 用long类型
+    //小数部分出现余数相同时 说明有循环节
+    public String fractionToDecimal(int numerator, int denominator) {
+        if(numerator==0)
+            return "0";
+        StringBuilder res=new StringBuilder();
+        //处理符号
+        res.append((numerator>0)^(denominator>0)?"-":"");
+        
+        long num=Math.abs((long)numerator);
+        long den=Math.abs((long)denominator);
+        //整数部分
+        res.append(num/den);
+        num%=den;
+        //整除
+        if(num==0)
+            return res.toString();
+        else{
+            res.append(".");
+            HashMap<Long,Integer> map=new HashMap<Long,Integer>();//余数和下标的对应
+            map.put(num,res.length());
+            while(num!=0){
+                num*=10;
+                res.append(num/den);
+                num%=den;
+                //是否存在循环节
+                if(map.containsKey(num)){
+                    int index=map.get(num);//循环节开始部分
+                    res.insert(index,"(");
+                    res.append(")");
+                    break;
+                }
+                map.put(num,res.length());
+            }
+            return res.toString();
+        }
+    }
+}
