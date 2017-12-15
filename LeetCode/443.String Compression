@@ -1,0 +1,51 @@
+443. String Compression
+/*
+Given an array of characters, compress it in-place.
+
+The length after compression must always be smaller than or equal to the original array.
+
+Every element of the array should be a character (not int) of length 1.
+
+After you are done modifying the input array in-place, return the new length of the array.
+
+
+Follow up:
+Could you solve it using only O(1) extra space?
+*/
+
+Solution：
+class Solution {
+public:
+    int compress(vector<char>& chars) {
+        int len=chars.size();
+        if(len<=1)
+            return len;
+        int curLen=0;//当前字符出现的次数
+        int p=0;//当前可以填充的有效位置
+        for(int i=0;i<len;i++){
+            if(i==0||chars[i]==chars[i-1])
+                curLen++;
+            else{
+                //填入字母
+                chars[p++]=chars[i-1];
+                //填入字母出现次数
+                //curLen==1不用显示表示
+                if(curLen>1){
+                    string num=to_string(curLen);
+                    for(auto &c:num)
+                        chars[p++]=c;
+                }
+                curLen=1;
+            }
+        }
+        //处理最后一组有效字符 如["a","a","b","b","c","c","c"]的"c"
+        chars[p++]=chars[len-1];
+        //curLen==1不用显示表示
+        if(curLen>1){
+            string num=to_string(curLen);
+            for(auto &c:num)
+                chars[p++]=c;
+        }
+        return p;
+    }
+};
