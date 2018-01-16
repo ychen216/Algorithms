@@ -1,0 +1,59 @@
+10. Regular Expression Matching
+
+Solution 1:
+class Solution {
+public:
+    //recursive 参考http://blog.csdn.net/hk2291976/article/details/51165010
+    bool helper(string &s,int i,string &p,int j){
+        if(j<0){
+            if(i<0)//p和s都匹配完了
+                return true;
+            else//p匹配完而s还没匹配完
+                return false;
+        }
+        //从后向前比较
+        if(p[j]=='*'){
+            //*不会单独出现 前面必然有一个.或者字母
+            if(i>=0&&(p[j-1]=='.'||p[j-1]==s[i]))
+                if(helper(s,i-1,p,j))
+                    return true;
+            //忽略这个*
+            return helper(s,i,p,j-2);
+        }
+        else{
+            if(i>=0&&(p[j]=='.'||p[j]==s[i]))
+                return helper(s,i-1,p,j-1);
+            return false;
+        }
+    }
+    bool isMatch(string s, string p) {
+        return helper(s,s.length()-1,p,p.length()-1);
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    //DP 参考http://blog.csdn.net/hk2291976/article/details/51165010
+    bool isMatch(string s, string p) {
+        int lens=s.length(),lenp=p.length();
+        bool dp[lens+1][lenp+1];
+        dp[0][0]=true;//s,p都为空 匹配
+        //初始化 因为空串p只能匹配空串，其他都无能匹配
+        for(int i=1;i<=lens;i++)
+            dp[i][0]=false;
+        //初始化 只有X*能匹配空串s，如果有*，它的真值一定和p[0][j-2]的相同
+        for(int j=1;j<=lenp;j++)
+            dp[0][j]=j>1&&p[j-1]=='*'&&dp[0][j-2];
+        for(int i=1;i<=lens;i++){
+            for(int j=1;j<=lenp;j++){
+                if(p[j-1]=='*')
+                    dp[i][j]=dp[i][j-2]||(s[i-1]==p[j-2]||p[j-2]=='.')&&dp[i-1][j];
+                else// 字母或.
+                    dp[i][j]=(s[i-1]==p[j-1]||p[j-1]=='.')&&dp[i-1][j-1];
+            }
+        }
+        return dp[lens][lenp];
+    }
+};
