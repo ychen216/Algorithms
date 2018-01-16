@@ -1,0 +1,83 @@
+4. Median of Two Sorted Arrays
+
+/*
+There are two sorted arrays nums1 and nums2 of size m and n respectively.
+
+Find the median of the two sorted arrays. The overall run time complexity should be O(log (m+n)).
+
+Example 1:
+nums1 = [1, 3]
+nums2 = [2]
+
+The median is 2.0
+Example 2:
+nums1 = [1, 2]
+nums2 = [3, 4]
+
+The median is (2 + 3)/2 = 2.5
+*/
+
+Solution 1: O(max(n,m))
+class Solution {
+public:
+    //利用归并的思想
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int len1=nums1.size();
+        int len2=nums2.size();
+        bool chu2=(len1+len2)%2?false:true;
+        int target=(len1+len2)/2;
+        vector<int> newArray;
+        int p1=0,p2=0;
+        while(p1<len1&&p2<len2){
+            if(nums1[p1]<=nums2[p2])
+                newArray.push_back(nums1[p1++]);
+            else
+                newArray.push_back(nums2[p2++]);
+        }
+        while(p1<len1)
+            newArray.push_back(nums1[p1++]);
+        while(p2<len2)
+            newArray.push_back(nums2[p2++]);
+        if(chu2)
+            return (newArray[target-1]+newArray[target])/2.0;
+        else
+            return (double)newArray[target];
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //把问题转化为求第k小的数  参考 http://blog.csdn.net/yutianzuijin/article/details/11499917/
+    //http://blog.csdn.net/gao1440156051/article/details/51725845
+    double findKthSmall(vector<int>& nums1,int i1,vector<int>& nums2,int i2,int k){
+        //nums1为空
+        if(i1>=nums1.size()){  
+            return nums2[i2+k-1];  
+        }  
+        //nums2为空
+        if(i2>=nums2.size()){  
+            return nums1[i1+k-1];  
+        }
+        if(k==1){  
+            return min(nums1[i1],nums2[i2]);  
+        }  
+  
+        int key1=i1+k/2-1>=nums1.size()?INT_MAX:nums1[i1+k/2-1];  
+        int key2=i2+k/2-1>=nums2.size()?INT_MAX:nums2[i2+k/2-1];  
+        if(key1<key2){  
+            return findKthSmall(nums1,i1+k/2,nums2,i2,k-k/2);  
+        }else{  
+            return findKthSmall(nums1,i1,nums2,i2+k/2,k-k/2);  
+        }  
+    }  
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int len1=nums1.size();
+        int len2=nums2.size();
+        int len=len1+len2;
+        if(len&1)
+            return findKthSmall(nums1,0,nums2,0,len/2+1);
+        else
+            return (findKthSmall(nums1,0,nums2,0,len/2)+findKthSmall(nums1,0,nums2,0,len/2+1))/2;
+    }
+};
