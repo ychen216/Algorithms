@@ -1,0 +1,42 @@
+312. Burst Balloons
+/*
+Given n balloons, indexed from 0 to n-1. Each balloon is painted with a number on it represented by array nums.
+You are asked to burst all the balloons. If the you burst balloon i you will get nums[left] * nums[i] * nums[right] coins.
+Here left and right are adjacent indices of i. After the burst, the left and right then becomes adjacent.
+
+Find the maximum coins you can collect by bursting the balloons wisely.
+
+Note: 
+(1) You may imagine nums[-1] = nums[n] = 1. They are not real therefore you can not burst them.
+(2) 0 ≤ n ≤ 500, 0 ≤ nums[i] ≤ 100
+
+Example:
+Given [3, 1, 5, 8]
+Return 167
+
+    nums = [3,1,5,8] --> [3,5,8] -->   [3,8]   -->  [8]  --> []
+   coins =  3*1*5      +  3*5*8    +  1*3*8      + 1*8*1   = 167
+*/
+
+Solution:
+class Solution {
+    //DP dp[i][j]=max(nums[i]*nums[k]*nums[j]+dp[i][k]+dp[k][j]) i<k<j 在(i,j)中选择最后一个爆炸的气球
+    //dp[i][j]表示(i,j)之间(不包含i,j)的气球burst得到的最大值
+    //为了便于处理在首末各加上一位 值为1 便于处理边界
+    public int maxCoins(int[] nums) {
+        int n=nums.length+2;
+        int [][]dp=new int[n][n];
+        int []bonus=new int[n];
+        bonus[0]=bonus[n-1]=1;
+        int p=1;
+        for(int x:nums)bonus[p++]=x;
+        for(int L=2;L<n;L++){
+            for(int i=0;i+L<n;i++){
+                int j=i+L;
+                for(int k=i+1;k<j;k++)
+                    dp[i][j]=Math.max(dp[i][j],dp[i][k]+dp[k][j]+bonus[i]*bonus[k]*bonus[j]);
+            }
+        }
+        return dp[0][n-1];
+    }
+}
