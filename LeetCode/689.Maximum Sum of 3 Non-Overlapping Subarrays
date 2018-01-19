@@ -117,6 +117,7 @@ public:
     }
 };
 
+JAVA
 class Solution {
     public int[] maxSumOfThreeSubarrays(int[] nums, int k) {
         int n=nums.length;
@@ -130,7 +131,7 @@ class Solution {
         int []posLeft=new int[n];
         int leftMaxSum=sum[k]-sum[0],leftMaxIndex=0;
         //中间区间选择起点为i
-        for(int i=k+1;i<=n-2*k;i++){
+        for(int i=k;i<=n-2*k;i++){
             if(sum[i]-sum[i-k]>leftMaxSum){
                 leftMaxSum=sum[i]-sum[i-k];
                 leftMaxIndex=i-k;
@@ -143,7 +144,7 @@ class Solution {
         // initial value is n-k because if middle interval start index is n - 2*k, then right interval start index is n-k.
         int []posRight=new int[n];
         int rightMaxSum=sum[n]-sum[n-k],rightMaxIndex=n-k;
-        for(int i=n-2*k-1;i>=k;i--){
+        for(int i=n-2*k;i>=k;i--){
             if(sum[i+2*k]-sum[i+k]>=rightMaxSum){
                 rightMaxSum=sum[i+2*k]-sum[i+k];
                 rightMaxIndex=i+k;
