@@ -1,0 +1,67 @@
+546. Remove Boxes
+
+/*
+Given several boxes with different colors represented by different positive numbers. 
+You may experience several rounds to remove boxes until there is no box left. Each time you can choose some continuous boxes 
+with the same color (composed of k boxes, k >= 1), remove them and get k*k points.
+Find the maximum points you can get.
+
+Example 1:
+Input:
+
+[1, 3, 2, 2, 2, 3, 4, 3, 1]
+Output:
+23
+Explanation:
+[1, 3, 2, 2, 2, 3, 4, 3, 1] 
+----> [1, 3, 3, 4, 3, 1] (3*3=9 points) 
+----> [1, 3, 3, 3, 1] (1*1=1 points) 
+----> [1, 1] (3*3=9 points) 
+----> [] (2*2=4 points)
+Note: The number of boxes n would not exceed 100.
+*/
+
+Solution:
+class Solution {
+public:
+    /*参考http://blog.csdn.net/yy254117440/article/details/67638980
+    三维dp
+    dp[i][j][k]表示可获得的最大分数 其中ij是左右边界 k是和右边界相等的后缀长度
+    对于固定的i,j,k可以有两种分割方式
+    eg.1 2 3 4 2 2 
+        1 2 3 4 2 2
+        i       j   即dp[i][j][1]
+    分割1 合并右侧相等的k个元素 dp[i][j][k]=dp[i][j-1][0]+(k+1)*(k+1)
+    分割2 在[i,j)找一个下标r 使得boxes[j]==boxes[r] 那么可以把数组划分为两个部分
+        1 2 2 2 左右两部分合并
+        i j    dp[i][j][2] 
+        3 4    中间的部分
+        i j    dp[i][j][0]
+        dp[i][j][k]=dp[r+1][j-1][0]+dp[i][r][k+1]
+    
+    */
+    int removeBoxes(vector<int>& box) {
+        int size=box.size();
+        int dp[100][100][100]={0};
+        return dfs(box,dp,0,size-1,0);
+    }
+
+private:
+    int dfs(vector<int>&box,int dp[100][100][100],int l,int r,int k){
+        if(l>r)
+            return 0;
+        if(dp[l][r][k]>0)
+            return dp[l][r][k];
+        while(l<r&&box[r]==box[r-1]){
+            k++;
+            r--;
+        }
+        dp[l][r][k]=dfs(box,dp,l,r-1,0)+(k+1)*(k+1);
+        for(int i=l;i<r;i++){
+            if(box[i]==box[r]){
+                dp[l][r][k]=max(dp[l][r][k],dfs(box,dp,i+1,r-1,0)+dfs(box,dp,l,i,k+1));
+            }
+        }
+        return dp[l][r][k];
+    }
+};
