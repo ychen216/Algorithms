@@ -52,8 +52,9 @@ public:
             for(int p=0;p<n;p++)
                 dp[p][k]=dp[p][k-1];
             for(auto &f:flights)
-                dp[f[1]][k]=min(dp[f[1]][k],dp[f[0]][k-1]+f[2]);
+                if(dp[f[0]][k-1]!=INT_MAX)//防止溢出
+                    dp[f[1]][k]=min(dp[f[1]][k],dp[f[0]][k-1]+f[2]);
         }
-        return dp[dst][K];
+        return dp[dst][K]==INT_MAX?-1:dp[dst][K];
     }
 };
