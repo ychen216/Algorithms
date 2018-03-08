@@ -16,6 +16,26 @@ You may assume that you have an infinite number of each kind of coin.
 Solution:
 class Solution {
 public:
+    //完全背包
+    int coinChange(vector<int>& coins, int amount) {
+        if(amount<0)
+            return -1;
+        int size=coins.size();
+        vector<int> dp(amount+1,INT_MAX);
+        dp[0]=0;
+        for(int i=0;i<size;i++){
+            for(int C=coins[i];C<=amount;C++){
+                if(dp[C-coins[i]]!=INT_MAX)
+                    dp[C]=min(dp[C],dp[C-coins[i]]+1);
+            }
+        }
+        return dp[amount]==INT_MAX?-1:dp[amount];
+    }
+};
+
+Solution:
+class Solution {
+public:
     //DP dp[x]=min(dp[x-coins[i]]+1);
     int coinChange(vector<int>& coins, int amount) {
         if(amount==0)
