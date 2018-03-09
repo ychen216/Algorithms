@@ -1,0 +1,46 @@
+115. Distinct Subsequences
+/*
+Given a string S and a string T, count the number of distinct subsequences of S which equals T.
+
+A subsequence of a string is a new string which is formed from the original string by deleting some (can be none) of the characters without disturbing the relative positions of the remaining characters. (ie, "ACE" is a subsequence of "ABCDE" while "AEC" is not).
+
+Here is an example:
+S = "rabbbit", T = "rabbit"
+
+Return 3.
+*/
+
+Solution:
+class Solution {
+public:
+    /*考虑最长公共子序列LCS的思想
+	dp[s.length+1][t.length+1]
+    dp[i][j]表示 s[0,i)能产生多少种不同的t[0,j)子序列
+    dp[i][0]=1 t是空串时 任何字符串只有一种方式得到空串(删除所有元素或者其本身就是空串)
+    dp[0][j]=0 (j>0) s是空串时不能得到任何非空串的子序列
+    dp[i][j]=dp[i-1][j]+dp[i-1][j-1] 当s[i-1]==t[j-1]时有两种考虑方案 
+        1 利用s[i-1]产生字符t[j-1] 有dp[i-1][j-1]中方案
+        2 不用s[i-1]产生字符t[j-1] 有dp[i-1][j]
+    dp[i][j]=dp[i-1][j] 当s[i-1]!=t[j-1]时
+    */
+    int numDistinct(string s, string t) {
+        int lens=s.length();
+        int lent=t.length();
+        int dp[lens+1][lent+1];
+        for(int i=0;i<=lens;i++)
+            dp[i][0]=1;
+        for(int j=1;j<=lent;j++)
+            dp[0][j]=0;
+        for(int i=1;i<=lens;i++){
+            for(int j=1;j<=lent;j++){
+                if(s[i-1]==t[j-1])
+                    dp[i][j]=dp[i-1][j-1]+dp[i-1][j];
+                else
+                    dp[i][j]=dp[i-1][j];
+            }
+        }
+        return dp[lens][lent];
+    }
+};
+
+
