@@ -1,0 +1,67 @@
+600.Non-negative Integers without Consecutive Ones
+
+/*
+Given a positive integer n, find the number of non-negative integers less than or equal to n, whose binary representations do NOT contain consecutive ones.
+
+Example 1:
+Input: 5
+Output: 5
+Explanation: 
+Here are the non-negative integers <= 5 with their corresponding binary representations:
+0 : 0
+1 : 1
+2 : 10
+3 : 11
+4 : 100
+5 : 101
+Among them, only integer 3 disobeys the rule (two consecutive ones) and the other 5 satisfy the rule. 
+Note: 1 <= n <= 109
+*/
+
+Solution：
+class Solution {
+public:
+    /*
+    one[i]：以1结尾长度为i的不包含连续1的二进制字符串个数
+    zero[i]:以0结尾长度为i的不包含连续1的二进制字符串个数
+    长度为i的二进制字符串中不存在连续1的字符串个数res的计算方式：
+        1.以1结尾 one[i]=zero[i-1]
+        2.以0结尾 zero[i]=zero[i-1]+one[i-1]
+    res=one[i]+zero[i]
+    
+    首先计算num的二进制表示的位数n 得到长度为n的不存在连续1的二进制字符串数目 然后减去大于num的部分
+    */
+    int findIntegers(int num) {
+        vector<int> bits;//存储num的二进制表示 倒序存放 eg 2->01
+        for(;num>0;num>>=1)
+            bits.push_back(num&1);
+        int n=bits.size();
+        int zero[n],one[n];
+        zero[0]=1,one[0]=1;//初始化长度为1的情况
+        for(int i=1;i<n;i++){
+            zero[i]=zero[i-1]+one[i-1];
+            one[i]=zero[i-1];
+        }
+        int res=one[n-1]+zero[n-1];
+        //减去大于num的部分
+        /*
+        if bit[i] == 1
+        if bit[i + 1] == 0, there’s no solutions in res that is larger than num, we go further into smaller bit and subtract.
+        if bit[i + 1] == 1, we know in those res solutions it won’t have any consecutive ones. when bit[i + 1] == 1, in one[i + 1],
+        the i-th bit in valid solutions must be 0, which are all smaller than ‘num’, we don’t need to check smaller bits and subtract, 
+        so we break form the loop.
+        if bit[i] == 0
+        if bit[i + 1] == 1, there’s no solutions in res that is larger than num, we go further into smaller bit and subtract.
+        if bit[i + 1] == 0, we know zero[i + 1] includes solutions of i-th == 0 (00***) and i-th bit == 1 (01***), 
+        we know the i-th bit of num is 0, so we need to subtract all the 01*** solutions because it is larger than num.
+        Therefore, one[i] is subtracted from res.
+        */
+        for(int i=n-2;i>=0;i--){
+            if(bits[i]==1&&bits[i+1]==1)//在符合条件的字符串中不可能存在比 11....更大的数
+                break;
+            else if(bits[i]==0&&bits[i+1]==0)//存在 01...比num大
+                res-=one[i];
+        }
+        return res;
+    }
+};
