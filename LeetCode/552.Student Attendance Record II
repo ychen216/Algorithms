@@ -1,0 +1,52 @@
+552. Student Attendance Record II
+
+/*
+Given a positive integer n, return the number of all possible attendance records with length n, which will be regarded as rewardable. 
+The answer may be very large, return it after mod 109 + 7.
+
+A student attendance record is a string that only contains the following three characters:
+
+'A' : Absent.
+'L' : Late.
+'P' : Present.
+A record is regarded as rewardable if it doesn't contain more than one 'A' (absent) or more than two continuous 'L' (late).
+
+Example 1:
+Input: n = 2
+Output: 8 
+Explanation:
+There are 8 records with length 2 will be regarded as rewardable:
+"PP" , "AP", "PA", "LP", "PL", "AL", "LA", "LL"
+Only "AA" won't be regarded as rewardable owing to more than one absent times. 
+*/
+
+Solution:
+class Solution {
+public:
+    /*长度为n的以P,L,A结尾rewardable Record数目 
+    P(n) = A(n - 1) + P(n - 1) + L(n - 1), n ≥ 2.
+    L(n) = A(n - 1) + P(n - 1) + A(n - 2) + P(n - 2), n ≥ 3.
+    A(n) = A(n - 1) + A(n - 2) + A(n - 3), n ≥ 4.
+    T(n)=P(n)+L(n)+A(n) 所有可行的方案数
+    初始化
+    P(1) = 1.
+    L(1) = 1, L(2) = 3.
+    A(1) = 1, A(2) = 2, A(3) = 4.
+    推导见discuss https://leetcode.com/problems/student-attendance-record-ii/discuss/101643/Share-my-O(n)-C++-DP-solution-with-thinking-process-and-explanation
+    */
+    int checkRecord(int n) {
+        int MOD=1e9+7;
+        if(n==1)
+            return 3;
+        int P[n+1];
+        int L[n+2];
+        int A[n+3];//避免初始化下标越界
+        P[1]=1,L[1]=1,L[2]=3,A[1]=1,A[2]=2,A[3]=4;
+        for(int i=2;i<=n;i++){
+            P[i]=((A[i-1]+P[i-1])%MOD+L[i-1])%MOD;
+            if(i>2) L[i]=((A[i-1]+P[i-1])%MOD+(A[i-2]+P[i-2])%MOD)%MOD;
+            if(i>3) A[i]=((A[i-1]+A[i-2])%MOD+A[i-3])%MOD;
+        }
+        return ((P[n]+L[n])%MOD+A[n])%MOD;
+    }
+};
