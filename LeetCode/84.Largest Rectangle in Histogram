@@ -1,0 +1,83 @@
+84. Largest Rectangle in Histogram
+/*
+Given n non-negative integers representing the histogram's bar height where the width of each bar is 1, find the area of largest rectangle in the histogram.
+
+      6
+    5 □
+    □ □
+    □ □   3
+2   □ □ 2 □
+□ 1 □ □ □ □
+□ □ □ □ □ □
+Above is a histogram where width of each bar is 1, given height = [2,1,5,6,2,3].
+
+      6
+    5 □
+    ■ ■
+    ■ ■   3
+2   ■ ■ 2 □
+□ 1 ■ ■ □ □
+□ □ ■ ■ □ □
+The largest rectangle is shown in the shaded area, which has area = 10 unit.
+For example,
+
+Given height = [2,1,5,6,2,3],
+
+return 10.
+*/
+
+Solution 1：
+class Solution {
+public:
+    //TLE 暴力解法 固定左右边界判断在此边界内的最大矩形面积
+    int largestRectangleArea(vector<int>& heights) {
+        int size=heights.size();
+        int res=0,minHeight=0,curArea=0;
+        for(int left=0;left<size;left++){
+            //初始化为左右边界相同的情况
+            minHeight=heights[left];
+            curArea=minHeight;
+            for(int right=left;right<size;right++){
+                if(heights[right]<minHeight)
+                    minHeight=heights[right];
+                curArea=minHeight*(right-left+1);
+                res=max(res,curArea);
+            }
+        }
+        return res;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    //实现参考 http://blog.csdn.net/makuiyu/article/details/44857459 
+    //利用栈记录一个递增序列
+    /*思想http://blog.csdn.net/yutianzuijin/article/details/520724274
+    解法的核心在于考虑了直方图两个相邻长方形AB之间的关系。如果前一个长方形A低后一个长方形B高，则A肯定不会是某个大长方形的终点，
+    因为我们可以安全地在A后面添加更高的B，使大长方形的宽度加1。如果A高B低，则A是可能的终点，假设我们就用A当做终点，
+    并且以该长方形的高度当做大长方形的高度，看看可以往前延伸多长。
+    根据上面这两条性质，我们可以维护一个递增序列（实际为非递减，当前后两个长方形的高度一样时，前一个长方形同样也不可能是终点，
+    在此为了解释方便假定前后高度都不一样），当B高时就将B的位置添加到序列中，否则就弹出A的位置，并用A的位置作为终点，
+    A的高度作为大长方形的高度计算面积。起点怎么确定呢，由于我们维护的是一个递增序列，在弹出A之后，
+    序列中A的前一个位置所对应的长方形高度肯定低于A的高度，所以A的前一个长方形的位置加1即是大长方形的起点。
+    
+    为了方便处理栈空 在heights加入一个哨兵元素
+    */
+    int largestRectangleArea(vector<int>& heights) {
+        heights.push_back(0);
+        stack<int> st;//存储递增序列的下标
+        int res=0,area=0,h=0;
+        for(int i=0;i<heights.size();i++){
+            while(!st.empty()&&heights[st.top()]>=heights[i]){
+                h=heights[st.top()];
+                st.pop();
+                area=h*(st.empty()?i:(i-st.top()-1));
+                res=max(res,area);
+            }
+            st.push(i);
+        }
+        return res;
+    }
+};
