@@ -1,0 +1,57 @@
+85. Maximal Rectangle
+/*
+Given a 2D binary matrix filled with 0's and 1's, find the largest rectangle containing only 1's and return its area.
+
+For example, given the following matrix:
+
+1 0 1 0 0
+1 0 1 1 1
+1 1 1 1 1
+1 0 0 1 0
+Return 6.
+*/
+Solution 1:
+class Solution {
+public:
+    /*
+    基于84Largest Rectangle in Histogram
+    假设把矩阵沿着某一行分开，然后把分开的行作为底面，将自底面往上的矩阵看成一个直方图
+    直方图的中每个项的高度就是从底面行开始往上1的数量 根据Largest Rectangle in Histogram就可以求出当前行作为矩阵下边缘的一个最大矩阵
+    接下来对每一行都做一次Largest Rectangle in Histogram,从其中选出最大的矩阵,那么它就是整个矩阵中面积最大的子矩阵
+    */
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        if(matrix.size()==0||matrix[0].size()==0)
+            return 0;
+        vector<int> height(matrix[0].size()+1,0);//存储基于不同行的直方图矩形的高度 便于栈的处理增加1个哨兵元素
+        int res=0;
+        //逐行计算不同的直方图
+        for(int i=0;i<matrix.size();i++){
+            for(int j=0;j<matrix[i].size();j++)
+                height[j]=matrix[i][j]=='1'?height[j]+1:0;
+            //00
+            //11
+            //10 该行获得的直方图的高度为2 0 而不是2 1 故不能直接根据matrix值为0或1累加height
+            res=max(res,calMaxRectArea(height));
+        }
+        return res;
+    }
+
+private:
+    int calMaxRectArea(vector<int>&height){
+        stack<int> st;
+        int res=0,h=0,area=0;
+        for(int i=0;i<height.size();i++){
+            while(!st.empty()&&height[st.top()]>=height[i]){
+                h=height[st.top()];
+                st.pop();
+                area=h*(st.empty()?i:(i-st.top()-1));
+                res=max(res,area);
+            }
+            st.push(i);
+        }
+        return res;
+    }
+};
+
+
+Solution 2: DP 未探索
