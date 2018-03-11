@@ -1,0 +1,51 @@
+140. Word Break II
+/*
+Given a non-empty string s and a dictionary wordDict containing a list of non-empty words, add spaces in s to construct a sentence where each word is a valid dictionary word. You may assume the dictionary does not contain duplicate words.
+
+Return all such possible sentences.
+
+For example, given
+s = "catsanddog",
+dict = ["cat", "cats", "and", "sand", "dog"].
+
+A solution is ["cats and dog", "cat sand dog"].
+*/
+
+Solution:
+class Solution {
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        unordered_map<string,vector<string>> mmap;//存储string对应的所有可能分割成的sentence
+        //按长度排序 只有长度不大于s的串才有可能是s的子串
+        sort(wordDict.begin(),wordDict.end(),[&](string&s1,string&s2){return s1.length()<s2.length();});
+        return dfs(s,wordDict,mmap);
+    }
+private:
+    vector<string> dfs(string s,vector<string>&wordDict,unordered_map<string,vector<string>>&mmap){
+        if(mmap.find(s)!=mmap.end())
+            return mmap[s];
+        vector<string> res;
+        int len=s.length();
+        if(len==0){
+            res.push_back("");
+            return res;
+        }
+        for(int i=0;i<wordDict.size();i++){
+            int lenw=wordDict[i].length();
+            if(lenw>len)
+                break;
+            //若匹配那么首字符一定相同
+            if(wordDict[i][0]!=s[0])
+                continue;
+            if(s.substr(0,lenw)==wordDict[i]){
+                vector<string> subres=dfs(s.substr(lenw),wordDict,mmap);
+                if(!subres.empty()){
+                    for(auto &sub:subres)
+                        res.push_back(wordDict[i]+(sub==""?"":" ")+sub);
+                }    
+            }
+        }
+        mmap[s]=res;
+        return res;
+    }
+};
