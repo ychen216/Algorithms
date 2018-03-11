@@ -1,0 +1,40 @@
+132. Palindrome Partitioning II
+/*
+Given a string s, partition s such that every substring of the partition is a palindrome.
+
+Return the minimum cuts needed for a palindrome partitioning of s.
+
+For example, given s = "aab",
+Return 1 since the palindrome partitioning ["aa","b"] could be produced using 1 cut.
+*/
+
+class Solution {
+public:
+    /*
+    参考 http://blog.csdn.net/jin_kwok/article/details/51423222
+    更详细 http://blog.csdn.net/yutianzuijin/article/details/16850031
+    首先判断字符串各部分是否是回文串
+    dp[i][j]表示s[i..j]是否是一个回文串 
+    dp[i][j]=true 当s[i]==s[j]&&(j-i<=1||dp[i+1][j-1]) j-i<=1说明s[i..j]是一个形如 aa或a这样的回文串
+    cut[i]表示从第i位到最后一位所用的最少切割数
+    cut[i]=min(cut[i],cut[j+1]+1) i<=j<len且dp[i][j]=true 即s[i..j]是一个回文串 在i处做一个切割
+    为了避免j+1在j==len-1时溢出 要做边界处理及初始化 cut[len]=0
+    最后的结果为cut[0]-1首位的切割应该删去  |aa|b
+    */
+    int minCut(string s) {
+        int len=s.length();
+        vector<int> cut(len+1,INT_MAX);
+        cut[len]=0;
+        vector<vector<bool>> dp(len,vector<bool>(len,0));
+        for(int i=len-1;i>=0;i--){
+            for(int j=i;j<len;j++){
+                if(s[i]==s[j]&&(j-i<=1||dp[i+1][j-1])){
+                    dp[i][j]=true;
+                    cut[i]=min(cut[i],cut[j+1]+1);
+                }
+            }
+        }
+        return cut[0]-1;
+    }
+};
+
