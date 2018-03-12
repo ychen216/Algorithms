@@ -1,0 +1,39 @@
+32. Longest Valid Parentheses
+/*
+Given a string containing just the characters '(' and ')', find the length of the longest valid (well-formed) parentheses substring.
+
+For "(()", the longest valid parentheses substring is "()", which has length = 2.
+
+Another example is ")()())", where the longest valid parentheses substring is "()()", which has length = 4.
+
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        利用栈 遇到匹配的括号就出栈 否则入栈 最后留在栈里的就是未匹配上的
+        当前字符下标i和栈顶下标j之间的就是有效的括号串(j..i)
+        为了便于处理扫描完s后栈非空的情况 在字符串s加一个哨兵元素
+    */
+    int longestValidParentheses(string s) {
+        s+="x";
+        int len=s.length();
+        stack<int> st;
+        int longest=INT_MIN;
+        for(int i=0;i<len;i++){
+            if(s[i]==')'&&!st.empty()&&s[st.top()]=='(')
+                st.pop();
+            else{
+                //s[i]没有匹配上
+                //栈是空的说明在s[i]之前的所有元素都匹配上了
+                if(st.empty())
+                    longest=max(longest,i);
+                else//在s[i]之前的元素和栈顶元素之后的元素之间的字符都匹配上了
+                    longest=max(longest,i-st.top()-1);
+                st.push(i);
+            }
+        }
+        return longest;
+    }
+};
