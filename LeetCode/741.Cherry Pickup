@@ -1,0 +1,89 @@
+741. Cherry Pickup
+
+/*
+In a N x N grid representing a field of cherries, each cell is one of three possible integers.
+
+0 means the cell is empty, so you can pass through;
+1 means the cell contains a cherry, that you can pick up and pass through;
+-1 means the cell contains a thorn that blocks your way.
+Your task is to collect maximum number of cherries possible by following the rules below:
+
+Starting at the position (0, 0) and reaching (N-1, N-1) by moving right or down through valid path cells (cells with value 0 or 1);
+After reaching (N-1, N-1), returning to (0, 0) by moving left or up through valid path cells;
+When passing through a path cell containing a cherry, you pick it up and the cell becomes an empty cell (0);
+If there is no valid path between (0, 0) and (N-1, N-1), then no cherries can be collected.
+Example 1:
+Input: grid =
+[[0, 1, -1],
+ [1, 0, -1],
+ [1, 1,  1]]
+Output: 5
+Explanation: 
+The player started at (0, 0) and went down, down, right right to reach (2, 2).
+4 cherries were picked up during this single trip, and the matrix becomes [[0,1,-1],[0,0,-1],[0,0,0]].
+Then, the player went left, up, up, left to return home, picking up one more cherry.
+The total number of cherries picked up is 5, and this is the maximum possible.
+Note:
+
+grid is an N by N 2D array, with 1 <= N <= 50.
+Each grid[i][j] is an integer in the set {-1, 0, 1}.
+It is guaranteed that grid[0][0] and grid[N-1][N-1] are not -1.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+    参考 http://blog.csdn.net/luke2834/article/details/79365645
+    首先我们知道，正反两次走，等价于分别做两次正着走。问题就变成分别走两次找最大收益，其中第一次走过的1会变成0。
+    然后我们进一步，简化理解，可以是2个人同时正着走，且速度一样，希望两人总体的收益最大，如果它们同时走到一个格子上，那它们只能拿一次
+    可以简单理解一下为什么这个问题，和刚才的问题等价：设速度都是1，则第t个时刻，设第一个人走到(x1, y1)，第二个人走到(x2, y2)，
+    那么一定有x1 + y1 = t，x2 + y2 = t，假如x1 != x2，那么这一次行程中，第一个人永远不会走到(x2, y2)，同理第二人永远不会走到(x1, y1)。
+    因此，拿重的问题只会在它们同时走到一个格子的时候遇到，因此我们判断他们每个时刻是否会到达同一个格子就可以去重了。
+    把这个思想转换成dp的状态，则可以表示为dp(t, x1, x2)，也就是第t时刻第一个人走到(x1, t - x1)，第二个人走到(x2, t - x2)时两人的最大收益。
+    状态转移也非常简单：dp(t, x1, x2) = grid(x1, t - x1) + (x1 == x2 ? 0 : grid(x2, t - x2)) + 
+    max(dp(t-1, x1, x2), dp(t - 1, x1, x2 - 1), dp(t - 1, x1 - 1, x2), dp(t - 1, x1 - 1, x2 - 1))
+    最后就是t这一维我们可以通过滚动数组压掉，注意这样的话需要反向遍历更新dp
+    也可以用一个三维数组正向遍历dp[t][x1][x2]
+    */
+    int cherryPickup(vector<vector<int>>& grid) {
+        int n=grid.size();
+        vector<vector<int>> dp(n,vector<int>(n,-1));
+        dp[0][0]=grid[0][0];
+        int K=2*n-1;
+        for(int k=1;k<K;k++){
+            //滚动数组 反向遍历
+            for(int xa=min(k,n-1);xa>=0&&xa>=k-n+1;xa--){
+                for(int xb=min(k,n-1);xb>=0&&xb>=k-n+1;xb--){
+                    int ya=k-xa,yb=k-xb;
+                    //-1 不能走
+                    if(grid[xa][ya]==-1||grid[xb][yb]==-1){
+                        dp[xa][xb]=-1;
+                        continue;
+                    }
+                    //更新
+                    
+                    if(xa>0&&xb>0){
+                        if(xb>0)//此时同向右走
+                            dp[xa][xb]=max(dp[xa][xb],dp[xa-1][xb-1]);
+                        if(yb>0)//a向右 b向下
+                            dp[xa][xb]=max(dp[xa][xb],dp[xa-1][xb]);
+                    }
+                    //都向下走
+                    //if(ya>0&&yb>0)
+                        //dp[xa][xb]=max(dp[xa][xb],dp[xa][xb]);
+                    //a向下 b向右
+                    if(ya>0&&xb>0)
+                        dp[xa][xb]=max(dp[xa][xb],dp[xa][xb-1]);
+                    if(dp[xa][xb]==-1)
+                        continue;
+                    //去重 排除两者走到相同的位置 捡了两次樱桃
+                    dp[xa][xb]+=grid[xa][ya];
+                    if(xa!=xb)
+                        dp[xa][xb]+=grid[xb][yb];
+                }
+            }
+        }
+        return max(dp[n-1][n-1],0);
+    }
+};
