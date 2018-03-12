@@ -1,0 +1,99 @@
+321. Create Maximum Number
+
+/*
+Given two arrays of length m and n with digits 0-9 representing two numbers. Create the maximum number of length k <= m + n
+from digits of the two. The relative order of the digits from the same array must be preserved. Return an array of the k digits. 
+You should try to optimize your time and space complexity.
+
+Example 1:
+nums1 = [3, 4, 6, 5]
+nums2 = [9, 1, 2, 5, 8, 3]
+k = 5
+return [9, 8, 6, 5, 3]
+
+Example 2:
+nums1 = [6, 7]
+nums2 = [6, 0, 4]
+k = 5
+return [6, 7, 6, 0, 4]
+
+Example 3:
+nums1 = [3, 9]
+nums2 = [8, 9]
+k = 3
+return [9, 8, 9]
+*/
+
+Solution:
+class Solution {
+public:
+    /* 参考 http://blog.csdn.net/yzhang6_10/article/details/51367533
+    https://www.cnblogs.com/CarryPotMan/p/5384172.html
+    要组成长度为k的数字 那么可以从nums1中取出长度为i的对应数值最大的子序列v1 从nums2中取出长度为k-i的对应数值最大的子序列v2
+    然后把v1 v2 merge成一个数
+    那么如何从数组中取出长度为i的最大子序列：
+        新建一个空栈stack
+        遍历数组 nums
+        如果栈顶元素比nums[i]小则弹出栈顶元素,直到
+            1、栈空
+            2、剩余的数组不足以填满栈至 k
+        如果栈的大小小于k,则压入nums[i]
+        返回栈stack
+        因为栈的长度知道是k，所以可以用数组来实现这个栈。时间复杂度为O(n)，因为每个元素最多被push和pop()一次
+    */
+    vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
+        int len1=nums1.size(),len2=nums2.size();
+        if(len1==0)
+            return findMaxSequence(nums2,k);
+        if(len2==0)
+            return findMaxSequence(nums1,k);
+        vector<int> res(k,0);
+        vector<int> temp(k,0);
+        //枚举num1数组得到的子序列长度
+        for(int i=max(0,k-len2);i<=min(len1,k);i++){
+            vector<int> v1=findMaxSequence(nums1,i);
+            vector<int> v2=findMaxSequence(nums2,k-i);
+            temp=merge(v1,v2);
+            if(compare(temp,0,res,0))
+                res=temp;
+        }
+        return res;
+    }
+private:
+    //求数组中长度为k的最大子序列
+    vector<int> findMaxSequence(vector<int> &num,int k){
+        if(k==0)
+            return {};
+        vector<int> st(k,0);
+        int n=num.size();
+        int j=0;//栈顶元素下一个位置 即可以放入元素的下标
+        for(int i=0;i<n;i++){
+            //出栈
+            while(j>0&&n-i+j>k&&st[j-1]<num[i])j--;
+            //入栈
+            if(j<k) st[j++]=num[i];
+        }
+        return st;
+    }
+    
+    //nums1[i..len1)是否比nums2[j..len2)大
+    bool compare(vector<int>& num1,int i,vector<int>&num2,int j){
+        int len1=num1.size(),len2=num2.size();
+        while(i<len1&&j<len2&&num1[i]==num2[j]){
+            i++;
+            j++;
+        }
+        return j==len2||(i<len1&&num1[i]>num2[j]);
+    }
+    
+    vector<int> merge(vector<int>&num1,vector<int>&num2){
+        int len1=num1.size();
+        int len2=num2.size();
+        vector<int> res(len1+len2,0);
+        int i=0,j=0,p=0;
+        while(i<len1||j<len2){
+            res[p++]=compare(num1,i,num2,j)?num1[i++]:num2[j++];
+        }
+        return res;
+    }
+};
