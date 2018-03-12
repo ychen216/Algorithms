@@ -1,0 +1,59 @@
+44. Wildcard Matching
+/*
+Implement wildcard pattern matching with support for '?' and '*'.
+
+'?' Matches any single character.
+'*' Matches any sequence of characters (including the empty sequence).
+
+The matching should cover the entire input string (not partial).
+
+The function prototype should be:
+bool isMatch(const char *s, const char *p)
+
+Some examples:
+isMatch("aa","a") → false
+isMatch("aa","aa") → true
+isMatch("aaa","aa") → false
+isMatch("aa", "*") → true
+isMatch("aa", "a*") → true
+isMatch("ab", "?*") → true
+isMatch("aab", "c*a*b") → false
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+    If s[i]==p[j] or p[j] == ? which means this is a match, then goes to next element i++ j++.
+    If p[j]=='*', this is also a match, but one or many chars may be available, so let us save this *'s position and the matched s position.
+If not match, then we check if there is a * previously showed up,
+       if there is no *,  return false;
+       if there is an *,  we set current p to the next element of *, and set current s to the next saved s position.
+
+    */
+    bool isMatch(string s, string p) {
+        int lens=s.length(),lenp=p.length();
+        int i=0,j=0,pstar=-1,prei;
+        while(i<lens){
+            if(j<lenp&&(p[j]=='?'||p[j]==s[i])){
+                i++;
+                j++;
+            }
+            else if(j<lenp&&p[j]=='*'){
+                //第一次遇到时 将*匹配空串
+                pstar=j;
+                j++;
+                prei=i;
+            }
+            else if(pstar>=0){
+                j=pstar+1;
+                i=++prei;
+            }
+            else
+                return false;
+        }
+        while(j<lenp&&p[j]=='*')
+            j++;
+        return j==lenp;
+    }
+};
