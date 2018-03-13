@@ -1,0 +1,68 @@
+155. Min Stack
+
+/*
+Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+
+push(x) -- Push element x onto stack.
+pop() -- Removes the element on top of the stack.
+top() -- Get the top element.
+getMin() -- Retrieve the minimum element in the stack.
+Example:
+MinStack minStack = new MinStack();
+minStack.push(-2);
+minStack.push(0);
+minStack.push(-3);
+minStack.getMin();   --> Returns -3.
+minStack.pop();
+minStack.top();      --> Returns 0.
+minStack.getMin();   --> Returns -2.
+*/
+
+Solution:
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    MinStack() {
+        
+    }
+    /*
+    当前要加入的值x小于当前最小值min时
+    将当前最小值压入栈 这是为了记录次小值 这样在pop时如果pop出最小值后 此刻在栈顶的就是现在的最小值
+    */
+    void push(int x) {
+        if(x<=min){
+            st.push(min);
+            min=x;
+        }
+        st.push(x);
+    }
+    
+    void pop() {
+        if(st.top()==min){
+            st.pop();
+            //更新最小值 再将多push的最小值pop()
+            min=st.top();
+        }
+        st.pop();
+    }
+    
+    int top() {
+        return st.top();
+    }
+    
+    int getMin() {
+        return min;
+    }
+private:
+    stack<int> st;
+    int min=INT_MAX;
+};
+
+/**
+ * Your MinStack object will be instantiated and called as such:
+ * MinStack obj = new MinStack();
+ * obj.push(x);
+ * obj.pop();
+ * int param_3 = obj.top();
+ * int param_4 = obj.getMin();
+ */
