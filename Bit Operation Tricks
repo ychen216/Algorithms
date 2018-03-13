@@ -1,3 +1,5 @@
+Reference: https://leetcode.com/problems/sum-of-two-integers/discuss/84278/A-summary:-how-to-use-bit-manipulation-to-solve-problems-easily-and-efficiently
+
 Set union A | B
 Set intersection A & B
 Set subtraction A & ~B
