@@ -1,0 +1,108 @@
+295. Find Median from Data Stream
+/*
+Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value.
+So the median is the mean of the two middle value.
+
+Examples: 
+[2,3,4] , the median is 3
+
+[2,3], the median is (2 + 3) / 2 = 2.5
+
+Design a data structure that supports the following two operations:
+void addNum(int num) - Add a integer number from the data stream to the data structure.
+double findMedian() - Return the median of all elements so far.
+
+For example:
+addNum(1)
+addNum(2)
+findMedian() -> 1.5
+addNum(3) 
+findMedian() -> 2
+*/
+
+Solution 1:利用multiset TLE
+class MedianFinder {
+public:
+    /** initialize your data structure here. */
+    MedianFinder() {
+        
+    }
+    
+    void addNum(int num) {
+        sset.insert(num);
+    }
+    
+    double findMedian() {
+        int size=sset.size();
+        double res=0;
+        auto it=sset.begin();
+        for(int i=0;i<size/2;i++)
+            it++;
+        res+=*it;
+        if(size%2==0){
+            it--;
+            res+=*it;
+            res/=2;
+        }
+        return res;
+    }
+private:
+    multiset<int> sset;
+};
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
+ 
+ Solution 2:
+ class MedianFinder {
+public:
+    /*
+    利用multiset TLE 插入O(lgn) 找中位数O(n)
+    参考 https://www.cnblogs.com/yrbbest/p/5044819.html
+    这里利用两个堆来完成
+    在最大堆中存放较小的一半数 堆顶是这些数中最大的数
+    在最小堆中存放较大的另一半数 堆顶是这些数中最小的数
+    取中位数时 只要看总数是偶数则取两个堆顶元素 否则取最小堆堆顶元素 O(1)
+    插入O(lgn)
+    
+    这里注意 greater和less  在排序时 greater从大到小 less从小到大排序
+    而在优先队列中第三个参数表达的是<,也就是何时优先级低! less表示小的优先级低 所以是最大堆 默认构造时就是最大堆
+    greater表示 大的优先级低 所以是最小堆
+    */
+    /** initialize your data structure here. */
+    MedianFinder() {
+        
+    }
+    //默认插入minHeap 一直保持着minHeap.size()>=maxHeap.size() 
+    //找中位数时 若总数是奇数 那么从minHeap堆顶取
+    void addNum(int num) {
+        minHeap.push(num);
+        maxHeap.push(minHeap.top());
+        minHeap.pop();
+        if(minHeap.size()<maxHeap.size()) {
+            minHeap.push(maxHeap.top());
+            maxHeap.pop();
+        }
+    }
+    
+    double findMedian() {
+        if(maxHeap.size()==minHeap.size())
+            return (maxHeap.top()+minHeap.top())/2.0;
+        return minHeap.top();
+    }
+private:
+    priority_queue<int> maxHeap;//默认最大堆
+    priority_queue<int,vector<int>,greater<int>>minHeap;
+};
+
+/**
+ * Your MedianFinder object will be instantiated and called as such:
+ * MedianFinder obj = new MedianFinder();
+ * obj.addNum(num);
+ * double param_2 = obj.findMedian();
+ */
+ 
