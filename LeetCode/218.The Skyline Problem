@@ -1,0 +1,80 @@
+218. The Skyline Problem
+
+/*
+A city's skyline is the outer contour of the silhouette formed by all the buildings in that city when viewed from a distance.
+Now suppose you are given the locations and height of all the buildings as shown on a cityscape photo (Figure A), 
+write a program to output the skyline formed by these buildings collectively (Figure B).
+
+ Buildings  Skyline Contour
+The geometric information of each building is represented by a triplet of integers [Li, Ri, Hi], 
+where Li and Ri are the x coordinates of the left and right edge of the ith building, respectively, and Hi is its height. 
+It is guaranteed that 0 ≤ Li, Ri ≤ INT_MAX, 0 < Hi ≤ INT_MAX, and Ri - Li > 0. 
+You may assume all buildings are perfect rectangles grounded on an absolutely flat surface at height 0.
+
+For instance, the dimensions of all buildings in Figure A are recorded as: [ [2 9 10], [3 7 15], [5 12 12], [15 20 10], [19 24 8] ] .
+The output is a list of "key points" (red dots in Figure B) in the format of [ [x1,y1], [x2, y2], [x3, y3], ... ] 
+that uniquely defines a skyline. A key point is the left endpoint of a horizontal line segment. Note that the last key point,
+where the rightmost building ends, is merely used to mark the termination of the skyline, and always has zero height. 
+Also, the ground in between any two adjacent buildings should be considered part of the skyline contour.
+
+For instance, the skyline in Figure B should be represented as:[ [2 10], [3 15], [7 12], [12 0], [15 10], [20 8], [24, 0] ].
+
+Notes:
+  The number of buildings in any input list is guaranteed to be in the range [0, 10000].
+  The input list is already sorted in ascending order by the left x position Li.
+  The output list must be sorted by the x position.
+  There must be no consecutive horizontal lines of equal height in the output skyline.
+    For instance, [...[2 3], [4 5], [7 5], [11 5], [12 7]...] is not acceptable; 
+    the three lines of height 5 should be merged into one in the final output as such: [...[2 3], [4 5], [12 7], ...]
+*/
+
+Solution:
+class Solution {
+    /*
+    主要思想是将building的左右端点拆分后进行排序
+    利用最大堆记录当前可见的最大高度maxH 如果maxH变化了那么将坐标加入结果集合
+    而一个高度的有效范围为该建筑的左右端点区间 当遇到了该建筑的右端点后该高度就失效了 应该remove
+    */
+    public List<int[]> getSkyline(int[][] buildings) {
+        List<int[]> res=new ArrayList<>();
+        List<int[]> buildingPoints=new ArrayList<>();//将建筑的左右端点拆分
+        for(int []b:buildings){
+            buildingPoints.add(new int[]{b[0],-b[2]});//为了区分左右端点 将左端点的高度设为负数
+            buildingPoints.add(new int[]{b[1],b[2]});
+        }
+        /*排序 将建筑按照横坐标从小到大排序
+            若左横坐标相同则按照高度降序排列 否则高度低的被遮盖的点将会成为天际线的顶点
+            若右横坐标相同则按照高度升序排列 否则高度低的被遮盖的点将会成为天际线的顶点 -->a[1]-b[1]
+            而左边的点为了便于区分 高度为负数 降序排列的时候 写成 -b[1]-(-a[1])-->a[1]-b[1]
+            故可以统一为 a[1]-b[1]
+            ----------     ----------
+            |        |     |        | 
+            |----    |     |     ---|
+            |   |    |     |     |  |
+            ----------     ----------
+        */
+        Collections.sort(buildingPoints,(a,b)->{
+           if(a[0]!=b[0]){
+               return a[0]-b[0];
+           }else{
+               return a[1]-b[1];
+           }
+        });
+        
+        PriorityQueue<Integer> pq=new PriorityQueue<>(Collections.reverseOrder());//最大堆
+        pq.offer(0);//必须的 这样才能把加入地面上的天际线刻画出来 且加入第一个元素高度时能够进行更新天际线
+        int preHeight=0,curHeight;//之前的最大高度
+        for(int []bp:buildingPoints){
+            if(bp[1]<0){
+                pq.offer(-bp[1]);
+            }else{
+                pq.remove(bp[1]);
+            }
+            curHeight=pq.peek();
+            if(curHeight!=preHeight)
+                res.add(new int[]{bp[0],curHeight});
+            preHeight=curHeight;
+        }
+        return res;
+    }
+}
