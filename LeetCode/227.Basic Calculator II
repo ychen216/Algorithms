@@ -1,0 +1,73 @@
+227. Basic Calculator II
+/*
+Implement a basic calculator to evaluate a simple expression string.
+
+The expression string contains only non-negative integers, +, -, *, / operators and empty spaces . 
+The integer division should truncate toward zero.
+
+You may assume that the given expression is always valid.
+
+Some examples:
+"3+2*2" = 7
+" 3/2 " = 1
+" 3+5 / 2 " = 5
+Note: Do not use the eval built-in library function.
+*/
+
+Solution:
+class Solution {
+public:
+    int calculate(string s) {
+        stack<int> numSt;
+        stack<char> opSt;
+        map<char,int> priority;
+        priority['+']=1;
+        priority['-']=1;
+        priority['*']=2;
+        priority['/']=2;
+        int curNum=0,n1,n2;
+        char op;
+        for(auto &c:s){
+            if(isdigit(c)){
+                curNum=curNum*10+c-'0';
+            }
+            else{//操作符或是空格
+                if(c!=' '){
+                    numSt.push(curNum);
+                    curNum=0;
+                    //操作符 优先级大于等于的情况下都要先算栈里的操作符 因为等于的情况 要按照从左向右的顺序
+                    while(!opSt.empty()&&priority[opSt.top()]>=priority[c]){
+                       helper(numSt,opSt);
+                    }
+                    opSt.push(c);
+                }
+            }
+        }
+        //不要漏了最后一个数
+        numSt.push(curNum);
+        while(!opSt.empty()){
+            helper(numSt,opSt);
+        }
+        return numSt.top();
+    }
+private:
+    int cal(int n1,int n2,char op){
+        switch(op){
+            case '+':return n1+n2;
+            case '-':return n1-n2;
+            case '*':return n1*n2;
+            case '/':return n1/n2;
+        }
+    }
+    void helper(stack<int>&numSt,stack<char>&opSt){
+        int n2,n1;
+        char op;
+        n2=numSt.top();
+        numSt.pop();
+        n1=numSt.top();
+        numSt.pop();
+        op=opSt.top();
+        opSt.pop();
+        numSt.push(cal(n1,n2,op));
+    }
+};
