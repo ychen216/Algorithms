@@ -1,0 +1,96 @@
+23. Merge k Sorted Lists
+
+/*
+Merge k sorted linked lists and return it as one sorted list. Analyze and describe its complexity.
+*/
+
+Solution 1:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+    利用最小堆每一次给出最小的元素
+    */
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        int size=lists.size();
+        if(size==0)
+            return NULL;
+        if(size==1)
+            return lists[0];
+        ListNode *fakeHead=new ListNode(0);
+        ListNode *cur=fakeHead;
+        priority_queue<ListNode*,vector<ListNode*>,function<bool(ListNode *, ListNode *)>> 
+            pq([](ListNode *a, ListNode *b){return a->val > b->val;});//最小堆
+        for(int i=0;i<size;i++){
+            if(lists[i]!=NULL)
+                pq.push(lists[i]);
+        }
+        while(!pq.empty()){
+            cur->next=pq.top();
+            pq.pop();
+            cur=cur->next;
+            if(cur->next!=NULL)
+                pq.push(cur->next);
+        }
+        return fakeHead->next;
+    }
+};
+
+Solution 2:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+    分治法 两两merge
+    */
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        int size=lists.size();
+        if(size==0)
+            return NULL;
+        if(size==1)
+            return lists[0];
+        if(size==2)
+            return merge(lists[0],lists[1]);
+        else{
+            vector<ListNode*> left(lists.begin(),lists.begin()+size/2);
+            vector<ListNode*> right(lists.begin()+size/2,lists.end());
+            return merge(mergeKLists(left),mergeKLists(right));
+        }
+            
+    }
+private:
+    ListNode *merge(ListNode *L1,ListNode *L2){
+        if(L1==NULL)
+            return L2;
+        if(L2==NULL)
+            return L1;
+        ListNode *fakeHead=new ListNode(0);
+        ListNode *cur=fakeHead;
+        while(L1!=NULL||L2!=NULL){
+            if(L2==NULL||L1!=NULL&&L1->val<L2->val){
+                cur->next=L1;
+                L1=L1->next;
+            }
+            else{
+                cur->next=L2;
+                L2=L2->next;
+            }
+            cur=cur->next;
+        }
+        return fakeHead->next;
+    }
+};
