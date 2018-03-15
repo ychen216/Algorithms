@@ -1,0 +1,83 @@
+212. Word Search II
+
+/*
+Given a 2D board and a list of words from the dictionary, find all words in the board.
+
+Each word must be constructed from letters of sequentially adjacent cell, where "adjacent" cells are those horizontally or vertically neighboring. The same letter cell may not be used more than once in a word.
+
+For example,
+Given words = ["oath","pea","eat","rain"] and board =
+
+[
+  ['o','a','a','n'],
+  ['e','t','a','e'],
+  ['i','h','k','r'],
+  ['i','f','l','v']
+]
+Return ["eat","oath"].
+Note:
+You may assume that all inputs are consist of lowercase letters a-z.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+    基本思想就是以每一个board元素为word的开始字符做dfs看是否能够构成一个dict里的词
+    具体实现利用了Trie树
+    */
+    struct TrieNode{
+        TrieNode *next[26];
+        string word="";
+    };
+    
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        int row=board.size();
+        if(row==0)
+            return {};
+        int col=board[0].size();
+        if(col==0)
+            return {};
+        TrieNode *root=buildTree(words);
+        vector<string> res;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++)
+                dfs(board,i,j,root,res);
+        }
+        return res;
+    }
+    
+    void dfs(vector<vector<char>>& board,int i,int j,TrieNode *p,vector<string>& res){
+        char c=board[i][j];
+        //board[i][j]在某个词中已经用过了 不能重复使用 或当前这个词没有这个字符
+        if(c=='#'||p->next[c-'a']==NULL)
+            return;
+        p=p->next[c-'a'];
+        if(p->word!=""){
+            res.push_back(p->word);
+            p->word="";//避免同一个词被多次加入结果集合
+        }
+        board[i][j]='#';//避免在回溯的过程中再次走到这里
+        //上下左右走
+        if(i>0) dfs(board,i-1,j,p,res);
+        if(i<board.size()-1) dfs(board,i+1,j,p,res);
+        if(j>0) dfs(board,i,j-1,p,res);
+        if(j<board[0].size()-1) dfs(board,i,j+1,p,res);
+        board[i][j]=c;//找完这个词 还可以继续利用这个单元
+    }
+    
+    //建Trie树
+    TrieNode *buildTree(vector<string>&words){
+        TrieNode *root=new TrieNode();
+        for(auto& w:words){
+            TrieNode *p=root;
+            for(auto&c:w){
+                if(p->next[c-'a']==NULL)p->next[c-'a']=new TrieNode();
+                p=p->next[c-'a'];
+            }
+            p->word=w;
+        }
+        return root;
+    }
+    
+};
