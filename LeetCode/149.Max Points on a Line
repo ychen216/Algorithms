@@ -1,0 +1,71 @@
+149. Max Points on a Line
+/*
+Given n points on a 2D plane, find the maximum number of points that lie on the same straight line.
+*/
+
+Solution:
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+    一条直线y=ax+b 根据斜率和截距决定 若是固定一个点p 则其他点n,m 若斜率(p,n)=(p,m)则p,m,n在一条直线上
+    遍历每个点，看它和后面的每个点构成的直线上有多少个点
+    对每个点建立map，斜率是key
+    斜率要用分数的形式，不要用double的形式存 double有精度问题 比较
+    计算分数时先求分子分母的最大公约数gcd，再都除以gcd
+    重合的点特殊处理
+     
+    */
+    int maxPoints(vector<Point>& points) {
+        int size=points.size();
+        if(size==0)
+            return 0;
+        if(size<=2)
+            return size;
+        unordered_map<int,unordered_map<int,int>> xlMap;//存斜率
+        int res=0;
+        for(int i=0;i<size;i++){
+            xlMap.clear();
+            int overlap=0,tempMax=0;
+            for(int j=i+1;j<size;j++){
+                int x=points[i].x-points[j].x;
+                int y=points[i].y-points[j].y;
+                //重合的点
+                if(x==0&&y==0){
+                    overlap++;
+                    continue;
+                }
+                int g=gcd(x,y);
+                if(g!=0){
+                    x/=g;
+                    y/=g;
+                }
+                if(xlMap.find(x)!=xlMap.end()){
+                    if(xlMap[x].find(y)!=xlMap[x].end())
+                        xlMap[x][y]++;
+                    else
+                        xlMap[x][y]=1;
+                }else{
+                    unordered_map<int,int> mm;
+                    mm[y]=1;
+                    xlMap[x]=mm;
+                }
+                tempMax=max(tempMax,xlMap[x][y]);
+            }
+            res=max(res,tempMax+overlap+1);
+        }
+        return res;
+    }
+private:
+    int gcd(int a,int b){
+        return b==0?a:gcd(b,a%b);
+    }
+};
