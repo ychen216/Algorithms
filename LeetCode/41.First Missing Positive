@@ -1,0 +1,33 @@
+41. First Missing Positive
+/*
+Given an unsorted integer array, find the first missing positive integer.
+
+For example,
+Given [1,2,0] return 3,
+and [3,4,-1,1] return 2.
+
+Your algorithm should run in O(n) time and uses constant space.
+*/
+Solution:
+class Solution {
+public:
+    /*
+    题意是在数组中找 1~正无穷中第一个未出现的正数
+    参考 http://www.cnblogs.com/AnnieKim/archive/2013/04/21/3034631.html
+    因为要求constant space不能开辟数组来判断是否出现过
+    这里利用swap 交换数组元素，使得数组中第i位存放数值(i+1);也就是把每一个正数放在应该出现的位置
+    最后遍历数组，寻找第一个不符合此要求的元素，返回其下标
+    */
+    int firstMissingPositive(vector<int>& nums) {
+        int n=nums.size();
+        for(int i=0;i<n;i++)
+            //把每一个正数放在正确的位置上 保证nums[i]在[1,n]范围 
+            //是因为长度为n的数组第一个缺失的正数只可能是1~n+1 只要保证前面的位置都是正确的数即可
+            while(nums[i]>0&&nums[i]<=n&&nums[nums[i]-1]!=nums[i])
+                swap(nums[nums[i]-1],nums[i]);
+        for(int i=0;i<n;i++)
+            if(nums[i]!=i+1)
+                return i+1;
+        return n+1;
+    }
+};
