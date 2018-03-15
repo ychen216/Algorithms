@@ -1,0 +1,55 @@
+76. Minimum Window Substring
+/*
+Given a string S and a string T, find the minimum window in S which will contain all the characters in T in complexity O(n).
+
+For example,
+S = "ADOBECODEBANC"
+T = "ABC"
+Minimum window is "BANC".
+
+Note:
+If there is no such window in S that covers all characters in T, return the empty string "".
+
+If there are multiple such windows, you are guaranteed that there will always be only one unique minimum window in S.
+
+
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        双指针
+    */
+    string minWindow(string s, string t) {
+        vector<int> map(128,0);//保存t的不同字符的个数
+        for(auto c:t)map[c]++;//计数
+        /*
+            map[c]>0说明string t还缺map[c]个c map[c]<0当前区间多|map[c]|个c 
+            map[c]==0 当前区间正好有t中所有的c的
+        */
+        int counter=t.size();//t的所有字符数
+        int begin=0,end=0;//s的区间
+        int head=0,d=INT_MAX;//最短有效区间起始位置和区间长度
+        while(end<s.size()){
+            //s[end]包含t中还未匹配上的字符
+            if(map[s[end]]>0)
+                counter--;
+            //移动右区间
+            map[s[end]]--;
+            end++;
+            //匹配完t中的所有字符
+            while(counter==0){
+                if(end-begin<d)   
+                    d=end-(head=begin);
+                //移动左区间 试图构建更小的区间
+                //map[s[begin]]<0说明s[begin]还有富余
+                //map[s[begin]]==0时说明s[begin]的存在使得t中的该元素个数刚刚好被填充 若移动begin counter++
+                if(map[s[begin]]==0)counter++;
+                map[s[begin]]++;
+                begin++;
+            }
+        }
+        return d==INT_MAX?"":s.substr(head,d);
+    }
+};
