@@ -1,0 +1,51 @@
+769. Max Chunks To Make Sorted
+
+/*
+Given an array arr that is a permutation of [0, 1, ..., arr.length - 1], we split the array into some number of "chunks" (partitions),
+and individually sort each chunk.  After concatenating them, the result equals the sorted array.
+
+What is the most number of chunks we could have made?
+
+Example 1:
+Input: arr = [4,3,2,1,0]
+Output: 1
+Explanation:
+Splitting into two or more chunks will not return the required result.
+For example, splitting into [4, 3], [2, 1, 0] will result in [3, 4, 0, 1, 2], which isn't sorted.
+
+Example 2:
+Input: arr = [1,0,2,3,4]
+Output: 4
+Explanation:
+We can split into two chunks, such as [1, 0], [2, 3, 4].
+However, splitting into [1, 0], [2], [3], [4] is the highest number of chunks possible.
+
+Note:
+  arr will have length in range [1, 10].
+  arr[i] will be a permutation of [0, 1, ..., arr.length - 1].
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        直观的看 数字[0,n-1]要使得分割后排序再合并的结果为[0,1,..,n-1]
+        那么可以分割的最小单元[i,j]必须满足区间[i,j]必须包含i..j的所有数字
+        从头遍历数组 若到位置i时最大的数字max是i,那么该区间可以分割 因为最大的数是i且其在第i位 
+        那么其前必然包含了所有比i小的数 也就是区间包含了该区间正确排序的所有数
+        形象的表示:因为数组的排序后正确顺序应该是arr[i]处的数是i,maxn是第0～i个数字中的最大值
+        遍历的过程中如果maxn==i，就保证了前面i-1个数字必然都比maxn小（因为maxn是0～i中的最大值）
+        则第0～i个数字必然能排列成正确顺序，以此类推，找到下一个满足maxn==i的地方（记为j）
+        则i+1～j又能分为一个块
+    */
+    int maxChunksToSorted(vector<int>& arr) {
+        int n=arr.size();
+        int res=0,maxn=-1;
+        for(int i=0;i<n;i++){
+            maxn=max(maxn,arr[i]);
+            if(maxn==i)
+                res++;
+        }
+        return res;
+    }
+};
