@@ -21,31 +21,71 @@ Note:
   The length and width of the given matrix are in the range of [1, 150].
 */
 
-Solution: Runtime Error
+Solution 1:
 class Solution {
-private:
-    int dx[8]={-1,-1,-1,0,0,1,1,1};
-    int dy[8]={-1,0,1,-1,1,-1,0,1};
 public:
+//naive
     vector<vector<int>> imageSmoother(vector<vector<int>>& M) {
-        int row=M.size();  
+        int row=M.size();
+        if(row==0)
+            return {};
         int col=M[0].size();
-        vector<vector<int>> ave;
+        if(col==0)
+            return {};
+        int dx[]={-1,-1,-1,0,0,1,1,1},dy[]={-1,0,1,-1,1,-1,0,1};
+        vector<vector<int>> res;
         for(int i=0;i<row;i++){
+            res.push_back({});
             for(int j=0;j<col;j++){
-                int sum=M[i][j];
-                int cnt=1;
+                int temp=M[i][j],cnt=1;
                 for(int k=0;k<8;k++){
-                    int x=dx[k]+i;
-                    int y=dy[k]+j;
+                    int x=i+dx[k];
+                    int y=j+dy[k];
                     if(x>=0&&x<row&&y>=0&&y<col){
-                        sum+=M[x][y];
+                        temp+=M[x][y];
                         cnt++;
                     }
                 }
-                ave[i][j]=sum/cnt;
+                res[i].push_back(temp/cnt);
             }
         }
-        return ave;    
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        利用位操作使得空间开销O(1)
+        灰度值为[0,255]可以保存在低八位 平均灰度的结果可以存在上一个八位
+    */
+    vector<vector<int>> imageSmoother(vector<vector<int>>& M) {
+        int row=M.size();
+        if(row==0)
+            return {};
+        int col=M[0].size();
+        if(col==0)
+            return {};
+        int dx[]={-1,-1,-1,0,0,1,1,1},dy[]={-1,0,1,-1,1,-1,0,1};
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                int temp=M[i][j],cnt=1;
+                for(int k=0;k<8;k++){
+                    int x=i+dx[k];
+                    int y=j+dy[k];
+                    if(x>=0&&x<row&&y>=0&&y<col){
+                        temp+=(M[x][y]&0xFF);//原始信息保存在低八位
+                        cnt++;
+                    }
+                }
+                M[i][j]|=((temp/cnt)<<8);//均值存在上八位
+            }
+        }
+        for(int i=0;i<row;i++)
+            for(int j=0;j<col;j++)
+                M[i][j]>>=8;
+                
+        return M;
     }
 };
