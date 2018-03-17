@@ -67,6 +67,7 @@ public:
             nums[mmap[val].back()]=last;
             mmap[val].pop_back();
             if(mmap[val].empty())mmap.erase(val);
+            nums.pop_back();
         }
         return res;
     }
