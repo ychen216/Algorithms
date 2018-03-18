@@ -1,0 +1,58 @@
+792. Number of Matching Subsequences
+
+/*
+Given string S and a dictionary of words words, find the number of words[i] that is a subsequence of S.
+
+Example :
+Input: 
+S = "abcde"
+words = ["a", "bb", "acd", "ace"]
+Output: 3
+Explanation: There are three words in words that are a subsequence of S: "a", "acd", "ace".
+Note:
+
+All words in words and S will only consists of lowercase letters.
+The length of S will be in the range of [1, 50000].
+The length of words will be in the range of [1, 5000].
+The length of words[i] will be in the range of [1, 50].
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+    基本思路是对words中的每一个word检查是否为S的一个子序列
+    但是如果每次检查都要扫描一遍S的话时间复杂度太高，所以就想到把S中字母的位置存储起来提高效率
+    扫描一遍字符串S并建立一个字典，记录每一个字母出现的位置并按照升序排列。
+    对每一个word，遍历word并查找字典中当前字母的出现位置并保持其相对位置不变。
+    */
+    int numMatchingSubseq(string S, vector<string>& words) {
+        vector<vector<int>> pos(26);//记录每一个字母在s中的位置
+        int lens=S.length();
+        for(int i=0;i<lens;i++)
+            pos[S[i]-'a'].push_back(i);
+        int res=0;
+        //遍历每一个word 判断其是否是S的子序列
+        for(auto &word:words){
+            int lenw=word.size();
+            int p=0,cur=-1;//p是word的下标 cur是上一个字符在S的下标 要保证下一个位置要大于cur
+            while(p<lenw){
+                int i=0,size=pos[word[p]-'a'].size();
+                //在word[p]的下标集合中找到cur后的合法位置
+                while(i<size){
+                    if(pos[word[p]-'a'][i]>cur){
+                        cur=pos[word[p]-'a'][i];
+                        break;
+                    }
+                    i++;
+                }
+                if(i==size)//在cur后S不存在word[p]
+                    break;
+                p++;
+            }
+            if(p==lenw)
+                res++;
+        }
+        return res;
+    }
+};
