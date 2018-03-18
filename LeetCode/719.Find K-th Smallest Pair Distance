@@ -1,0 +1,98 @@
+719. Find K-th Smallest Pair Distance
+/*
+Given an integer array, return the k-th smallest distance among all the pairs. The distance of a pair (A, B) is defined as the absolute difference between A and B.
+
+Example 1:
+Input:
+nums = [1,3,1]
+k = 1
+Output: 0 
+Explanation:
+Here are all the pairs:
+(1,3) -> 2
+(1,1) -> 0
+(3,1) -> 2
+Then the 1st smallest distance pair is (1,1), and its distance is 0.
+Note:
+2 <= len(nums) <= 10000.
+0 <= nums[i] < 1000000.
+1 <= k <= len(nums) * (len(nums) - 1) / 2.
+*/
+
+Solution 1:TLE
+class Solution {
+public:
+    //利用长度为k的最大堆 第k小的元素就是堆顶元素
+    int smallestDistancePair(vector<int>& nums, int k) {
+        int n=nums.size();
+        priority_queue<int> pq;//默认是最大堆
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                int d=abs(nums[i]-nums[j]);
+                if(pq.size()<k)pq.push(d);
+                else if(pq.top()>d){
+                    pq.pop();
+                    pq.push(d);
+                }
+            }
+        }
+        return pq.top();
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //桶排序 0 <= nums[i] < 1000000 所以distance的范围为0~1000000
+    //可以记录下不同distance的pair数
+    int smallestDistancePair(vector<int>& nums, int k) {
+        int n=nums.size();
+        int N=1000001;
+        vector<int> cnt(N,0);
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                int d=abs(nums[i]-nums[j]);
+                cnt[d]++;
+            }
+        }
+        for(int i=0;i<N;i++){
+            if(cnt[i]>=k)return i;
+            k-=cnt[i];
+        }
+        return -1;
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    /*
+        利用二分搜索 第k小的distance必然在minDistance和maxDistance之间
+        计算distance在[low,mid]之间的的pair个数
+    */
+    int smallestDistancePair(vector<int>& nums, int k) {
+        int n=nums.size();
+        sort(nums.begin(),nums.end());
+        int low=nums[1]-nums[0];
+        for(int i=2;i<n;i++)//排序后distance最小值必然在相邻的两个元素之间
+            low=min(low,nums[i]-nums[i-1]);
+        int high=nums[n-1]-nums[0];
+        //二分寻找Kth smallest distance
+        while(low<high){
+            int mid=low+(high-low)/2;
+            //计算在distance小于等于mid的pair对数
+            int cnt=0;
+            for(int i=0;i<n;i++){
+                int j=i+1;
+                while(j<n&&nums[j]-nums[i]<=mid)j++;
+                cnt+=j-i-1;
+            }
+            if(cnt<k)
+                low=mid+1;
+            else
+                high=mid;
+        }
+        return low;
+        
+    }
+};
