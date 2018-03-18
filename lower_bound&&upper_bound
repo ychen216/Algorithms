@@ -1,0 +1,23 @@
+lower_bound(key) 返回大于等于key的第一个指针
+upper_bound(key) 返回大于key的第一个指针
+
+example:
+int _tmain(int argc, _TCHAR* argv[])  
+{  
+    map<int,string> maptmp;  
+    map<int,string>::iterator pos,pos1;  
+    maptmp[1]="a";  
+    maptmp[2]="b";  
+    maptmp[4]="c";  
+    maptmp[3]="f";  
+    maptmp[5]="d";  
+    pos = maptmp.lower_bound(3);  
+    pos1 = maptmp.upper_bound(3);  
+    printf("lower_bound %d=>%s\n",pos->first,pos->second.c_str());  
+    printf("upper_bound %d=>%s\n",pos1->first,pos1->second.c_str());  
+    system("pause");  
+    return 0;  
+}  
+Output:
+lower_bound 3=>f
+upper_bound 4=>c
