@@ -1,0 +1,58 @@
+45. Jump Game II
+
+/*
+Given an array of non-negative integers, you are initially positioned at the first index of the array.
+
+Each element in the array represents your maximum jump length at that position.
+
+Your goal is to reach the last index in the minimum number of jumps.
+
+For example:
+Given array A = [2,3,1,1,4]
+The minimum number of jumps to reach the last index is 2. (Jump 1 step from index 0 to 1, then 3 steps to the last index.)
+
+Note:
+You can assume that you can always reach the last index.
+*/
+Solution 1: TLE
+class Solution {
+public:
+    //DP dp[i+j]=min(dp[i+j],dp[i]+1) 1<=j<max jump at i
+    int jump(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> dp(n,INT_MAX);
+        dp[0]=0;
+        for(int i=0;i<n-1;i++){
+            //dp[i]可达
+            if(dp[i]!=INT_MAX){
+                for(int j=1;j<=nums[i]&&i+j<n;j++)
+                    dp[i+j]=min(dp[i+j],dp[i]+1);
+            }
+        }
+        return dp[n-1];
+    }
+};
+
+Solution 2：
+class Solution {
+public:
+    /*
+        参考 http://blog.csdn.net/wusecaiyun/article/details/47041057
+        题意要求不一定非得跳到last index，越过去也算
+        利用贪心算法
+    */
+    int jump(vector<int>& nums) {
+        int n=nums.size();
+        int curFar=0,lastFar=0,jump=0;//当前能到的最远距离 上一跳能到达的最远距离
+        for(int i=0;i<n;i++){
+            if(i>curFar)//无论怎么跳，都不能到达终点或者越过终点
+                return -1;
+            if(i>lastFar){ //需要进行下次跳跃，则更新last和当执行的跳数ret   
+                jump++;
+                lastFar=curFar;
+            }
+            curFar=max(curFar,i+nums[i]);
+        }
+        return jump;
+    }
+};
