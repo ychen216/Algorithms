@@ -1,0 +1,57 @@
+791. Custom Sort String
+/*
+S and T are strings composed of lowercase letters. In S, no letter occurs more than once.
+
+S was sorted in some custom order previously. We want to permute the characters of T so that they match the order that S was sorted. 
+More specifically, if x occurs before y in S, then x should occur before y in the returned string.
+
+Return any permutation of T (as a string) that satisfies this property.
+
+Example :
+Input: 
+S = "cba"
+T = "abcd"
+Output: "cbad"
+Explanation: 
+"a", "b", "c" appear in S, so the order of "a", "b", "c" should be "c", "b", and "a". 
+Since "d" does not appear in S, it can be at any position in T. "dcba", "cdba", "cbda" are also valid outputs.
+ 
+Note:
+  S has length at most 26, and no character is repeated in S.
+  T has length at most 200.
+  S and T consist of lowercase letters only.
+*/
+
+Solution:
+class Solution {
+public:
+    //按照S中字符出现的顺序给定字符的优先级 然后按照此优先级排序
+    string customSortString(string S, string T) {
+        vector<int> priority(26,0);//默认没有出现的字符优先级为0
+        for(int i=0;i<S.length();i++)
+            priority[S[i]-'a']=25-i;
+        sort(T.begin(),T.end(),[&](char a,char b){return priority[a-'a']>priority[b-'a'];});
+        return T;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    string customSortString(string S, string T) {
+        vector<int> cnt(26,0);
+        for(int i=0;i<T.length();i++)
+            cnt[T[i]-'a']++;
+        string res="";
+        //按照S中的优先级次序排序T中的字符
+        for(auto c:S){
+            while(cnt[c-'a']-->0)
+                res.push_back(c);
+        }
+        for(char c='a';c<='z';c++){
+            while(cnt[c-'a']-->0)
+                res.push_back(c);
+        }
+        return res;
+    }
+};
