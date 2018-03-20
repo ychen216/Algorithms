@@ -1,0 +1,59 @@
+632. Smallest Range
+/*
+You have k lists of sorted integers in ascending order. Find the smallest range that includes at least one number from each of the k lists.
+
+We define the range [a,b] is smaller than range [c,d] if b-a < d-c or a < c if b-a == d-c.
+
+Example 1:
+Input:[[4,10,15,24,26], [0,9,12,20], [5,18,22,30]]
+Output: [20,24]
+Explanation: 
+List 1: [4, 10, 15, 24,26], 24 is in range [20,24].
+List 2: [0, 9, 12, 20], 20 is in range [20,24].
+List 3: [5, 18, 22, 30], 22 is in range [20,24].
+Note:
+The given list may contain duplicates, so ascending order means >= here.
+1 <= k <= 3500
+-105 <= value of elements <= 105.
+For Java users, please note that the input type has been changed to List<List<Integer>>. And after you reset the code template, you'll see this point.
+
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+    参考 http://blog.csdn.net/xiaocong1990/article/details/76614836
+    给我们一些数组，都是排好序的 求一个最小的范围 使得这个范围内至少会包括每个数组中的一个数字
+    虽然每个数组都是有序的，但是考虑到他们之间的数字差距可能很大，所以我们最好还是合并成一个数组统一处理比较好
+    但是合并成一个大数组还需要保留其原属数组的序号，所以我们大数组中存pair对，同时保存数字和原数组的序号
+    然后重新按照数字大小进行排序，这样我们的问题实际上就转换成了求一个最小窗口，使其能够同时包括所有数组中的至少一个数字。
+    求最小窗口利用双指针 同时利用map记录属于不同数组出现过的次数
+    */
+    vector<int> smallestRange(vector<vector<int>>& nums) {
+        vector<int> res;
+        unordered_map<int,int> mmp;//记录数组i的元素在该窗口中出现过的次数
+        vector<pair<int,int>> wholeNum;//将原来的k个数组合并成一个大数组
+        int k=nums.size();
+        for(int i=0;i<k;i++){
+            for(auto num:nums[i])
+                wholeNum.push_back({num,i});
+            mmp[i]=0;
+        }
+        sort(wholeNum.begin(),wholeNum.end());
+        int left=0,cnt=0,diff=INT_MAX,size=wholeNum.size();
+        //找符合条件的最小窗口
+        for(int right=0;right<size;right++){
+            if(mmp[wholeNum[right].second]++==0)cnt++;
+            while(cnt==k&&left<=right){
+                if(wholeNum[right].first-wholeNum[left].first<diff){
+                    diff=wholeNum[right].first-wholeNum[left].first;
+                    res={wholeNum[left].first,wholeNum[right].first};
+                }
+                if(--mmp[wholeNum[left].second]==0)cnt--;
+                left++;
+            }
+        }
+        return res;
+    }
+};
