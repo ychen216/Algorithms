@@ -1,0 +1,51 @@
+37. Sudoku Solver
+/*
+Write a program to solve a Sudoku puzzle by filling the empty cells.
+
+Empty cells are indicated by the character '.'.
+
+You may assume that there will be only one unique solution.
+*/
+
+Solution:
+class Solution {
+public:
+    //回溯
+    void solveSudoku(vector<vector<char>>& board) {
+        helper(board,0,0);
+    }
+
+private:
+    bool helper(vector<vector<char>>& board,int row,int col){
+        for(int i=row;i<board.size();i++,col=0){//注意col的处理 当进入下一行时 要将col置为0
+            for(int j=col;j<board[i].size();j++){
+                if(board[i][j]=='.'){
+                    for(char c='1';c<='9';c++){
+                        if(isValid(board,i,j,c)){
+                            board[i][j]=c;
+                            if(helper(board,i,j+1))
+                                return true;
+                            board[i][j]='.';
+                        }
+                    }
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    bool isValid(vector<vector<char>>& board,int row,int col,char c){
+        for(int i=0;i<9;i++){
+            if(board[i][col]==c)return false;
+            if(board[row][i]==c)return false;
+        }
+        int blr=row/3*3,blc=col/3*3;
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++)
+                if(board[blr+i][blc+j]==c)
+                    return false;
+        }
+        return true;
+    }
+};
