@@ -1,0 +1,51 @@
+30. Substring with Concatenation of All Words
+/*
+You are given a string, s, and a list of words, words, that are all of the same length. Find all starting indices of substring(s) in s that is a concatenation of each word in words exactly once and without any intervening characters.
+
+For example, given:
+s: "barfoothefoobarman"
+words: ["foo", "bar"]
+
+You should return the indices: [0,9].
+(order does not matter).
+*/
+Solution:
+class Solution {
+public:
+    /*
+        分别拼接dict中的每一个词 有多种可能的顺序 难以实现
+        主要的思想是记录dict中的每个词及他们出现的次数 然后在目标串中查找时候所有的串都出现了
+    */
+    vector<int> findSubstring(string s, vector<string>& words) {
+        int wnum=words.size();
+        int lens=s.length();
+        if(wnum==0)
+            return {};
+        int lenw=words[0].length();//每个词的长度相同
+        unordered_map<string,int> mmp;
+        vector<int> res;
+        //每个词出现的次数
+        for(auto &w:words){
+            if(mmp.find(w)==mmp.end())
+                mmp[w]=1;
+            else
+                mmp[w]++;
+        }
+        unordered_map<string,int> curCnt;
+        //遍历s中每一个可能的起始位置
+        for(int i=0;i<=lens-lenw*wnum;i++){
+            curCnt=unordered_map<string,int>(mmp.begin(),mmp.end());
+            bool flag=true;
+            for(int j=0;j<wnum;j++){
+                string curWord=s.substr(i+j*lenw,lenw);//当前长度为lenw的子串
+                if(curCnt.find(curWord)==curCnt.end()||--curCnt[curWord]<0){
+                    flag=false;
+                    break;
+                }
+            }
+            if(flag)
+                res.push_back(i);
+        }
+        return res;
+    }
+};
