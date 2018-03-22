@@ -105,3 +105,77 @@ public:
         return -1;
     }
 };
+
+Solution 1:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        每个节点值为孩子节点中较小的值 所以根节点是最小值
+        可以用递归也可以用set保存所有值 取出第二即为次小值
+    */
+    int findSecondMinimumValue(TreeNode* root) {
+        if(root==NULL||root->left==NULL)//少于两个节点
+            return -1;
+        set<int> sset;
+        stack<TreeNode *>st;
+        TreeNode *p=root;
+        //前序
+        while(p!=NULL||!st.empty()){
+            if(p!=NULL){
+                sset.insert(p->val);
+                st.push(p);
+                p=p->left;
+            }else{
+                p=st.top();
+                st.pop();
+                p=p->right;
+            }
+        }
+        if(sset.size()>=2)
+            return *(++sset.begin());
+        return -1;
+    }
+};
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        每个节点值为孩子节点中较小的值 所以根节点是最小值
+        可以用递归也可以用set保存所有值 取出第二即为次小值
+    */
+    int findSecondMinimumValue(TreeNode* root) {
+        if(root==NULL||root->left==NULL)//少于两个节点
+            return -1;
+        int ans=helper(root,root->val);
+        return ans==INT_MAX?-1:ans;
+    }
+private:
+    int helper(TreeNode *root,int val){
+        if(root->val!=val)
+            return root->val;
+        else if(root->val==val&&root->left)
+            return min(helper(root->left,val),helper(root->right,val));
+        else
+            return INT_MAX;
+    }
+};
+
