@@ -24,6 +24,9 @@ string:
   
 graph:
   mediun:399,684,332,310,127,133,
+
+bfs&dfs:
+  hard:778,
   
 data struction:
   simple:237,447,501,160,513,206,155,606,671,
