@@ -26,6 +26,7 @@ graph:
   mediun:399,684,332,310,127,133,
 
 bfs&dfs:
+  medium:785,
   hard:778,753,
   
 data struction:
