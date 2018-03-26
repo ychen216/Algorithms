@@ -44,7 +44,8 @@ private:
     bool dfs(vector<int> &color,vector<vector<int>>& graph,int i){
         if(color[i]!=0)
             return color[i]==1;
-        color[i]=2;
+        color[i]=2;//初始化为有环 避免有自环
+        //从i开始的每一条路径都不能包含环
         for(auto j:graph[i]){
             if(!dfs(color,graph,j))
                 return false;
