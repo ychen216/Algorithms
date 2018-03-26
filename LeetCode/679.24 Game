@@ -1,0 +1,61 @@
+679. 24 Game
+/*
+You have 4 cards each containing a number from 1 to 9. You need to judge whether they could operated through *, /, +, -, (, ) to get the value of 24.
+
+Example 1:
+Input: [4, 1, 8, 7]
+Output: True
+Explanation: (8-4) * (7-1) = 24
+Example 2:
+Input: [1, 2, 1, 2]
+Output: False
+Note:
+  The division operator / represents real division, not integer division. For example, 4 / (1 - 2/3) = 12.
+  Every operation done is between two numbers. In particular, we cannot use - as a unary operator. For example, with [1, 1, 1, 1] as input, the expression -1 - 1 - 1 - 1 is not allowed.
+  You cannot concatenate numbers together. For example, if the input is [1, 2, 1, 2], we cannot write this as 12 + 12.
+*/
+
+Solution:
+class Solution {
+public:
+    //参考 https://blog.csdn.net/raoyx/article/details/78070019
+    // 回溯
+    bool judgePoint24(vector<int>& nums) {
+        vector<double> input(nums.begin(),nums.end());//为了处理浮点除法
+        return helper(input,input.size());
+    }
+    
+private:
+    double exp=1e-2;
+    bool helper(vector<double>&input,int len){
+        if(len==1)
+            return fabs(input[0]-24)<=exp;
+        //枚举两个数的运算 运算结果存在input[i] input[j]的空缺由最后一个元素补上
+        for(int i=0;i<len;i++){
+            for(int j=i+1;j<len;j++){
+                double a=input[i],b=input[j];
+                input[j]=input[len-1];
+                input[i]=a+b;
+                if(helper(input,len-1))return true;
+                input[i]=a-b;
+                if(helper(input,len-1))return true;
+                input[i]=b-a;
+                if(helper(input,len-1))return true;
+                input[i]=a*b;
+                if(helper(input,len-1))return true;
+                if(b!=0){
+                    input[i]=a/b;
+                    if(helper(input,len-1))return true;
+                }
+                if(a!=0){
+                    input[i]=b/a;
+                    if(helper(input,len-1))return true;
+                }
+                //回溯
+                input[i]=a;
+                input[j]=b;
+            }
+        }
+        return false;
+    }
+};
