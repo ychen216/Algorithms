@@ -1,0 +1,64 @@
+753. Cracking the Safe
+
+/*
+There is a box protected by a password. The password is n digits, where each letter can be one of the first k digits 0, 1, ..., k-1.
+
+You can keep inputting the password, the password will automatically be matched against the last n digits entered.
+
+For example, assuming the password is "345", I can open it when I type "012345", but I enter a total of 6 digits.
+
+Please return any string of minimum length that is guaranteed to open the box after the entire string is inputted.
+
+Example 1:
+Input: n = 1, k = 2
+Output: "01"
+Note: "10" will be accepted too.
+Example 2:
+Input: n = 2, k = 2
+Output: "00110"
+Note: "01100", "10011", "11001" will be accepted too.
+Note:
+  n will be in the range [1, 4].
+  k will be in the range [1, 10].
+  k^n will be at most 4096.
+
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        求包含所有长度为n的密码组合的最短字符串
+        长度的n的密码组合有 k^n
+        为了使字符串长度最短 每一次我们都复用前n-1个字符构成新的密码组合 有点贪心的思想
+        初始化密码为长度为n的"0"字符串
+    */
+    string crackSafe(int n, int k) {
+        unordered_set<string> visit;//已经出现的密码
+        string res=string(n,'0');
+        int totCnt=pow(k,n);
+        visit.insert(res);
+        dfs(res,visit,totCnt,n,k);
+        return res;
+    }
+
+private:
+    bool dfs(string &res,unordered_set<string> &visit,int totCnt,int n,int k){
+        if(visit.size()==totCnt)
+            return true;
+        string preN=res.substr(res.length()-n+1);//复用n-1个字符
+        for(int i=0;i<k;i++){
+            string cur=preN+char(i+'0');
+            if(visit.find(cur)==visit.end()){
+                visit.insert(cur);
+                res.push_back(i+'0');
+                if(dfs(res,visit,totCnt,n,k))
+                    return true;
+                res.pop_back();
+                visit.erase(cur);
+            }
+        }
+        return false;
+        
+    }
+};
