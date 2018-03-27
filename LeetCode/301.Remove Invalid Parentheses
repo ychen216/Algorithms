@@ -1,0 +1,51 @@
+301. Remove Invalid Parentheses
+/*
+Remove the minimum number of invalid parentheses in order to make the input string valid. Return all possible results.
+
+Note: The input string may contain letters other than the parentheses ( and ).
+
+Examples:
+  "()())()" -> ["()()()", "(())()"]
+  "(a)())()" -> ["(a)()()", "(a())()"]
+  ")(" -> [""]
+*/
+
+Solution :
+class Solution {
+public:
+    /*
+        移除最少的括号使得给定字符串为一个合法的含有括号的字符串 
+        参考https://www.cnblogs.com/grandyang/p/4944875.html
+        利用counter记录左括号和右括号的差值 当其小于0时需要删除')' 
+        但是为了避免删除后得到重复的答案 要记录最后一个删除的位置 如()()) 可以删除的右括号有三个位置但是不重复的结果只有两个
+        针对右括号的情况 可以进行代码复用 逆置字符串后再次进行类似操作
+    */
+    vector<string> removeInvalidParentheses(string s) {
+        vector<string> res;
+        helper(s,res,0,0,{'(',')'});
+        return res;
+    }
+private:
+    //start此次扫描开始的位置 lastd上一次删除的位置
+    void helper(string s,vector<string> &res,int start,int lastd,vector<char> p){
+        for(int i=start,cnt=0;i<s.length();i++){
+            if(s[i]==p[0])cnt++;
+            else if(s[i]==p[1])cnt--;
+            if(cnt>=0)continue;
+            //删除一个括号
+            for(int j=lastd;j<=i;j++){
+                if(s[j]==p[1]&&(j==lastd||s[j]!=s[j-1])){
+                    //保证无重复答案
+                    helper(s.substr(0,j)+s.substr(j+1),res,i,j,p);
+                }
+            }
+            return;
+        }
+        string rev=string(s.rbegin(),s.rend());
+        if(p[0]=='(')
+            helper(rev,res,0,0,{')','('});
+        else
+            res.push_back(rev);
+        
+    }
+};
