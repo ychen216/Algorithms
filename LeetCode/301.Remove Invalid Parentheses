@@ -10,7 +10,7 @@ Examples:
   ")(" -> [""]
 */
 
-Solution :
+Solution 1:
 class Solution {
 public:
     /*
@@ -47,5 +47,50 @@ private:
         else
             res.push_back(rev);
         
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        移除最少的括号使得给定字符串为一个合法的含有括号的字符串 
+        参考https://www.cnblogs.com/grandyang/p/4944875.html
+        bfs 给定字符串排入队中，然后取出检测其是否合法，若合法直接返回
+        否则，对其进行遍历，对于遇到的左右括号的字符，去掉括号字符生成一个新的字符串
+        如果这个字符串之前没有遇到过，将其排入队中，我们用哈希集合记录一个字符串是否出现过
+        我们对队列中的每个元素都进行相同的操作，直到队列为空还没找到合法的字符串的话，那就返回空集，
+    */
+    vector<string> removeInvalidParentheses(string s) {    
+        vector<string> res;
+        unordered_set<string> visited{{s}};
+        queue<string> q{{s}};
+        bool found = false;
+        while(!q.empty()){
+            string t = q.front(); q.pop();
+            if (isValid(t)) {
+                res.push_back(t);
+                found = true;
+            }
+            if (found) continue;
+            for (int i = 0; i < t.size(); ++i) {
+                if (t[i] != '(' && t[i] != ')') continue;
+                string str = t.substr(0, i) + t.substr(i + 1);
+                if (!visited.count(str)) {
+                    q.push(str);
+                    visited.insert(str);
+                }
+            }
+        }
+        return res;
+    }
+private:    
+    bool isValid(string t) {
+        int cnt = 0;
+        for (int i = 0; i < t.size(); ++i) {
+            if (t[i] == '(') ++cnt;
+            else if (t[i] == ')' && --cnt < 0) return false;
+        }
+        return cnt == 0;
     }
 };
