@@ -1,0 +1,75 @@
+756. Pyramid Transition Matrix
+/*
+We are stacking blocks to form a pyramid. Each block has a color which is a one letter string, like `'Z'`.
+
+For every block of color `C` we place not in the bottom row, we are placing it on top of a left block of color `A` and right block of color `B`. We are allowed to place the block there only if `(A, B, C)` is an allowed triple.
+
+We start with a bottom row of bottom, represented as a single string. We also start with a list of allowed triples allowed. Each allowed triple is represented as a string of length 3.
+
+Return true if we can build the pyramid all the way to the top, otherwise false.
+
+Example 1:
+Input: bottom = "XYZ", allowed = ["XYD", "YZE", "DEA", "FFF"]
+Output: true
+Explanation:
+We can stack the pyramid like this:
+    A
+   / \
+  D   E
+ / \ / \
+X   Y   Z
+
+This works because ('X', 'Y', 'D'), ('Y', 'Z', 'E'), and ('D', 'E', 'A') are allowed triples.
+Example 2:
+Input: bottom = "XXYX", allowed = ["XXX", "XXY", "XYX", "XYY", "YXZ"]
+Output: false
+Explanation:
+We can't stack the pyramid to the top.
+Note that there could be allowed triples (A, B, C) and (A, B, D) with C != D.
+  Note:
+  bottom will be a string with length in range [2, 8].
+  allowed will have length in range [0, 200].
+  Letters in all strings will be chosen from the set {'A', 'B', 'C', 'D', 'E', 'F', 'G'}.
+*/
+Solution:
+class Solution {
+public:
+    /*
+        垒金字塔 当前层(串为cur)i+1的第j个字符 由下一层(串为prev)i的第j和j+1个字符 以及allowd集合决定 
+        如果allowed包含prev[j]prev[j+1]cur[j] 那么第i+1层第j个字符可以是cur[j]
+        利用map记录两个字符之上可以放的所有字符集合 然后dfs回溯
+    */
+    bool pyramidTransition(string bottom, vector<string>& allowed) {
+        unordered_map<string,vector<char>> mmp;
+        for(auto &ss:allowed)
+            mmp[ss.substr(0,2)].push_back(ss[2]);
+        string curRow="";
+        return dfs(bottom,curRow,0,mmp);        
+    }
+
+private:
+    //start为preRow要扫描的位置
+    bool dfs(string &preRow,string &curRow,int start,unordered_map<string,vector<char>>&mmp){
+        if(preRow.length()==1){
+            //已经到塔顶
+            return true;
+        }
+        if(preRow.length()-1==start){
+            //底层已经扫描结束 上一层已经构建好
+            string nextRow="";
+            return dfs(curRow,nextRow,0,mmp);
+        }else{
+            //构建可能的上一层
+            string base=preRow.substr(start,2);
+            if(mmp.find(base)==mmp.end())
+                return false;
+            for(auto c:mmp[base]){
+                curRow.push_back(c);
+                if(dfs(preRow,curRow,start+1,mmp))
+                    return true;
+                curRow.pop_back();
+            }
+            return false;
+        }
+    }
+};
