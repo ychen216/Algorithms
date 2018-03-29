@@ -27,7 +27,7 @@ graph:
 
 bfs&dfs:
   medium:785,802,756,
-  hard:778,753,679,488,301,
+  hard:778,753,679,488,301,749,
   
 data struction:
   simple:237,447,501,160,513,206,155,606,671,
@@ -41,6 +41,7 @@ two-pointer:
 
 imitation:
   medium:649,
+  hard:749,
   
 hard to classification:
   simple:653,283,628,121,405,594,459,643,9,205,88,680,190,475,532,696,717,
