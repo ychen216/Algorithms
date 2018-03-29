@@ -1,0 +1,54 @@
+793. Preimage Size of Factorial Zeroes Function
+/*
+Let f(x) be the number of zeroes at the end of x!. (Recall that x! = 1 * 2 * 3 * ... * x, and by convention, 0! = 1.)
+
+For example, f(3) = 0 because 3! = 6 has no zeroes at the end, while f(11) = 2 because 11! = 39916800 has 2 zeroes at the end. Given K, find how many non-negative integers x have the property that f(x) = K.
+
+Example 1:
+Input: K = 0
+Output: 5
+Explanation: 0!, 1!, 2!, 3!, and 4! end with K = 0 zeroes.
+
+Example 2:
+Input: K = 5
+Output: 0
+Explanation: There is no x such that x! ends in K = 5 zeroes.
+Note:
+
+K will be an integer in the range [0, 10^9].
+*/
+
+Solution: WA
+class Solution {
+public:
+    /*
+        n!有尾部有几个0 取决于n!中因数5的个数 有i个5那么n!尾部有i个0
+        故结尾有K个0的阶乘数 n的范围必然在[0,5K] 在此范围是否存在 可以用二分搜索来寻找
+        阶乘值n! n每多一个5，0的数量就会变化 因此，如果K存在，那么满足条件的数字就是5，如果不存在则是0。
+    */
+    int preimageSizeFZF(int K) {
+        long low=0,high=5*K;
+        while(low<=high){
+            long mid=low+(high-low)/2;
+            int res=cal(mid);
+            if(res<K)
+                low=mid+1;
+            else if(res>K)
+                high=mid-1;
+            else
+                return 5;
+        }
+        return 0;
+    }
+    
+private:
+    //计算n!尾部包含多少0
+    long cal(long n){
+        long res=0;
+        while(n>0){
+            res+=n/5;
+            n/=5;
+        }
+        return res;
+    }
+};
