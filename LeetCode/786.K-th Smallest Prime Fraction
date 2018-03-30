@@ -1,0 +1,62 @@
+786. K-th Smallest Prime Fraction
+/*
+A sorted list A contains 1, plus some number of primes.  Then, for every p < q in the list, we consider the fraction p/q.
+
+What is the K-th smallest fraction considered?  Return your answer as an array of ints, where answer[0] = p and answer[1] = q.
+
+Examples:
+Input: A = [1, 2, 3, 5], K = 3
+Output: [2, 5]
+Explanation:
+The fractions to be considered in sorted order are:
+1/5, 1/3, 2/5, 1/2, 3/5, 2/3.
+The third fraction is 2/5.
+
+Input: A = [1, 7], K = 1
+Output: [1, 7]
+Note:
+
+A will have length between 2 and 2000.
+Each A[i] will be between 1 and 30000.
+K will be between 1 and A.length * (A.length - 1) / 2.
+*/
+Solution:
+class Solution {
+     /*
+        [1, 7, 23, 29, 47]进行转化
+        1/47  < 1/29    < 1/23 < 1/7
+        7/47  < 7/29    < 7/23
+        23/47 < 23/29
+        29/47
+        这样就相当于在n-1个有序数列中找K-th smallest element的问题
+        可以利用堆来完成
+        初始时加入每个序列的最小元素
+        在堆中找k次 则第k次堆顶元素即是最小值 每次然后利用当前最小元素y所在的数列 的后一个元素来更新堆
+        这样能保证第i次找到第i小的元素
+    */
+    public int[] kthSmallestPrimeFraction(int[] A, int K) {
+        // o[0]记录分子 o[1]记录分母 的下标
+        PriorityQueue<int[]> pq=new PriorityQueue<>(new Comparator<int[]>(){
+            public int compare(int[] o1, int[] o2) {
+                //a/b-c/d的符号取决于 ad-bc
+                int s1=A[o1[0]]*A[o2[1]];
+                int s2=A[o1[1]]*A[o2[0]];
+                return s1-s2;//最小堆
+            }
+        });
+        int n=A.length;
+        //初始化 加入每个数列的最小元素
+        for(int i=0;i<n-1;i++)
+            pq.add(new int[]{i,n-1});
+        for(int i=0;i<K-1;i++){
+            int[] small=pq.poll();
+            if(small[1]-1>small[0]){
+                small[1]--;
+                pq.offer(small);
+            }
+        }
+        int []p=pq.peek();
+        return new int[]{A[p[0]],A[p[1]]};
+        
+    }
+}
