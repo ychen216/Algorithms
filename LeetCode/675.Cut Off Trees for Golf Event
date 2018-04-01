@@ -1,0 +1,108 @@
+675. Cut Off Trees for Golf Event
+
+/*
+You are asked to cut off trees in a forest for a golf event. The forest is represented as a non-negative 2D map, in this map:
+
+0 represents the obstacle can't be reached.
+1 represents the ground can be walked through.
+The place with number bigger than 1 represents a tree can be walked through, and this positive number represents the tree's height.
+You are asked to cut off all the trees in this forest in the order of tree's height - always cut off the tree with lowest height first. And after cutting, the original place has the tree will become a grass (value 1).
+
+You will start from the point (0, 0) and you should output the minimum steps you need to walk to cut off all the trees. If you can't cut off all the trees, output -1 in that situation.
+
+You are guaranteed that no two trees have the same height and there is at least one tree needs to be cut off.
+
+Example 1:
+Input: 
+[
+ [1,2,3],
+ [0,0,4],
+ [7,6,5]
+]
+Output: 6
+Example 2:
+Input: 
+[
+ [1,2,3],
+ [0,0,0],
+ [7,6,5]
+]
+Output: -1
+Example 3:
+Input: 
+[
+ [2,3,4],
+ [0,0,5],
+ [8,7,6]
+]
+Output: 6
+Explanation: You started from the point (0,0) and you can cut off the tree in (0,0) directly without walking.
+Hint: size of the given matrix will not exceed 50x50.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        要求把树都砍完且按照树从低到高的顺序 可以用优先队列记录树的位置
+        每一次要判断是否能从当前位置走到下一棵要砍的树的位置 要求最短路径可以用bfs
+    */
+    struct Tree{
+        int x,y,h;
+        Tree(int a,int b,int c):x(a),y(b),h(c){}
+        bool operator<(Tree t)const{return h>t.h;}
+    };
+    int cutOffTree(vector<vector<int>>& forest) {
+        int row=forest.size();
+        if(row==0)
+            return 0;
+        int col=forest[0].size();
+        if(col==0)
+            return 0;
+        priority_queue<Tree,vector<Tree>>pq;//最小堆 堆顶记录下一个要到达的位置
+        //加入所有的树
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++)
+                if(forest[i][j]>1)
+                    pq.push(Tree(i,j,forest[i][j]));
+        }
+        int res=0;
+        int sx=0,sy=0;//起始位置
+        //按照高低顺序依次砍树
+        while(!pq.empty()){
+            Tree tree=pq.top();pq.pop();
+            int step=minStep(forest,tree,sx,sy,row,col);
+            if(step==-1)//无法按顺序砍到该树
+                return -1;
+            res+=step;
+            sx=tree.x;sy=tree.y;//更新起始位置为本次砍得树
+        }
+        return res;
+    }
+
+private:
+    //从(sx,sy)走到tree的位置最少的步数 bfs
+    int minStep(vector<vector<int>>& forest,Tree &tree,int sx,int sy,int row,int col){
+        queue<pair<int,int>> q;
+        int dir[]={-1,0,1,0,-1};
+        vector<vector<bool>> visit(row,vector<bool>(col,false));
+        q.push({sx,sy});
+        visit[sx][sy]=true;
+        for(int step=0;!q.empty();step++){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                auto cur=q.front();q.pop();
+                if(cur.first==tree.x&&cur.second==tree.y)
+                    return step;
+                for(int j=0;j<4;j++){
+                    int x=cur.first+dir[j];
+                    int y=cur.second+dir[j+1];
+                    if(x<0||x>=row||y<0||y>=col||visit[x][y]||forest[x][y]==0)continue;
+                    visit[x][y]=true;
+                    q.push({x,y});
+                }
+            }
+        }
+        return -1;//无法到达
+    }
+};
