@@ -1,0 +1,59 @@
+51.N-Queens
+/*
+The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+Given an integer n, return all distinct solutions to the n-queens puzzle.
+
+Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+
+For example,
+There exist two distinct solutions to the 4-queens puzzle:
+
+[
+ [".Q..",  // Solution 1
+  "...Q",
+  "Q...",
+  "..Q."],
+
+ ["..Q.",  // Solution 2
+  "Q...",
+  "...Q",
+  ".Q.."]
+]
+*/
+
+Solution:
+class Solution {
+public:
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> res;
+        vector<int> col(n,-1);//记录每一行queue放在哪一列
+        helper(res,col,0,n);
+        return res;
+    }
+private:
+    void helper(vector<vector<string>>& res,vector<int>&col,int r,int n){
+        if(r==n){
+            vector<string> v(n,string(n,'.'));
+            //在第i行col[i]列放Queue
+            for(int i=0;i<n;i++)
+                v[i][col[i]]='Q';
+            res.push_back(v);
+            return;
+        }
+        //遍历第r行的queue放在哪一列
+        for(int i=0;i<n;i++){
+            //把第r行的queue放在第i列
+            col[r]=i;
+            //验证与前r-1行不冲突
+            bool ok=true;
+            for(int j=0;j<r;j++){
+                if(col[j]==col[r]||abs(r-j)==abs(col[r]-col[j])){
+                    ok=false;
+                    break;
+                }
+            }
+            if(ok)
+                helper(res,col,r+1,n);
+        }
+    }
+};
