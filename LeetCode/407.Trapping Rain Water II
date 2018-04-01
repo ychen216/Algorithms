@@ -1,0 +1,71 @@
+407. Trapping Rain Water II
+/*
+Given an m x n matrix of positive integers representing the height of each unit cell in a 2D elevation map, compute the volume of water it is able to trap after raining.
+
+Note:
+  Both m and n are less than 110. The height of each unit cell is greater than 0 and is less than 20,000.
+Example:
+Given the following 3x6 height map:
+[
+  [1,4,3,1,3,2],
+  [3,2,1,3,2,4],
+  [2,3,3,2,3,1]
+]
+Return 4.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        参考 https://www.cnblogs.com/grandyang/p/5928987.html
+        利用bfs 实现用最小优先队列
+        首先 最外围的部分不可能存水因为区域不封闭
+        其次 只有当前区域比四周都低才能蓄水
+        利用优先队列 每次都获得当前最低的边界 然后向四周扩展 当存在低于当前边界的区域就能够蓄水
+    */
+    struct Cell{
+        int x,y,h;
+        Cell(int a,int b,int c):x(a),y(b),h(c){};
+        bool operator<(const Cell&c)const{return h>c.h;}
+    };
+    int trapRainWater(vector<vector<int>>& heightMap) {
+        int row=heightMap.size();
+        if(row==0)
+            return 0;
+        int col=heightMap[0].size();
+        if(col==0)
+            return 0;
+        priority_queue<Cell>pq;
+        vector<vector<bool>> visit(row,vector<bool>(col,false));
+        int dir[]={-1,0,1,0,-1};
+        //初始化加入边界
+        for(int i=0;i<row;i++){
+            visit[i][0]=visit[i][col-1]=true;
+            pq.push(Cell(i,0,heightMap[i][0]));
+            pq.push(Cell(i,col-1,heightMap[i][col-1]));
+        }
+        for(int j=1;j<col-1;j++){
+            visit[0][j]=visit[row-1][j]=true;
+            pq.push(Cell(0,j,heightMap[0][j]));
+            pq.push(Cell(row-1,j,heightMap[row-1][j]));
+        }
+        int horizon=0;//海平面
+        int res=0;
+        while(!pq.empty()){
+            Cell cell=pq.top();
+            pq.pop();
+            horizon=max(horizon,cell.h);
+            for(int i=0;i<4;i++){
+                int x=cell.x+dir[i];
+                int y=cell.y+dir[i+1];
+                if(x<0||x>=row||y<0||y>=col||visit[x][y])continue;
+                visit[x][y]=true;
+                if(heightMap[x][y]<horizon)
+                    res+=horizon-heightMap[x][y];
+                pq.push(Cell(x,y,heightMap[x][y]));
+            }
+        }
+        return res;
+    }
+};
