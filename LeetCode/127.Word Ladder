@@ -13,40 +13,33 @@ wordList = ["hot","dot","dog","lot","log","cog"]
 As one shortest transformation is "hit" -> "hot" -> "dot" -> "dog" -> "cog",
 return its length 5.
 */
-Solution: TLE
+Solution:
 class Solution {
 public:
-    //利用BFS的思想找到一条begin到end的最短路径 与路径中上一个节点相邻的词语是在词典中与他只差一个字母的词
-    //为了便于实现 将endword加入到wordList
+    //bfs 
     int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
-        if(find(wordList.begin(),wordList.end(),endWord)==wordList.end())
-            return 0;
-        queue<string> q;
-        //初始化q
-        q.push(beginWord);
-        int res=1;
+        queue<pair<string,int>> q;//word,cnt
+        unordered_set<string> visit;
+        unordered_set<string> dict(wordList.begin(),wordList.end());//字典
+        q.push({beginWord,1});
+        visit.insert(beginWord);
         while(!q.empty()){
-            int size=q.size();
-            for(int i=0;i<size;i++){
-                string cur=q.front();
-                q.pop();
-                //找只差一个字母的邻居节点
-                for(int j=0;j<cur.length();j++){
-                    char letter=cur[j];
-                    for(int k=0;k<26;k++){
-                        cur[j]=k+'a';             
-                        auto it=find(wordList.begin(),wordList.end(),cur);
-                        if(it!=wordList.end()){
-                            if(*it==endWord)
-                                return res+1;
-                            q.push(cur);
-                            wordList.erase(it);
-                        }
+            auto cur=q.front();q.pop();
+            if(cur.first==endWord)
+                return cur.second;
+            int len=cur.first.length();
+            //尝试可能的一位字符的变化
+            for(int i=0;i<len;i++){
+                for(char j='a';j<='z';j++){
+                    if(cur.first[i]==j)continue;
+                    string next=cur.first;
+                    next[i]=j;
+                    if(visit.find(next)==visit.end()&&dict.find(next)!=dict.end()){
+                        visit.insert(next);
+                        q.push({next,cur.second+1});
                     }
-                    cur[j]=letter;
                 }
             }
-            res++;
         }
         return 0;
     }
