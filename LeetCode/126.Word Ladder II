@@ -1,0 +1,79 @@
+126. Word Ladder II
+
+/*
+Given two words (beginWord and endWord), and a dictionary's word list, find all shortest transformation sequence(s) from beginWord to endWord, such that:
+
+Only one letter can be changed at a time
+Each transformed word must exist in the word list. Note that beginWord is not a transformed word.
+For example,
+
+Given:
+beginWord = "hit"
+endWord = "cog"
+wordList = ["hot","dot","dog","lot","log","cog"]
+Return
+  [
+    ["hit","hot","dot","dog","cog"],
+    ["hit","hot","lot","log","cog"]
+  ]
+Note:
+  Return an empty list if there is no such transformation sequence.
+  All words have the same length.
+  All words contain only lowercase alphabetic characters.
+  You may assume no duplicates in the word list.
+  You may assume beginWord and endWord are non-empty and are not the same.
+*/
+
+Solution:
+class Solution {
+public:
+    /* 
+        参考 http://www.cnblogs.com/grandyang/p/4548184.html
+        利用bfs 这里主要是要用到剪枝操作
+        1.某条路径的长度超过了已有的最短路径的长度 就要舍弃
+        2.构建路径时 将上一轮新增加到路径中的词从dict中删去 因为该词再次在后面出现时不可能是最短路径
+        eg. a->b, a->c 这时要从dict中删去b,c;因为a->b->..->c(后面可能的情况和a->c后面的情况一样)和a->c->..->b都不可能是最短路径
+    */
+    vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
+        vector<vector<string>> res;
+        unordered_set<string> dict(wordList.begin(),wordList.end());//词典
+        unordered_set<string> occurred;//已经添加的词
+        queue<vector<string>> q;//构造最短路径的队列
+        vector<string> path;
+        path.push_back(beginWord);
+        q.push(path);
+        int level=1,minLevel=INT_MAX;
+        while(!q.empty()){
+            auto cur=q.front();q.pop();
+            //更新level及在词典中删去已加入路径的词
+            if(cur.size()>level){
+                for(auto &word:occurred)dict.erase(word);
+                occurred.clear();//清空以存储下一轮的词
+                level=cur.size();
+                if(level>minLevel)
+                    break;//剪枝
+            }
+            string last=cur.back();//该路径的最后一个词
+            //构造该路径下一个词
+            for(int i=0;i<last.length();i++){
+                string next=last;
+                for(char j='a';j<='z';j++){
+                    if(j==last[i])continue;
+                    next[i]=j;
+                    if(dict.find(next)!=dict.end()){
+                        vector<string> nextPath=cur;
+                        nextPath.push_back(next);
+                        occurred.insert(next);
+                        if(next==endWord){
+                            res.push_back(nextPath);
+                            minLevel=level;
+                        }else{
+                            q.push(nextPath);
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
