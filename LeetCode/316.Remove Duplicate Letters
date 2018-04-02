@@ -1,0 +1,81 @@
+316. Remove Duplicate Letters
+
+/*
+Given a string which contains only lowercase letters, remove duplicate letters so that every letter appear once and only once. You must make sure your result is the smallest in lexicographical order among all possible results.
+
+Example:
+Given "bcabc"
+Return "abc"
+
+Given "cbacdcbc"
+Return "acdb"
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        记录每一个字符出现的次数cnt 且记录栈中已有的字符occur
+        当栈顶字符大于当前字符时 top>cur
+            如果:cnt[top]>=1且occur[cur]==false那么出栈 因为将其放在cur后面能够构成更小的字母序
+    */
+    string removeDuplicateLetters(string s) {
+        vector<int> cnt(26,0);//字符计数
+        vector<bool> occur(26,false);//出现过
+        stack<char> st;
+        for(char &c:s)
+            cnt[c-'a']++;
+        for(char &cur:s){
+            //当前字符的字母序小于栈顶字符 且 当前字符还未出现过 且 栈顶字符在后面还会出现(不会造成缺少该类字符的情况)
+            while(!st.empty()&&st.top()>cur&&cnt[st.top()-'a']>=1&&!occur[cur-'a']){
+                occur[st.top()-'a']=false;
+                st.pop();
+            }
+            //还未出现过的字符可以加入
+            if(!occur[cur-'a']){
+                st.push(cur);
+                occur[cur-'a']=true;
+            }
+            cnt[cur-'a']--;
+        }
+        string res;
+        while(!st.empty()){
+            res.push_back(st.top());
+            st.pop();
+        }
+        reverse(res.begin(),res.end());
+        return res;
+    }
+};
+
+Solution 2:重构Solution1的代码
+class Solution {
+public:
+    /*
+        记录每一个字符出现的次数cnt 且记录栈中已有的字符occur
+        当栈顶字符大于当前字符时 top>cur
+            如果:cnt[top]>=1且occur[cur]==false那么出栈 因为将其放在cur后面能够构成更小的字母序
+    */
+    string removeDuplicateLetters(string s) {
+        vector<int> cnt(26,0);//字符计数
+        vector<bool> occur(26,false);//出现过
+        //直接用res充当栈的角色
+        string res="0";//初始化 所有的字母都大于'0'避免处理栈空的情况
+        for(char &c:s)
+            cnt[c-'a']++;
+        for(char &cur:s){
+            cnt[cur-'a']--;
+            if(occur[cur-'a'])continue;
+            //当前字符的字母序小于栈顶字符 且 当前字符还未出现过 且 栈顶字符在后面还会出现(不会造成缺少该类字符的情况)
+            while(res.back()>cur&&cnt[res.back()-'a']>0){
+                occur[res.back()-'a']=false;
+                res.pop_back();
+            }
+            //还未出现过的字符可以加入
+            res.push_back(cur);
+            occur[cur-'a']=true;
+            
+        }
+        return res.substr(1);
+    }
+};
