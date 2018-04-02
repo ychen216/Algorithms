@@ -1,0 +1,42 @@
+738. Monotone Increasing Digits
+/*
+Given a non-negative integer N, find the largest number that is less than or equal to N with monotone increasing digits.
+
+(Recall that an integer has monotone increasing digits if and only if each pair of adjacent digits x and y satisfy x <= y.)
+
+Example 1:
+Input: N = 10
+Output: 9
+Example 2:
+Input: N = 1234
+Output: 1234
+Example 3:
+Input: N = 332
+Output: 299
+Note: N is an integer in the range [0, 10^9].
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        观察到要得到非递减的数 要找到从后往前遍历的最后一个值升高的位置，让前一位减1，并把当前位以及后面的所有位都变成9
+        eg.1534 第一个开始变小的是3 前一位变为4 故最后为1499
+    */
+    int monotoneIncreasingDigits(int N) {
+        string s=to_string(N);
+        int first=0;
+        for(int i=s.length()-1;i>0;i--){
+            if(s[i]<s[i-1]){
+                first=i;
+                s[i-1]--;
+            }
+        }
+        for(int i=first;i<s.length();i++)
+            s[i]='9';
+        return stoi(s);
+    }
+};
+
+Solution 2:
+
