@@ -1,0 +1,100 @@
+341. Flatten Nested List Iterator
+/*
+Given a nested list of integers, implement an iterator to flatten it.
+
+Each element is either an integer, or a list -- whose elements may also be integers or other lists.
+
+Example 1:
+Given the list [[1,1],2,[1,1]],
+
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,1,2,1,1].
+
+Example 2:
+Given the list [1,[4,[6]]],
+
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,4,6]
+*/
+
+Solution 1:
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * class NestedInteger {
+ *   public:
+ *     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     bool isInteger() const;
+ *
+ *     // Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // The result is undefined if this NestedInteger holds a nested list
+ *     int getInteger() const;
+ *
+ *     // Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // The result is undefined if this NestedInteger holds a single integer
+ *     const vector<NestedInteger> &getList() const;
+ * };
+ */
+class NestedIterator {
+public:
+    // 参考 https://www.cnblogs.com/grandyang/p/5358793.html
+    // Solution 1 利用stack 逆序压栈使得最前的元素在栈顶
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        for(int i=nestedList.size()-1;i>=0;i--)
+            st.push(nestedList[i]);
+    }
+
+    int next() {
+        auto t=st.top();st.pop();
+        return t.getInteger();
+    }
+
+    bool hasNext() {
+        while(!st.empty()){
+            auto t=st.top();
+            if(t.isInteger())return true;//可以直接出栈
+            st.pop();
+            //否则需要将嵌套的部分 拆分出来
+            for(int i=t.getList().size()-1;i>=0;i--)
+                st.push(t.getList()[i]);
+        }
+        return false;
+    }
+private:
+    stack<NestedInteger> st;
+};
+
+/**
+ * Your NestedIterator object will be instantiated and called as such:
+ * NestedIterator i(nestedList);
+ * while (i.hasNext()) cout << i.next();
+ */
+ 
+ 
+Solution 2:
+class NestedIterator {
+public:
+    // 参考 https://www.cnblogs.com/grandyang/p/5358793.html
+    // Solution 2 利用deque 
+    NestedIterator(vector<NestedInteger> &nestedList) {
+        for(int i=0;i<nestedList.size();i++)
+            dq.push_back(nestedList[i]);
+    }
+
+    int next() {
+        auto t=dq.front();dq.pop_front();
+        return t.getInteger();
+    }
+
+    bool hasNext() {
+        while(!dq.empty()){
+            auto t=dq.front();
+            if(t.isInteger())return true;//单个数字可以直接出栈
+            dq.pop_front();
+            //否则需要将嵌套的部分 拆分出来
+            for(int i=0;i<t.getList().size();i++)
+                dq.insert(dq.begin()+i,t.getList()[i]);//从头插入
+        }
+        return false;
+    }
+private:
+    deque<NestedInteger> dq;
+};
