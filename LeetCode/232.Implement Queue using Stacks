@@ -1,0 +1,115 @@
+232. Implement Queue using Stacks
+/*
+Implement the following operations of a queue using stacks.
+
+push(x) -- Push element x to the back of queue.
+pop() -- Removes the element from in front of queue.
+peek() -- Get the front element.
+empty() -- Return whether the queue is empty.
+Notes:
+  You must use only standard operations of a stack -- which means only push to top, peek/pop from top, size, and is empty operations are valid.
+  Depending on your language, stack may not be supported natively. You may simulate a stack by using a list or deque (double-ended queue), as long as you use only standard operations of a stack.
+  You may assume that all operations are valid (for example, no pop or peek operations will be called on an empty queue).
+*/
+Solution:
+class MyQueue {
+public:
+    /** Initialize your data structure here. */
+    
+    // 保证栈中元素从顶到底是先进的在顶部 为了保证这个效果push操作需要一个辅助栈实现 这样pop top empty可以继续沿用栈原生的实现 
+    MyQueue() {
+        
+    }
+    
+    /** Push element x to the back of queue. */
+    void push(int x) {
+        stack<int> temp;//用于翻转
+        //st栈顶是最先加入的元素
+        while(!st.empty()){
+            temp.push(st.top());
+            st.pop();
+        }
+        st.push(x);//最后加入的元素在栈底
+        while(!temp.empty()){
+            st.push(temp.top());
+            temp.pop();
+        }
+    }
+    
+    /** Removes the element from in front of queue and returns that element. */
+    int pop() {
+        int t=st.top();
+        st.pop();
+        return t;
+    }
+    
+    /** Get the front element. */
+    int peek() {
+        return st.top();
+    }
+    
+    /** Returns whether the queue is empty. */
+    bool empty() {
+        return st.empty();
+    }
+private:
+    stack<int> st;
+};
+
+/**
+ * Your MyQueue object will be instantiated and called as such:
+ * MyQueue obj = new MyQueue();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.peek();
+ * bool param_4 = obj.empty();
+ */
+ 
+Solution 2:
+class MyQueue {
+public:
+    /** Initialize your data structure here. */
+    
+    //每次插入时都进行两次翻转 为了提高效率利用两个栈 当涉及到出栈 去队首元素时才进行翻转
+    MyQueue() {
+        
+    }
+    
+    /** Push element x to the back of queue. */
+    void push(int x) {
+        newSt.push(x);
+    }
+    
+    /** Removes the element from in front of queue and returns that element. */
+    int pop() {
+        shift();
+        int t=0;
+        if(!oldSt.empty()){
+            t=oldSt.top();
+            oldSt.pop();
+        }
+        return t;
+    }
+    
+    /** Get the front element. */
+    int peek() {
+        shift();
+        if(!oldSt.empty())return oldSt.top();
+        return 0;
+    }
+    
+    /** Returns whether the queue is empty. */
+    bool empty() {
+        return newSt.empty()&&oldSt.empty();
+    }
+private:
+    stack<int> newSt,oldSt;
+    void shift(){
+        if(oldSt.empty()){
+            while(!newSt.empty()){
+                oldSt.push(newSt.top());
+                newSt.pop();
+            }
+        }
+    }
+};
