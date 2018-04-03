@@ -1,0 +1,67 @@
+767. Reorganize String
+
+/*
+Given a string S, check if the letters can be rearranged so that two characters that are adjacent to each other are not the same.
+
+If possible, output any possible result.  If not possible, return the empty string.
+
+Example 1:
+Input: S = "aab"
+Output: "aba"
+
+Example 2:
+Input: S = "aaab"
+Output: ""
+
+Note:
+  S will consist of lowercase letters and have length in range [1, 500].
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        通过观察可以看出：出现次数最多的字母个数 - 1 > 其他所有字母出现次数和,此时必有两个出现次数最多的字母连在一起.反之，必能形成一个隔一个的情形
+        贪心 利用最大堆实现 先尽量用频次高的元素；若一轮使用后还有剩余，则交给子问题
+        将字母按照出现次数从大到小排序,每次优先选择剩余次数最多,且与新字符串末尾字符串不重复的字符,排在末尾
+        若某次选择无法找出这样的字符,则返回空串
+    */
+    string reorganizeString(string S) {
+        int n=S.length();
+        unordered_map<char,int> cnt;
+        int maxn=0;//出现最多字母的个数
+        //计数
+        for(char &c:S){
+            cnt[c]++;
+            maxn=max(maxn,cnt[c]);
+        }
+        if(n-maxn<maxn-1)
+            return "";
+        //pair char->
+        priority_queue<pair<char,int>,vector<pair<char,int>>,function<bool(const pair<char,int>&,const pair<char,int>&)>> 
+            pq([](const pair<char,int>&a,const pair<char,int>&b)->bool{return a.second<b.second;});//最大堆
+        for(auto &pair:cnt){
+            pq.push(pair);
+        }
+        string res="";
+        while(!pq.empty()){
+            auto node1=pq.top();//频率最高的字符
+            pq.pop();
+            if(res.length()==0||node1.first!=res.back()){
+                res.push_back(node1.first);
+                if(--node1.second>0)
+                    pq.push(node1);
+            }
+            else{
+                //频率次高的字符
+                auto node2=pq.top();
+                pq.pop();
+                res.push_back(node2.first);
+                if(--node2.second>0)
+                    pq.push(node2);
+                pq.push(node1);//node1没有被消耗 需要入队
+            }
+        }
+        return res;
+    }
+};
