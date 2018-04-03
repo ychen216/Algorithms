@@ -25,7 +25,7 @@ public:
     */
     int monotoneIncreasingDigits(int N) {
         string s=to_string(N);
-        int first=0;
+        int first=s.length();
         for(int i=s.length()-1;i>0;i--){
             if(s[i]<s[i-1]){
                 first=i;
