@@ -1,0 +1,58 @@
+757. Set Intersection Size At Least Two
+
+/*
+An integer interval [a, b] (for integers a < b) is a set of all consecutive integers from a to b, including a and b.
+
+Find the minimum size of a set S such that for every integer interval A in intervals, the intersection of S with A has size at least 2.
+
+Example 1:
+Input: intervals = [[1, 3], [1, 4], [2, 5], [3, 5]]
+Output: 3
+Explanation:
+Consider the set S = {2, 3, 4}.  For each interval, there are at least 2 elements from S in the interval.
+Also, there isn't a smaller size set that fulfills the above condition.
+Thus, we output the size of this set, which is 3.
+Example 2:
+Input: intervals = [[1, 2], [2, 3], [2, 4], [4, 5]]
+Output: 5
+Explanation:
+An example of a minimum sized set is {1, 2, 3, 4, 5}.
+Note:
+  intervals will have length in range [1, 3000].
+  intervals[i] will have length 2, representing some integer interval.
+  intervals[i][j] will be an integer in [0, 10^8].
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        参考 http://www.cnblogs.com/grandyang/p/8503476.html
+        为了使得集合S中的数字尽可能的小，我们希望处理区间的时候从小区间开始.
+        如果区间b完全覆盖了区间a，那么和区间a有两个相同数字的集合，一定和区间b也有两个相同数字。
+        同样，我们不希望一会处理一个前面的区间，一会又处理一个很后面的区间，我们希望区间是有序的。那么如何给区间排序呢，是按起始位置排，还是按结束位置排，
+        这里我们按结束位置从小往大排，当两个结束位置相同时，起始位置大的排前面先处理，这也符合我们先处理小区间的原则。
+        那么遍历区间的时候，当前区间就和我们维护的集合S有三种情况：
+
+        1. 二者完全没有交集，这时候我们就需要从当前区间中取出两个数字加入集合S;
+        为了尽可能少使用数字，我们取当前区间中的最大两个数字，因为我们区间位置不断变大，所以取大的数字有更高的概率能和后面的区间有交集。
+
+        2. 二者有一个数字的交集，那么这个交集数字一定是区间的起始位置，那么我们需要从当前区间中再取一个数字加入集合S，
+        根据上面的分析，我们取最大的那个数，即区间的结束位置。
+
+        3. 二者有两个及两个以上数字的交集，那么不用做任何处理。
+    */
+    int intersectionSizeTwo(vector<vector<int>>& intervals) {
+        vector<int> res{-1,-1};//加入-1是为了防止越界
+        sort(intervals.begin(),intervals.end(),[](vector<int>&a,vector<int>&b){return a[1]<b[1]||a[1]==b[1]&&a[0]>b[0];});
+        for(auto &v:intervals){
+            int size=res.size();
+            //至少两个交点
+            if(v[0]<=res[size-2])continue;
+            //无交集
+            if(v[0]>res[size-1])res.push_back(v[1]-1);
+            res.push_back(v[1]);
+        }
+        return res.size()-2;//减掉两个-1
+    }
+};
