@@ -32,7 +32,7 @@ public:
         以此类推直至遍历完整个数组
     */
     int minPatches(vector<int>& nums, int n) {
-        int res=0,miss=1,i=0;
+        long res=0,miss=1,i=0;
         while(miss<=n){
             //扩展可表示数的范围
             if(i<nums.size()&&nums[i]<=miss)
