@@ -1,0 +1,54 @@
+765. Couples Holding Hands
+/*
+N couples sit in 2N seats arranged in a row and want to hold hands. We want to know the minimum number of swaps so that every couple is sitting side by side. A swap consists of choosing any two people, then they stand up and switch seats.
+
+The people and seats are represented by an integer from 0 to 2N-1, the couples are numbered in order, the first couple being (0, 1), the second couple being (2, 3), and so on with the last couple being (2N-2, 2N-1).
+
+The couples' initial seating is given by row[i] being the value of the person who is initially sitting in the i-th seat.
+
+Example 1:
+
+Input: row = [0, 2, 1, 3]
+Output: 1
+Explanation: We only need to swap the second (row[1]) and third (row[2]) person.
+Example 2:
+
+Input: row = [3, 2, 0, 1]
+Output: 0
+Explanation: All couples are already seated side by side.
+Note:
+  len(row) is even and in the range of [4, 60].
+  row is guaranteed to be a permutation of 0...len(row)-1
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        为了便于快速查找某个id的人所处的位置，我们定义一个哈希表，表示从某人的id到其在row中的位置
+        然后就开始扫描row中的偶数位。根据在该偶数位上的人的id，可以推出其另一半所处的位置。
+        如果他的另一半不在他接下来的位置，那么我们就交换下一位置和它的另一半的位置,返回总次数即可
+        贪心证明 参考cyclic permutation https://en.wikipedia.org/wiki/Cyclic_permutation
+    */
+    int minSwapsCouples(vector<int>& row) {
+        unordered_map<int,int> pos;//id->pos
+        int n=row.size();
+        for(int i=0;i<n;i++)
+            pos[row[i]]=i;
+        int res=0;
+        for(int i=0;i<n;i+=2){
+            int p1=row[i];
+            int p2=p1%2==0?p1+1:p1-1;//id of p1's couple
+            //下一个位置不是p1的couple则交换
+            if(row[i+1]!=p2){
+                //更新pos
+                int pos_p2=pos[p2];
+                pos[row[i+1]]=pos_p2;
+                pos[p2]=i+1;
+                swap(row[i+1],row[pos_p2]);
+                res++;
+            }
+        }
+        return res;
+    }
+};
