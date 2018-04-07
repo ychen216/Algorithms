@@ -1,0 +1,32 @@
+135. Candy
+/*
+There are N children standing in a line. Each child is assigned a rating value.
+You are giving candies to these children subjected to the following requirements:
+  Each child must have at least one candy.
+  Children with a higher rating get more candies than their neighbors.
+What is the minimum candies you must give?
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        要求每个人至少有一颗糖 且高等级的人比他的邻居获得更多的糖(利用左右两次遍历来保证)
+    */
+    int candy(vector<int>& ratings) {
+        int n=ratings.size();
+        vector<int> candy(n,1);//初始化每个人有一颗糖
+        //保证从左到右 高等级的人比其左邻居糖更多
+        for(int i=1;i<n;i++)
+            if(ratings[i]>ratings[i-1])
+                candy[i]=candy[i-1]+1;
+        //保证从右到左
+        for(int i=n-1;i>0;i--)
+            if(ratings[i-1]>ratings[i])
+                candy[i-1]=max(candy[i-1],candy[i]+1);
+        int res=0;
+        for(int i=0;i<n;i++)
+            res+=candy[i];
+        return res;
+    }
+};
