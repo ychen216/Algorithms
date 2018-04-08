@@ -1,0 +1,38 @@
+327. Count of Range Sum
+
+/*
+Given an integer array nums, return the number of range sums that lie in [lower, upper] inclusive.
+Range sum S(i, j) is defined as the sum of the elements in nums between indices i and j (i ≤ j), inclusive.
+
+Note:
+A naive algorithm of O(n2) is trivial. You MUST do better than that.
+
+Example:
+Given nums = [-2, 5, -1], lower = -2, upper = 2,
+Return 3.
+The three ranges are : [0, 0], [2, 2], [0, 2] and their respective sums are: -2, -1, 2
+*/
+
+Solution:
+class Solution {
+public:
+    /*  sum[i]为0~i元素之和
+        最简单的方式就是利用sum[i]-sum[j]循环判断其值是否在[lower,upper]之间 复杂度为O(n^2)
+        对于某个i来说,只有那些满足 lower <= sum[i] - sum[j] <= upper 的j能形成一个区间[j, i)满足题意
+        问题可以转化为寻找有多少个这样的j (0 =< j < i) 满足 sum[i] - upper =< sum[j] <= sum[i] - lower
+        利用multiset(sum[j]可能有重复)对其中数据排序,然后用upperbound和lowerbound来找临界值
+        lower_bound是找数组中第一个不小于给定值的数(包括等于情况),而upper_bound是找数组中第一个大于给定值的数，那么两者相减，就是j的个数
+    */
+    int countRangeSum(vector<int>& nums, int lower, int upper) {
+        multiset<long> sumSet;
+        long sum=0;
+        int res=0;
+        sumSet.insert(0);//初始化 保证只有一个元素的情况
+        for(int &n:nums){
+            sum+=n;
+            res+=distance(sumSet.lower_bound(sum-upper),sumSet.upper_bound(sum-lower));//计算两个iterator的距离
+            sumSet.insert(sum);
+        }
+        return res;
+    }
+};
