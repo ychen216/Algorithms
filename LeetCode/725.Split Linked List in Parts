@@ -52,7 +52,7 @@ public:
             len++;
         int base=len/k,r=len%k;
         ListNode *pre=NULL,*cur=root;
-        for(int i=0;i<k;i++,r--){
+        for(int i=0;i<k&&cur;i++,r--){
             res[i]=cur;
             for(int j=0;j<base+(r>0);j++){
                 pre=cur;
