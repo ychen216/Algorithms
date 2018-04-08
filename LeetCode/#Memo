@@ -56,14 +56,14 @@ trick：many use bit operation
   medium:462,477,421,318,516,137,525,334,313,289,567,80,81,201,467,134,60,18,523,3,11,
 
 Divide&Conque:
-  hard:315,327,282,
+  hard:315,327,282,493,
 
 Bit:
   simple:762,
   medium:393,
   
 Sort:
-  hard:164,
+  hard:164,493,
   
 细节:如溢出
   simple:7,
