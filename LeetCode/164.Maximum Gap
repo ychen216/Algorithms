@@ -1,0 +1,75 @@
+164. Maximum Gap
+
+/*
+Given an unsorted array, find the maximum difference between the successive elements in its sorted form.
+
+Try to solve it in linear time/space.
+
+Return 0 if the array contains less than 2 elements.
+
+You may assume all elements in the array are non-negative integers and fit in the 32-bit signed integer range.
+*/
+
+Solution 1:
+class Solution {
+public:
+    // 排序后遍历 O(nlgn)
+    int maximumGap(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return 0;
+        sort(nums.begin(),nums.end());
+        int maxGap=0;
+        for(int i=1;i<n;i++)
+            maxGap=max(maxGap,nums[i]-nums[i-1]);
+        return maxGap;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        为了使得时间复杂度为O(n) 利用桶排序
+        
+    */
+    int maximumGap(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return 0;
+        // get the max and min value of the array
+        int minNum = INT_MAX;
+        int maxNum = INT_MIN;
+        for (int i:nums) {
+            minNum = min(minNum, i);
+            maxNum = max(maxNum, i);
+        }
+        // the minimum possibale gap, ceiling of the integer division
+        int gap = (maxNum - minNum)/n + 1;
+        int bucket_nums = (maxNum - minNum) / gap + 1;
+        vector<int> bucketsMIN(bucket_nums,INT_MAX); // store the min value in that bucket
+        vector<int> bucketsMAX(bucket_nums,INT_MIN); // store the max value in that bucket
+        // put numbers into buckets
+        for (int i:nums) {
+            if (i == minNum || i == maxNum)
+                continue;
+            int idx = (i - minNum) / gap; // index of the right position in the buckets
+            bucketsMIN[idx] = min(i, bucketsMIN[idx]);
+            bucketsMAX[idx] = max(i, bucketsMAX[idx]);
+        }
+        // scan the buckets for the max gap
+        int maxGap = INT_MIN;
+        int previous = minNum;
+        for (int i = 0; i < bucket_nums; i++) {
+            if (bucketsMIN[i] == INT_MAX && bucketsMAX[i] == INT_MIN)
+                // empty bucket
+                continue;
+            // min value minus the previous value is the current gap
+            maxGap = max(maxGap, bucketsMIN[i] - previous);
+            // update previous bucket value
+            previous = bucketsMAX[i];
+        }
+        maxGap = max(maxGap, maxNum - previous); // updata the final max value gap
+        return maxGap;
+    }
+};
