@@ -1,5 +1,9 @@
 Reference: https://leetcode.com/problems/sum-of-two-integers/discuss/84278/A-summary:-how-to-use-bit-manipulation-to-solve-problems-easily-and-efficiently
 
+C++中进制表示:
+    1.二进制常数 以0b为起始 int x=0b110;//C++ 14后可使用
+    2.十六进制   以0x为起始 int x=0xFF;
+   
 Set union A | B
 Set intersection A & B
 Set subtraction A & ~B
