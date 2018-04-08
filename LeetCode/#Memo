@@ -58,6 +58,9 @@ trick：many use bit operation
 Divide&Conque:
   hard:315,
 
+Bit:
+  simple:762,
+  
 细节:如溢出
   simple:7,
 
