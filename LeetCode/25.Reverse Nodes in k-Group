@@ -1,0 +1,65 @@
+25. Reverse Nodes in k-Group
+/*
+Given a linked list, reverse the nodes of a linked list k at a time and return its modified list.
+
+k is a positive integer and is less than or equal to the length of the linked list. If the number of nodes is not a multiple of k then left-out nodes in the end should remain as it is.
+
+You may not alter the values in the nodes, only nodes itself may be changed.
+
+Only constant memory is allowed.
+
+For example,
+Given this linked list: 1->2->3->4->5
+  For k = 2, you should return: 2->1->4->3->5
+  For k = 3, you should return: 3->2->1->4->5
+*/
+
+Solution:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if(head==NULL)
+            return NULL;
+        if(k==1)
+            return head;
+        ListNode *feakHead=new ListNode(0);
+        ListNode *cur=feakHead;//cur->next指向当前区间已翻转过的首元素
+        ListNode *first=head,*last=head;//first当前要反转的区间的头一个元素 下一个区间的头元素 当前区间尾元素的下一个元素
+        int nodeCnt;
+        while(last!=NULL){
+            //找到区间尾
+            for(nodeCnt=1;nodeCnt<=k&&last;nodeCnt++){
+                last=last->next;
+            }
+            //当前区间存在k个元素 可以翻转
+            if(nodeCnt>k){
+                //记录尾节点
+                ListNode *tail=first;
+                //reverse操作 头插法
+                while(first!=last){
+                    ListNode *temp=first->next;
+                    first->next=cur->next;
+                    cur->next=first;
+                    first=temp;
+                }
+                //下一轮reverse
+                cur=tail;
+                first=last;
+                nodeCnt=0;
+            }
+            else{
+                //不足k个node 不必翻转
+                cur->next=first;
+            }
+        }
+        return feakHead->next;
+    }
+};
