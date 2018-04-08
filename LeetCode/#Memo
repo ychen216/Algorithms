@@ -60,6 +60,7 @@ Divide&Conque:
 
 Bit:
   simple:762,
+  medium:393,
   
 细节:如溢出
   simple:7,
