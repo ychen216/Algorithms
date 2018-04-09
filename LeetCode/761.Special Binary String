@@ -1,0 +1,53 @@
+761. Special Binary String
+
+/*
+Special binary strings are binary strings with the following two properties:
+
+The number of 0's is equal to the number of 1's.
+Every prefix of the binary string has at least as many 1's as 0's.
+Given a special string S, a move consists of choosing two consecutive, non-empty, special substrings of S, and swapping them. (Two strings are consecutive if the last character of the first string is exactly one index before the first character of the second string.)
+
+At the end of any number of moves, what is the lexicographically largest resulting string possible?
+
+Example 1:
+Input: S = "11011000"
+Output: "11100100"
+Explanation:
+The strings "10" [occuring at S[1]] and "1100" [at S[3]] are swapped.
+This is the lexicographically largest string possible after some number of swaps.
+Note:
+  S has length at most 50.
+  S is guaranteed to be a special binary string as defined above.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+       一个特殊的二进制字符串,要满足两个要求:一是0和1的个数要相等;二是任何一个前缀中的1的个数都要大于等于0的个数
+       将其看作是一个括号字符串.这里的1表示左括号,0表示右括号,那么题目中的两个限制条件其实就是限定这个括号字符串必须合法
+       即左右括号的个数必须相同,且左括号的个数随时都要大于等于右括号的个数
+       将每一个符合条件的字符串(自身必须是重排序好的,利用递归)按照字母序从大到小排序 连接后得到最后结果
+       参考 http://www.cnblogs.com/grandyang/p/8606024.html
+    */
+    string makeLargestSpecial(string S) {
+        vector<string> v;
+        int i=0;//符合条件的子字符串起始位置
+        int cnt=0;
+        for(int j=0;j<S.length();j++){
+            cnt+=S[j]=='1'?1:-1;
+            if(cnt==0){
+                //S[i~j]形成了合法的可移动子串
+                //那么S[i]必然为1 S[j]必然为0 否则不满足special binary string条件2
+                //所以对S[i~j]内部进行重排时可以不考虑 S[i] S[j]
+                v.push_back('1'+makeLargestSpecial(S.substr(i+1,j-i-1))+'0');
+                i=j+1;//更新i
+            }
+        }
+        sort(v.begin(),v.end(),greater<string>());//按照字符串从大到小排序
+        string res="";
+        for(int i=0;i<v.size();i++)
+            res+=v[i];
+        return res;
+    }
+};
