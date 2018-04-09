@@ -1,0 +1,88 @@
+745. Prefix and Suffix Search
+/*
+Given many words, words[i] has weight i.
+
+Design a class WordFilter that supports one function, WordFilter.f(String prefix, String suffix). It will return the word with given prefix and suffix with maximum weight. If no word exists, return -1.
+
+Examples:
+Input:
+WordFilter(["apple"])
+WordFilter.f("a", "e") // returns 0
+WordFilter.f("b", "") // returns -1
+Note:
+  words has length in range [1, 15000].
+  For each test case, up to words.length queries WordFilter.f may be made.
+  words[i] has length in range [1, 10].
+  prefix, suffix have lengths in range [0, 10].
+  words[i] and prefix, suffix queries consist of lowercase letters only.
+*/
+
+Solution 1:
+class WordFilter {
+public:
+    /*
+        将每一个词可能形成的前缀后缀存入map 
+        eg.app长度为3 有4个前缀'' a ap app4个后缀'' p,pp,app要将这n^2种可能组合起来
+    */
+    WordFilter(vector<string> words) {
+        for(int w=0;w<words.size();w++){
+            for(int i=0;i<=words[w].length();i++){
+                for(int j=0;j<=words[w].length();j++)
+                    wordDict[words[w].substr(0,i)+"*"+words[w].substr(words[w].length()-j)]=w;
+            }
+        }
+    }
+    
+    int f(string prefix, string suffix) {
+        return wordDict.find(prefix+"*"+suffix)==wordDict.end()?-1:wordDict[prefix+"*"+suffix];
+    }
+private:
+    unordered_map<string,int> wordDict;
+};
+
+/**
+ * Your WordFilter object will be instantiated and called as such:
+ * WordFilter obj = new WordFilter(words);
+ * int param_1 = obj.f(prefix,suffix);
+ */
+ 
+ Solution 2:
+ class WordFilter {
+public:
+    /*
+        用两个map记录所有前缀和后缀可能的权重
+    */
+    WordFilter(vector<string> words) {
+        
+        for(int w=0;w<words.size();w++){
+            for(int i=0;i<=words[w].length();i++)
+                preMap[words[w].substr(0,i)].push_back(w);
+            
+            for(int j=0;j<=words[w].length();j++)
+                sufMap[words[w].substr(words[w].length()-j)].push_back(w);    
+        }
+    }
+    
+    int f(string prefix, string suffix) {
+        if(!preMap.count(prefix)||!sufMap.count(suffix))return -1;
+        vector<int> prev=preMap[prefix];
+        vector<int> sufv=sufMap[suffix];
+        int p=prev.size()-1,s=sufv.size()-1;
+        //由后向前扫 得到权重最大的
+        while(p>=0&&s>=0){
+            if(prev[p]>sufv[s])p--;
+            else if(prev[p]<sufv[s])s--;
+            else return prev[p];
+        }
+        return -1;
+    }
+private:
+    unordered_map<string,vector<int>> preMap,sufMap;
+};
+
+/**
+ * Your WordFilter object will be instantiated and called as such:
+ * WordFilter obj = new WordFilter(words);
+ * int param_1 = obj.f(prefix,suffix);
+ */
+ 
