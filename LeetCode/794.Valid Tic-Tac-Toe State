@@ -82,3 +82,50 @@ public:
         return (turns == 0 || turns == 1) && (!xwin || !owin);
     }
 };
+
+Solution 2：
+class Solution {
+public:
+    /*
+       straightforward
+       计算X,O的个数 如果legal必然有cntx==cnto||cntx==cnto+1
+       如果X,O的个数合法 则检验是否有一方获胜 获胜的状态是否合法
+       若无人获胜且X,O个数合法 那么状态合法
+    */
+    bool validTicTacToe(vector<string>& board) {
+        int cntx=0,cnto=0;
+        for(int i=0;i<3;i++)
+            for(int j=0;j<3;j++){
+                if(board[i][j]==' ')continue;
+                board[i][j]=='X'?cntx++:cnto++;
+            }
+        // X,O个数是否合法
+        if(cntx!=cnto&&cntx!=cnto+1)return false;
+        if(checkWin(board,'X')&&cntx!=cnto+1)return false;//X获胜不合法的状态
+        if(checkWin(board,'O')&&cntx!=cnto)return false;//O获胜不合法的状态
+        return true;
+    }
+
+private:
+    //判断ch是否获胜
+    bool checkWin(vector<string>&board,char ch){
+        //对角
+        if(board[1][1]==ch){
+            if(board[0][0]==ch&&board[2][2]==ch)return true;
+            if(board[0][2]==ch&&board[2][0]==ch)return true;
+        }
+        //行
+        for(int i=0;i<3;i++){
+            if(board[i][0]==ch){
+                if(board[i][1]==ch&&board[i][2]==ch)return true;
+            }
+        }
+        //列
+        for(int j=0;j<3;j++){
+            if(board[0][j]==ch){
+                if(board[1][j]==ch&&board[2][j]==ch)return true;
+            }
+        }
+        return false;
+    }
+};
