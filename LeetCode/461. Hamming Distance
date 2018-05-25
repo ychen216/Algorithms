@@ -22,7 +22,8 @@ The above arrows point to positions where the corresponding bits are different.
 
 */
 
-class Solution {
+Solution 1:
+class Solution  {
 public:
     int hammingDistance(int x, int y) {
         int count=0;
@@ -45,5 +46,26 @@ public:
             y/=2;
         }
         return count;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        求两个数二进制表示中不同的位数
+        可以利用异或操作 A^B中 A和B不同的二进制位将会置为1
+        然后可以求C=A^B中1的个数
+        可以利用C&(C-1)求1的个数
+    */
+    int hammingDistance(int x, int y) {
+        int C=x^y;
+        int cnt=0;
+        while(C!=0){
+            cnt++;
+            C&=(C-1);
+        }
+        return cnt;
     }
 };
