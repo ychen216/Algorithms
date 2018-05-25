@@ -31,3 +31,23 @@ public:
         return sum;
     }
 };
+
+class Solution {
+public:
+    /*
+        我们想要获得尽可能大的n个数的和,很自然的会想要
+        1.首先加入最大的数maxNum
+        但是maxNum无论与哪个数组合,通过min(a,b)后,都会被筛掉
+        那么我们想加入次大的数2ndMaxNum,那么只有将其与maxNum分为一组 才能得到2ndMaxNum
+        2.同理，接下来我们想加入3rdMaxNum，此时3rdMaxNum是剩下的数中最大的;又回到了情况1
+        总结一下 可以发现 每次都取当前剩下的数中次大的
+        这样我们可以对数组进行排序 然后每次取1,3..,n-3,n-1个数
+    */
+    int arrayPairSum(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int sum=0;
+        for(int i=0;i<nums.size();i+=2)
+            sum+=nums[i];
+        return sum;
+    }
+};
