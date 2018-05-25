@@ -35,3 +35,27 @@ public:
         return res;
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    // 简单验证每一个元素
+    vector<int> selfDividingNumbers(int left, int right) {
+        vector<int> res;
+        for(int i=left;i<=right;i++){
+            int num=i;
+            bool ok=(num==0?false:true);
+            // 特别注意每次用原来的数i做被除数 在num上获得i的每一位数
+            while(ok&&num!=0){
+                int reminder=num%10;
+                if(reminder==0||i%reminder!=0)
+                    ok=false;
+                num/=10;
+            }
+            if(ok)
+                res.push_back(i);
+        }
+        return res;
+    }
+};
