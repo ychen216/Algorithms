@@ -77,3 +77,39 @@ public:
         return t1;
     }
 };
+
+Solution 3：
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //构造一棵新树 返回新树的根
+    TreeNode* mergeTrees(TreeNode* t1, TreeNode* t2) {
+        if(t1==NULL&&t2==NULL)
+            return NULL;
+        TreeNode *root = new TreeNode(0);
+        if(t1==NULL){
+            root->val=t2->val;
+            root->left=mergeTrees(NULL,t2->left);
+            root->right=mergeTrees(NULL,t2->right);
+        }
+        else if(t2==NULL){
+            root->val=t1->val;
+            root->left=mergeTrees(t1->left,NULL);
+            root->right=mergeTrees(t1->right,NULL);
+        }
+        else{
+            root->val=t1->val+t2->val;
+            root->left=mergeTrees(t1->left,t2->left);
+            root->right=mergeTrees(t1->right,t2->right);
+        }
+        return root;
+    }
+};
