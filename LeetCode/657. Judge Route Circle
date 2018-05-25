@@ -38,3 +38,33 @@ public:
             return false;
     }
 };
+
+
+Solution 2：
+class Solution {
+public:
+    // 题目指的圈是指序列结束时 回到原点 在序列中回到原点不是满足条件的解
+    // 当序列长度为奇数时 必然不会形成一个圈
+    // 记录前一步走的位置更新下一步 判断到序列结束时其是否回到原点(0,0)
+    // 也可以记录向上下左右移动的步数 当numL==numR&&numU==numD时回到原点
+    bool judgeCircle(string moves) {
+        // 奇数步 必然不形成circle
+        if(moves.length()&1)
+            return false;
+        int preX=0,preY=0;
+        for(auto &move:moves){
+            if(move=='U')
+                preX--;
+            else if(move=='D')
+                preX++;
+            else if(move=='L')
+                preY--;
+            else
+                preY++;
+            
+        }
+        if(preX==0&&preY==0)
+                return true;
+        return false;
+    }
+};
