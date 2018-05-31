@@ -59,3 +59,21 @@ public:
         return res;    
     }
 };
+
+换一种初始化方法
+class Solution {
+public:
+    vector<vector<int>> matrixReshape(vector<vector<int>>& nums, int r, int c) {
+        int oldR=nums.size();
+        int oldC=nums[0].size();
+        if(r*c!=oldR*oldC)
+            return nums;
+        vector<vector<int>> res(r,vector<int>(c));
+        for(int i=0;i<r;i++)
+            for(int j=0;j<c;j++){
+                int offset=i*c+j;
+                res[i][j]=nums[offset/oldC][offset%oldC];
+            }
+        return res;
+    }
+};
