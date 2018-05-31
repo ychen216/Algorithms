@@ -14,7 +14,7 @@ You may use one character in the keyboard more than once.
 You may assume the input string will only contain letters of alphabet.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
 	map<char, int> charToIntMap;
@@ -61,4 +61,31 @@ public:
 		}
 		return res;
 	}
+};
+
+Solution 2:
+class Solution {
+public:
+    vector<string> findWords(vector<string>& words) {
+        string alphabet[]={"qwertyuiop","asdfghjkl","zxcvbnm"};
+        unordered_map<char,int> word2Row;//每个字母对应的行数
+        // 初始化 每个字母对应的行数
+        for(int r=0;r<3;r++){
+            for(auto &w:alphabet[r])
+                word2Row[w]=r;
+        }
+        vector<string> res;
+        // 判断合法的字符串
+        for(auto &word:words){
+            int label= word2Row[tolower(word[0])];//以单词首字符所在的行表示单词所在的行
+            int i=1;
+            for(;i<word.length();i++){
+                if(word2Row[tolower(word[i])]!=label)
+                    break;
+            }
+            if(i==word.length())
+                res.push_back(word);
+        }
+        return res;
+    }
 };
