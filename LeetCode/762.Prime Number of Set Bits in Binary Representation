@@ -63,3 +63,25 @@ public:
         return res;
     }
 };
+
+Solution 3:判断一个数n的二进制中1的位数x 时间复杂度为O(x)
+class Solution {
+public:
+    int countPrimeSetBits(int L, int R) {
+        unordered_set <int> prime={2,3,5,7,11,13,17,19,21,23};
+        int res=0;
+        for(int i=L;i<=R;i++)
+            if(prime.find(numOf1Bit(i))!=prime.end())
+                res++;
+        return res;
+    }
+private:
+    int numOf1Bit(int n){
+        int cnt=0;
+        while(n){
+            cnt++;
+            n&=(n-1);
+        }
+        return cnt;
+    }
+};
