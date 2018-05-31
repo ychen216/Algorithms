@@ -51,3 +51,30 @@ public:
         return max;
     }
 };
+
+
+Solution 3:
+class Solution {
+public:
+    // 从左向右记录每一位左边连续1的个数
+    // 从右向左记录每一位右边连续1的个数
+    int findMaxConsecutiveOnes(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> left(n,0),right(n,0);
+        for(int i=1;i<n;i++){
+            if(nums[i-1]==1)
+                left[i]=left[i-1]+1;
+        }
+        for(int i=n-2;i>=0;i--){
+            if(nums[i+1]==1)
+                right[i]=right[i+1]+1;
+        }
+        int maxOnes=0;
+        for(int i=0;i<n;i++){
+            if(nums[i]==1){
+                maxOnes=max(maxOnes,1+left[i]+right[i]);
+            }
+        }
+        return maxOnes;
+    }
+};
