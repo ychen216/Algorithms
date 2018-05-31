@@ -31,3 +31,30 @@ public:
         return res;
     }
 };
+
+Solution 2：
+class Solution {
+public:
+    // 逐个将单词逆置
+    string reverseWords(string s) {
+        int len=s.length();
+        for(int begin=0,end=0;end<len;end++){
+            // 一个词结束 以' '分割
+            if(s[end]==' '){
+                reverse(s,begin,end-1);
+                begin=end+1;
+            }
+            // 到句末
+            else if(end==len-1)
+                reverse(s,begin,end);
+        }
+        return s;
+    }
+private:
+    // 将word[begin~end]逆置
+    void reverse(string &word,int begin,int end){
+        while(begin<end){
+            swap(word[begin++],word[end--]);
+        }
+    }
+};
