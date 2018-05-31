@@ -1,0 +1,91 @@
+824. Goat Latin
+
+/*
+A sentence S is given, composed of words separated by spaces. Each word consists of lowercase and uppercase letters only.
+
+We would like to convert the sentence to "Goat Latin" (a made-up language similar to Pig Latin.)
+
+The rules of Goat Latin are as follows:
+
+If a word begins with a vowel (a, e, i, o, or u), append "ma" to the end of the word.
+For example, the word 'apple' becomes 'applema'.
+ 
+If a word begins with a consonant (i.e. not a vowel), remove the first letter and append it to the end, then add "ma".
+For example, the word "goat" becomes "oatgma".
+ 
+Add one letter 'a' to the end of each word per its word index in the sentence, starting with 1.
+For example, the first word gets "a" added to the end, the second word gets "aa" added to the end and so on.
+Return the final sentence representing the conversion from S to Goat Latin. 
+
+
+Example 1:
+Input: "I speak Goat Latin"
+Output: "Imaa peaksmaaa oatGmaaaa atinLmaaaaa"
+
+Example 2:
+Input: "The quick brown fox jumped over the lazy dog"
+Output: "heTmaa uickqmaaa rownbmaaaa oxfmaaaaa umpedjmaaaaaa overmaaaaaaa hetmaaaaaaaa azylmaaaaaaaaa ogdmaaaaaaaaaa"
+ 
+
+Notes:
+  S contains only uppercase, lowercase and spaces. Exactly one space between each word.
+  1 <= S.length <= 150.
+
+*/
+
+Solution 1：
+class Solution {
+public:
+    string toGoatLatin(string S) {
+        string res="";
+        // index 表示这是第几个单词 begin end表示当前单词在sentence[begin,end]
+        for(int index=1,begin=0,end=0;end<S.length();end++){
+            if(S[end]==' '){
+                res+=getGoatLatin(S,begin,end-1,index);
+                res+=" ";
+                begin=end+1;
+                index++;
+            }
+            else if(end==S.length()-1)
+                res+=getGoatLatin(S,begin,end,index);
+        }
+        return res;
+    }
+private:
+    unordered_set<char> vowel={'a','e','i','o','u','A','E','I','O','U'};
+    // s[begin~end]转为goat latin的结果 index表示要加几个a
+    string getGoatLatin(string &s,int begin,int end,int index){
+        if(begin>end)
+            return "";
+        string res="";
+        // 首字母是元音
+        if(vowel.find(s[begin])!=vowel.end())
+            res=s.substr(begin,end-begin+1)+"ma";
+        else
+            res=s.substr(begin+1,end-begin)+s[begin]+"ma";
+        res+=string(index,'a');
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    // 利用stringstream
+    string toGoatLatin(string S) {
+        stringstream ios(S);
+        unordered_set<char> vowel({'a','e','i','o','u','A','E','I','O','U'});
+        string res,word,a;//结果 当前单词
+        int index=1;//需要append的'a'长度
+        while(ios>>word){
+            // 词首元音字母
+            if(vowel.find(word[0])!=vowel.end())
+                res+=" "+word+"ma";
+            else
+                res+=" "+word.substr(1)+word[0]+"ma";
+            res+=string(index++,'a');
+        }
+        return res.substr(1);
+    }
+
+};
