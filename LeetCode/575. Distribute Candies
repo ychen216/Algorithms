@@ -57,3 +57,27 @@ public:
             return candyType;
     }
 };
+
+Solution 2:
+class Solution {
+public:
+    // 姐姐能拿到的最多的不同的糖果类型 
+    // 姐姐优先选择 那么她每次都会选尽可能选新的糖果类型 除非剩下的都是选过的糖果类型 或者 拿的糖果数超过一半
+    int distributeCandies(vector<int>& candies) {
+        unordered_set<int> candySet;
+        for(auto &c:candies)
+            candySet.insert(c);
+        return min(candySet.size(),candies.size()/2);
+    }
+};
+
+换一种初始化方式
+class Solution {
+public:
+    // 姐姐能拿到的最多的不同的糖果类型 
+    // 姐姐优先选择 那么她每次都会选尽可能选新的糖果类型 除非剩下的都是选过的糖果类型 或者 拿的糖果数超过一半
+    int distributeCandies(vector<int>& candies) {
+        unordered_set<int> candySet(candies.begin(),candies.end());
+        return min(candySet.size(),candies.size()/2);
+    }
+};
