@@ -41,7 +41,7 @@ Every integer represented in the list will be between -30000 and 30000.
 
 */
 
-Solution:JAVA
+Solution 1:JAVA
 class Solution {
     private int[] score=new int[1005];
     private int valid_index;
@@ -74,3 +74,66 @@ class Solution {
         return sum;
     }
 }
+
+Solution 2:
+class Solution {
+public:
+    // 观察到每次的操作都只于至多最后两个数有关且还有可能有无效分数 可以用栈结构来完成
+    int calPoints(vector<string>& ops) {
+        stack<int> st;
+        for(int i=0;i<ops.size();i++){
+            if(ops[i][0]=='+'){
+                int last = st.top();//前一轮比赛分数
+                st.pop();
+                int cur = st.top()+last;// 前两轮比赛分数之和
+                st.push(last);
+                st.push(cur);
+            }
+            else if(ops[i][0]=='C'){
+                st.pop();
+            }
+            else if(ops[i][0]=='D'){
+                st.push(st.top()*2);
+            }
+            else{
+                st.push(stoi(ops[i]));
+            }
+        }
+        int sum=0;
+        while(!st.empty()){
+            sum+=st.top();
+            st.pop();
+        }
+        return sum;
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    // 观察到每次的操作都只于至多最后两个数有关且还有可能有无效分数 可以用栈结构来完成
+    // 可以直接用数组实现
+    int calPoints(vector<string>& ops) {
+        vector<int> st;
+        int sum=0,score;
+        for(int i=0;i<ops.size();i++){
+            if(ops[i]=="C"){
+                sum-=st.back();
+                st.pop_back();
+                continue;
+            }
+            if(ops[i]=="D"){
+                score=st.back()*2;
+            }
+            else if(ops[i]=="+"){
+                score=st.back()+st[st.size()-2];
+            }
+            else{
+                score=stoi(ops[i]);
+            }
+            sum+=score;
+            st.push_back(score);
+        }
+        return sum;
+    }
+};
