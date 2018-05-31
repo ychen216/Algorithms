@@ -80,3 +80,35 @@ public:
     }
 
 };
+
+class Solution {
+public:
+    // 题目确保了只有一块连通的土地 那么不需要判断 看到1就可以直接操作 计算其贡献的边
+    // 参考其上下左右四个方向 是土地 则减少贡献的边数 注意边界
+    int islandPerimeter(vector<vector<int>>& grid) {
+        int row = grid.size();
+        if(row==0)
+            return 0;
+        int col=grid[0].size();
+        if(col==0)
+            return 0;
+        int perimeter=0;
+        for(int r=0;r<row;r++){
+            for(int c=0;c<col;c++){
+                if(grid[r][c]==1){
+                    int edge=4;
+                    if(r-1>=0&&grid[r-1][c]==1)
+                        edge--;
+                    if(r+1<row&&grid[r+1][c]==1)
+                        edge--;
+                    if(c-1>=0&&grid[r][c-1]==1)
+                        edge--;
+                    if(c+1<col&&grid[r][c+1]==1)
+                        edge--;
+                    perimeter+=edge;
+                }
+            }
+        }
+        return perimeter;
+    }
+};
