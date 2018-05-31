@@ -24,7 +24,8 @@ Output: True
 Explanation:
 The binary representation of 10 is: 1010.
 */
-Solution:
+
+Solution 1:
 class Solution {
 public:
     bool hasAlternatingBits(int n) {
@@ -42,5 +43,39 @@ public:
             }
         }
         return flag;
+    }
+};
+
+Solution 2：naive bit operator
+class Solution {
+public:
+    bool hasAlternatingBits(int n) {
+        int r=(n&1);
+        n>>=1;
+        bool flag=true;
+        while(n){
+            if((n&1)==r){
+                flag=false;
+                break;
+            }
+            else{
+                r=1-r;
+                n>>=1;
+            }
+        }
+        return flag;
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    bool hasAlternatingBits(int n) {
+        int r=n&1;
+        while((n&1)==r){
+            r=1-r;
+            n>>=1;
+        }
+        return n==0;
     }
 };
