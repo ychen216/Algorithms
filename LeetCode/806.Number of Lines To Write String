@@ -61,3 +61,17 @@ public:
         return {line,lastwidth};
     }
 };
+
+class Solution {
+public:
+    vector<int> numberOfLines(vector<int>& widths, string S) {
+        int line=1,lastWidth=0;//行数 最后一行的字符数
+        int maxWidth=100;
+        for(auto &c:S){
+            int width = widths[c-'a'];
+            line = width + lastWidth > maxWidth?line+1:line;
+            lastWidth = width + lastWidth > maxWidth? width:width+lastWidth;
+        }
+        return {line,lastWidth};
+    }
+};
