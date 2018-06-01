@@ -39,18 +39,20 @@ public:
     /*
         idea:因为数组元素大小为[1,n]所以可以将他们的值和数组下标做一个映射 使得空间消耗为O(1)
     */
+    // 两次遍历 利用1~n 对应数组中1~n的下标值
+    // 第一次遍历当出现x时 将num[x]的值置为相反数 表示该数已经出现过
+    // 第二次遍历时若num[x]>0则x未出现过
     vector<int> findDisappearedNumbers(vector<int>& nums) {
-        int size=nums.size();
-        int temp;
-        for(int i=0;i<size;i++){
-            temp=abs(nums[i])-1;//数组下标从0开始 
-            if(nums[temp]>0)
-                nums[temp]=-nums[temp];
-        }
         vector<int> res;
-        for(int i=0;i<size;i++)
-            if(nums[i]>0)
-                res.push_back(i+1);
+        for(int i=0;i<nums.size();i++){
+            int index=abs(nums[i])-1;// 要注意取绝对值 且数组下标从0开始
+            if(nums[index]>=0)
+                nums[index]=-nums[index];
+        }
+        for(int j=0;j<nums.size();j++){
+            if(nums[j]>=0)
+                res.push_back(j+1);// 0~n-1下标回复到1~
+        }
         return res;
     }
 };
