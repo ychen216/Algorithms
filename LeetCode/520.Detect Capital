@@ -35,3 +35,20 @@ public:
         return false;
     }
 };
+
+class Solution {
+public:
+    bool detectCapitalUse(string word) {
+        int capitalCnt=0;
+        //记录大写字母数
+        for(auto &w:word)
+            if(w>='A'&&w<='Z')
+                capitalCnt++;
+        int len=word.length();
+        if(len==capitalCnt||capitalCnt==0)
+            return true;
+        if(capitalCnt==1&&word[0]>='A'&&word[0]<='Z')
+            return true;
+        return false;
+    }
+};
