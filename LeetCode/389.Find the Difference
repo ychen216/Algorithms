@@ -19,7 +19,7 @@ Explanation:
 'e' is the letter that was added.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     int count[26];
@@ -32,6 +32,21 @@ public:
         for(int i=0;i<26;i++)
             if(count[i])
                 return i+'a';
+    }
+};
+
+class Solution {
+public:
+    char findTheDifference(string s, string t) {
+        vector<int> cntS(26,0),cntT(26,0);
+        for(auto &ss:s)
+            cntS[ss-'a']++;
+        for(auto &tt:t)
+            cntT[tt-'a']++;
+        for(int i=0;i<26;i++)
+            if(cntS[i]!=cntT[i])
+                return i+'a';
+        return '0';
     }
 };
 
