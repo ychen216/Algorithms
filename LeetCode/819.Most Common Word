@@ -1,0 +1,100 @@
+819. Most Common Word
+
+/*
+Given a paragraph and a list of banned words, return the most frequent word that is not in the list of banned words.  It is guaranteed there is at least one word that isn't banned, and that the answer is unique.
+
+Words in the list of banned words are given in lowercase, and free of punctuation.  Words in the paragraph are not case sensitive.  The answer is in lowercase.
+
+Example:
+Input: 
+paragraph = "Bob hit a ball, the hit BALL flew far after it was hit."
+banned = ["hit"]
+Output: "ball"
+Explanation: 
+"hit" occurs 3 times, but it is a banned word.
+"ball" occurs twice (and no other word does), so it is the most frequent non-banned word in the paragraph. 
+Note that words in the paragraph are not case sensitive,
+that punctuation is ignored (even if adjacent to words, such as "ball,"), 
+and that "hit" isn't the answer even though it occurs more because it is banned.
+ 
+Note:
+  1 <= paragraph.length <= 1000.
+  1 <= banned.length <= 100.
+  1 <= banned[i].length <= 10.
+  The answer is unique, and written in lowercase (even if its occurrences in paragraph may have uppercase symbols, and even if it is a proper noun.)
+  paragraph only consists of letters, spaces, or the punctuation symbols !?',;.
+  Different words in paragraph are always separated by a space.
+  There are no hyphens or hyphenated words.
+  Words only consist of letters, never apostrophes or other punctuation symbols.
+*/
+
+Solution 1：
+class Solution {
+public:
+    string mostCommonWord(string paragraph, vector<string>& banned) {
+        unordered_map<string,int> mmp;//非banned词的计数
+        unordered_set<string> ban(banned.begin(),banned.end());//banned word set
+        for(int begin=0,end=0;end<paragraph.size();end++){
+            // 一个词结束或到句末
+            if(!isalpha(paragraph[end])||end==paragraph.size()-1){
+                // 判断连续空格或是标点的情况
+                if(end>0&&!isalpha(paragraph[end-1])){
+                    begin++;
+                    continue;
+                }
+                // 该单词是否包含end 0为不包含 1为包含
+                int offset=0;
+                // 有可能最后一个词的最后一个字符是标点 这样offset==0
+                if(end==paragraph.size()-1&&isalpha(paragraph[end]))
+                   offset=1;
+                string word=paragraph.substr(begin,end-begin+offset);
+                transform(word.begin(),word.end(),word.begin(),::tolower);//转换成小写
+                // 当前单词不在banned中
+                if(ban.find(word)==ban.end()){
+                    if(mmp.find(word)!=mmp.end())
+                        mmp[word]++;
+                    else
+                        mmp[word]=1;
+                }
+                begin=end+1;
+            }
+        }
+        int maxCnt=0;
+        string res;
+        for(auto &m:mmp){
+            if(m.second>maxCnt){
+                maxCnt=m.second;
+                res=m.first;
+            }
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    // 利用stringstream
+    string mostCommonWord(string paragraph, vector<string>& banned) {
+        unordered_map<string,int> mmp;//非banned词的计数
+        unordered_set<string> ban(banned.begin(),banned.end());//banned word set
+        // 转化小写字符 且以空格作为唯一分隔符
+        for(auto &c:paragraph) 
+            c=isalpha(c)?tolower(c):' ';
+        stringstream ios(paragraph);
+        string word;
+        while(ios>>word){
+            if(ban.find(word)==ban.end())
+                mmp[word]++;
+        }
+        int maxCnt=0;
+        string res;
+        for(auto &m:mmp){
+            if(m.second>maxCnt){
+                maxCnt=m.second;
+                res=m.first;
+            }
+        }
+        return res;
+    }
+};
