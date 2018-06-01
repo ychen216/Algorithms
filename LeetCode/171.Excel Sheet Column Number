@@ -16,7 +16,7 @@ For example:
     AA -> 27
     AB -> 28 
 */
-Solution:
+Solution 1:
 class Solution {
 public:
     int titleToNumber(string s) {
@@ -27,6 +27,17 @@ public:
             sum+=base*(s[i]-'A'+1);
             base*=26;
         }
+        return sum;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    int titleToNumber(string s) {
+        int sum=0,base=26;
+        for(int i=0;i<s.length();i++)
+            sum=sum*base+s[i]-'A'+1;
         return sum;
     }
 };
