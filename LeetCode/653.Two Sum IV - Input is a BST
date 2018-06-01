@@ -28,7 +28,7 @@ Target = 28
 Output: False
 */
 
-Solution:
+Solution 1:
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -65,4 +65,33 @@ public:
         getTreeValue(root->right,nums);
     }
     
+};
+
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // 利用set 每次查找set中是否包含 k-root->val
+    bool findTarget(TreeNode* root, int k) {
+        unordered_set<int> sset;
+        return dfs(sset,root,k);
+    }
+private:
+    bool dfs(unordered_set<int> &sset,TreeNode *root,int k){
+        if(root==NULL)
+            return false;
+        if(sset.find(k-root->val)!=sset.end())
+            return true;
+        sset.insert(root->val);
+        return dfs(sset,root->left,k)||dfs(sset,root->right,k);
+    }
 };
