@@ -21,7 +21,7 @@ Given the above grid, return 0.
 Note: The length of each dimension in the given grid does not exceed 50.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     bool visit[51][51];
@@ -54,5 +54,75 @@ public:
                 area+=dfs(x,y,r,c,grid);
         }
         return area;
+    }
+};
+
+
+Solution 2:不使用visit 直接在原数组上改动
+class Solution {
+public:
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+        int row=grid.size();
+        if(row==0)
+            return 0;
+        int col=grid[0].size();
+        int maxArea=0,curArea;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(grid[i][j]==1){
+                    dfs(grid,i,j,row,col,curArea=0);
+                    maxArea=max(maxArea,curArea);
+                }
+            }
+        }
+        return maxArea;
+    }
+    
+private:
+    int dx[4]={-1,1,0,0},dy[4]={0,0,-1,1};
+    void dfs(vector<vector<int>>&grid,int i,int j,int row,int col,int &curArea){
+        curArea++;
+        grid[i][j]=0;
+        for(int k=0;k<4;k++){
+            int x=i+dx[k];
+            int y=j+dy[k];
+            if(x<0||x>=row||y<0||y>=col||grid[x][y]==0)continue;
+            dfs(grid,x,y,row,col,curArea);
+        }
+    }
+};
+
+不使用引用或全局变量 利用返回值
+class Solution {
+public:
+    int maxAreaOfIsland(vector<vector<int>>& grid) {
+        int row=grid.size();
+        if(row==0)
+            return 0;
+        int col=grid[0].size();
+        int maxArea=0,curArea;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(grid[i][j]==1){
+                    curArea=dfs(grid,i,j,row,col,0);
+                    maxArea=max(maxArea,curArea);
+                }
+            }
+        }
+        return maxArea;
+    }
+    
+private:
+    int dx[4]={-1,1,0,0},dy[4]={0,0,-1,1};
+    int dfs(vector<vector<int>>&grid,int i,int j,int row,int col,int curArea){
+        curArea++;
+        grid[i][j]=0;
+        for(int k=0;k<4;k++){
+            int x=i+dx[k];
+            int y=j+dy[k];
+            if(x<0||x>=row||y<0||y>=col||grid[x][y]==0)continue;
+            curArea+=dfs(grid,x,y,row,col,0);
+        }
+        return curArea;
     }
 };
