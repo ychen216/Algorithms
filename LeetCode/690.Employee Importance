@@ -24,7 +24,7 @@ Note:
   
 */
 
-Solution:
+Solution 1:
 /*
 // Employee info
 class Employee {
@@ -56,5 +56,43 @@ public:
             total+=helper(sub[i],m);
         }
         return total;
+    }
+};
+
+
+Solution 2:
+/*
+// Employee info
+class Employee {
+public:
+    // It's the unique ID of each node.
+    // unique id of this employee
+    int id;
+    // the importance value of this employee
+    int importance;
+    // the id of direct subordinates
+    vector<int> subordinates;
+};
+*/
+class Solution {
+public:
+    // 利用队列保存
+    int getImportance(vector<Employee*> employees, int id) {
+        // 构造id到employee的映射
+        unordered_map<int,Employee*> mmap;
+        for(auto &em:employees){
+            mmap[em->id]=em;
+        }
+        queue<Employee*> q;
+        q.push(mmap[id]);
+        int res=0;
+        while(!q.empty()){
+            Employee * em=q.front();
+            q.pop();
+            res+=em->importance;
+            for(auto &sub:em->subordinates)
+                q.push(mmap[sub]);
+        }
+        return res;
     }
 };
