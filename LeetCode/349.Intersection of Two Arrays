@@ -10,7 +10,7 @@ Note:
   Each element in the result must be unique.
   The result can be in any order.
 */
-Solution:
+Solution 1:利用两个set 时间O(n) 空间O(n)
 class Solution {
 public:
     vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
@@ -24,5 +24,87 @@ public:
         for(set<int>::iterator it=s2.begin();it!=s2.end();it++)
             res.push_back(*it);
         return res;
+    }
+};
+
+利用unordered_set提高效率 改写
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> sset(nums1.begin(),nums1.end()),res;
+        for(auto &n:nums2)
+            if(sset.find(n)!=sset.end())
+                res.insert(n);
+        return vector<int>(res.begin(),res.end());
+    }
+};
+
+
+Solution 2：利用一个set 时间O(n) 空间O(n)
+class Solution {
+public:
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> sset(nums1.begin(),nums1.end());
+        vector<int> res;
+        for(auto &n:nums2){
+            if(sset.find(n)!=sset.end()){
+                res.push_back(n);
+                //从sset里移除n 避免nums2的重复元素
+                sset.erase(n);
+            }
+        }
+        return res;
+    }
+};
+
+Solution 3:利用排序 O(nlgn)
+class Solution {
+public:
+    //利用排序 和双指针
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> sset;
+        sort(nums1.begin(),nums1.end());
+        sort(nums2.begin(),nums2.end());
+        int i=0,j=0;
+        while(i<nums1.size()&&j<nums2.size()){
+            if(nums1[i]<nums2[j])
+                i++;
+            else if(nums1[i]>nums2[j])
+                j++;
+            else{
+                sset.insert(nums1[i]);
+                i++;j++;
+            }
+        }
+        return vector<int>(sset.begin(),sset.end());
+    }
+};
+
+Solution 4:排序加二分 
+class Solution {
+public:
+    //利用排序 和 二分排序
+    vector<int> intersection(vector<int>& nums1, vector<int>& nums2) {
+        unordered_set<int> sset;
+        sort(nums1.begin(),nums1.end());
+        for(int i=0;i<nums2.size();i++){
+            if(binarySearch(nums1,nums2[i]))
+                sset.insert(nums2[i]);
+        }
+        return vector<int>(sset.begin(),sset.end());
+    }
+private:
+    bool binarySearch(vector<int>&array,int k){
+        int low=0,high=array.size()-1;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(array[mid]==k)
+                return true;
+            else if(array[mid]>k)
+                high=mid-1;
+            else
+                low=mid+1;
+        }
+        return false;
     }
 };
