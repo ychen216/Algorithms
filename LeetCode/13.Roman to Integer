@@ -42,3 +42,29 @@ public:
         return sum;
     }
 };
+
+利用map映射
+class Solution {
+public:
+    int romanToInt(string s) {
+        unordered_map<char,int> mmp;
+        getMap(mmp);//得到字符和数字的映射
+        int sum=0;
+        for(int i=0;i<s.length();i++){
+            sum+=mmp[s[i]];
+            if(i>0&&mmp[s[i]]>mmp[s[i-1]])
+                sum-=2*mmp[s[i-1]];
+        }
+        return sum;
+    }
+private:
+    void getMap(unordered_map<char,int>&mmp){
+        mmp['I']=1;
+        mmp['V']=5;
+        mmp['X']=10;
+        mmp['L']=50;
+        mmp['C']=100;
+        mmp['D']=500;
+        mmp['M']=1000;   
+    }
+};
