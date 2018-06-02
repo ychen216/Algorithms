@@ -7,11 +7,13 @@ Design an algorithm to find the maximum profit. You may complete as many transac
 However, you may not engage in multiple transactions at the same time (ie, you must sell the stock before you buy again).
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:    
     /*
-    寻找所有递增子序列
+    可以无限次买卖 那么希望将所有有增幅的股票买入
+     suppose the first sequence is "a <= b <= c <= d", the profit is "d - a = (b - a) + (c - b) + (d - c)" without a doubt.
+     And suppose another one is "a <= b >= b' <= c <= d", the profit is not difficult to be figured out as "(b - a) + (d - b')"
     */
     int maxProfit(vector<int>& prices) {
         int size=prices.size();
@@ -24,5 +26,24 @@ public:
         
         return profit;
         
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    // 每一天都只有持有或售出两种状态
+    int maxProfit(vector<int>& prices) {
+        if(prices.size()<2)
+            return 0;
+        int presell=0,prebuy=-prices[0],buy,sell;
+        for(int i=1;i<prices.size();i++){
+            buy=max(prebuy,presell-prices[i]);
+            sell=max(prebuy+prices[i],presell);
+            presell=sell;
+            prebuy=buy;
+        }
+        return max(buy,sell);
     }
 };
