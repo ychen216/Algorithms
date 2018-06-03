@@ -85,6 +85,6 @@ public:
                 i++;
             j++;
         }
-        return res;
+        return i;
     }
 };
