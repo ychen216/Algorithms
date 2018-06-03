@@ -19,6 +19,7 @@ Solution:
 class Solution {
 public:
     //node是要删除的元素，没有给我们前项，只能假删除，通过复制下一个元素的值，并删除下一个元素完成
+    // 狸猫换太子 替换要删除节点x的值为后一个节点y的值 删除y
     void deleteNode(ListNode* node) {
         ListNode *temp=node->next;
         node->val=temp->val;
