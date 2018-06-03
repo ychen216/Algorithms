@@ -14,7 +14,7 @@ Note: You may assume the string contain only lowercase letters.
 
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     int firstUniqChar(string s) {
@@ -27,5 +27,27 @@ public:
                 return i;
         return -1;
         
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    // 如果字符串很长 那么不希望两次扫描
+    // 记录下每个字符出现的次数及首次出现的位置 那么第二次只需要扫描26个字符即可
+    int firstUniqChar(string s) {
+        vector<int> cnt(26,0);//字符出现的次数及首次出现的下标
+        vector<int> index(26,-1);
+        for(int i=0;i<s.length();i++){
+            cnt[s[i]-'a']++;
+            if(cnt[s[i]-'a']==1)
+                index[s[i]-'a']=i;
+        }
+        int minIndex=INT_MAX;
+        for(int i=0;i<26;i++)
+            if(cnt[i]==1)
+                minIndex=min(minIndex,index[i]);
+        return minIndex==INT_MAX?-1:minIndex;
     }
 };
