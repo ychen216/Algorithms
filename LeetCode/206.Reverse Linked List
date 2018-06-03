@@ -30,3 +30,32 @@ public:
         return fakeHead->next;
     }
 };
+
+// 头插法
+    ListNode* reverseList(ListNode* head) {
+        ListNode *feakNode=new ListNode(0);
+        ListNode *cur=head,*temp=NULL;
+        while(cur){
+            temp=feakNode->next;
+            feakNode->next=cur;
+            cur=cur->next;
+            feakNode->next->next=temp;
+        }
+        return feakNode->next;
+    }
+    
+Solution 2:recursive
+class Solution {
+public:
+    // recursive
+    ListNode* reverseList(ListNode* head) {
+       if(head==NULL)
+           return NULL;
+        if(head->next==NULL)
+            return head;
+        ListNode *newHead=reverseList(head->next);
+        head->next->next=head;
+        head->next=NULL;
+        return newHead;
+    }
+};
