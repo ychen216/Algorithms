@@ -47,3 +47,44 @@ public:
         return cnt;
     }
 };
+
+class Solution {
+public:
+    // 贪心 用尽可能小的cookie优先满足最小贪婪的小孩 将大的cookie留给可能更贪婪的小孩
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+        int leng=g.size(),lens=s.size();
+        if(lens==0)
+            return 0;
+        sort(g.begin(),g.end());
+        sort(s.begin(),s.end());
+        int i=0,j=0,res=0;
+        while(i<leng&&j<lens){
+            if(g[i]<=s[j]){
+                res++;
+                i++;
+            }
+            j++;
+        }
+        return res;
+    }
+};
+
+可以满足的小孩数目就是i
+class Solution {
+public:
+    // 贪心 用尽可能小的cookie优先满足最小贪婪的小孩 将大的cookie留给可能更贪婪的小孩
+    int findContentChildren(vector<int>& g, vector<int>& s) {
+        int leng=g.size(),lens=s.size();
+        if(lens==0)
+            return 0;
+        sort(g.begin(),g.end());
+        sort(s.begin(),s.end());
+        int i=0,j=0;
+        while(i<leng&&j<lens){
+            if(g[i]<=s[j])
+                i++;
+            j++;
+        }
+        return res;
+    }
+};
