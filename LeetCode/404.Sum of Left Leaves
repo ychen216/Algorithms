@@ -15,7 +15,7 @@ There are two left leaves in the binary tree, with values 9 and 15 respectively.
 
 */
 
-Solution:
+Solution 1:
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -44,4 +44,39 @@ public:
         travel(root,false);
         return sum;
     }
+};
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // 利用BFS
+    int sumOfLeftLeaves(TreeNode* root) {
+        if(root==NULL)
+            return 0;
+        int sum=0;
+        queue<TreeNode *> q;
+        q.push(root);
+        while(!q.empty()){
+            TreeNode *node=q.front();
+            q.pop();
+            if(node->left){
+                if(!node->left->left&&!node->left->right)
+                    sum+=node->left->val;
+                else
+                    q.push(node->left);
+            }
+            if(node->right)q.push(node->right);
+        }
+        return sum;
+    }
+
 };
