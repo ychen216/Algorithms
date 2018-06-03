@@ -55,3 +55,30 @@ public:
         return smallLen;
     }
 };
+
+改写
+class Solution {
+public:
+    int findShortestSubArray(vector<int>& nums) {
+        unordered_map<int,int> cnt;// 每个元素出现的次数
+        unordered_map<int,int> firstIndex,lastIndex;// element第一次出现和最后一次出现的下标
+        vector<int> maxFreqElement;// 出现频率最多的元素
+        int maxFreq=0;
+        for(int i=0;i<nums.size();i++){
+            cnt[nums[i]]++;
+            if(cnt[nums[i]]==1)
+                lastIndex[nums[i]]=firstIndex[nums[i]]=i;
+            else
+                lastIndex[nums[i]]=i;
+        }
+        for(auto &m:cnt)
+            maxFreq=max(maxFreq,m.second);
+        for(auto &m:cnt)
+            if(m.second==maxFreq)
+                maxFreqElement.push_back(m.first);
+        int minInterval=INT_MAX;
+        for(int i=0;i<maxFreqElement.size();i++)
+            minInterval=min(minInterval,lastIndex[maxFreqElement[i]]-firstIndex[maxFreqElement[i]]+1);
+        return minInterval;
+    }
+};
