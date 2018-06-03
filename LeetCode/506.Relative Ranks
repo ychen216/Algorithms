@@ -70,3 +70,29 @@ public:
         return vec;
     }
 };
+
+
+Solution 3:
+class Solution {
+public:
+    vector<string> findRelativeRanks(vector<int>& nums) {
+        int n=nums.size();
+        vector<pair<int,int>> mmp;//分数和下标的映射
+        for(int i=0;i<n;i++)
+            mmp.push_back({nums[i],i});
+        // 按照分数从大到小排序
+        sort(mmp.begin(),mmp.end(),[&](auto &p1,auto &p2){return p1.first>=p2.first;});
+        vector<string> res(n,"");
+        for(int i=0;i<n;i++){
+            if(i==0)
+                res[mmp[i].second]="Gold Medal";
+            else if(i==1)
+                res[mmp[i].second]="Silver Medal";
+            else if(i==2)
+                res[mmp[i].second]="Bronze Medal";
+            else
+                res[mmp[i].second]=to_string(i+1);
+        }
+        return res;
+    }
+};
