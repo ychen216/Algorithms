@@ -5,8 +5,7 @@ Given an array of integers, find if the array contains any duplicates. Your func
 if any value appears at least twice in the array, and it should return false if every element is distinct.
 */
 
-Solution:
-
+Solution 1:
 class Solution {
 public:
     bool containsDuplicate(vector<int>& nums) {
@@ -16,6 +15,28 @@ public:
             if(s.count(nums[i])==0)
                 s.insert(nums[i]);
             else
+                return true;
+        }
+        return false;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    // 通过数量的比较 看是否有重复元素
+    bool containsDuplicate(vector<int>& nums) {
+        return nums.size()>unordered_set<int>(nums.begin(),nums.end()).size();
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    bool containsDuplicate(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        for(int i=1;i<nums.size();i++){
+            if(nums[i]==nums[i-1])
                 return true;
         }
         return false;
