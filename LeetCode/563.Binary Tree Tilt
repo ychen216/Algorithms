@@ -92,3 +92,35 @@ public:
         return sum;
     }
 };
+
+Solution 3:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int sum=0;
+    int findTilt(TreeNode* root) {
+        if(root==NULL)
+            return 0;
+        int left=getSubTreeSum(root->left);
+        int right=getSubTreeSum(root->right);
+        sum+=abs(right-left);
+        findTilt(root->left);
+        findTilt(root->right);
+        return sum;
+    }
+private:
+    // 以root为根节点的子树节点之和
+    int getSubTreeSum(TreeNode *root){
+        if(root==NULL)
+            return 0;
+        return root->val+getSubTreeSum(root->left)+getSubTreeSum(root->right);
+    }
+};
