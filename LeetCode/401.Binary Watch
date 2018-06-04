@@ -19,7 +19,7 @@ Note:
 
 */
 
-Solution:
+Solution 1:
 class Solution {
 private:
      vector<vector<string>> hour = {{"0"},
@@ -46,5 +46,34 @@ public:
             }
         }
         return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    // num即为亮灯数 遍历所有可能的时间组合p 若p需要的亮灯数==num即为可能的结果
+    vector<string> readBinaryWatch(int num) {
+        vector<string> res;
+        for(int h=0;h<12;h++){
+            for(int m=0;m<60;m++)
+                if(getBit1(h)+getBit1(m)==num){
+                    string tempmin=to_string(m);
+                    if(m<10)
+                        tempmin="0"+tempmin;
+                    res.push_back(to_string(h)+":"+tempmin);
+                }
+        }
+        return res;
+    }
+private:
+    // 计算n的二进制表示有几位1
+    int getBit1(int n){
+        int cnt=0;
+        while(n){
+            cnt++;
+            n&=(n-1);
+        }
+        return cnt;
     }
 };
