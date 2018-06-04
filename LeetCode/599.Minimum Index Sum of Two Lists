@@ -49,3 +49,26 @@ public:
         return res;
     }
 };
+改写：
+class Solution {
+public:
+    vector<string> findRestaurant(vector<string>& list1, vector<string>& list2) {
+        unordered_map<string,int> mmp;// list1中restaurant和index的映射
+        for(int i=0;i<list1.size();i++)
+            mmp[list1[i]]=i;
+        int indexSum=INT_MAX;
+        vector<string> res;
+        for(int i=0;i<list2.size();i++){
+            if(mmp.find(list2[i])!=mmp.end()){
+                if(indexSum>i+mmp[list2[i]]){
+                    indexSum=i+mmp[list2[i]];
+                    res.clear();
+                    res.push_back(list2[i]);
+                }
+                else if(indexSum==i+mmp[list2[i]])
+                    res.push_back(list2[i]);
+            }
+        }
+        return res;
+    }
+};
