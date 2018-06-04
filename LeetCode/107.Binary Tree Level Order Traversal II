@@ -76,3 +76,40 @@ public:
         return res;
     }
 };
+
+
+Solution 2：
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // BFS
+    vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        if(root==NULL)
+            return {};
+        vector<vector<int>> res;
+        queue<TreeNode *> q;
+        q.push(root);
+        TreeNode *node=NULL;
+        while(!q.empty()){
+            int size=q.size();
+            vector<int> v;
+            for(int i=0;i<size;i++){
+                node=q.front();
+                q.pop();
+                v.push_back(node->val);
+                if(node->left)q.push(node->left);
+                if(node->right)q.push(node->right);
+            }
+            res.insert(res.begin(),v);//头插
+        }
+        return res;
+    }
+};
