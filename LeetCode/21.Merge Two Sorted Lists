@@ -5,7 +5,7 @@ Merge two sorted linked lists and return it as a new list.
 The new list should be made by splicing together the nodes of the first two lists.
 */
 
-Solution:
+Solution 1:recursive
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -30,5 +30,30 @@ public:
             return l2;
         }
         
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        ListNode *feakHead=new ListNode(0);
+        ListNode *cur=feakHead,*p=l1,*q=l2;
+        while(p&&q){
+            if(p->val<=q->val){
+                cur->next=p;
+                p=p->next;
+            }
+            else{
+                cur->next=q;
+                q=q->next;
+            }
+            cur=cur->next;
+        }
+        if(p)
+            cur->next=p;
+        if(q)
+            cur->next=q;
+        return feakHead->next;
     }
 };
