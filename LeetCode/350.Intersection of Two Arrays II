@@ -61,3 +61,21 @@ public:
         return res;
     }
 };
+
+Solution 3：
+class Solution {
+public:
+    // 利用multiset当一个元素使用过后删除该元素
+    vector<int> intersect(vector<int>& nums1, vector<int>& nums2) {
+        multiset<int> sset(nums1.begin(),nums1.end());
+        vector<int> res;
+        for(auto &n:nums2){
+            auto it=sset.find(n);
+            if(it!=sset.end()){
+                res.push_back(n);
+                sset.erase(it);// sset.erase(n) 删除所有值为n的元素
+            }
+        }
+        return res;
+    }
+};
