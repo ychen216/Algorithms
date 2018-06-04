@@ -15,7 +15,7 @@ Explanation:
   The two boomerangs are [[1,0],[0,0],[2,0]] and [[1,0],[2,0],[0,0]]
 */
 
-Solution:
+Solution :
 class Solution {
 public:
     int numberOfBoomerangs(vector<pair<int, int>>& points) {
@@ -38,5 +38,31 @@ public:
                     cnt+=it->second*(it->second-1);//距离相同的点 可以两两组合
         }
         return cnt;
+    }
+};
+
+改写
+class Solution {
+public:
+    int numberOfBoomerangs(vector<pair<int, int>>& points) {
+        // 与点p距离平方为d的点的个数 之所以用平方是为了避免double造成的精度问题
+        unordered_map<int,unordered_map<long,int>> disMap;
+        // 计算每个点j到i的距离
+        for(int i=0;i<points.size();i++){
+            for(int j=i+1;j<points.size();j++){
+                long dis=(points[j].first-points[i].first)*(points[j].first-points[i].first)+
+                    (points[j].second-points[i].second)*(points[j].second-points[i].second);
+                disMap[i][dis]++;
+                disMap[j][dis]++;
+            }
+        }
+        int res=0;
+        for(auto &cntMap:disMap){
+            for(auto&m:cntMap.second){
+                if(m.second>1)
+                    res+=m.second*(m.second-1);
+            }
+        }
+        return res;
     }
 };
