@@ -19,7 +19,7 @@ Explanation:
   One longest palindrome that can be built is "dccaccd", whose length is 7.
 */
 
-Solution:
+Solution 1:
 class Solution {
     
 public:
@@ -54,5 +54,34 @@ public:
                     palindromeSize+=(upper[i]>0?upper[i]-1:0);
             }
         return palindromeSize;
+    }
+};
+
+SOlution 2:
+class Solution {
+public:
+    /*
+        可以构成回文串的两种情况：
+        1.aaab|baaa 长度为偶数 两两对称 
+        2.aaabaaa   长度为奇数,关于中间字符对称 只有中轴字符的个数为奇数其余都为偶数
+        
+    */
+    int longestPalindrome(string s) {
+        unordered_map<char,int> cntMap;
+        for(auto &c:s)
+            cntMap[c]++;
+        int maxLen=0;
+        bool hasOdd=false;
+        for(auto&m:cntMap){
+            if(m.second&1){
+                hasOdd=true;
+                maxLen+=m.second-1;//先加上偶数部分
+            }
+            else
+                maxLen+=m.second;
+        }
+        if(hasOdd)
+            maxLen++;//加上一个奇数字符 构成最长字符
+        return maxLen;
     }
 };
