@@ -23,14 +23,20 @@ Note:
 Solution:
 class Solution {
 public:
+    /*
+        给定字符串数组,从单个字符开始拼,最长能组成什么单词
+        注意中间生成的字符串也要在字典中存在
+        当组成的单词长度相等时 返回字母顺序小的那个
+        首先对字符串进行排序 这样字母序小的就会排在前面同时也保证了长度短的会排在前面
+    */
     string longestWord(vector<string>& words) {
         sort(words.begin(),words.end());
-        unordered_set<string> build;
-        string res="";
-        for(auto &s:words){
-            if(s.length()==1||build.find(s.substr(0,s.length()-1))!=build.end()){
-                build.insert(s);
-                res=res.length()<s.length()?s:res;
+        unordered_set<string> sset;
+        string res;
+        for(auto &word:words){
+            if(word.length()==1||sset.find(word.substr(0,word.length()-1))!=sset.end()){
+                sset.insert(word);
+                res=res.length()<word.length()?word:res;
             }
         }
         return res;
