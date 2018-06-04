@@ -35,3 +35,38 @@ public:
     }
     
 };
+改写
+class Solution {
+public:
+    // dp[i]为以第i个元素结尾的最长连续子数组长度
+    int findLengthOfLCIS(vector<int>& nums) {
+        int size=nums.size();
+        if(size<2)
+            return size;
+        int maxLen=0;
+        vector<int> dp(size,1);//初始化
+        for(int i=1;i<size;i++){
+            if(nums[i]>nums[i-1])
+                dp[i]+=dp[i-1];
+            maxLen=max(maxLen,dp[i]);
+        }
+        return maxLen;
+    }
+};
+
+Solution 2：空间O(1)
+class Solution {
+public:
+    // 第i个元素的结果只与前一个元素有关 可以用一个变量记录
+    int findLengthOfLCIS(vector<int>& nums) {
+        int maxLen=0,cnt=0;
+        for(int i=0;i<nums.size();i++){
+            if(i==0||nums[i]>nums[i-1])
+                cnt++;
+            else
+                cnt=1;
+            maxLen=max(maxLen,cnt);
+        }
+        return maxLen;
+    }
+};
