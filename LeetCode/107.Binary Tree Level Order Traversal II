@@ -113,3 +113,26 @@ public:
         return res;
     }
 };
+
+
+Solution 3:
+class Solution {
+public:
+    // BFS
+    vector<vector<int>> levelOrderBottom(TreeNode* root) {
+        vector<vector<int>> res;
+        bfsHelper(res,root,0);
+        reverse(res.begin(),res.end());
+        return res;
+    }
+private:
+    void bfsHelper(vector<vector<int>>&res,TreeNode *root,int level){
+        if(root==NULL)
+            return;
+        if(res.size()<=level)
+            res.push_back({});
+        res[level].push_back(root->val);
+        bfsHelper(res,root->left,level+1);
+        bfsHelper(res,root->right,level+1);
+    }
+};
