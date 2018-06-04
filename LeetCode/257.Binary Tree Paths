@@ -45,3 +45,38 @@ public:
         return res;
     }
 };
+
+改写
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<string> binaryTreePaths(TreeNode* root) {
+        if(root==NULL)
+            return {};
+        vector<string> res;
+        helper(res,"",root);
+        return res;
+    }
+private:
+    void helper(vector<string>&res,string path,TreeNode*root){
+        // 已经到叶节点
+        if(!root->left&&!root->right){
+            path+=to_string(root->val);
+            res.push_back(path);
+            return;
+        }
+        path+=to_string(root->val)+"->";
+        if(root->left)
+            helper(res,path,root->left);
+        if(root->right)
+            helper(res,path,root->right);
+    }
+};
