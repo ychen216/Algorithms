@@ -62,3 +62,20 @@ public:
         return letters[res];
     }
 };
+
+改写
+class Solution {
+public:
+    // 二分查找
+    char nextGreatestLetter(vector<char>& letters, char target) {
+        int i=0,j=letters.size()-1;
+        while(i<=j){//要保留等号 否则size==1时无法进入
+            int mid=i+(j-i)/2;
+            if(letters[mid]>target)
+                j=mid-1;
+            else
+                i=mid+1;
+        }
+        return i<letters.size()?letters[i]:letters[0];
+    }
+};
