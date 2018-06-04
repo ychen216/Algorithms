@@ -10,7 +10,7 @@ Note:
   Your algorithm should run in linear runtime complexity. Could you implement it using only constant extra space complexity?
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     /*
@@ -23,5 +23,23 @@ public:
             sum-=nums[i];
         return sum;
         
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /* 
+        还可以利用异或 数字0~n刚好和下标0~n一一对应 相当于找2n-1中只出现一次的数
+        如果数字i出现过 那么和下标i异或后得到0 两两异或得到0
+        将所有数字和下标都异或上 那么最后得到的数就是未出现的数(即只出现一次的数,在下标中出现)
+    */
+    int missingNumber(vector<int>& nums) {
+        int res=nums.size();// 异或上n
+        for(int i=0;i<nums.size();i++){
+            res^=i;
+            res^=nums[i];
+        }
+        return res;
     }
 };
