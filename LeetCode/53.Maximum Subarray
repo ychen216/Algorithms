@@ -22,3 +22,21 @@ public:
         return maxSum;
     }
 };
+
+改写 空间 O(1)
+class Solution {
+public:
+    // dp 考虑以元素i结尾的子数组的和
+    int maxSubArray(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return 0;
+        int maxSum=nums[0];
+        int preSum=nums[0];
+        for(int i=1;i<n;i++){
+            preSum=preSum<=0?nums[i]:preSum+nums[i];
+            maxSum=max(preSum,maxSum);
+        }
+        return maxSum;
+    }
+};
