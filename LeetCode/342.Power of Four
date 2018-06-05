@@ -33,3 +33,17 @@ public:
         return num>0&&(num&(num-1))==0&&(num-1)%3==0;
     }
 };
+
+Solution 3:
+class Solution {
+public:
+    // 4的指数必然是正数 且 二进制表示有且只有一位是1 
+    // 但是满足这种情况的还包含2的指数 所以要排除仅仅满足2的指数的情况
+    bool isPowerOfFour(int num) {
+        //0x55555555 is to get rid of those power of 2 but not power of 4
+        //so that the single 1 bit always appears at the odd position 
+        //0x55555555 is a hexametrical number，it is 1010101010101010101010101010101 in binary with a length of 32
+        //To make sure the 1 locates in the odd location.
+        return num>0&&(num&(num-1))==0&&(num&0x55555555)!=0;
+    }
+};
