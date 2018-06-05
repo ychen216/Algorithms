@@ -58,3 +58,30 @@ public:
         return res;
     }
 };
+
+改写
+class Solution {
+public:
+    string licenseKeyFormatting(string S, int K) {
+        int i=S.length()-1;
+        string res="";
+        int cnt=0;
+        char c;
+        while(i>=0){
+            if(S[i]!='-'){
+                if(isalpha(S[i]))
+                    c=toupper(S[i]);
+                else
+                    c=S[i];
+                cnt++;
+                res=c+res;
+                if(cnt==K){
+                    res="-"+res;
+                    cnt=0;
+                }
+            }
+            i--;
+        }
+        return res[0]=='-'?res.substr(1):res;
+    }
+};
