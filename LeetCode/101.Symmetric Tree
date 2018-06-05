@@ -20,7 +20,7 @@ Note:
 Bonus points if you could solve it both recursively and iteratively.
 */
 
-Solution 1:
+Solution 1: Recursive
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -46,4 +46,38 @@ public:
             return isSymmetricHelper(root->left,root->right);
         return true;
     }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    // BFS
+    bool isSymmetric(TreeNode* root) {
+        if(root==NULL)
+            return true;
+        queue<TreeNode *>q;
+        q.push(root->left);
+        q.push(root->right);
+        TreeNode *left=NULL,*right=NULL;
+        while(!q.empty()){
+            left=q.front();
+            q.pop();
+            right=q.front();
+            q.pop();
+            if(left&&right){
+                if(left->val==right->val){
+                    q.push(left->left);
+                    q.push(right->right);
+                    q.push(left->right);
+                    q.push(right->left);    
+                }
+                else
+                    return false;
+            }else if(!(!left&&!right))//一个为NULL一个非NULL的情况
+                return false;
+        }
+        return true;
+    }
+
 };
