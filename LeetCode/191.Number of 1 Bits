@@ -6,7 +6,7 @@ Write a function that takes an unsigned integer and returns the number of ’1' 
 For example, the 32-bit integer ’11' has binary representation 00000000000000000000000000001011, so the function should return 3.
 */
 
-Solution:
+Solution 1:
 class Solution {
 
 public:
@@ -23,5 +23,19 @@ public:
                 res+=n&arr[i]?1:0;
         }
         return res;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    int hammingWeight(uint32_t n) {
+        int cnt=0;
+        while(n){
+            cnt++;
+            n&=(n-1);
+        }
+        return cnt;
     }
 };
