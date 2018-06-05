@@ -50,3 +50,48 @@ public:
         return NULL;
     }
 };
+
+
+改写
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root==NULL)
+            return NULL;
+        if(p->val==root->val||q->val==root->val)
+            return root;
+        if(p->val>root->val&&q->val>root->val)
+            return lowestCommonAncestor(root->right,p,q);
+        else if(p->val<root->val&&q->val<root->val)
+            return lowestCommonAncestor(root->left,p,q);
+        else
+            return root;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root==NULL)
+            return NULL;
+        TreeNode *cur=root;
+        while(cur){
+            if(p->val>cur->val&&q->val>cur->val)
+                cur=cur->right;
+            else if(p->val<cur->val&&q->val<cur->val)
+                cur=cur->left;
+            else // 包括 pq分别在cur两侧的情况 pq至少有一个等于cur
+                return cur;
+        }
+    }
+};
