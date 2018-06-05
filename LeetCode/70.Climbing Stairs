@@ -8,8 +8,7 @@ Each time you can either climb 1 or 2 steps. In how many distinct ways can you c
 Note: Given n will be a positive integer.
 */
 
-Solution:
-
+Solution 1:
 class Solution {
 public:
     //到达第i个阶梯只可能由第i-2或第i-1个阶梯跨一步上来
@@ -20,5 +19,22 @@ public:
         for(int i=2;i<=n;i++)
             cnt[i]=cnt[i-1]+cnt[i-2];
         return cnt[n];
+    }
+};
+
+Solution 2：空间O(1)
+class Solution {
+public:
+    // 走到第i层的走法只与i-1和i-2层的走法有关 利用两个变量记录即可
+    int climbStairs(int n) {
+        int step0=1,step1=1;// top为0和1时的走法
+        int cur=step1;
+        for(int i=2;i<=n;i++){
+            cur=step0+step1;
+            step1=step0;
+            step0=cur;
+        }
+
+        return cur;
     }
 };
