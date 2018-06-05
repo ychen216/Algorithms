@@ -17,6 +17,13 @@ The given array's numbers won't have any order.
 Solution 1:
 class Solution {
 public:
+    /*
+        1+2+3+...+x+...+y+...n=sum,其中x为发生错误后重复的元素,y为失去的元素
+        发生错误后的和sum'为
+        sum'=sum+x-y
+        sum-sum'=y-x;
+        y=sum-sum'+x
+    */
     vector<int> findErrorNums(vector<int>& nums) {
         int size=nums.size();
         set<int> s;
@@ -30,5 +37,67 @@ public:
             sum-=nums[i];
         }
         return {nums[index],nums[index]+sum};
+    }
+};
+
+改写
+class Solution {
+public:
+    /*
+        1+2+3+...+x+...+y+...n=sum,其中x为发生错误后重复的元素,y为失去的元素
+        发生错误后的和sum'为
+        sum'=sum+x-y
+        y=sum-sum'+x;
+        当找到重复元素x之后就可以求解y
+    */
+    vector<int> findErrorNums(vector<int>& nums) {
+        int n=nums.size();
+        int oldSum=(1+n)*n/2;
+        unordered_set<int> sset;
+        int duplicate;
+        bool findDuplicate=false;
+        for(auto &i:nums){
+            oldSum-=i;
+            if(!findDuplicate){
+                if(sset.find(i)==sset.end())
+                    sset.insert(i);
+                else{
+                    duplicate=i;
+                    findDuplicate=true;
+                }
+            }
+        }
+        return {duplicate,oldSum+duplicate};
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        1+2+3+...+x+...+y+...n=sum,其中x为发生错误后重复的元素,y为失去的元素
+        发生错误后的和sum'为
+        sum'=sum+x-y
+        y=sum-sum'+x;
+        当找到重复元素x之后就可以求解y
+    */
+    vector<int> findErrorNums(vector<int>& nums) {
+        int n=nums.size();
+        int oldSum=(1+n)*n/2;
+        unordered_set<int> sset;
+        int newSum=0,duplicate;
+        bool findDuplicate=false;
+        for(auto &i:nums){
+            newSum+=i;
+            if(!findDuplicate){
+                if(sset.find(i)==sset.end())
+                    sset.insert(i);
+                else{
+                    duplicate=i;
+                    findDuplicate=true;
+                }
+            }
+        }
+        return {duplicate,oldSum-newSum+duplicate};
     }
 };
