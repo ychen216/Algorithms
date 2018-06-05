@@ -11,27 +11,48 @@ Output: 5
 Explanation: The longest harmonious subsequence is [3,2,2,2,3].
 Note: The length of the input array will not exceed 20,000.
 */
-Solution:
 
+Solution 1:
+空间O(n) 时间O(n)
 class Solution {
 public:
-    /*
-    就是求出x和x-1的个数之和 的最大值
-    */
+    // 求满足最大值和最小值的差值为1的子序列的最大长度 那么序列中实际上就只能有x和x-1两种数值的数字
+    // 可以利用map记录每种数字出现的次数 满足条件的序列长度为cnt[x]+cnt[x-1]
     int findLHS(vector<int>& nums) {
-        int size=nums.size();
-        map<int,int> m;
-        for(int i=0;i<size;i++){
-            if(m.count(nums[i])==0)
-                m[nums[i]]=1;
-            else
-                m[nums[i]]++;
+        unordered_map<int,int> mmp;
+        for(auto &num:nums)
+            mmp[num]++;
+        int maxLen=0;
+        for(auto&m:mmp){
+            if(mmp.find(m.first-1)!=mmp.end())
+                maxLen=max(maxLen,mmp[m.first]+mmp[m.first-1]);
         }
-       
-        int len=0;
-        for(map<int,int>::iterator it=m.begin();it!=m.end();it++)
-            if(m.count(it->first-1))
-                len=max(len,m[it->first-1]+it->second);
-        return len;
+        return maxLen;
+    }
+};
+
+Solution 2:
+空间O(1) 时间O(nlgn)
+class Solution {
+public:
+    // 求满足最大值和最小值的差值为1的子序列的最大长度 那么序列中实际上就只能有x和x-1两种数值的数字
+    // 可以将数组排序
+    // Two pointers: left = 0, right = 0; loop from the beginning to end. O(n)
+    // nums[right] - nums[left] == 1 ---> right++ && update the max length
+    // nums[right] - nums[left] > 1 ---> left++
+    // nums[right] - nums[left] < 1 ---> right++
+    int findLHS(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int maxLen=0,left=0,right=0;
+        while(left<=right&&right<nums.size()){
+            if(nums[right]-nums[left]==1){
+                right++;
+                maxLen=max(maxLen,right-left);
+            }else if(nums[right]-nums[left]<1)
+                right++;
+            else
+                left++;
+        }
+        return maxLen;
     }
 };
