@@ -26,3 +26,22 @@ public:
         return cur;
     }
 };
+
+// 比较麻烦 但是保留了所有元素 只是将删除元素都放在了数组的最后
+class Solution {
+public:
+    // 双指针 当当前元素是要删除的元素时就与当前有效的最后一个字符交换
+    int removeElement(vector<int>& nums, int val) {
+        int curIndex=0,lastIndex=nums.size()-1;
+        while(curIndex<=lastIndex){
+            if(nums[curIndex]==val){
+                swap(nums[curIndex],nums[lastIndex]);
+                lastIndex--;
+            }else{
+                curIndex++;
+            }
+        }
+        // lastIndex==-1时所有元素都删完了
+        return lastIndex==-1?0:curIndex;
+    }
+};
