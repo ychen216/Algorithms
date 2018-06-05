@@ -46,3 +46,21 @@ public:
         return low;
     }
 };
+改写
+class Solution {
+public:
+    // 找到值则返回下标 找不到则返回第一个比该数大的数的下标
+    int searchInsert(vector<int>& nums, int target) {
+        int i=0,j=nums.size()-1;
+        while(i<=j){
+            int mid=i+(j-i)/2;
+            if(nums[mid]==target)
+                return mid;
+            else if(nums[mid]>target)
+                j=mid-1;
+            else
+                i=mid+1;
+        }
+        return i;
+    }
+};
