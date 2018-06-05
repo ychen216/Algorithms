@@ -13,7 +13,7 @@ Note:
 The vowels does not include the letter "y".
 */
 
-Solution:
+Solution: 双指针
 class Solution {
 public:
     string reverseVowels(string s) {
@@ -38,6 +38,23 @@ public:
                 s[high]=temp;
                 low++;high--;
             }
+        }
+        return s;
+    }
+};
+
+改写
+class Solution {
+public:
+    string reverseVowels(string s) {
+        unordered_set<char> sset({'a','e','i','o','u','A','E','I','O','U'});
+        int i=0,j=s.length()-1;
+        // 首位找元音字符进行交换
+        while(i<j){
+            while(i<j&&sset.find(s[i])==sset.end())i++;
+            while(i<j&&sset.find(s[j])==sset.end())j--;
+            if(i<j)
+                swap(s[i++],s[j--]);
         }
         return s;
     }
