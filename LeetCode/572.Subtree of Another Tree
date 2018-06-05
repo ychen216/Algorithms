@@ -72,3 +72,37 @@ public:
         }   
     }
 };
+
+改写
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isSubtree(TreeNode* s, TreeNode* t) {
+        if(s==NULL&&t==NULL)
+            return true;
+        if(s==NULL)
+            return false;
+        if(isSame(s,t))
+            return true;
+        return isSubtree(s->left,t)||isSubtree(s->right,t);
+    }
+private:
+    bool isSame(TreeNode *s,TreeNode *t){
+        if(s == NULL && t == NULL) // 全为空树
+            return true;
+        if(s == NULL || t == NULL) // 一个空树一个非空
+            return false;
+        // 两棵非空树
+        if(s->val == t->val)
+            return isSame(s->left,t->left)&&isSame(s->right,t->right);
+        return false;
+    }
+};
