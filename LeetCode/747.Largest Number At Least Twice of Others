@@ -23,7 +23,7 @@ Note:
 Solution:
 class Solution {
 public:
-    //记录下最大值和次大值
+    // 只需要比较最大值和次大值即可
     int dominantIndex(vector<int>& nums) {
         int n=nums.size();
         if(n==0)
@@ -32,7 +32,7 @@ public:
             return 0;
         int max1=nums[0],max2=INT_MIN,index=0;
         for(int i=1;i<n;i++){
-            if(nums[i]>max1){
+            if(nums[i]>=max1){
                 max2=max1;
                 max1=nums[i];
                 index=i;
