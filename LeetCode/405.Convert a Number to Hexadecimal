@@ -25,23 +25,22 @@ Output:
 
 Solution:
 class Solution {
-private:
-    string hex="0123456789abcdef";
 public:
-    /*
-    每四位二进制数转化为1位16进制数,按位操作能够保证正负值不混乱
-    其实就是将二进制数转化为十六进制数
-    */
+    // 一个十六进制位对应4个二进制位
+    // 每次将最后的四个二进制位转换成16进制位
+    // 要注意处理0 和 负数 负数右移左边添加1 会导致死循环 需要cnt来控制最多右移的次数
     string toHex(int num) {
         if(num==0)
             return "0";
+        int count=0;//32位2进制数 每4位转16进制 最多转换8次 避免负数右移导致出现全1 死循环
         string res="";
-        int cnt=0;//int 32位
-        while(num!=0&&cnt<8){
-            res=hex[num&0xf]+res;
-            num=num>>4;
-            cnt++;
+        while(num&&count<8){
+            res=HEX[num&0xf]+res;
+            num>>=4;
+            count++;
         }
         return res;
     }
+private:
+    const string HEX="0123456789abcdef";
 };
