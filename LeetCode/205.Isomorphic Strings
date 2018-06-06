@@ -54,10 +54,12 @@ public:
                 mt[t[i]]=s[i];
             }
             else{
-                if(ms.find(s[i])!=ms.end()&&mt.find(t[i])!=mt.end()&&ms[s[i]]==t[i]&&mt[t[i]]==s[i])
-                    continue;
-                
-                return false;
+                if(ms.find(s[i])==ms.end())
+                    return false;
+                if(mt.find(t[i])==mt.end())
+                    return false;
+                if(ms[s[i]]!=t[i]||mt[t[i]]!=s[i])
+                    return false;
             }
         }
         return true;
