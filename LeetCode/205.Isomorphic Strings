@@ -41,3 +41,45 @@ public:
         return true;
     }
 };
+
+二刷 感觉上面的方法有点不对劲 写了相同思路的方法
+class Solution {
+public:
+    bool isIsomorphic(string s, string t) {
+        unordered_map<char,char> ms,mt;
+        int len=s.length();
+        for(int i=0;i<len;i++){
+            if(ms.find(s[i])==ms.end()&&mt.find(t[i])==mt.end()){
+                ms[s[i]]=t[i];//s[i]和t[i]互相映射
+                mt[t[i]]=s[i];
+            }
+            else{
+                if(ms.find(s[i])!=ms.end()&&mt.find(t[i])!=mt.end()&&ms[s[i]]==t[i]&&mt[t[i]]==s[i])
+                    continue;
+                
+                return false;
+            }
+        }
+        return true;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    // 必须保证映射是一一对应的 ab->aa
+    bool isIsomorphic(string s, string t) {
+        if(s.length()!=t.length())
+            return false;
+        vector<int> mmp1(256,-1),mmp2(256,-1);
+        // 在字符串s中 s[i]映射到t中的第j个字符
+        for(int i=0;i<s.length();i++){
+            if(mmp1[s[i]]!=mmp2[t[i]])
+                return false;
+            mmp1[s[i]]=i;
+            mmp2[t[i]]=i;
+        }
+        return true;
+    }
+};
