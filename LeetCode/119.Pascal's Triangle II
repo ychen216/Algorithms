@@ -24,3 +24,23 @@ public:
         return array;
     }
 };
+
+改写
+class Solution {
+public:
+    // 每次只保存上一行的结果 下一行元素的计算在上一行的结果上进行in-place计算覆盖
+    // 并且从右向左计算 保证不会覆盖到还需要使用的元素
+    vector<int> getRow(int rowIndex) {
+        rowIndex++;//rowIndex 从0开始
+        vector<int> res(rowIndex);
+        for(int i=0;i<rowIndex;i++){
+            for(int j=i;j>=0;j--){
+                if(j==i)
+                    res[j]=1;
+                else
+                    res[j]+=res[j-1];
+            }
+        }
+        return res;
+    }
+};
