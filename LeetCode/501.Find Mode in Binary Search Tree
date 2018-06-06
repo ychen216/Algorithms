@@ -60,6 +60,32 @@ public:
         return res;
     }
 };
+改写：
+class Solution {
+public:
+    // map
+    vector<int> findMode(TreeNode* root) {
+        if(root==NULL)
+            return {};
+        vector<int> res;
+        unordered_map<int,int> mmp;
+        int maxCnt=0;
+        travel(mmp,root,maxCnt);
+        for(auto&m:mmp)
+            if(m.second==maxCnt)
+                res.push_back(m.first);
+        return res;
+    }
+private:
+    void travel(unordered_map<int,int>&mmp,TreeNode *root,int &maxCnt){
+        if(root==NULL)
+            return;
+        mmp[root->val]++;
+        maxCnt=max(mmp[root->val],maxCnt);
+        travel(mmp,root->left,maxCnt);
+        travel(mmp,root->right,maxCnt);
+    }
+};
 
 Solution 2:
 /**
@@ -100,5 +126,41 @@ public:
         maxCnt=0,preVal=INT_MIN,tempCnt=0;
         inorder(root,res);
         return res;
+    }
+};
+
+改写:
+class Solution {
+public:
+    // BST中序遍历的结果是非递减序列 那么重复出现的元素必然是连续访问到的
+    vector<int> findMode(TreeNode* root) {
+        if(root==NULL)
+            return {};
+        vector<int> res;
+        int maxCnt=0,curCnt=0;
+        pre=NULL;
+        inorder(res,root,maxCnt,curCnt);
+        return res;
+    }
+private:
+    TreeNode *pre=NULL;// 必须作为全局变量
+    // maxCnt和curCnt必须是全局变量或者传引用
+    void inorder(vector<int>&res,TreeNode *root,int &maxCnt,int &curCnt){
+        if(root==NULL)
+            return;
+        inorder(res,root->left,maxCnt,curCnt);
+        if(pre&&pre->val==root->val)
+            curCnt++;
+        else
+            curCnt=1;
+        pre=root;
+        if(maxCnt==curCnt)
+            res.push_back(root->val);
+        else if(maxCnt<curCnt){
+            res.clear();
+            res.push_back(root->val);
+            maxCnt=curCnt;
+        }
+        inorder(res,root->right,maxCnt,curCnt);
     }
 };
