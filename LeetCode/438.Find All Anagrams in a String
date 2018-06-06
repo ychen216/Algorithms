@@ -59,3 +59,43 @@ public:
         return res;
     }
 };
+
+Solution 2：
+class Solution {
+public:
+    // 
+    vector<int> findAnagrams(string s, string p) {
+        int lens=s.length(),lenp=p.length();
+        if(lens<lenp)
+            return {};
+        unordered_map<char,int> patternMap,curMap;
+        vector<int> res;
+        for(auto&c:p)
+            patternMap[c]++;
+        // 滑动窗口
+        for(int i=0;i+lenp<=lens;i++){
+            if(i==0){
+                // 统计第一个区间不同字符出现的次数
+                for(int k=i;k<i+lenp;k++)
+                    curMap[s[k]]++;
+            }
+            else{
+                // 减去上一个区间的首字符 加上新区间的新字符
+                curMap[s[i-1]]--;
+                curMap[s[i+lenp-1]]++;
+            }
+            // 稍微做一个小剪枝 候选区间最后一个字符不在pattern中必然不符合条件
+            if(patternMap.find(s[i+lenp-1])!=patternMap.end()){
+                bool ok=true;
+                for(auto &m:patternMap)
+                    if(m.second!=curMap[m.first]){
+                        ok=false;
+                        break;
+                    }
+                if(ok)
+                    res.push_back(i);
+            }
+        }
+        return res;
+    }
+};
