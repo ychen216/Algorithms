@@ -42,3 +42,41 @@ public:
         return a==x;
     }
 };
+
+
+Solution 3:转化为字符串的回文问题
+public:
+    bool isPalindrome(int x) {
+        string num=to_string(x);
+        int i=0,j=num.length()-1;
+        while(i<j){
+            if(num[i]!=num[j])
+                return false;
+            i++;j--;
+        }
+        return true;
+    }
+};
+
+
+Solution 4：
+class Solution {
+public:
+    /*
+        不必将整个数字反转 只需要反转一半即可
+        将x的后半部分进行翻转 与前半部分进行比较
+        1234321 ->123 1234比较
+        123321 -> 123 123比较
+    */
+    bool isPalindrome(int x) {
+        // 负数不满足条件 且排除翻转后有前导0的情况
+        if(x<0|| (x!=0 &&x%10==0)) 
+            return false;
+        int sum=0;
+        while(x>sum){
+            sum = sum*10+x%10;
+            x = x/10;
+        }
+        return (x==sum)||(x==sum/10);
+    }
+};
