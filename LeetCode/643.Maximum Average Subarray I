@@ -37,9 +37,11 @@ public:
     double findMaxAverage(vector<int>& nums, int k) {
         int size=nums.size();
         double sum=0,res;
+        // 第一个长度为k的子数组
         for(int i=0;i<k;i++)
             sum+=nums[i];
         res=sum;
+        // 遍历子数组可能的右边界
         for(int i=k;i<size;i++){
             sum+=nums[i]-nums[i-k];
             res=max(res,sum);   
