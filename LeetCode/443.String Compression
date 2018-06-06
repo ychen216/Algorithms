@@ -49,3 +49,29 @@ public:
         return p;
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    int compress(vector<char>& chars) {
+        int curIndex=0;
+        int i=0,cnt=0,len=chars.size();
+        char curChar;
+        while(i<len){
+            curChar=chars[i];
+            cnt=0;
+            while(i<len&&chars[i]==curChar){
+                cnt++;
+                i++;
+            }
+            chars[curIndex++]=curChar;
+            if(cnt!=1){
+                string cntString=to_string(cnt);
+                for(auto&c:cntString)
+                    chars[curIndex++]=c;
+            }
+        }
+        return curIndex;
+    }
+};
