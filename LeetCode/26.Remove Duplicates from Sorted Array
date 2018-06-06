@@ -30,3 +30,21 @@ public:
         return cnt;
     }
 };
+
+改写 更清晰
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return n;
+        int cur=0;// 当前无重复元素的最后一个下标
+        for(int i=1;i<n;i++){
+            if(nums[i]!=nums[cur]){
+                cur++;
+                nums[cur]=nums[i];
+            }
+        }
+        return cur+1;
+    }
+};
