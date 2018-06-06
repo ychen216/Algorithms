@@ -27,3 +27,22 @@ public:
         return {};
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    // 利用map
+    vector<int> twoSum(vector<int>& nums, int target) {
+        unordered_map<int,int> mmp;//值和index
+        int left;
+        for(int i=0;i<nums.size();i++){
+            left=target-nums[i];
+            if(mmp.find(left)!=mmp.end())
+                return {mmp[left],i};
+            else
+                mmp[nums[i]]=i;
+        }
+        return {-1,-1};
+    }
+};
