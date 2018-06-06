@@ -11,7 +11,7 @@ Input: "Hello, my name is John"
 Output: 5
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     int countSegments(string s) {
@@ -26,5 +26,37 @@ public:
                 flag=true;
         }
         return cnt;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    int countSegments(string s) {
+        int ans=0;
+        int i=0,len=s.length();
+        while(i<len){
+            // 找到第一个非空格的字符
+            while(i<len&&s[i]==' ')i++;
+            if(i>=len)
+                break;
+            while(i<len&&s[i]!=' ')i++;
+            ans++;
+        }
+        return ans;
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    int countSegments(string s) {
+        int ans=0;
+        for(int i=0;i<s.length();i++){
+            if(s[i]!=' '&&(i==0||s[i-1]==' '))
+                ans++;
+        }
+        return ans;
     }
 };
