@@ -30,7 +30,7 @@ The coins can form the following rows:
 Because the 4th row is incomplete, we return 3.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     int arrangeCoins(int n) {
@@ -41,5 +41,37 @@ public:
         }
         i--;
         return i; 
+    }
+};
+
+Solution 2：
+class Solution {
+public:
+    // 找到1+2+3+4+..+k<=n的最大的k 利用二分搜索
+    // (1+k)k<=2n
+    int arrangeCoins(int n) {
+        long low=1,high=sqrt(2.0*n);// 避免int溢出
+        long mid,sum;
+        while(low<=high){
+            mid=low+(high-low)/2;
+            sum=(1+mid)*mid/2;
+            if(sum<=n)
+                low=mid+1;
+            else
+                high=mid-1;
+        }
+        return low-1;
+    }
+};
+
+Solution 3：
+class Solution {
+public:
+    /*
+    一种数学解法O(1)，充分利用了等差数列的性质，我们建立等式, n = (1 + x) * x / 2,
+    用一元二次方程的求根公式可以得到 x = (-1 + sqrt(8 * n + 1)) / 2, 然后取整后就是能填满的行
+    */
+    int arrangeCoins(int n) {
+        return (int)((-1 + sqrt(1 + 8 * (long)n)) / 2);
     }
 };
