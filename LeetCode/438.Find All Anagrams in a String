@@ -63,7 +63,7 @@ public:
 Solution 2：
 class Solution {
 public:
-    // 
+    // 只要s与pattern中每个字符出现的次数相同 就是一个Anagram
     vector<int> findAnagrams(string s, string p) {
         int lens=s.length(),lenp=p.length();
         if(lens<lenp)
