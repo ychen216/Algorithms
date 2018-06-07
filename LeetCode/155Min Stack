@@ -66,3 +66,37 @@ private:
  * int param_3 = obj.top();
  * int param_4 = obj.getMin();
  */
+
+
+Solution 2：
+class MinStack {
+public:
+    /** initialize your data structure here. */
+    MinStack() {
+        
+    }
+    // 利用两个栈 分别记录记录实际值 和 当前最小值
+    void push(int x) {
+        if(valSt.empty()){
+            minSt.push(x);
+        }
+        else
+            minSt.push(min(x,minSt.top()));
+        valSt.push(x);
+    }
+    
+    void pop() {
+        valSt.pop();
+        minSt.pop();
+    }
+    
+    int top() {
+        return valSt.top();
+    }
+    
+    int getMin() {
+        return minSt.top();
+    }
+private:
+    stack<int> minSt,valSt;// minSt的栈顶就是当前最小元素
+};
