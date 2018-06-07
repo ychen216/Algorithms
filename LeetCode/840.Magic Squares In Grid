@@ -1,0 +1,109 @@
+840. Magic Squares In Grid
+/*
+A 3 x 3 magic square is a 3 x 3 grid filled with distinct numbers from 1 to 9 such that each row, column, and both diagonals all have the same sum.
+
+Given an grid of integers, how many 3 x 3 "magic square" subgrids are there?  (Each subgrid is contiguous)
+
+Example 1:
+Input: [[4,3,8,4],
+        [9,5,1,9],
+        [2,7,6,2]]
+Output: 1
+Explanation: 
+The following subgrid is a 3 x 3 magic square:
+438
+951
+276
+while this one is not:
+384
+519
+762
+
+In total, there is only one magic square inside the given grid.
+Note:
+  1 <= grid.length <= 10
+  1 <= grid[0].length <= 10
+  0 <= grid[i][j] <= 15
+
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        A 3 x 3 magic square is a 3 x 3 grid filled with distinct numbers from 1 to 9.
+        Here I just want share two observatons with this 1-9 condition:
+
+        Assume a magic square:
+        a1,a2,a3
+        a4,a5,a6
+        a7,a8,a9
+
+        a2 + a5 + a8 = 15
+        a4 + a5 + a6 = 15
+        a1 + a5 + a9 = 15
+        a3 + a5 + a7 = 15
+
+        Accumulate all, then we have:
+        sum(ai) + 3 * a5 = 60
+        3 * a5 = 15
+        a5 = 5
+
+        The center of magic square must be 5.
+
+        Another observation for other 8 numbers:
+        The even must be in the corner, and the odd must be on the edge.
+        And it must be in a order like "43816729" （clockwise or anticlockwise)
+        magic square中心一定是5
+        且行列对角线的和为15
+    */
+    int numMagicSquaresInside(vector<vector<int>>& grid) {
+        int row=grid.size();
+        if(row<3)
+            return 0;
+        int col=grid[0].size();
+        if(col<3)
+            return 0;
+        int ans=0;
+        for(int i=0;i<=row-3;i++){
+            for(int j=0;j<=col-3;j++)
+                if(isValid(grid,i,j))
+                    ans++;
+        }
+        return ans;
+    }
+private:
+    bool isValid(vector<vector<int>>&grid,int x,int y){
+        // 中心元素必须是5
+        if(grid[x+1][y+1]!=5)
+            return false;
+        vector<int> visit(16,0);//grid[i][j]的范围在1-15
+        // 1~9每个数字有且出现一次
+        for(int i=x;i<x+3;i++){
+            for(int j=y;j<y+3;j++)
+                visit[grid[i][j]]++;
+        }
+        for(int i=1;i<10;i++)
+            if(visit[i]!=1)
+                return false;
+        // 行列对角线和
+        for(int i=x;i<x+3;i++){
+            int sum=0;
+            for(int j=y;j<y+3;j++)
+                sum+=grid[i][j];
+            if(sum!=15)
+                return false;
+        }
+        
+        for(int j=y;j<y+3;j++){
+            int sum=0;
+            for(int i=x;i<x+3;i++)
+                sum+=grid[i][j];
+            if(sum!=15)
+                return false;
+        }
+        if(grid[x][y]+grid[x+2][y+2]!=10)return false;
+        if(grid[x][y+2]+grid[x+2][y]!=10)return false;
+        return true;
+    }
+};
