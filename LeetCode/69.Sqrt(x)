@@ -6,7 +6,7 @@ Implement int sqrt(int x).
 Compute and return the square root of x.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     int mySqrt(int x) {
@@ -23,5 +23,25 @@ public:
             }
         }
         return ans;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    int mySqrt(int x) {
+        long low=0,high=x,mid,pro;
+        while(low<=high){
+            mid=low+(high-low)/2;
+            pro=mid*mid;
+            if(pro==x)
+                return mid;
+            else if(pro>x)
+                high=mid-1;
+            else
+                low=mid+1;
+        }
+        return low-1;
     }
 };
