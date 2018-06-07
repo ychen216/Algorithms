@@ -41,3 +41,29 @@ class Solution {
         return true;
     }
 }
+
+Solution 2:
+class Solution {
+    // 一一对应
+    public boolean wordPattern(String pattern, String str) {
+        Map<Character,Integer> map1=new HashMap<Character,Integer>();// Character最后映射的字符串下标
+        Map<String,Integer> map2=new HashMap<String,Integer>();// String最后映射的字符下标
+        String[] words=str.split("\\s+");
+        char [] pArray=pattern.toCharArray();
+        if(pArray.length!=words.length)
+            return false;
+        for(int i=0;i<pArray.length;i++){
+            if(!map1.containsKey(pArray[i])&&!map2.containsKey(words[i])){
+                map1.put(pArray[i],i);
+                map2.put(words[i],i);
+            }
+            else{
+                if(!map1.containsKey(pArray[i])||!map2.containsKey(words[i]))
+                    return false;
+                if(!map1.get(pArray[i]).equals(map2.get(words[i])))
+                   return false;
+            }
+        }
+        return true;
+    }
+}
