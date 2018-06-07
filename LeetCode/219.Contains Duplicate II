@@ -5,14 +5,14 @@ Given an array of integers and an integer k, find out whether there are two dist
 such that nums[i] = nums[j] and the absolute difference between i and j is at most k.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     bool containsNearbyDuplicate(vector<int>& nums, int k) {
         if(k<=0)
             return false;
         int size=nums.size();
-        map<int,int> m;
+        unordered_map<int,int> m;
         for(int i=0;i<size;i++){
             if(m.count(nums[i])){
                 if(i-m[nums[i]]<=k)
@@ -21,6 +21,31 @@ public:
             }
             else
                 m[nums[i]]=i;
+        }
+        return false;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*  unordered_set
+        The basic idea is to maintain a set s which contain unique values from nums[i - k] to nums[i - 1]
+        if nums[i] is in set s then return true else update the set.
+    */
+    bool containsNearbyDuplicate(vector<int>& nums, int k) {
+        int size=nums.size();
+        if(size<2)
+            return false;
+        if(k>=size)
+            k=size-1;
+        unordered_set<int> sset;// 保存i-k+1~i范围的元素
+        for(int i=0;i<nums.size();i++){
+            if(i>k) sset.erase(nums[i-k+1]);
+            if(sset.find(nums[i])!=sset.end())
+                return true;
+            sset.insert(nums[i]);
         }
         return false;
     }
