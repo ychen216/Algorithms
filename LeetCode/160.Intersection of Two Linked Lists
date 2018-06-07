@@ -21,7 +21,8 @@ Notes:
   Your code should preferably run in O(n) time and use only O(1) memory.
 */
 
-Solution:
+Solution 1:
+
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -30,6 +31,49 @@ Solution:
  *     ListNode(int x) : val(x), next(NULL) {}
  * };
  */
+class Solution {
+public:
+    // 有交集的两个链 必然从交点到链尾都是共享的 
+    // 得到两个链的长度差k 长的链表向前移动k步使其尾部对齐
+    // 然后同步向后走 若节点相同则为交点
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if(!headA||!headB)
+            return NULL;
+        ListNode *pa=headA,*pb=headB;
+        int lena=0,lenb=0;
+        while(pa){
+            lena++;
+            pa=pa->next;
+        }
+        while(pb){
+            lenb++;
+            pb=pb->next;
+        }
+        int k=abs(lena-lenb);
+        // 令pa指向长的链表
+        if(lena<lenb){
+            pa=headB;
+            pb=headA;
+        }
+        else{
+            pa=headA;
+            pb=headB;
+        }
+        while(k){
+            pa=pa->next;
+            k--;
+        }
+        while(pa){
+            if(pa==pb)
+                return pa;
+            pa=pa->next;
+            pb=pb->next;
+        }
+        return NULL;
+    }
+};
+
+相同思路但是更巧妙
 class Solution {
 public:
     //考虑A和B一样长 那么只要一步一步比较两个链的每一个节点 看是否存在交集即可
@@ -50,5 +94,45 @@ public:
             return p;
         }
         return NULL;
+    }
+};
+
+
+Solution 2：
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // 有交集的两个链 必然从交点到链尾都是共享的 
+    // 可以利用栈结构得到最后一个相同的节点即为交点 时间O(n) 空间O(n)
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if(!headA||!headB)
+            return NULL;
+        stack<ListNode *>stA,stB;
+        ListNode *pa=headA,*pb=headB;
+        // 链表分别入栈 尾部对齐
+        while(pa){
+            stA.push(pa);
+            pa=pa->next;
+        }
+        while(pb){
+            stB.push(pb);
+            pb=pb->next;
+        }
+        // 找到相交的第一个节点
+        ListNode *intersection=NULL;
+        while(!stA.empty()&&!stB.empty()){
+            if(stA.top()!=stB.top())
+                break;
+            intersection=stA.top();
+            stA.pop();stB.pop();
+        }
+        return intersection;
     }
 };
