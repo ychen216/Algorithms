@@ -19,22 +19,44 @@ class Solution {
 public:
     //与排序好的数组比较看相异的元素有几个
     int findUnsortedSubarray(vector<int>& nums) {
-        vector<int> sortV(nums.begin(),nums.end());
-        sort(sortV.begin(),sortV.end());
+        vector<int> copy(nums.begin(),nums.end());
+        sort(copy.begin(),copy.end());
         int i=0,j=nums.size()-1;
-        while(i<j&&nums[i]==sortV[i]){
-            i++;
-        }
-        if(i==j)
-            return 0;
-        while(j>i&&nums[j]==sortV[j]){
-            j--;
-        }
+        // 从前向后 排除不需要重排序的元素
+        while(i<=j&&copy[i]==nums[i])i++;
+        // 从后向前 
+        while(i<=j&&copy[j]==nums[j])j--;
         return j-i+1;
     }
 };
 
-Solution 2：
+Solution 2: 时间空间O(n)
+class Solution {
+public:
+    // 利用栈维护一个递增序列 和 递减序列
+    int findUnsortedSubarray(vector<int>& nums) {
+        stack<int> st1,st2;// 存放元素下标
+        int begin=nums.size(),end=-1;
+        // 通过构造递增序列 找到第一个需要重排的元素 
+        for(int i=0;i<nums.size();i++){
+            while(!st1.empty()&&nums[st1.top()]>nums[i]){
+                begin=min(begin,st1.top());
+                st1.pop();
+            }
+            st1.push(i);
+        }
+        for(int i=nums.size()-1;i>=0;i--){
+            while(!st2.empty()&&nums[st2.top()]<nums[i]){
+                end=max(end,st2.top());
+                st2.pop();
+            }
+            st2.push(i);
+        }
+        return begin>end?0:end-begin+1;
+    }
+};
+
+Solution 3：
 class Solution {
 public:
     /*O(n)
@@ -66,3 +88,35 @@ public:
         return j-i-1;
     }
 };
+
+
+Solution 4: 时间O(n) 空间O(1) 还没理解
+public class Solution {
+    public int findUnsortedSubarray(int[] nums) {
+        int min = Integer.MAX_VALUE, max = Integer.MIN_VALUE;
+        boolean flag = false;
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] < nums[i - 1])
+                flag = true;
+            if (flag)
+                min = Math.min(min, nums[i]);
+        }
+        flag = false;
+        for (int i = nums.length - 2; i >= 0; i--) {
+            if (nums[i] > nums[i + 1])
+                flag = true;
+            if (flag)
+                max = Math.max(max, nums[i]);
+        }
+        int l, r;
+        for (l = 0; l < nums.length; l++) {
+            if (min < nums[l])
+                break;
+        }
+        for (r = nums.length - 1; r >= 0; r--) {
+            if (max > nums[r])
+                break;
+        }
+        return r - l < 0 ? 0 : r - l + 1;
+    }
+}
