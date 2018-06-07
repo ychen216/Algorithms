@@ -7,7 +7,7 @@ Follow up:
 Could you do it in O(n) time and O(1) space?
 */
 
-Solution:
+Solution 1:空间O(n)
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -32,5 +32,53 @@ public:
                 return false;
         }
         return true;
+    }
+};
+
+
+Solution 2:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // 利用快慢指针找到链表的中点 翻转后半部分 然后前后两部分比较
+    bool isPalindrome(ListNode* head) {
+        if(head==NULL||head->next==NULL)
+            return true;
+        ListNode *slow=head,*fast=head;
+        while(fast->next&&fast->next->next){
+            slow=slow->next;
+            fast=fast->next->next;
+        }
+        // 保证后半部分的长度<=前半部分
+        slow=slow->next;
+        slow=reverseList(slow);
+        fast=head;
+        while(slow){
+            if(slow->val!=fast->val)
+                return false;
+            slow=slow->next;
+            fast=fast->next;
+        }
+        return true;
+    }
+private:
+    ListNode *reverseList(ListNode *head){
+        ListNode *feakHead=new ListNode(0);
+        ListNode *cur=feakHead,*next=head;
+        // 头插法
+        while(next){
+            ListNode *temp=next->next;
+            next->next=cur->next;
+            cur->next=next;
+            next=temp;
+        }
+        return feakHead->next;
     }
 };
