@@ -41,3 +41,29 @@ public:
         return head;
     }
 };
+
+Solution 2:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* removeElements(ListNode* head, int val) {
+        ListNode *feakHead=new ListNode(0);
+        ListNode *cur=feakHead,*next=head;
+        while(next){
+            if(next->val!=val){
+                cur->next=next;
+                cur=cur->next;
+            }
+            next=next->next;
+        }
+        cur->next=NULL;//必须 防止 1->2->3->6 删除6不成功
+        return feakHead->next;
+    }
+};
