@@ -20,3 +20,23 @@ public:
         return m;
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    // 初始化逆置后的数为0xffffffff
+    // 每次都判断n的某一位的值如果是0 那么要对应去找逆置以后的位 并改正 可以通过异或操作完成
+    uint32_t reverseBits(uint32_t n) {
+        uint32_t res=0xffffffff;
+        uint32_t flagn=1;
+        uint32_t flagres=0x80000000;
+        while(flagn){
+            if((n&flagn)==0)
+                res^=flagres;
+            flagn<<=1;
+            flagres>>=1;
+        }
+        return res;
+    }
+};
