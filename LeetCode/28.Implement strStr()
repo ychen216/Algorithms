@@ -20,3 +20,22 @@ public:
         }
     }
 };
+
+改写
+class Solution {
+public:
+    int strStr(string haystack, string needle) {
+        int lenh=haystack.length(),lenn=needle.length();
+        if(lenh<lenn)
+            return -1;
+        int i=0;// haystack的搜索起始下标
+        while(i+lenn<=lenh){
+            int j=0;
+            while(j<lenn&&haystack[i+j]==needle[j])j++;
+            if(j==lenn)
+                return i;
+            i++;
+        }
+        return -1;
+    }
+};
