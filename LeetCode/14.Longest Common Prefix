@@ -34,3 +34,56 @@ public:
         
     }
 };
+
+Solution 2:
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        if(strs.size()==0)
+            return "";
+        int minLen=INT_MAX,index=-1;
+        // 最长前缀必然在最短的字符串中产生
+        for(int i=0;i<strs.size();i++){
+            if(strs[i].length()<minLen){
+                minLen=strs[i].length();
+                index=i;
+            }
+        }
+        for(int len=minLen;len>0;len--){
+            string prefix=strs[index].substr(0,len);
+            bool ok=true;
+            for(int i=0;i<strs.size();i++){
+                if(i==index)continue;
+                if(strs[i].substr(0,len)!=prefix){
+                    ok=false;
+                    break;
+                }
+            }
+            if(ok)
+                return prefix;
+        }
+        return "";
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    string longestCommonPrefix(vector<string>& strs) {
+        int n=strs.size();
+        if(n==0)
+            return "";
+        // 初始选取第一个字符串作为候选前缀
+        string prefix=strs[0];
+        int len=strs[0].length();
+        int i=1;
+        while(i<n){
+            while(strs[i].substr(0,len)!=prefix){
+                len--;
+                prefix=prefix.substr(0,len);
+            }
+            i++;
+        }
+        return prefix;
+    }
+};
