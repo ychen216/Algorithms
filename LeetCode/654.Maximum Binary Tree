@@ -59,3 +59,58 @@ public:
         return build(nums,0,size-1);
     }
 };
+
+
+改写
+class Solution {
+public:
+    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+        
+        return builder(nums,0,nums.size()-1);
+    }
+private:
+    TreeNode *builder(vector<int>&nums,int s,int e){
+        if(s>e)
+            return NULL;
+        int minIndex=s,minVal=nums[s];
+        for(int i=s+1;i<=e;i++){
+            if(nums[i]>minVal){
+                minVal=nums[i];
+                minIndex=i;
+            }
+        }
+        TreeNode *root=new TreeNode(minVal);
+        root->left=builder(nums,s,minIndex-1);
+        root->right=builder(nums,minIndex+1,e);
+        return root;
+    }
+};
+
+Solution 2：
+class Solution {
+public:
+    /*
+        使用到了一个辅助数组v 或者是栈来让其保持降序
+        \遍历数组，对于每个遍历到的数字，创建一个结点
+        然后进行循环，如果数组v不空，且末尾结点值小于当前数字，那么将末尾结点连到当前结点的左子结点，并且移除数组中的末尾结点
+        这样可以保证子结点都会小于父结点
+        循环结束后，如果此时数组v仍不为空，说明结点值很大，那么将当前结点连到数组末尾结点的右子结点上。
+        之后别忘了将当前结点加入数组v中，最后返回数组v的首结点即可
+    */
+    TreeNode* constructMaximumBinaryTree(vector<int>& nums) {
+        vector<TreeNode*> stk;
+        for (int i = 0; i < nums.size(); ++i)
+        {
+            TreeNode* cur = new TreeNode(nums[i]);
+            while (!stk.empty() && stk.back()->val < nums[i])
+            {
+                cur->left = stk.back();
+                stk.pop_back();
+            }
+            if (!stk.empty())
+                stk.back()->right = cur;
+            stk.push_back(cur);
+        }
+        return stk.front();
+    }
+};
