@@ -55,3 +55,26 @@ public:
         return res;
     }
 };
+
+改写
+class Solution {
+public:
+    string customSortString(string S, string T) {
+        vector<int> cnt(26,0);
+        for(int i=0;i<T.length();i++)
+            cnt[T[i]-'a']++;
+        string res="";
+        //按照S中的优先级次序排序T中的字符
+        for(auto c:S){
+            if(cnt[c-'a']>0){
+              res.append(string(cnt[c-'a'],c));
+              cnt[c-'a']=0;
+            }
+        }
+        for(char c='a';c<='z';c++){
+            if(cnt[c-'a']>0)
+                res.append(string(cnt[c-'a'],c));
+        }
+        return res;
+    }
+};
