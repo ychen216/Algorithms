@@ -23,7 +23,7 @@ Follow up:
 
 */
 
-Solution 1:
+Solution 1: 不改变棋盘元素
 class Solution {
 public:
     //只记录舰艇第一个出现的单元
@@ -46,7 +46,30 @@ public:
     }
 };
 
-Solution 2:
+改写
+class Solution {
+public:
+    int countBattleships(vector<vector<char>>& board) {
+        int row=board.size();
+        if(row==0)
+            return 0;
+        int col=board[0].size();
+        if(col==0)
+            return 0;
+        int ans=0;
+        // 只记录第一次出现的X
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(board[i][j]=='X'&&(i==0||board[i-1][j]=='.')&&(j==0||board[i][j-1]=='.'))
+                    ans++;
+            }
+        }
+        return ans;
+    }
+
+};
+
+Solution 2: 改变棋盘元素
 class Solution {
 public:
     //只记录舰艇第一个出现的单元
@@ -78,5 +101,39 @@ public:
             }
         }
         return cnt;
+    }
+};
+
+Solution 3:dfs
+class Solution {
+public:
+    int countBattleships(vector<vector<char>>& board) {
+        int row=board.size();
+        if(row==0)
+            return 0;
+        int col=board[0].size();
+        if(col==0)
+            return 0;
+        int ans=0;
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(board[i][j]=='X'){
+                    ans++;
+                    dfs(board,i,j,row,col);
+                }
+            }
+        }
+        return ans;
+    }
+private:
+    void dfs(vector<vector<char>>& board,int x,int y,int row,int col){
+        board[x][y]='.';
+        // 因为主函数中扫描的顺序从左到右 从上到下
+        // 如果左侧或上方有船只 那么该cell肯定已经被遍历了
+        // 所以能走到这一步只需要考虑下方和右侧即可
+        if(x+1<row&&board[x+1][y]=='X')
+            dfs(board,x+1,y,row,col);
+        if(y+1<col&&board[x][y+1]=='X')
+            dfs(board,x,y+1,row,col);
     }
 };
