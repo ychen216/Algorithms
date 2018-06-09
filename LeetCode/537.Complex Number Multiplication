@@ -20,7 +20,7 @@ The input strings will be given in the form of a+bi, where the integer a and b w
 And the output should be also in this form.
 */
 
-Solution:
+Solution 1: stringstream
 class Solution {
 public:
     string complexNumberMultiply(string a, string b) {
@@ -31,5 +31,51 @@ public:
         sb>>rb>>c>>ib>>c;
         ans<<ra*rb-ia*ib<<"+"<<ra*ib+rb*ia<<"i";
         return ans.str();
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    // (a+bi)*(c+di)=ac-bd+(ad+bc)i
+    string complexNumberMultiply(string a, string b) {
+        int realA,imageryA,realB,imageryB;
+        getComplexNumber(a,realA,imageryA);
+        getComplexNumber(b,realB,imageryB);
+        int resReal=realA*realB-imageryA*imageryB;
+        int resImg=realA*imageryB+imageryA*realB;
+        return to_string(resReal)+"+"+to_string(resImg)+"i";
+    }
+private:
+    void getComplexNumber(string &num,int &real,int &imagery){
+        real=0,imagery=0;
+        // 找实部
+        int i=0;
+        bool negReal=false;
+        if(num[0]=='-'){
+            i++;
+            negReal=true;
+        }
+        while(i<num.length()&&num[i]!='+'){
+            real=real*10+num[i]-'0';
+            i++;
+        }
+        if(negReal)
+            real=-real;
+        // 跳过+
+        i++;
+        // 找虚部
+        bool negImg=false;
+        if(num[i]=='-'){
+            negImg=true;
+            i++;
+        }
+        while(i<num.length()&&num[i]!='i'){
+            imagery=imagery*10+num[i]-'0';
+            i++;
+        }
+        if(negImg)
+            imagery=-imagery;
     }
 };
