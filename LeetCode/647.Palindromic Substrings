@@ -65,3 +65,34 @@ public:
         }
     }
 };
+
+same idea :iterative
+class Solution {
+public:
+    // 从中心向两侧扩展回文串
+    int countSubstrings(string s) {
+        int res=0;
+        for(int i=0;i<s.length();i++)
+            res+=countPalindrome(s,i);
+        return res;
+    }
+private:
+    int countPalindrome(string &s,int centerIndex){
+        int cnt=1;
+        // 回文串为奇数长度 xxxkxxx
+        int i=centerIndex-1,j=centerIndex+1;
+        while(i>=0&&j<s.length()){
+            if(s[i]!=s[j])break;
+            cnt++;
+            i--;j++;
+        }
+        // 回文串为偶数长度 xxxkkxxx
+        i=centerIndex,j=centerIndex+1;
+        while(i>=0&&j<s.length()){
+            if(s[i]!=s[j])break;
+            cnt++;
+            i--;j++;
+        }
+        return cnt;
+    }
+};
