@@ -28,7 +28,36 @@ Output:
 Note: You may assume the tree (i.e., the given root node) is not NULL.
 */
 
-Solution:
+Solution 1:
+class Solution {
+public:
+    // BFS
+    int findBottomLeftValue(TreeNode* root) {
+        if(root==NULL)
+            return NULL;
+        queue<TreeNode *> q;
+        q.push(root);
+        int mostLeft=root->val;
+        TreeNode *cur=NULL;
+        while(!q.empty()){
+            int size=q.size();
+            for(int i=0;i<size;i++){
+                cur=q.front();
+                q.pop();
+                if(i==0)
+                    mostLeft=cur->val;
+                if(cur->left)
+                    q.push(cur->left);
+                if(cur->right)
+                    q.push(cur->right);
+            }
+        }
+        return mostLeft;
+    }
+};
+
+
+Solution 2:trick 从右到左BFS
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
