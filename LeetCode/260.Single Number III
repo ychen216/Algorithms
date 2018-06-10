@@ -61,3 +61,30 @@ public:
         return res;
     }
 };
+
+same idea: 但是用笨方法得到第一位为1的位置
+class Solution {
+public:
+    // 利用异或
+    vector<int> singleNumber(vector<int>& nums) {
+        int res1=0,res2=0,res12=0;
+        for(auto &num:nums)
+            res12^=num;
+        // res12的结果就是两个仅出现一次的元素的异或值
+        // 找到res12第一个不一致的位 也就是res12中从右到左第一个1的位置k
+        // 按照k是0,1将nums元素分为两个部分 分别异或得到两个出现一次的元素
+        int flag=1;
+        while(flag){
+            if(flag&res12)
+                break;
+            flag<<=1;
+        }
+        for(auto &num:nums){
+            if(flag&num)
+                res1^=num;
+            else
+                res2^=num;
+        }
+        return {res1,res2};
+    }
+};
