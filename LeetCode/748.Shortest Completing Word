@@ -41,16 +41,16 @@ public:
         string res;
         int minLen=INT_MAX;
         for(auto &word:words){
+            // 剪枝
+            if(minLen<=word.length()) continue;
             vector<int> wcnt(26,0);
             for(auto &c:word){
                 if(isalpha(c))
                     wcnt[tolower(c)-'a']++;
             }
             if(isMatch(lcnt,wcnt)){
-                if(minLen>word.length()){
-                    minLen=word.length();
-                    res=word;
-                }
+                minLen=word.length();
+                res=word;
             }
         }
         return res;
