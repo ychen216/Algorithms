@@ -60,3 +60,42 @@ public:
         return res;
     }
 };
+
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    vector<int> findFrequentTreeSum(TreeNode* root) {
+        unordered_map<int,int> mmp;// sum-> cnt
+        vector<int> res;
+        int maxCnt=INT_MIN;
+        getSum(mmp,res,root,maxCnt);
+        return res;
+    }
+private:
+    int getSum(unordered_map<int,int> &mmp,vector<int>&res,TreeNode *root,int &maxCnt){
+        if(root==NULL)
+            return 0;
+        int left=getSum(mmp,res,root->left,maxCnt);
+        int right=getSum(mmp,res,root->right,maxCnt);
+        int curSum=root->val+left+right;
+        mmp[curSum]++;
+        if(mmp[curSum]>maxCnt){
+            maxCnt=mmp[curSum];
+            res.clear();
+            res.push_back(curSum);
+        }
+        else if(mmp[curSum]==maxCnt)
+            res.push_back(curSum);
+        return curSum;
+    }
+};
