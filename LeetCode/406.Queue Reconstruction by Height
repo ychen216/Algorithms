@@ -37,3 +37,22 @@ public:
         return res;
     }
 };
+改写
+class Solution {
+public:
+    // 优先插入高的人 矮的人插入并不影响高个子的人
+    // 当高个子的都插入后 矮个子的人只需要根据她需要左侧有几个比他高的人插入到相应位置即可
+    vector<pair<int, int>> reconstructQueue(vector<pair<int, int>>& people) {
+        // 排序
+        sort(people.begin(),people.end(),[&](const pair<int,int>&p1,const pair<int,int>&p2){
+            if(p1.first!=p2.first)
+                return p1.first>p2.first;
+            else
+                return p1.second<p2.second;
+        });
+        vector<pair<int,int>> res;
+        for(auto &p:people)
+            res.insert(res.begin()+p.second,p);
+        return res;
+    }
+};
