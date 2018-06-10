@@ -26,6 +26,7 @@ graph:
   mediun:399,684,332,310,127,133,
 
 binary-search:
+  medium:540,
   hard:793,668,
   
 bfs&dfs:
