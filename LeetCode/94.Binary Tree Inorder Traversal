@@ -72,3 +72,29 @@ public:
         return res;
     }
 };
+
+same idea 改写
+
+class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int> res;
+        stack<TreeNode *> st;
+        TreeNode *temp=NULL;
+        while(root||!st.empty()){
+            if(root){
+                st.push(root);
+                root=root->left;
+            }
+            else{
+                temp=st.top();
+                st.pop();
+                res.push_back(temp->val);
+                if(temp->right)
+                    root=temp->right;
+            }
+        }
+        return res;
+    }
+
+};
