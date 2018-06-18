@@ -57,3 +57,19 @@ public:
         return cnt;
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    int findPoisonedDuration(vector<int>& timeSeries, int duration) {
+        int last=0,ans=0;
+        for(auto &time:timeSeries){
+            if(time+duration>=last){
+                ans+=min(time+duration-last,duration);
+                last=time+duration;
+            }
+        }
+        return ans;
+    }
+};
