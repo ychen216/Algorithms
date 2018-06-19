@@ -11,7 +11,7 @@ Note:
   Your algorithm's time complexity must be better than O(n log n), where n is the array's size.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     //桶排序
@@ -37,6 +37,35 @@ public:
                     return res;
             }
         }
+        return res;
+    }
+};
+
+Solution 2：
+class Solution {
+public:
+    // 利用最小堆
+    vector<int> topKFrequent(vector<int>& nums, int k) {
+        unordered_map<int,int> mmp;
+        for(auto&n:nums)
+            mmp[n]++;
+        // 定义最小堆 定义小优先级小
+        auto cmp=[&](const pair<int,int>&p1,const pair<int,int>&p2){return p1.second>p2.second;};
+        priority_queue<pair<int,int>,vector<pair<int,int>>,decltype(cmp)> pq(cmp);
+        for(auto&m:mmp){
+            if(pq.size()<k) pq.push({m.first,m.second});
+            else if(pq.top().second<m.second){
+                pq.pop();
+                pq.push({m.first,m.second});
+            }
+        }
+        vector<int> res(k);
+        // 注意队列中保存的是逆序的结果
+        while(k--){
+            res[k]=pq.top().first;
+            pq.pop();
+        }
+        
         return res;
     }
 };
