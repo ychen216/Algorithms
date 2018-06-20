@@ -25,7 +25,7 @@ Note: n and m both fit in range [0, 1000].
 
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     int flipLights(int n, int m) {
@@ -37,5 +37,56 @@ public:
         if(m==2) return 7;
         if(m>=3) return 8;
         return 8;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    //  利用BFS 每一步操作向下扩展
+    int flipLights(int n, int m) {
+        unordered_set<int> statusSet;
+        queue<int> q;
+        q.push((1<<n)-1);// 起始状态n盏灯都亮着
+        for(int i=0;i<m;i++){
+            int curStatus,size=q.size();
+            statusSet.clear(); // 保证每次操作的状态没有重复的
+            // 对上一次的操作进行扩展
+            for(int j=0;j<size;j++){
+                curStatus=q.front();
+                q.pop();
+                vector<int> next({flipAll(curStatus,n),flipOdd(curStatus,n),flipEven(curStatus,n),flip3k(curStatus,n)});
+                for(auto &s:next){
+                    if(statusSet.find(s)==statusSet.end()){
+                        statusSet.insert(s);
+                        q.push(s);
+                    }
+                }
+            }
+        }
+        return q.size();
+    }
+private:
+    int flipAll(int status,int n){
+        return status^=(1<<n)-1;
+    }
+    
+    int flipOdd(int status,int n){
+        for(int i=0;i<n;i+=2)
+            status^=(1<<i);
+        return status;
+    }
+    
+    int flipEven(int status,int n){
+        for(int i=1;i<n;i+=2)
+            status^=(1<<i);
+        return status;
+    }
+    
+    int flip3k(int status,int n){
+        for(int i=0;i<n;i+=3)
+            status^=(1<<i);
+        return status;
     }
 };
