@@ -33,3 +33,29 @@ public:
         return res;
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    // 时刻保持左括号不少于右括号
+    vector<string> generateParenthesis(int n) {
+        int left=0,right=0;
+        vector<string> res;
+        generator(res,"",left,right,n);
+        return res;
+    }
+    
+private:
+    void generator(vector<string> &res,string format,int left,int right,int n){
+        if(left>n||right>n)
+            return;
+        if(left==n&&right==n){
+            res.push_back(format);
+            return;
+        }
+        if(left>right)
+            generator(res,format+")",left,right+1,n);
+        generator(res,format+"(",left+1,right,n);
+    }
+};
