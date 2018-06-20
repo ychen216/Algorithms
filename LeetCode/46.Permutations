@@ -48,3 +48,31 @@ public:
         }
     }
 };
+
+Solution 3: visit数组
+class Solution {
+public:
+    vector<vector<int>> permute(vector<int>& nums) {
+        int n=nums.size();
+        vector<bool> visit(n,false);
+        vector<vector<int>> res;
+        permutation(res,nums,visit,{});
+        return res;
+    }
+    
+private:
+    void permutation(vector<vector<int>> &res,vector<int>&nums,vector<bool>&visit,vector<int> cur){
+        if(cur.size()==nums.size()){
+            res.push_back(cur);
+            return;
+        }
+        for(int i=0;i<nums.size();i++){
+            if(visit[i])continue;
+            visit[i]=true;
+            cur.push_back(nums[i]);
+            permutation(res,nums,visit,cur);
+            cur.pop_back();
+            visit[i]=false;
+        }
+    }
+};
