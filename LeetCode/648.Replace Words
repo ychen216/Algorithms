@@ -20,7 +20,7 @@ Note:
   1 <= sentence words length <= 1000
 */
 
-Solution:
+Solution 1:
 class Solution {
     public String replaceWords(List<String> dict, String sentence) {
         if(dict==null||dict.size()==0)
@@ -45,3 +45,66 @@ class Solution {
         return sb.toString();
     }
 }
+
+Solution 2:
+class Solution {
+public:
+    // trie 
+    string replaceWords(vector<string>& dict, string sentence) {
+        if(dict.size()==0)
+            return sentence;
+        Node *root=build(dict);
+        stringstream ins(sentence),outs;
+        string word,out;
+        while(ins>>word){
+            if(findRoot(root,word,out))
+                outs<<out<<" ";
+            else
+                outs<<word<<" ";
+        }
+        string res=outs.str();
+        return res.substr(0,res.length()-1);
+    }
+struct Node{
+    Node *next[26];
+    string word;
+    bool flag;
+    Node(){
+        for(int i=0;i<26;i++)
+            next[i]=NULL;
+        word="";
+        flag=false;
+    }
+};
+    
+private:
+    Node *build(vector<string>&dict){
+        Node *root=new Node();
+        Node *cur=NULL;
+        for(auto&word:dict){
+            cur=root;
+            for(auto&c:word){
+                if(!cur->next[c-'a'])
+                    cur->next[c-'a']=new Node();
+                cur=cur->next[c-'a'];
+            }
+            cur->flag=true;
+            cur->word=word;
+        }
+        return root;
+    }
+    
+    bool findRoot(Node *root,string &word,string &rootWord){
+        Node *cur=root;
+        for(auto &c:word){
+            if(!cur->next[c-'a'])
+                return false;
+            cur=cur->next[c-'a'];
+            if(cur->flag){
+                rootWord=cur->word;
+                return true;
+            }
+        }
+        return false;
+    }
+};
