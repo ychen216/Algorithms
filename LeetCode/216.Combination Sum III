@@ -84,3 +84,36 @@ public:
         return res;
     }
 };
+
+
+Solution 3:不想看1 2 方法 不知道以前写的啥
+利用 start来解决重复问题 即 保证combination元素都是从小到大的
+class Solution {
+public:
+    vector<vector<int>> combinationSum3(int k, int n) {
+        if(k<1||n<=0||n>45) //45=(1+9)*9/2
+            return {};
+        vector<vector<int>> res;
+        vector<int> cur;
+        helper(res,cur,0,1,k,n);
+        return res;
+    }
+
+private:
+    void helper(vector<vector<int>>&res,vector<int> cur,int curSum,int start,const int k,const int n){
+        if(curSum>n)
+            return;
+        if(cur.size()>k)
+            return;
+        if(cur.size()==k){
+           if(curSum==n)
+               res.push_back(cur);
+            return;
+        }
+        for(int i=start;i<=9;i++){
+            cur.push_back(i);
+            helper(res,cur,curSum+i,i+1,k,n);
+            cur.pop_back();
+        }
+    }
+};
