@@ -53,3 +53,85 @@ class Solution {
         return res;
     }
 }
+
+class Solution {
+public:
+    /*
+        方法2:利用a^b = max => max ^a =b的性质
+        参考https://kingsfish.github.io/2017/12/15/Leetcode-421-Maximum-XOR-of-Two-Numbers-in-an-Array/
+    */
+    
+    int findMaximumXOR(vector<int>& nums) {
+        int curMax=0;
+        int mask=0;
+        for(int i=31;i>=0;i--){
+            // 更新mask来获取前i位数
+            mask = mask | (1<<i);
+            unordered_set<int> s;
+            // 获取前i位数
+            for(auto num: nums)
+                s.insert(mask&num);
+            int temp=curMax | (1<<i);//假设max的该位为1
+            for(auto a:s){
+                if(s.find(temp^a)!=s.end()){
+                    curMax=temp;
+                    break;
+                }
+            }
+        }
+        return curMax;
+    }
+};
+
+Solution 3:trie tree
+class Solution {
+public:
+    /*
+        方法3:利用Trie Tree或二叉树(只有左右两个孩子 表示0,1)
+        https://discuss.leetcode.com/topic/63207/java-o-n-solution-using-trie
+        构建Trie树 当从根节点从上到下遍历
+        如果某一个节点左右子树都不为空，那么得到最终答案的两个数字肯定分别出自于左右子树且此位为1
+        如果任意一个为空，那么最终答案该位为0，依次迭代得到最终结果
+    */
+    
+    int findMaximumXOR(vector<int>& nums) {
+        int res=INT_MIN;
+        // build tree
+        Trie *root=new Trie;
+        for(auto num:nums){
+            Trie *cur=root;
+            for(int i=31;i>=0;i--){
+                int curBit=(num>>i)&1;
+                if(cur->bits[curBit]==NULL){
+                    cur->bits[curBit]=new Trie;
+                }
+                cur=cur->bits[curBit];
+            }
+        }
+        
+        // findMax
+        for(auto num:nums){
+            Trie *cur=root;
+            int temp=0;
+            for(int i=31;i>=0;i--){
+                int curBit=(num>>i)&1;
+                // 是否存在兄弟节点 存在则该位异或就可以获得1
+                if(cur->bits[curBit ^ 1]!=NULL){
+                    temp+=(1<<i);
+                    cur=cur->bits[curBit ^ 1];
+                }
+                else
+                    cur=cur->bits[curBit];
+            }
+            res=max(res,temp);
+        }
+        return res;
+    }
+    
+    struct Trie{
+        Trie * bits[2]; //分别表示该位为0,1
+        Trie(){
+            bits[0]=bits[1]=NULL;
+        }
+    };
+};
