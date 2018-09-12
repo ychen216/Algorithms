@@ -56,3 +56,29 @@ class Solution {
  * int[] param_1 = obj.reset();
  * int[] param_2 = obj.shuffle();
  */
+
+class Solution {
+public:
+    Solution(vector<int> nums) {
+        origin=nums;
+    }
+    
+    /** Resets the array to its original configuration and return it. */
+    vector<int> reset() {
+        return origin;
+    }
+    
+    /** Returns a random shuffling of the array. */
+    vector<int> shuffle() {
+        vector<int> shuf(origin.begin(),origin.end());
+        int n=origin.size();
+        // 将第i位与i~n-1的任意一位随机交换
+        for(int i=0;i<n-1;i++){
+            int j=rand()%(n-i)+i;//产生由i~n-1的随机数
+            swap(shuf[i],shuf[j]);
+        }
+        return shuf;          
+    }
+private:
+    vector<int> origin;
+};
