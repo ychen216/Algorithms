@@ -49,3 +49,24 @@ public:
         return res;
     }
 };
+
+// 将map改为 unordered_map 加速
+class Solution {
+public:
+    // A+B = -C-D
+    int fourSumCount(vector<int>& A, vector<int>& B, vector<int>& C, vector<int>& D) {
+        unordered_map<long,int> mmp;
+        for(auto a:A){
+            for(auto b:B)
+                mmp[a+b]++;
+        }
+        
+        int res=0;
+        for(auto c:C){
+            for(auto d:D)
+                if(mmp.find(-(c+d))!=mmp.end())
+                    res+=mmp[-(c+d)];
+        }
+        return res;
+    }
+};
