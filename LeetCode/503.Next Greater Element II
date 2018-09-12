@@ -53,3 +53,35 @@ public:
         return res;
     }
 };
+
+class Solution {
+public:
+    /*
+        循环数组 将数组拼接成两倍长度 除了最大值 一定都能找到离自己最近的次大值
+        eg. 1 2 1 -> 1 2 1 1 2 1
+        利用栈来寻找next greater number 在栈中形成降序序列
+        在第二轮循环的时候 实际不必将元素再次压入栈,否则就相当于是重复了一遍执行过的比较、出栈操作
+    */
+    vector<int> nextGreaterElements(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return {};
+        if(n==1)
+            return {-1};
+        vector<int> res(n,-1);
+        stack<int> st;//存储元素下标
+        // 拼接数组 相当于遍历两次数组
+        for(int i=0;i<2;i++){
+            for(int j=0;j<n;j++){
+                while(!st.empty()&&nums[st.top()]<nums[j]){
+                    //if(res[st.top()]==-1)// 还未找到next greater number
+                    res[st.top()]=nums[j];
+                    st.pop();
+                }
+                if(i==0)
+                  st.push(j);
+            }
+        }
+        return res;
+    }
+};
