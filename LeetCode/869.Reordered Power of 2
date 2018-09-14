@@ -1,0 +1,138 @@
+869. Reordered Power of 2
+/*
+Starting with a positive integer N, we reorder the digits in any order (including the original order) such that the leading digit is not zero.
+
+Return true if and only if we can do this in a way such that the resulting number is a power of 2.
+
+Example 1:
+Input: 1
+Output: true
+
+Example 2:
+Input: 10
+Output: false
+
+Example 3:
+Input: 16
+Output: true
+
+Example 4:
+Input: 24
+Output: false
+
+Example 5:
+Input: 46
+Output: true
+
+Note:
+1 <= N <= 10^9
+
+*/
+
+Solution 1:
+class Solution {
+public:
+    // 拆解N看其组成元素 比如 64 长度为2 组成为:一个6，一个4
+    // 遍历2的次方找到相同长度的候选中 是否存在N的组合
+    bool reorderedPowerOf2(int N) {
+        unordered_map<int,int> n_component;
+        int len=0;// N的长度
+        do{
+            n_component[N%10]++;
+            N/=10;
+            len++;
+        }while(N>0);
+        
+        // 找到与N有相同长度的 2次幂候选
+        vector<int> candidate;
+        int curLen=0;
+        long curNum=1;// 避免有可能是2^31
+        while(curLen<=len){
+            curLen=getLen(curNum);
+            if(curLen==len)
+                candidate.push_back(curNum);
+            curNum*=2;
+        }
+        if(candidate.empty())
+            return false;
+        for(auto can:candidate){
+            if(isMatch(can,n_component))
+                return true;
+        }
+        return false;
+    }
+    int getLen(int num){
+        int len=0;
+        do{
+            len++;
+            num/=10;
+        }while(num);
+        return len;
+    }
+    // map不能传引用 否则在遇到real candidate之前若对mmp操作(--操作),会使得后面应验证的元素数量变少
+    bool isMatch(int num,unordered_map<int,int> mmp){
+        do{
+            int r=num%10;
+            if(mmp.find(r)==mmp.end() || mmp[r]<=0)
+                return false;
+            mmp[r]--;
+            num/=10;
+        }while(num>0);
+        return true;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+    与方法1思想类似: 都是比较N的数字字符组成情况是否与某一个2次幂数相同
+    只是实现上,不再人为计算N包含的字符组成以及将其与2次幂数集合比较
+    而是将N和二次幂数都转化为字符串 然后按照字符排序 看set中是否与N存在相同的字符串
+    */
+    Solution(){
+        // 初始化可能的二次幂
+        for(int i=0;i<32;i++){
+            string num=to_string(1<<i);
+            sort(num.begin(),num.end());
+            this->candidate.insert(num);
+        }
+    }
+    
+    bool reorderedPowerOf2(int N) {
+        string num=to_string(N);
+        sort(num.begin(),num.end());
+        return candidate.find(num)!=candidate.end();
+    }
+private:
+    unordered_set<string> candidate;
+};
+
+
+Solution 3:
+class Solution {
+public:
+    /*
+    与方法2思想类似: 都是比较N的数字字符组成情况是否与某一个2次幂数相同
+    只是实现上,不是排序进行比较 
+    而是对数字的各个字符进行hash运算 看是否存在与2次幂数集合中相同的hash值
+    因为N<=10^9 所以最多有10个数字 可以利用十进制位第i位的值x表示N中有x个数字i 以此来构造hash
+    eg 1233  ->  211(1个1 表示在第1位,1个2 表示在第2位, 2个3表示在第3位)
+    */
+    bool reorderedPowerOf2(int N) {
+        long hashN=getHash(N);
+        for(int i=0;i<32;i++)
+            if(hashN==getHash(1<<i))
+                return true;
+        return false;
+    }
+private:
+    int getHash(int num){
+        long res=0;
+        while(num>0){
+            res+=pow(10,num%10);
+            num/=10;
+        }
+        return res;
+    }
+};
