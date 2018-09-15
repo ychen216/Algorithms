@@ -36,22 +36,51 @@ public:
     }
 };
 
+update 计算num的二进制表示中1个数的方法
+class Solution {
+public:
+    /*
+    naive 两两计算两个数的hamming distance
+    可以对两个数做异或操作得到x 计算x中1的个数 即为hamming distance
+    计算x中1的个数:可以利用x=x&(x-1)直到x==0计算结束
+    */
+    int totalHammingDistance(vector<int>& nums) {
+        int dis=0;
+        for(int i=0;i<nums.size();i++){
+            for(int j=i+1;j<nums.size();j++)
+                dis+=get1Bit(nums[i]^nums[j]);
+        }
+        return dis;
+    }
+
+private:
+    int get1Bit(int num){
+        int res=0;
+        while(num!=0){
+            num=num&(num-1);
+            res++;
+        }
+        return res;
+    }
+};
+
 Solution 2:
 class Solution {
 public:
     /*
-    所有数字的同一个bit位，统计在这个bit位上出现的1的次数count
-    那么这个bit位在总的汉明距离中就贡献了count*(n-count)
-    n是数组中元素的个数
+    计算每一个比特位上1的个数,那么针对第i位有ni个1,那么有n-ni个数该位为0
+    那么第i位贡献了 dis_i=ni*(n-ni) distance
+    total hamming distance=sum(dis_i) 0<=i<32
     */
     int totalHammingDistance(vector<int>& nums) {
         int dis=0;
-        int size=nums.size();
+        int n=nums.size();
         for(int i=0;i<32;i++){
             int cnt=0;
-            for(int j=0;j<size;j++)
-                cnt+=(nums[j]>>i)&1;
-            dis+=cnt*(size-cnt);
+            for(int j=0;j<n;j++)
+                if((nums[j]>>i)&1==1)
+                    cnt++;
+            dis+=cnt*(n-cnt);
         }
         return dis;
     }
