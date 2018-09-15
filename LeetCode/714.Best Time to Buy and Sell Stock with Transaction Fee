@@ -60,3 +60,19 @@ public:
         return sell;
     }
 };
+
+class Solution {
+public:
+    // 对于每一天都只有持有和非持有状态两种状态
+    int maxProfit(vector<int>& prices, int fee) {
+        long sell,buy,preSell=0,preBuy=INT_MIN;
+        // 类型设置为long 避免对preBuy进行操作时溢出
+        for(auto &num:prices){
+            buy=max(preBuy,preSell-num);
+            sell=max(preSell,preBuy+num-fee);
+            preSell=sell;
+            preBuy=buy;
+        }
+        return sell;
+    }
+};
