@@ -61,3 +61,32 @@ public:
         return ksmall;
     }
 };
+
+update:全局变量->引用
+class Solution {
+public:
+    /*
+        BST中序遍历的结果是递增序列所以遍历的第k个数就是Kth smallest element
+    */
+    int kthSmallest(TreeNode* root, int k) {
+        int res;
+        helper(root,k,res);
+        return res;
+    }
+private:
+    void helper(TreeNode *node,int& cnt,int &res){
+        if(!node){
+            res=-1;
+            return;
+        }
+        if(node->left)
+            helper(node->left,cnt,res);
+        cnt--;
+        if(cnt==0){
+            res=node->val;
+            return;
+        }
+        if(node->right)
+            helper(node->right,cnt,res);
+    }
+};
