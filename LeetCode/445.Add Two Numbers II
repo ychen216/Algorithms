@@ -76,3 +76,61 @@ public:
         return cur;
     }
 };
+
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // 利用栈将元素逆序 并用头插法构造结果List
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        if(l1==NULL)
+            return l2;
+        if(l2==NULL)
+            return l1;
+        stack<int> st1,st2;
+        getStack(l1,st1);
+        getStack(l2,st2);
+        ListNode *feakHead=new ListNode(0);
+        ListNode *cur=feakHead;
+        int jinwei=0;
+        while(!st1.empty()||!st2.empty()){
+            int tem1=0,tem2=0;
+            if(!st1.empty()){
+                tem1=st1.top();
+                st1.pop();
+            }
+            if(!st2.empty()){
+                tem2=st2.top();
+                st2.pop();
+            }
+            int sum=tem1+tem2+jinwei;
+            jinwei=sum/10;
+            sum=sum%10;
+            headInsert(cur,sum);
+        }
+        if(jinwei!=0)
+            headInsert(cur,jinwei);
+        return feakHead->next;
+    }
+private: 
+    void getStack(ListNode *head,stack<int>&st){
+        if(head){
+            while(head){
+                st.push(head->val);
+                head=head->next;
+            }
+        }
+    }
+    void headInsert(ListNode *head,int val){
+        ListNode *cur=new ListNode(val);
+        cur->next=head->next;
+        head->next=cur;
+    }
+};
