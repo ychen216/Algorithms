@@ -63,3 +63,54 @@ public:
         return res;
     }
 };
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        链表长度为len,平分为k段 每段长度为len/k
+        若不能整除 则将剩余的部分平摊到前len%k中 每一段多一个node
+    */
+    vector<ListNode*> splitListToParts(ListNode* root, int k) {
+        int len=getLen(root);
+        int perLen=len/k; //每段平均包含node数
+        int r=len%k; // 余数 平摊到前r段中 每段+1个node
+        ListNode *cur=root,*pre=NULL;
+        vector<ListNode *> res;
+        for(int i=0;i<k;i++){
+            res.push_back(cur);
+            for(int j=0;j<perLen;j++){
+                pre=cur;
+                cur=cur->next;
+            }
+            // 增加一个node
+            if(r>0){
+                pre=cur;
+                cur=cur->next;
+                r--;
+            }
+            // 该段截断 
+            // 有可能root是一个空list k!=0
+            // eg.root=null k=3 =>[null,null,null]
+            if(pre!=NULL)
+                pre->next=NULL;
+        }
+        return res;
+    }
+private:
+    int getLen(ListNode *root){
+        int len=0;
+        while(root){
+            len++;
+            root=root->next;
+        }
+        return len;
+    }
+};
