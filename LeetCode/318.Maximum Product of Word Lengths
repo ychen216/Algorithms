@@ -43,26 +43,33 @@ public:
     }
 };
 
-Solution:
+Solution 2:
 class Solution {
 public:
-    //利用bit表示一个字符串所包含的字符类型
+    /*
+        基本思想还是两两计算max product
+        只是在记录word包含的letter和判定两个词是否有common letter是利用位运算
+        利用一个int 32bit来表示一个word钟包含的letter(至多26种)
+    */
     int maxProduct(vector<string>& words) {
-        int n=words.size();
-        int max_pro=0;
-        int value[n]={0};
-        for(int i=0;i<n;i++){
-            int len=words[i].length();
-            for(int j=0;j<len;j++)
-                value[i]|=(1<<(words[i][j]-'a'));
-        }
-        for(int i=0;i<n;i++){
-            for(int j=i+1;j<n;j++){
-                if((value[i]&value[j])==0)
-                    max_pro=max(max_pro,(int)(words[i].length()*words[j].length()));
+        int size=words.size();
+        if(size==0)
+            return 0;
+        vector<int> w2bit(size,0);
+        // 预处理 记录每一个词包含的letter
+        for(int i=0;i<size;i++){
+            for(auto c:words[i]){
+                w2bit[i]|=1<<(c-'a');
             }
         }
-        
-        return max_pro;
+        // 两两计算product
+        int maxProduct=0;
+        for(int i=0;i<size;i++){
+            for(int j=i+1;j<size;j++)
+                // 注意位运算的优先级较低
+                if((w2bit[i]&w2bit[j])==0)
+                    maxProduct=max(maxProduct,(int)words[i].length() * (int)words[j].length());
+        }
+        return maxProduct;
     }
 };
