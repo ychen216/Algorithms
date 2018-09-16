@@ -56,3 +56,27 @@ public:
         return size-maxBrick;
     }
 };
+
+class Solution {
+public:
+    /*
+        找一条垂线 尽可能少地cross brick
+        换个角度想尽可能少cross,那就是尽可能多的brick的边界在同一个位置
+        记录下水平方向上不同位置边界 包含的brick数目(要排除起始位置和终止位置)
+    */
+    int leastBricks(vector<vector<int>>& wall) {
+        unordered_map<int,int> mmp;
+        int max_cross=wall.size();//最多每一行都cross1个brick;
+        int max_brick=0;
+        for(auto &v:wall){
+            int margin=0;
+            // 要排除左右两个墙
+            for(int i=0;i<v.size()-1;i++){
+                margin+=v[i];
+                mmp[margin]++;
+                max_brick=max(max_brick,mmp[margin]);
+            }
+        }
+        return max_cross-max_brick;
+    }
+};
