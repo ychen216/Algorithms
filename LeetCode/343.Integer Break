@@ -11,15 +11,18 @@ Note: You may assume that n is not less than 2 and not larger than 58.
 Solution 1:
 class Solution {
 public:
+    // dp[i]:i拆分成至少两个正数能获得的最大乘积
+    // dp[1]=1
+    // dp[i]=max(dp[i],x*y,dp[x]*dp[y],x*dp[y],y*dp[x]); 其中x+y=i
+    // 分别表示拆解为2个数x,y x继续拆解 y继续拆解 组成的四种情况
+    // 上式可以改写为 dp[i]=max(dp[i],max(x,dp[x])*max(y,dp[y]))
     int integerBreak(int n) {
-        int dp[n+1]={0};
-        dp[1]=1;
+        vector<int> dp(n+1,0);
+        dp[0]=dp[1]=1;
         for(int i=2;i<=n;i++){
-            int m=i/2;
-            for(int j=1;j<=m;j++)
-                //因为dp[k]中是x+y=k中x*y最大的值 不包含k自身的值
-                //而 对num=k+(num-k) 来说 还有可能最大值不进行拆解就是 k*(num-k)
+            for(int j=1;j<=i/2;j++){
                 dp[i]=max(dp[i],max(j,dp[j])*max(i-j,dp[i-j]));
+            }
         }
         return dp[n];
     }
