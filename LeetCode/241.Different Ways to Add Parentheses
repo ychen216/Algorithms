@@ -52,3 +52,49 @@ public:
         return res;
     }
 };
+
+Solution 2: memorized recursive 
+class Solution {
+public:
+    /*  
+        利用递归 括号都是加在双目运算符的两侧 
+        分别得出两侧有多少种不同的计算结果 然后根据运算符进行两两计算
+        同时可以利用memorized方法降低时间复杂度
+    */
+    vector<int> diffWaysToCompute(string input) {
+        vector<int> res;
+        for(int i=0;i<input.length();i++){
+            char c=input[i];
+            if(c=='+'||c=='-'||c=='*'){
+                vector<int> res1,res2;
+                string left=input.substr(0,i);
+                string right=input.substr(i+1);
+                if(mmp.find(left)==mmp.end()){
+                    mmp[left]=diffWaysToCompute(left);   
+                }
+                res1=mmp[left];
+                if(mmp.find(right)==mmp.end()){
+                    mmp[right]=diffWaysToCompute(right);
+                }
+                res2=mmp[right];
+                
+                for(auto i:res1){
+                    for(auto j:res2){
+                        if(c=='+')
+                            res.push_back(i+j);
+                        else if(c=='-')
+                            res.push_back(i-j);
+                        else if(c=='*')
+                            res.push_back(i*j);
+                    }
+                }
+            }
+        }
+        // 只有一个数字的情况
+        if(res.empty())
+            res.push_back(stoi(input));
+        return res;
+    }
+private:
+    unordered_map<string,vector<int>> mmp;//存储表达式s 不同加括号方式得出的不同结果
+};
