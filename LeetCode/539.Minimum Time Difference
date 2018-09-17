@@ -36,3 +36,43 @@ private:
         return h*60+m;
     }
 };
+
+Solution 2:bucket sort
+class Solution {
+public:
+    /* 一天只有24*60种时钟组合 可以利用桶排序
+        要注意最小的和最大的时钟有可能组合出min distance
+        eg.00:00 2:00 23:59 -> min 00:00-23:59+24*60
+    */
+    int findMinDifference(vector<string>& timePoints) {
+        int maxTime=24*60;
+        vector<bool> bucket(maxTime,false);
+        for(auto &time:timePoints){
+            int t=getTime(time);
+            if(bucket[t])// 有相同的时钟出现过
+                return 0;
+            bucket[t]=true;
+        }
+        int minDis=INT_MAX,pre=INT_MAX,first,last;
+        for(int i=0;i<maxTime;i++){
+            if(bucket[i]){
+                if(pre!=INT_MAX){
+                    pre=last;
+                    last=i;
+                    minDis=min(minDis,last-pre);
+                }
+                else{
+                    // 第一个有效时钟
+                    pre=last=first=i;
+                }
+            }
+        }
+        // 处理最大最小组合
+        minDis=min(minDis,maxTime+first-last);
+        return minDis;
+    }
+private:
+    int getTime(string &t){
+        return 60*stoi(t.substr(0,2))+stoi(t.substr(3));
+    }
+};
