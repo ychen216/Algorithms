@@ -41,3 +41,41 @@ public:
         return head;
     }
 };
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        odd node和even node单独成串 然后拼接起来
+    */
+    ListNode* oddEvenList(ListNode* head) {
+        if(!head)
+            return NULL;
+        // 至少一个节点
+        ListNode *oddHead=new ListNode(0);
+        ListNode *evenHead=new ListNode(0);
+        ListNode *curOdd=oddHead,*curEven=evenHead;
+        while(head){
+            curOdd->next=head;
+            curOdd=curOdd->next;
+            head=head->next;
+            curOdd->next=NULL; //重新链接最后一个node
+            if(head){
+                curEven->next=head;
+                curEven=curEven->next;
+                head=head->next;
+                curEven->next=NULL;//重置最后一个node    
+            }
+        }
+        // odd even list link
+        curOdd->next=evenHead->next;
+        return oddHead->next;
+    }
+};
