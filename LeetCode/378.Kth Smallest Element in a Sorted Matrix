@@ -70,3 +70,29 @@ public:
         return pq.top();
     }
 };
+
+Solution 3: Binary Search
+class Solution {
+public:
+    /*
+        同时利用每一行每一列排序好的特点 左上角和右下角一定是矩阵中最大和最小的元素
+        利用二分搜索 每次统计矩阵中小于等于中间值的数字个数cnt 拿它和k比较来确定第k小的数字在左半部分还是右半部分
+    */
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        int low=matrix[0][0],high=matrix.back().back();
+        while(low<high){
+            int mid=low+(high-low)/2;
+            int cnt=0;
+            // 统计每一行>=mid 的数字个数
+            // upper_bound 利用二分查找返回的是有序数组中第一个>mid的元素的iterator
+            for(auto &row:matrix)
+                cnt+=upper_bound(row.begin(),row.end(),mid)-row.begin();
+            // kth smallest element must be bigger than mid
+            if(cnt<k)
+                low=mid+1;
+            else
+                high=mid;
+        }
+        return low;
+    }
+};
