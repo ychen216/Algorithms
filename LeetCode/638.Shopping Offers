@@ -77,7 +77,44 @@ public:
 Solution 2: 改进1
 class Solution {
 public:
-    //用map实现 备忘录memorize
+    /*用map实现 备忘录memorize
+    针对每个special offer，计算使用这个special offer后的花费，如果比minPrice少， 则保存为minPrice;
+    递归方法实现，如果商品数量是k，special offer的数量是n, 因为原题规定了商品数目最大为6，每个商品最多采购6个，special offer最多是100个；
+    */
+    int shoppingOffers(vector<int>& price, vector<vector<int>>& special, vector<int>& needs) {
+        map<vector<int>,int> mmap;//存储某需求数组的最小花费
+        return helper(price,special,needs,mmap);
+    }
+    
+private:
+    int helper(vector<int>& price, vector<vector<int>>& special, vector<int>& needs,map<vector<int>,int> mmap) {
+        if(mmap.find(needs)!=mmap.end())
+            return mmap[needs];
+        int min_price=getOriginCost(price,needs);
+        int size=price.size();
+        //使用special offer
+        int sf_type=special.size();
+        for(int i=0;i<sf_type;i++){
+            if(check(needs,special[i])){
+                vector<int> cur_need;
+                for(int j=0;j<size;j++){
+                    cur_need.push_back(needs[j]-special[i][j]);
+                }
+                min_price=min(min_price,special[i][size]+shoppingOffers(price,special,cur_need));
+            }
+        }
+        mmap[needs]=min_price;
+        return min_price;
+    }
+    
+    // 计算所有need不使用special offer使用原始价格所需要的开销
+    int getOriginCost(vector<int>& price,vector<int>&needs){
+        int cost=0;
+        for(int i=0;i<price.size();i++)
+            cost+=price[i]*needs[i];
+        return cost;
+    }
+    
     bool check(vector<int>& needs, vector<int>& special){
         int item_type=needs.size();
         //不能买超过需要的东西
@@ -86,31 +123,5 @@ public:
                 return false;
         }
         return true;
-    }
-    int helper(vector<int>& price, vector<vector<int>>& special, vector<int>& needs,map<vector<int>,int> mmap) {
-        if(mmap.count(needs)!=0)
-            return mmap[needs];
-        int min_price=0;
-        int item_type=price.size();
-        for(int i=0;i<item_type;i++){
-            min_price+=price[i]*needs[i];
-        }
-        //使用special offer
-        int sf_type=special.size();
-        for(int i=0;i<sf_type;i++){
-            if(check(needs,special[i])){
-                vector<int> cur_need;
-                for(int j=0;j<item_type;j++){
-                    cur_need.push_back(needs[j]-special[i][j]);
-                }
-                min_price=min(min_price,special[i][item_type]+shoppingOffers(price,special,cur_need));
-            }
-        }
-        mmap[needs]=min_price;
-        return min_price;
-    }
-    int shoppingOffers(vector<int>& price, vector<vector<int>>& special, vector<int>& needs) {
-        map<vector<int>,int> mmap;//存储某需求数组的最小花费
-        return helper(price,special,needs,mmap);
     }
 };
