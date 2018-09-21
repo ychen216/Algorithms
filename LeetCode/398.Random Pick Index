@@ -58,3 +58,29 @@ public:
 private:
     vector<int> v;
 };
+
+
+Solution 3:
+class Solution {
+public:
+    Solution(vector<int> nums) {
+        this->nums=nums;
+    }
+    
+    int pick(int target) {
+        int cnt=0,index=-1;
+        // 产生0~n-1的随机数 按照1/n的概率替换候选的index 
+        // 也就是随机数生成0的时候 index被替换
+        for(int i=0;i<nums.size();i++){
+            if(nums[i]!=target)
+                continue;
+            cnt++;
+            int rate=rand()%cnt;
+            if(rate==0)
+                index=i;
+        }
+        return index;
+    }
+private:
+    vector<int> nums;
+};
