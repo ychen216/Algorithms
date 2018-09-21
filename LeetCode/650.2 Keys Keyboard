@@ -43,3 +43,26 @@ public:
 };
 
 
+update:
+class Solution {
+public:
+    /*
+        dp[i]为获得i个A最少需要的步数 最差的情况就是一一复制A 需要i步
+        dp[i]=min(dp[i],dp[j]+i/j) 其中i整除j
+        为了降低复杂度 寻找i的因子 可以从i/2~2寻找
+        同时paste的次数越少越好即j越大越好 这样步数最少(看来别人的代码总结出来的)
+    */
+    int minSteps(int n) {
+        vector<int> dp(n+1);
+        dp[0]=dp[1]=0;
+        for(int i=2;i<=n;i++){
+            dp[i]=i;
+            for(int j=i/2;j>2;j--)
+                if(i%j==0){
+                    dp[i]=min(dp[i],dp[j]+i/j);
+                    break;
+                }
+        }
+        return dp[n];
+    }
+};
