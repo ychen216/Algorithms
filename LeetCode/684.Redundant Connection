@@ -31,7 +31,7 @@ The size of the input 2D-array will be between 3 and 1000.
 Every integer represented in the 2D-array will be between 1 and N, where N is the size of the input array.
 */
 
-Solution:
+Solution: 9ms
 class Solution {
 public:
     //Union Find 加入一条边形成环的 必然是已经在同一个UnionSet中的 也就是有相同的父节点
@@ -54,5 +54,34 @@ public:
         if(x!=parent[x])
             parent[x]=findParent(parent[x],parent);
         return parent[x];
+    }
+};
+
+update: 4ms 依旧是并查集 
+class Solution {
+public:
+    // 利用并查集 n个结点的树 n条边 必然有一条冗余的
+    vector<int> findRedundantConnection(vector<vector<int>>& edges) {
+        int n=edges.size();
+        vector<int> parent(n+1,0);
+        // 初始化每一个节点的父节点
+        for(int i=1;i<=n;i++)
+            parent[i]=i;
+        vector<int> remove(2,0);
+        for(auto &edge: edges){
+            int u=edge[0], v=edge[1];
+            int pu=findParent(parent,u);
+            int pv=findParent(parent,v);
+            if(pu==pv){
+                remove[0]=u;
+                remove[1]=v;
+            }
+            parent[pu]=pv;
+        }
+        return remove;
+    }
+private:
+    int findParent(vector<int>& p,int u){
+        return p[u]==u ? u : p[u]=findParent(p, p[u]);
     }
 };
