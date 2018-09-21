@@ -11,6 +11,10 @@ Solution:
 class Solution {
 public:
     //dp i位数中UniqueDigits 就是要第i位数和前i-1位数都不一样
+    // dp[i] 为长度为i的unique digit数目 
+    // dp[0]=1,dp[1]=10,d[2]=9*9=81
+    // dp[i+1]=dp[i]*(10-i) 
+    // result=sum(dp[i])
     int countNumbersWithUniqueDigits(int n) {
         if(n==0)
             return 1;
@@ -19,6 +23,36 @@ public:
         for(int i=2;i<=n;i++){
             base=base*(10-i+1);//10-(i-1)
             res+=base;
+        }
+        return res;
+    }
+};
+
+
+class Solution {
+public:
+    // 当n>=10的时候不存在 unique digits
+    int countNumbersWithUniqueDigits(int n) {
+        if(n==0)
+            return 1;
+        int res=10;// 一位数
+        /*  firstMatch表示在寻找长度为n的unique digits时
+            长度为n-1的且符合作为一个数字起始n-1位数(即第一位不能是0)的unique digits 数目
+            availableNum表示长度为n的数最后一位可以组合成unique digits的数字个数
+            eg n=2 两位数 第一位可以是1-9 第二位可以是0-9且不与第一个数字相同
+            firstMatch=9,availableNum=9;
+            长度为2的unique digits=9*9=81
+            eg n=3 firstMatch=长度为2的unique digits 第三位可以是0-9中与前两位不同的数 共8个
+            firstMatch=81, availableNum=8
+        */
+        int firstMatch=9;
+        int availableNum=9;
+        n--;
+        while(n && availableNum>0){
+            firstMatch=firstMatch*availableNum;
+            res+=firstMatch;
+            n--;
+            availableNum--;a
         }
         return res;
     }
