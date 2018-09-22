@@ -23,7 +23,16 @@ Example 2:
 Maximum amount of money the thief can rob = 4 + 5 = 9.
 */
 
-Solution:
+Solution 1:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -35,22 +44,120 @@ Solution:
  */
 class Solution {
 public:
+    /*
+        以root为根的树可以获得的最大收益 按照不能偷相邻接的约束 可以分为两种情况
+        1.偷root 但是不能偷root->left和root->right 只能偷root->left，root->right的子树
+        收益=root->val+收益(root->left的子树)+收益(root->right的子树)
+        2.不偷root 可以收获以root->left和root->right为根节点的两棵树可以获得的收益
+        收益=收益(root->left)+收益(root->right)
+    */
     int rob(TreeNode* root) {
         if(root==NULL)
             return 0;
-        //不包含root 和不包含root的两种
-        int left=0,nextleft=0,right=0,nextright=0;
+        int left=0,right=0,nextLeft=0,nextRight=0;//nextLeft代表left的子树可以获得的max money
         if(root->left){
             left=rob(root->left);
-            //包含root 那么只能往 root的下下层选择
-            nextleft=rob(root->left->left)+rob(root->left->right);
+            // 包含root时 只能往下下层的子树搜索
+            nextLeft=rob(root->left->left)+rob(root->left->right);// root->left的子树可以获得的收益
         }
         if(root->right){
             right=rob(root->right);
-            nextright=rob(root->right->left)+rob(root->right->right);
+            nextRight=rob(root->right->left)+rob(root->right->right);
         }
-        int hasroot=root->val+nextleft+nextright;
-        int notroot=left+right;
-        return max(hasroot,notroot);
+        int robRoot=root->val+nextLeft+nextRight;
+        int notRobRoot=left+right;
+        return max(robRoot,notRobRoot);
+    }
+};
+
+Solution 2:memorized dp
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        以root为根的树可以获得的最大收益 按照不能偷相邻接的约束 可以分为两种情况
+        1.偷root 但是不能偷root->left和root->right 只能偷root->left，root->right的子树
+        收益1=root->val+收益(root->left的子树)+收益(root->right的子树)
+        2.不偷root 可以收获以root->left和root->right为根节点的两棵树可以获得的收益
+        收益2=收益(root->left)+收益(root->right)
+        收益=max(收益1,收益2);
+        观察到在搜索以root->left为根的树的收益时 已经遍历了root->left->left,root->left->right
+        在获得root->left子树的收益时,会再次遍历root->left->left,root->left->right 这样就会造成overlapping
+        所以利用memorized 技术避免
+    */
+    int rob(TreeNode *root){
+        unordered_map<TreeNode*,int> mmp;
+        return helper(root,mmp);
+    }
+private:
+    int helper(TreeNode* root,unordered_map<TreeNode *,int> &mmp) {
+        if(root==NULL)
+            return 0;
+        if(mmp.find(root)!=mmp.end())
+            return mmp[root];
+        int left=0,right=0,nextLeft=0,nextRight=0;//nextLeft代表left的子树可以获得的max money
+        if(root->left){
+            left=helper(root->left,mmp);
+            nextLeft=helper(root->left->left,mmp)+helper(root->left->right,mmp);// root->left的子树可以获得的收益
+        }
+        if(root->right){
+            right=helper(root->right,mmp);
+            nextRight=helper(root->right->left,mmp)+helper(root->right->right,mmp);
+        }
+        int robRoot=root->val+nextLeft+nextRight;
+        int notRobRoot=left+right;
+        int res=max(robRoot,notRobRoot);
+        mmp[root]=res;
+        return res;
+    }
+};
+
+Solution 3:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        以root为根的树可以获得的最大收益 按照不能偷相邻接的约束 可以分为两种情况
+        1.偷root 但是不能偷root->left和root->right 只能偷root->left，root->right的子树
+        收益1=root->val+收益(root->left的子树)+收益(root->right的子树)
+        2.不偷root 可以收获以root->left和root->right为根节点的两棵树可以获得的收益
+        收益2=收益(root->left)+收益(root->right)
+        收益=max(收益1,收益2);
+        更改一下递归函数的定义 helper(root):获得是否rob root两种情况下获得的收益
+        可以利用两个变量分别记录是否rob root两种情况下获得的收益 
+        而每一个节点的收益只依赖下层节点是否rob root两种情况下获得的收益
+        所以可以无重复的一直传递、利用下层的信息
+    */
+    int rob(TreeNode *root){
+        vector<int> res=helper(root);
+        return max(res[0],res[1]);
+    }
+private:
+    // 其中vector[0]表示not rob root的收益 vector[1]表示rob root的收益
+    vector<int> helper(TreeNode* root) {
+        if(root==NULL)
+            return {0,0};
+        vector<int> left(2,0),right(2,0);
+        if(root->left)
+            left=helper(root->left);
+        if(root->right)
+            right=helper(root->right);
+        return {max(left[0],left[1])+max(right[0],right[1]),root->val+left[0]+right[0]};
     }
 };
