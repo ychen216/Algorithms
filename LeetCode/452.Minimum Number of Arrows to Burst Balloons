@@ -45,3 +45,34 @@ public:
         return cnt;
     }
 };
+
+update:
+
+class Solution {
+public:
+    /*
+        greedy 将区间按照终止节点从小到大排序
+        射击一个区间的终止节点处 这样能最大可能的多射穿几个气球
+    */
+    int findMinArrowShots(vector<pair<int, int>>& points) {
+        int n=points.size();
+        if(n==0)
+            return 0;
+        sort(points.begin(),points.end(),[&](auto &p1,auto &p2){
+            if(p1.second!=p2.second)
+                return p1.second<p2.second;
+            return p1.first<p2.first;
+        });
+        int last=points[0].second; // position of last shot
+        int res=1; // number of shot
+        for(int i=1;i<n;i++){
+            // p的区间在包含上一次shot的位置 已经击穿该气球
+            // 即 points[i].first<=last&&points[i].>=last
+            // 亦可以将条件简化为points[i].first<=last 因为排序已经保证 points[i].second>=last
+            if(points[i].first<=last) continue;
+            last=points[i].second;
+            res++;
+        }
+        return res;
+    }
+};
