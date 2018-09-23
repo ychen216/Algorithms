@@ -52,3 +52,39 @@ public:
         
     }
 };
+
+Solution 2:
+class Solution {
+public:
+    /*  找规律
+        zero,one,two,three,four,five,six,seven,eight,nine
+        0,2,4,6,8 可以唯一被'z','w','u','x','g'确定
+        1:one,包含一个'o',只有0,1,2,4包含'o',可以利用 #'o' - #0 - #2 - #4
+        同理: 3:包含一个'r' #'r'- #0 - #4
+        5:包含一个'f' #'f' - #4
+        7:包含一个's' #'s' - #6
+        9:包含一个'i' #'i' - #6 - #5 - #8
+        
+    */
+    string originalDigits(string s) {
+        vector<int> letter(26,0);
+        vector<int> cnt(10,0);
+        for(auto c:s)
+            letter[c-'a']++;
+        cnt[0]=letter['z'-'a'];
+        cnt[2]=letter['w'-'a'];
+        cnt[4]=letter['u'-'a'];
+        cnt[6]=letter['x'-'a'];
+        cnt[8]=letter['g'-'a'];
+        cnt[1]=letter['o'-'a']-cnt[0]-cnt[2]-cnt[4];
+        cnt[3]=letter['r'-'a']-cnt[0]-cnt[4];
+        cnt[5]=letter['f'-'a']-cnt[4];
+        cnt[7]=letter['s'-'a']-cnt[6];
+        cnt[9]=letter['i'-'a']-cnt[5]-cnt[6]-cnt[8];
+        string res="";
+        for(int i=0;i<10;i++)
+            if(cnt[i]>0)
+                res.append(string(cnt[i],i+'0'));
+        return res;
+    }
+};
