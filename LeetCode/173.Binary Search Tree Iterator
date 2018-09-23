@@ -7,7 +7,7 @@ Calling next() will return the next smallest number in the BST.
 Note: next() and hasNext() should run in average O(1) time and uses O(h) memory, where h is the height of the tree.
 */
 
-Solution:
+Solution 1:
 /**
  * Definition for binary tree
  * struct TreeNode {
@@ -20,11 +20,59 @@ Solution:
 class BSTIterator {
 public:
     /*
-        利用栈保存所有的左节点
-        next()操作时压入最小节点右子树
+        利用中序遍历BST将结果保存在数组中 得到的是升序数组
+        next() hasNext()直接对数组进行操作即可
+        时间O(1) 空间O(n)
     */
     BSTIterator(TreeNode *root) {
-        pushAll(root);
+        inOrder(root);
+        index=0;
+    }
+
+    /** @return whether we have a next smallest number */
+    bool hasNext() {
+        return index<v.size();
+    }
+
+    /** @return the next smallest number */
+    int next() {
+        if(hasNext())
+            return v[index++];
+        return -1;
+    }
+private:
+    vector<int> v;
+    int index;
+    void inOrder(TreeNode *root){
+        if(root==NULL)
+            return;
+        inOrder(root->left);
+        v.push_back(root->val);
+        inOrder(root->right);
+    }
+};
+
+ 
+Solution 2:
+/**
+ * Definition for binary tree
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class BSTIterator {
+public:
+    /*
+        为了满足空间O(h) 将BST所有左节点压栈 则最左下节点在栈顶就是当前最小的节点
+        同时在节点出栈时要压入其右节点
+        next()最差的时间情况为O(h)但均摊下来O(1)
+        (只要保有所有最左节点 就可以恢复整棵树 通过左节点可以得到其右子树)
+    */
+    BSTIterator(TreeNode *root) {
+        push(root);
     }
 
     /** @return whether we have a next smallest number */
@@ -34,15 +82,22 @@ public:
 
     /** @return the next smallest number */
     int next() {
-        TreeNode *res=st.top();
-        st.pop();
-        pushAll(res->right);//将右子树的所有左节点压入
-        return res->val;
+        if(hasNext()){
+            TreeNode *small=st.top();
+            st.pop();
+            push(small->right);
+            return small->val;
+        }
+        return -1;
     }
 private:
     stack<TreeNode *> st;
-    void pushAll(TreeNode *root){
-        for(;root!=NULL;st.push(root),root=root->left);    
+    // 将所有左节点入栈
+    void push(TreeNode *root){
+        while(root){
+            st.push(root);
+            root=root->left;
+        }
     }
 };
 
