@@ -45,3 +45,62 @@ public:
         return false;
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        判断s是否是t的subsequence 即s的字符保持相对位置出现在t中
+        naive:之间遍历t是否以相对顺序包含s中的字符
+    */
+    bool isSubsequence(string s, string t) {
+        int lens=s.length();
+        int lent=t.length();
+        if(lens>lent)
+            return false;
+        int ps=0,pt=0;
+        while(ps<lens&&pt<lent){
+            if(s[ps]==t[pt])
+                ps++;
+            pt++;
+        }
+        return ps==lens;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        判断s是否是t的subsequence 即s的字符保持相对位置出现在t中
+        当需要判断的字符很长时 可以利用二分搜索
+    */
+    bool isSubsequence(string s, string t) {
+        int lens=s.length();
+        int lent=t.length();
+        if(lens>lent)
+            return false;
+        unordered_map<char,vector<int>> mmp;// 存储t中字符c出现的位置 c出现的位置是递增的数组
+        for(int i=0;i<lent;i++){
+            if(mmp.find(t[i])==mmp.end())
+                mmp[t[i]]={};
+            mmp[t[i]].push_back(i);
+        }
+        int prePos=-1;//在t中查找是否存在字符的起始位置
+        for(auto &c: s){
+            auto it=mmp.find(c);
+            if(it==mmp.end())
+                return false;
+            auto &v=it->second;
+            // 在c的位置数组中利用二分查找 找到在前一个字符出现位置之后出现的c的位置
+            // upper_bound 返回在有序数组中第一个大于val的位置指针 如果没有找到则返回 v.end()
+            // 想要知道具体下标必须 - v.begin() 否则只是指针而已
+            int index=upper_bound(v.begin(),v.end(),prePos)-v.begin();
+            if(index==v.size())
+                return false;
+            prePos=v[index];
+        }
+        return true;
+    }
+};
