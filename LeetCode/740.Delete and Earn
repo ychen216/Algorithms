@@ -25,7 +25,7 @@ The length of nums is at most 20000.
 Each element nums[i] is an integer in the range [1, 10000].
 */
 
-Solution:
+Solution 1:
 class Solution {
     /*
     本题其实类似House Robber 做一个转换
@@ -48,3 +48,39 @@ class Solution {
         return res;
     }
 }
+
+Solution 2:
+class Solution {
+public:
+    /*
+        要认识到一点:如果pick一个数num,且num在数组中出现多次,那么我们一定会pick所有的num,否则数组中会剩下num
+        because after picking num,all num+1 and num-1 will be deleted.那么也就不存在一个数,使得num会被删除
+        那么就将问题转化为每次看到一个数num,是否选择pick num.if pick u will earn n*num;n为num在数组中出现的次数
+        类似于rob house的问题 不能偷相邻的房子
+        预处理将pick每一个num的获利记录下来 然后从小到大进行遍历 
+        dp[i]=max(dp[i-1],dp[i-2]+earn[i]) dp[i]到i可以获得的最多利润
+        可以利用map进行优化空间 同时对于每一个num只有pick和skip两者状态 可以用两个变量记录 进一步优化空间
+    */
+    int deleteAndEarn(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return 0;
+        map<int,int> mmp;
+        // 预处理获利
+        for(auto &num:nums)
+            mmp[num]+=num;
+        int pick=0,skip=0;
+        for(auto &pair:mmp){
+            int temp=skip; 
+            if(mmp.find(pair.first-1)==mmp.end()){
+                skip=max(skip,pick);
+                //pick=max(pick,temp)+pair.second;
+                pick=skip+pair.second;
+            }else{
+                skip=max(pick,skip);
+                pick=temp+pair.second;
+            }
+        }
+        return max(skip,pick);
+    }
+};
