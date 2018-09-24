@@ -47,10 +47,56 @@ public:
             if(j<0){
                 j=0;
                 d=1-d;
+            }           
+        }
+        return res;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        模拟:每一次行进的路线都是对角线 x+y=k x,y分别是元素的横纵坐标
+        当k%2==0时 朝上走
+        当k%2==1时 朝下走
+    */
+    vector<int> findDiagonalOrder(vector<vector<int>>& matrix) {
+        int M=matrix.size();
+        if(M==0)
+            return {};
+        int N=matrix[0].size();
+        int r=0,c=0,total=M*N;
+        vector<int> res;
+        for(int i=0;i<total;i++){
+            res.push_back(matrix[r][c]);
+            if((r+c)&1){
+                //向下走
+                // if else 的顺序很重要 向上走的情况也是同理
+                // 必须先r==M-1 因为有时候同时满足 r==M-1&&c==0
+                // 此时应该按照 r==M-1的情况行动
+                if(r==M-1){
+                    c++;
+                }
+                else if(c==0){
+                    r++;
+                }
+                else{
+                    r++;c--;    
+                }
+            }else{
+                // 向上走
+                if(c==N-1){
+                    r++;
+                }
+                else if(r==0){
+                    c++;
+                }
+                else{
+                    r--;c++;
+                }
             }
-            
-            
-            
         }
         return res;
     }
