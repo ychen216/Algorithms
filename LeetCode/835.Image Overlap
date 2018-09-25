@@ -23,7 +23,7 @@ Notes:
   0 <= A[i][j], B[i][j] <= 1
 */
 
-Solution 1:
+Solution 1: 8ms
 class Solution {
 public:
     /*  首先有一个认识:overlap的部分 一定是AB中都为1的地方 也就是一定将A中的1移动到B中的1的位置 才有意义
@@ -65,7 +65,7 @@ public:
     }
 };
 
-Solution 2:
+Solution 2: 334ms
 class Solution {
 public:
     /*  首先有一个认识:overlap的部分 一定是AB中都为1的地方 也就是一定将A中的1移动到B中的1的位置 才有意义
@@ -81,6 +81,7 @@ public:
         可以把B中的1当做A中1平移后的结果 那么平移距离相同的都会装在同一个'盒子'里
         可以将原来的O(n^4) --> O(n^2)
         注意 unordered_map只支持原生类型作为key 所以不能用pair<int,int> 我们使用string作为代替
+        然这种写法 比Solution 1慢很多
     */
     int largestOverlap(vector<vector<int>>& A, vector<vector<int>>& B) {
         int n=A.size();
