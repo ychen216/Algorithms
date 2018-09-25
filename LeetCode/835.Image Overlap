@@ -1,0 +1,108 @@
+835.Image Overlap
+
+/*
+Two images A and B are given, represented as binary, square matrices of the same size.  (A binary matrix has only 0s and 1s as values.)
+
+We translate one image however we choose (sliding it left, right, up, or down any number of units), and place it on top of the other image.  After, the overlap of this translation is the number of positions that have a 1 in both images.
+
+(Note also that a translation does not include any kind of rotation.)
+
+What is the largest possible overlap?
+
+Example 1:
+Input: A = [[1,1,0],
+            [0,1,0],
+            [0,1,0]]
+       B = [[0,0,0],
+            [0,1,1],
+            [0,0,1]]
+Output: 3
+Explanation: We slide A to right by 1 unit and down by 1 unit.
+Notes: 
+  1 <= A.length = A[0].length = B.length = B[0].length <= 30
+  0 <= A[i][j], B[i][j] <= 1
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*  首先有一个认识:overlap的部分 一定是AB中都为1的地方 也就是一定将A中的1移动到B中的1的位置 才有意义
+        经过观察overlap最大的情况是:
+        (0,0)->(1,1)->(0,0)-(1,1)=(-1,-1)
+        (0,1)->(1,2)->(0,1)-(1,2)=(-1,-1)
+        (1,1)->(2,2)->(1,1)-(2,2)=(-1,-1)
+        这种情况就是将A的横纵坐标分别-1,相当于求所有A矩阵1的点到B矩阵1的点的X轴和Y轴距离
+        横纵坐标可以移动的范围在[-N,N]之间 向左(上)N个单位 向右(下)N个单位 将这2N+1种可能映射到 [0,2N]
+        map[i][j]表示A分别水平、垂直移动i,j个单位所包含的1的个数
+        
+        换一种理解:采取映射的方式计算max overlap
+        可以把B中的1当做A中1平移后的结果 那么平移距离相同的都会装在同一个'盒子'里
+    */
+    int largestOverlap(vector<vector<int>>& A, vector<vector<int>>& B) {
+        int n=A.size();
+        if(n==0)
+            return 0;
+        vector<vector<int>> mmp(2*n+1,vector<int>(2*n+1,0));
+        for(int ax=0;ax<n;ax++){
+            for(int ay=0;ay<n;ay++){
+                if(A[ax][ay]==1){
+                    for(int bx=0;bx<n;bx++){
+                        for(int by=0;by<n;by++){
+                            if(B[bx][by]==1){
+                                mmp[ax-bx+n][ay-by+n]++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        int res=0;
+        for(auto &v:mmp){
+            for(auto &cnt:v)
+                res=max(res,cnt);
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*  首先有一个认识:overlap的部分 一定是AB中都为1的地方 也就是一定将A中的1移动到B中的1的位置 才有意义
+        经过观察overlap最大的情况是:
+        (0,0)->(1,1)->(0,0)-(1,1)=(-1,-1)
+        (0,1)->(1,2)->(0,1)-(1,2)=(-1,-1)
+        (1,1)->(2,2)->(1,1)-(2,2)=(-1,-1)
+        这种情况就是将A的横纵坐标分别-1,相当于求所有A矩阵1的点到B矩阵1的点的X轴和Y轴距离
+        横纵坐标可以移动的范围在[-N,N]之间 向左(上)N个单位 向右(下)N个单位 将这2N+1种可能映射到 [0,2N]
+        map[i][j]表示A分别水平、垂直移动i,j个单位所包含的1的个数
+        
+        换一种理解:采取映射的方式计算max overlap
+        可以把B中的1当做A中1平移后的结果 那么平移距离相同的都会装在同一个'盒子'里
+        可以将原来的O(n^4) --> O(n^2)
+        注意 unordered_map只支持原生类型作为key 所以不能用pair<int,int> 我们使用string作为代替
+    */
+    int largestOverlap(vector<vector<int>>& A, vector<vector<int>>& B) {
+        int n=A.size();
+        if(n==0)
+            return 0;
+        vector<pair<int,int>> va,vb;
+        // 找到AB中1的位置
+        for(int x=0;x<n;x++){
+            for(int y=0;y<n;y++){
+                if(A[x][y]==1) va.push_back({x,y});
+                if(B[x][y]==1) vb.push_back({x,y});
+            }
+        }
+        unordered_map<string,int> mmp;
+        // 遍历AB中1所有可能的映射关系
+        for(auto &p1:va){
+            for(auto &p2:vb)
+                mmp[to_string(p1.first-p2.first)+","+to_string(p1.second-p2.second)]++;
+        }
+        int res=0;
+        for(auto &p:mmp)
+            res=max(res,p.second);
+        return res;
+    }
+};
