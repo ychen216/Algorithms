@@ -56,3 +56,150 @@ public:
  */
 
 Solution 2:
+class MyCalendar {
+public:
+    /*
+        方法2:利用map存储[start,end) 按照start时间从小到大排序
+        事实上会与新加入的区间x重叠的区间只需要检查两个 
+        1.第一个start>=x.start的区间[  {  ] } 如果该区间不重叠后续的区间 起始位置更远更不可能重叠 
+        2.区间的start小于x.start的最后一个区间{  [ }  ] 如果该区间不重叠后续的区间 起始位置更前更不可能重叠 
+        会发生重叠的情况:
+        1.a.start<=b.start&& a.end<=b.end  [  {  ] }  []代表a {}代表b
+        2.b.start<=a.start && b.end<=a.end  {  [ }  ]
+        3. ab被对方完全包含 这个可以放在 1,2中判断  {[]}  or  [{}]
+        情况1:新进来的区间，我们在已有区间中查找第一个不小于新入区间的起始时间的区间，如果这个区间存在的话，说明新入区间的起始时间小于等于当前区间
+        情况2：
+        我们还要跟前面一个区间进行查重叠操作,如果当前区间不是第一个区间的话，就找到前一个区间并且如果前一个区间的结束时间大于新入区间的起始时间就发生重叠
+    */
+    
+    MyCalendar() {
+        
+    }
+    
+    bool book(int start, int end) {
+        auto it=books.lower_bound(start);
+        if(it!=books.end()&&it->first<end) return false;
+        if(it!=books.begin()&&prev(it)->second>start) return false;
+        books[start]=end;
+        return true;
+    }
+    
+private:
+    map<int,int> books;
+};
+
+
+Solution 3:
+BST recursive
+class MyCalendar {
+public:
+    /*
+        方法3:利用BST，每个节点代表一个事件区间，如果要插入的部分全部在当前节点的左侧或者右侧，则左递归或者右递归，否则，插入失败。
+        如果是用循环实现，则需要保存插入节点的父节点以及是父节点的左子树还是右子树
+    */
+    struct Node{
+        int start,end;
+        Node *left,*right;
+        Node(int s, int e){
+            start=s;
+            end=e;
+            left=right=NULL;
+        }
+    };
+    
+    MyCalendar() {
+        root=NULL;
+    }
+    
+    bool book(int start, int end) {
+        if(root==NULL){
+            root=new Node(start,end);
+            return true;
+        }
+        return insert(root,start,end);
+    }
+    
+private:
+    Node *root;
+    // 将[start,end)插入以cur为根的BST中
+    bool insert(Node *cur,int start,int end){
+        // 左子树
+        if(cur->start>=end){
+            if(cur->left==NULL){
+                cur->left=new Node(start,end);
+                return true;
+            }
+            return insert(cur->left,start,end);
+        }
+        else if(cur->end<=start){
+            // 右子树
+            if(cur->right==NULL){
+                cur->right=new Node(start,end);
+                return true;
+            }
+            return insert(cur->right,start,end);
+        }
+        else{
+            // 有交集
+            return false;
+        }
+    }
+};
+
+iteration
+class MyCalendar {
+public:
+    /*
+        方法3:利用BST，每个节点代表一个事件区间，如果要插入的部分全部在当前节点的左侧或者右侧，则左递归或者右递归，否则，插入失败。
+        如果是用循环实现，则需要保存插入节点的父节点以及是父节点的左子树还是右子树
+    */
+    struct Node{
+        int start,end;
+        Node *left,*right;
+        Node(int s, int e){
+            start=s;
+            end=e;
+            left=right=NULL;
+        }
+    };
+    
+    MyCalendar() {
+        root=NULL;
+    }
+    
+    bool book(int start, int end) {
+        if(root==NULL){
+            root=new Node(start,end);
+            return true;
+        }
+        // 将[start,end)插入BST中
+        Node *cur=root,*pre=NULL;
+        bool leftTag=false;// [start,end)是否插入左子树
+        // 找到BST中可以插入的位置
+        while(cur){
+            pre=cur;
+            // 左子树
+            if(cur->start>=end){
+                cur=cur->left;
+                leftTag=true;
+            }
+            else if(cur->end<=start){
+                cur=cur->right;
+                leftTag=false;
+            }
+            else{
+                //有重叠
+                return false;
+            }
+        }
+        if(leftTag)
+            pre->left=new Node(start,end);
+        else
+            pre->right=new Node(start,end);
+        return true;
+    }
+    
+private:
+    Node *root;
+};
+
