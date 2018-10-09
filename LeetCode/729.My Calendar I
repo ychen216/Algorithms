@@ -22,8 +22,16 @@ Note:
 The number of calls to MyCalendar.book per test case will be at most 1000.
 In calls to MyCalendar.book(start, end), start and end are integers in the range [0, 10^9]
 */
-Solution:
+Solution 1:
 class MyCalendar {
+    /*
+        方法一:利用vector存储每一个book,每插入一个book时 检查与全部已有的book是否重叠
+        要注意这时候vector中存储的book[start,end)是无序的 a,b重叠的情况有多种需要判断
+        1.a.start<=b.start&& a.end<=b.end  [  {  ] }  []代表a {}代表b
+        2.b.start<=a.start && b.end<=a.end  {  [ }  ]
+        3. ab被对方完全包含 这个可以放在 1,2中判断  {[]}  or  [{}]
+        三种情况的重叠可以利用条件 max(a.start,b.start)<min(a.end,b.end)是否满足来判断
+    */
 private:
     vector<pair<int,int>> books;
 public:
@@ -46,3 +54,5 @@ public:
  * MyCalendar obj = new MyCalendar();
  * bool param_1 = obj.book(start,end);
  */
+
+Solution 2:
