@@ -17,7 +17,7 @@ Output:
 One possible longest palindromic subsequence is "bb".
 */
 
-Solution：
+Solution 1：DP
 class Solution {
 public:
     //求 S和S的逆转S'的最长公共子序列
@@ -32,11 +32,72 @@ public:
         for(int i=1;i<=len;i++){
             for(int j=1;j<=len;j++){
                 if(s[i-1]==ss[j-1])
-                    dp[i][j]=max(dp[i-1][j-1]+1,max(dp[i-1][j],dp[i][j-1]));
+                    dp[i][j]=dp[i-1][j-1]+1;
                 else
                     dp[i][j]=max(dp[i-1][j],dp[i][j-1]);
             }
         }
         return dp[len][len];
+    }
+};
+
+
+Solution 2:
+直接在原串上dp
+class Solution {
+public:
+    /*
+        直接在原串上求得最长回文序列
+        初始化dp[i][i]=1 
+        if s[i] == s[j] dp[i][j] = dp[i+1][j-1] + 2 
+        if s[i] != s[j] dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+    */
+    int longestPalindromeSubseq(string s) {
+        int len=s.length();
+        vector<vector<int>> dp(len+1,vector<int>(len+1,0));// 主要是初始化 dp[i][0]和dp[0][j]的情况
+        for(int i=1;i<=len;i++)
+            dp[i][i]=1;
+        for(int L=2;L<=len;L++){
+            for(int i=0;i<=len-L;i++){
+                int j=i+L-1;
+                if(s[i]==s[j])
+                    dp[i+1][j+1]=dp[i+2][j]+2;
+                else
+                    dp[i+1][j+1]=max(dp[i+1][j],dp[i+2][j+1]);
+            }
+        }
+        return dp[1][len];
+    }
+};
+
+class Solution {
+public:
+    /*
+        直接在原串上求得最长回文序列
+        初始化dp[i][i]=1 
+        if s[i] == s[j] dp[i][j] = dp[i+1][j-1] + 2 
+        if s[i] != s[j] dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+        利用memorized递归
+    */
+    int longestPalindromeSubseq(string s) {
+        int len=s.length();
+        vector<vector<int>> dp(len+1,vector<int>(len+1,0));// 主要是初始化 dp[i][0]和dp[0][j]的情况
+        return helper(dp,0,len-1,s);
+    }
+private:
+    // 求s[i~j]的最长回文序列
+    int helper(vector<vector<int>> &dp,int i,int j,const string &s){
+        if(dp[i+1][j+1]!=0)
+            return dp[i+1][j+1];
+        if(i>j)
+            return 0;
+        if(i==j)
+            dp[i+1][j+1]=1;
+        else if(s[i]==s[j]){
+            dp[i+1][j+1]=helper(dp,i+1,j-1,s)+2;
+        }else{
+            dp[i+1][j+1]=max(helper(dp,i+1,j,s),helper(dp,i,j-1,s));
+        }
+        return dp[i+1][j+1];
     }
 };
