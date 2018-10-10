@@ -1,0 +1,97 @@
+820. Short Encoding of Words
+/*
+Given a list of words, we may encode it by writing a reference string S and a list of indexes A.
+
+For example, if the list of words is ["time", "me", "bell"], we can write it as S = "time#bell#" and indexes = [0, 2, 5].
+
+Then for each index, we will recover the word by reading from the reference string from that index until we reach a "#" character.
+
+What is the length of the shortest reference string S possible that encodes the given words?
+
+Example:
+Input: words = ["time", "me", "bell"]
+Output: 10
+Explanation: S = "time#bell#" and indexes = [0, 2, 5].
+ 
+Note:
+  1 <= words.length <= 2000.
+  1 <= words[i].length <= 7.
+  Each word has only lowercase letters.
+
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        题目的要求是
+        Given string list L1, construct a another string list L2, making every word in L1 be a suffix of a word in L2.
+        Return the minimum possible total length of words in L2
+        Input L1: [“time”,“me”,“bell”]
+        L2: [“time”,“bell”]
+        也就是将L1中所有是其他词w2后缀的词w1删除就能得到答案 例如me就是time的一个后缀可以用time表示 直接删去 可以遍历所有词判断其是否是其他词的后缀
+        同时在1个词重复出现的时候至少要保留一个 eg.time time time 最后答案为time# 为了避免所有词都是相互的后缀结果为0 需要去重 可以利用set完成
+    */
+    int minimumLengthEncoding(vector<string>& words) {
+        unordered_set<string> sset(words.begin(),words.end());//去重
+        vector<string> v(sset.begin(),sset.end());
+        int res=0;
+        // 判断v[i]是否是v[j]的后缀
+        for(int i=0;i<v.size();i++){
+            bool add=true;
+            for(int j=0;j<v.size();j++){
+                if(i==j)continue;
+                if(checkSuffix(v[i],v[j])){
+                    add=false;
+                    break;
+                }
+            }
+            if(add)
+                res+=v[i].length()+1;
+        }
+        return res;
+    }
+private:
+    // s1是否是s2的后缀
+    bool checkSuffix(const string &s1,const string &s2){
+        if(s1.length()>s2.length())
+            return false;
+        int i=s1.length()-1,j=s2.length()-1;
+        while(i>=0){
+            if(s1[i]!=s2[j])
+                return false;
+            i--;j--;
+        }
+        return true;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        题目的要求是
+        Given string list L1, construct a another string list L2, making every word in L1 be a suffix of a word in L2.
+        Return the minimum possible total length of words in L2
+        Input L1: [“time”,“me”,“bell”]
+        L2: [“time”,“bell”]
+        也就是将L1中所有是其他词w2后缀的词w1删除就能得到答案 例如me就是time的一个后缀可以用time表示 直接删去 可以遍历所有词判断其是否是其他词的后缀
+        同时在1个词重复出现的时候至少要保留一个 eg.time time time 最后答案为time# 为了避免所有词都是相互的后缀结果为0 需要去重 可以利用set完成
+        update:判断一个词是否是其他词的后缀 还可以用另一种方式完成:
+        我们可以将每个词(除了自身,为了保留自己)的所有可能后缀都提取出来 看看这些后缀构成的词是否存在 存在则删除 那么最后集合里存在的词就是结果
+        eg. time除了自己以外的后缀为ime me e 其中me在集合中 删去
+    */
+    int minimumLengthEncoding(vector<string>& words) {
+        unordered_set<string> sset(words.begin(),words.end());//去重
+        // 删除所有可能的后缀
+        for(auto &w:sset){
+            for(int i=1;i<w.length();i++)
+                sset.erase(w.substr(i));
+        }
+        int res=0;
+        for(auto &w:sset)
+            res+=w.length()+1;
+        return res;
+    }
+
+};
