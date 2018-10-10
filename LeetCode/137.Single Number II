@@ -10,16 +10,12 @@ Your algorithm should have a linear runtime complexity. Could you implement it w
 Solution 1:
 class Solution {
 public:
+    // naive map记录每个数字出现的次数
     int singleNumber(vector<int>& nums) {
-        int size=nums.size();
-        map<int,int> mmap;
-        for(int i=0;i<size;i++){
-            if(mmap.count(nums[i])==0)
-                mmap[nums[i]]=1;
-            else
-                mmap[nums[i]]++;
-        }
-        for(auto p:mmap){
+        unordered_map<int,int> mmp;
+        for(auto num:nums)
+            mmp[num]++;
+        for(auto &p:mmp){
             if(p.second==1)
                 return p.first;
         }
@@ -27,6 +23,7 @@ public:
 };
 
 Solution2:
+空间复杂度 O(1)
 class Solution {
 public:
     /*
