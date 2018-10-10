@@ -33,15 +33,16 @@ public:
     另外，这个做法可以扩展，如果有一堆输入，其中1个数字出现了1次，剩下的数字出现了K次，这样的问题全部可以使用这样的办法来做。
     */
     int singleNumber(vector<int>& nums) {
-        int size=nums.size();
-        int cnt[32]={0};
         int res=0;
+        vector<int> cnt(32,0);
         for(int i=0;i<32;i++){
-            for(int j=0;j<size;j++){
-                cnt[i]+=((nums[j]>>i)&1);
+            for(auto num:nums){
+                // 记录每个数字在i位的值v(0 or 1) 重复出现k次的数字 一定在i位有k个一样的值v v*k必然整除k
+                // 那么在i位得到的各个数字在该位的和对K求余,得到的就是只出现一次的数字在该位的取值情况
+                cnt[i]+=((num>>i)&1);
                 cnt[i]%=3;
             }
-            res|=(cnt[i]<<i);
+            res|=cnt[i]<<i;
         }
         return res;
     }
