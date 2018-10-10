@@ -17,7 +17,7 @@ A solution set is:
 
 */
 
-Solution:
+Solution 1:
 
 class Solution {
 public:
@@ -40,5 +40,61 @@ public:
         sort(candidates.begin(),candidates.end());
         helper(res,temp,candidates,0,target);
         return res;
+    }
+};
+
+update:
+class Solution {
+public:
+    // 本题中 candidates without duplicates 不需要对candidates进行排序来保证结果中没有重复的combinations
+    // 且本题中一个数字可以多次使用所以每一次从start从再次搜索
+    // temp用引用避免重复复制操作
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> res;
+        vector<int> temp;
+        helper(res,candidates,temp,target,0);
+        return res;
+    }
+private:
+    void helper(vector<vector<int>> &res,vector<int> &nums,vector<int> &temp,int leftNum,int start){
+        if(leftNum<=0){
+            if(leftNum==0)
+                res.push_back(temp);
+            return;
+        }
+        for(int i=start;i<nums.size();i++){
+            temp.push_back(nums[i]);
+            helper(res,nums,temp,leftNum-nums[i],i);
+            temp.pop_back();
+        }
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*  本题中 candidates without duplicates 不需要对candidates进行排序来保证结果中没有重复的combinations
+        DP  状态可以利用map存储
+        dp[j]=dp[j-num]中的所有combination 都push_back num 的结果
+        每一个数字可以无限次使用 类似于完全背包 内层循环从num到target即从该物体积到背包容积
+    */
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        unordered_map<int,vector<vector<int>>> mmp;
+        mmp[0]={{}};// 初始化{{}}不能是{} 
+        for(auto num:candidates){
+            for(int i=num;i<=target;i++){
+                if(mmp.find(i-num)==mmp.end()||mmp[i-num].size()==0) continue;
+                if(mmp.find(i)==mmp.end())
+                    mmp[i]={};
+                for(auto v:mmp[i-num]){
+                    v.push_back(num);
+                    mmp[i].push_back(v);
+                }
+            }
+        }
+        if(mmp.find(target)==mmp.end())
+            return {};
+        return mmp[target];
     }
 };
