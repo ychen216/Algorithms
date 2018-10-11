@@ -93,7 +93,7 @@ public:
     }
 };
 
-Floyd
+Solution 2:Floyd
 class Solution {
 public:
     /*
@@ -137,7 +137,7 @@ public:
     }
 };
 
-bfs:
+Solution 3:bfs
 class Solution {
 public:
     /*
@@ -199,4 +199,60 @@ private:
     }
 };
 
-dfs:
+Solution 4:dfs:
+class Solution {
+public:
+    /*
+        构造图来解决
+        Image a/b = k as a link between node a and b, the weight from a to b is k, the reverse link is 1/k. 
+        Query is to find a path between two nodes. eg.a/c = a/b * b/c 相当于a->b b->c 将边的权重乘起来
+        构造好图以后 我们可以利用dfs或bfs搜索 a->c之间是否存在路径或是利用 Floyd算法直接计算出所有节点两两之间的距离
+        图可以利用邻接链表表示 利用map实现
+    */
+    vector<double> calcEquation(vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries) {
+        unordered_map<string,unordered_map<string,double>> graph;// (a,b,weight)
+        //  构造图
+        for(int i=0;i<values.size();i++){
+            graph[equations[i].first][equations[i].second]=values[i]; // 正向边
+            graph[equations[i].second][equations[i].first]=1.0/values[i]; // 反向边
+        }
+        /* 利用bfs和dfs时不需要该步
+        for(auto &p:graph){
+            graph[p.first][p.first]=1.0; // a/a=1
+        }
+        */
+        vector<double> res;
+        unordered_set<string> visit;
+        for(auto &q:queries){
+            // 算式中含有没出现过得节点
+            if(graph.find(q.first)==graph.end()||graph.find(q.second)==graph.end())
+                res.push_back(-1.0);
+            // 这个条件要放在第二个 因为如果没有出现过x 则 x/x=-1.0
+            else if(q.first==q.second)
+                res.push_back(1.0);
+            else{
+                visit.clear();
+                res.push_back(dfs(graph,visit,q.first,q.second,1.0));   
+            }
+        }
+        return res;
+    }
+private:
+    // res为起始点到当前点的结果
+    double dfs(unordered_map<string,unordered_map<string,double>> &graph,unordered_set<string> &visit,const string &cur,const string &e,double res){
+        if(visit.find(cur)!=visit.end())
+            return -1.0;
+        visit.insert(cur);
+        if(cur==e)
+            return res;
+        // 往下继续搜索
+        for(auto &p:graph[cur]){
+            if(visit.find(p.first)==visit.end()){
+                double r=dfs(graph,visit,p.first,e,res*p.second);
+                if(r!=-1.0)
+                    return r;
+            }
+        }
+        return -1.0;
+    }
+};
