@@ -18,14 +18,49 @@ Note:
   For now, the judge is able to judge based on one instance of gray code sequence. Sorry about that.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
+    /*
+        方法1:直接利用gray-code的数学性质 第i个gray-code= (i>>1) ^ i 即将数字i右移一位再与i异或运算
+        Int    Grey Code    Binary
+         0  　　  000        000      00^000          i=0将数字i右移一位，再与i异或运算
+         1  　　  001        001      00^001          i=1将数字i右移一位，再与i异或运算
+         2   　 　011        010      01^010          i=2将数字i右移一位，再与i异或运算
+         3   　 　010        011      01^011          i=3将数字i右移一位，再与i异或运算
+         4   　 　110        100      10^100          i=4将数字i右移一位，再与i异或运算
+         5   　 　111        101      10^101          i=5将数字i右移一位，再与i异或运算
+         6   　 　101        110      11^110          i=6将数字i右移一位，再与i异或运算
+         7   　　 100        111      11^111          i=7将数字i右移一位，再与i异或运算
+    */
     vector<int> grayCode(int n) {
-        vector<int> res;
-        int limit=(1<<n);
-        for(int i=0;i<limit;i++)
-            res.push_back(i^(i>>1));
-        return res;
+        vector<int> code(1<<n);
+        for(int i=0;i<code.size();i++)
+            code[i]=(i>>1)^i;
+        return code;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        方法2: 找规律
+        https://blog.csdn.net/u012501459/article/details/46790683
+        已知n=k的情况 
+        那么n=k+1的结果共有2^(k+1)个数:前2^k为对n=k的结果左边补零 即保迟不变
+        后2^k个数为逆序遍历n=k的结果左边补1
+        即只需要增加后2^k个数即可
+    */
+    vector<int> grayCode(int n) {
+        vector<int> code;
+        code.push_back(0); // 初始化0
+        for(int i=0;i<n;i++){
+            // 逆序增加 2^i个数
+            for(int j=code.size()-1;j>=0;j--){
+                code.push_back((1<<i)|code[j]);
+            }
+        }
+        return code;
     }
 };
