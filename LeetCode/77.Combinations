@@ -17,23 +17,23 @@ If n = 4 and k = 2, a solution is:
 Solution:
 class Solution {
 public:
-    void helper(vector<vector<int>>& res,vector<int> temp,int start,int n,int k){
-        if(k==0){
+    // temp利用引用 避免每一次变量赋值操作
+    vector<vector<int>> combine(int n, int k) {
+        vector<vector<int>> res;
+        vector<int> candidate;
+        helper(res,candidate,k,1,n);
+        return res;
+    }
+private:
+    void helper(vector<vector<int>> &res,vector<int> &temp,int k,int start,int n){
+        if(temp.size()==k){
             res.push_back(temp);
             return;
         }
         for(int i=start;i<=n;i++){
             temp.push_back(i);
-            helper(res,temp,i+1,n,k-1);
+            helper(res,temp,k,i+1,n);
             temp.pop_back();
         }
-    }
-    vector<vector<int>> combine(int n, int k) {
-        if(k==0)
-            return {{}};
-        vector<vector<int>> res;
-        vector<int> temp;
-        helper(res,temp,1,n,k);
-        return res;
     }
 };
