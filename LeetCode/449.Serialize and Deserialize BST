@@ -9,55 +9,90 @@ The encoded string should be as compact as possible.
 Note: Do not use class member/global/static variables to store states. Your serialize and deserialize algorithms should be stateless.
 */
 
-Solution:
+Solution 1:
 /**
  * Definition for a binary tree node.
- * public class TreeNode {
+ * struct TreeNode {
  *     int val;
- *     TreeNode left;
- *     TreeNode right;
- *     TreeNode(int x) { val = x; }
- * }
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
  */
-public class Codec {
-
+class Codec {
+public:
+    // 前序遍历将NULL节点也表示出来 构成序列化string 不能使用中序这样无法找到根节点
+    // 空节点用#表示 用" "分隔不同节点 这样便于用stringstream获取各个节点的值
     // Encodes a tree to a single string.
-    public String serialize(TreeNode root) {
-        StringBuilder ans=new StringBuilder();
-        sHelper(root,ans);
-        return ans.toString();
+    string serialize(TreeNode* root) {
+        if(root==NULL)
+            return "# ";
+        return to_string(root->val)+" "+serialize(root->left)+serialize(root->right);
     }
 
     // Decodes your encoded data to tree.
-    public TreeNode deserialize(String data) {
-        String []tree=data.split(" ");
-        Deque<String> dq = new LinkedList<>();
-        dq.addAll(Arrays.asList(tree));
-        return dHelper(dq);
+    TreeNode* deserialize(string data) {
+        stringstream ss(data);
+        return helper(ss);
     }
-    //按照前序遍历
-    private void sHelper(TreeNode root,StringBuilder res){
-        if(root==null){
-            res.append("null").append(" ");
-            return;
-        }
-        res.append(root.val).append(" ");
-        sHelper(root.left,res);
-        sHelper(root.right,res);
-    }
-    
-    private TreeNode dHelper(Deque<String> tree){
-        TreeNode root=null;
-        String cur=tree.remove();
-        if(cur.equals("null"))
-            return root;
-        root=new TreeNode(Integer.parseInt(cur));
-        root.left=dHelper(tree);
-        root.right=dHelper(tree);
+private:
+    // 利用dfs反序列化 同时利用引用可以将已经构建过的节点从stringstream中剔除
+    // 不需要再次记录已经处理到的节点在哪里
+    TreeNode *helper(stringstream &ss){
+        string curNode;
+        ss>>curNode;
+        if(curNode=="#")
+            return NULL;
+        TreeNode *root=new TreeNode(stoi(curNode));
+        root->left=helper(ss);
+        root->right=helper(ss);
         return root;
     }
-}
+};
+
+Solution 2:
+class Codec {
+public:
+    // 前序遍历将NULL节点也表示出来 构成序列化string 不能使用中序这样无法找到根节点
+    // 空节点用#表示 用" "分隔不同节点 这样便于用stringstream获取各个节点的值
+    // 只要是二叉树就可以用上述方式重构出来
+    // 利用BST的性质可以不需要存储NULL 直接保存非空节点的值即可 然后比根节点的值小的即为左子树 大的为右子树
+    // 利用队列保存节点值 同时利用引用可以将已经构建过的节点从队列中删去 不需要再次记录已经处理到的节点在哪里
+    // Encodes a tree to a single string.
+    string serialize(TreeNode* root) {
+        if(root==NULL)
+            return "";
+        return to_string(root->val)+" "+serialize(root->left)+serialize(root->right);
+    }
+
+    // Decodes your encoded data to tree.
+    TreeNode* deserialize(string data) {
+        stringstream ss(data);
+        queue<int> q;
+        string cur;
+        while(ss>>cur){
+            q.push(stoi(cur));
+        }
+        return helper(q);
+    }
+private:
+    TreeNode *helper(queue<int> &q){
+        if(q.empty())
+            return NULL;
+        TreeNode *root=new TreeNode(q.front());
+        q.pop();
+        queue<int> leftTree;
+        while(!q.empty()&&q.front()<root->val){
+            leftTree.push(q.front());
+            q.pop();
+        }
+        // q中剩下的即为右子树
+        root->left=helper(leftTree);
+        root->right=helper(q);
+        return root;
+    }
+};
 
 // Your Codec object will be instantiated and called as such:
-// Codec codec = new Codec();
+// Codec codec;
 // codec.deserialize(codec.serialize(root));
