@@ -62,6 +62,43 @@ public:
     }
 };
 
+update:不需要用O(mn)的时间计算两字符串LCS 只需要判断一个字符串是否是另一个字符串的子序列O(max(n,m))
+速度优于Solution 2
+class Solution {
+public:
+    /*  
+        删除s中的字符是否能构成d中的字符串相当于判断d是否是s的子序列
+        两两判断是否是包含子序列
+    */
+    string findLongestWord(string s, vector<string>& d) {
+        string res="";
+        int maxLen=0;
+        for(auto &candidate:d){
+            if(!isSubseq(s,candidate))continue;
+            int len=candidate.length();
+            if(maxLen<len || (maxLen==len && candidate<res)){
+                maxLen=len;
+                res=candidate;
+            }
+        }
+        return res;
+    }
+private:
+    // t是否是s的子序列
+    bool isSubseq(const string&s, const string&t){
+        int lens=s.length(),lent=t.length();
+        if(lens==0||lent==0||lent>lens)
+            return false;
+        int i=0,j=0;
+        while(i<lens && j<lent){
+            if(s[i]==t[j])
+                j++;
+            i++;
+        }
+        return j==lent;
+    }
+};
+
 Solution 2:
 
 class Solution {
