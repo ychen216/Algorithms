@@ -17,8 +17,8 @@ Given n = 3, there are a total of 5 unique BST's.
 Solution:
 class Solution {
 public:
-    //DP:根节点在1~n中选择一个i 那么1~i-1 i+1~n分别构成左右子树
-    //G(n)为1~n节点构成的uniqueBST的数量 F(i,n)为选择i为根节点的uniqueBST的数量 F(i,n)=G(i-1)*G(n-i)
+    //DP:有n个从小到大的有序的数 根节点在第1~n中选择一个数num[i] 那么第1~i-1和第i+1~n 两组有序数分别构成左右BST子树
+    //G(n)为由n个有序数能构成的uniqueBST的数量 F(i,n)为选择第i个数为根节点的uniqueBST的数量 F(i,n)=G(i-1)*G(n-i)
     //G(n)=F(1,n)+F(2,n)+...+F(n,n);
     int numTrees(int n) {
         int G[n+1]={0};
