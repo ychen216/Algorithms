@@ -1,0 +1,37 @@
+470. Implement Rand10() Using Rand7()
+/*
+Given a function rand7 which generates a uniform random integer in the range 1 to 7, write a function rand10 which generates a uniform random integer in the range 1 to 10.
+
+Do NOT use system's Math.random().
+*/
+
+Solution 1:
+// The rand7() API is already defined for you.
+// int rand7();
+// @return a random integer in the range 1 to 7
+
+class Solution {
+public:
+    int rand10() {
+        int i,j;
+        while(i=rand7()>6); // i may be 1 2 3 4 5 6, P(i is odd)=P(i is even)=0.5;
+        while(j=rand7()>5); // j may be 1 2 3 4 5 P(j=1)=P(j=2)=P(j=3)=P(j=4)=P(j=5)=0.2
+        return (i&1)? j : j+5;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    // Idea: rand7() -> rand49() -> rand40() -> rand10()
+    // https://leetcode.com/problems/implement-rand10-using-rand7/discuss/150301/Three-line-Java-solution-the-idea-can-be-generalized-to-%22Implement-RandM()-Using-RandN()%22
+    // 证明
+    int rand10() {
+        int res=40;
+        while(res>=40){ // 跳出循环的条件为 res属于[0,39]
+            res=7 * (rand7() - 1) + rand7() - 1; // res属于[0,48] 其中任意一个的概率为1/49 
+        }
+        // 总得就是 跳出循环后 [0,39]任意一个的概率为1/40 取余0~9的概率分别为1/10 -> 1~10 1/10
+        return (res%10)+1;
+    }
+};
