@@ -24,11 +24,59 @@ How does it change the problem?
 What limitation we need to add to the question to allow negative numbers?
 */
 
-Solution:DP
+Solution 1: TLE
 class Solution {
-public: 
+public:
+    //recursive 因为(1,3)(3,1)算不同的元组 所以不需要记录处理过的元素下标
     int combinationSum4(vector<int>& nums, int target) {
-        int dp[target+1]={0};
+        if(target==0)
+            return 1;
+        if(target<0)
+            return 0;
+        int res=0;
+        for(int i=0;i<nums.size();i++){
+            res+=combinationSum4(nums,target-nums[i]);
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    //memorized dfs 因为(1,3)(3,1)算不同的元组 所以不需要记录处理过的元素下标
+    int combinationSum4(vector<int>& nums, int target) {
+        if(target==0)
+            return 1;
+        vector<int> dp(target+1,-1);
+        dp[0]=1;
+        return dfs(dp,nums,target);
+    }
+private:
+    int dfs(vector<int> &dp,vector<int>&nums, int target){
+        if(dp[target]!=-1)
+            return dp[target];
+        int res=0;
+        for(int i=0;i<nums.size();i++)
+            if(target>=nums[i])
+                res+=dfs(dp,nums,target-nums[i]);
+        dp[target]=res;
+        return dp[target];
+            
+    }
+};
+
+Solution 3:DP
+class Solution {
+public:
+    /*
+        dp[target]=sum(dp[target-nums[i]]) (for i=0..num.size()-1)
+        dp[target] 利用nums数组 target一共有多少种可能的combination
+    */
+    int combinationSum4(vector<int>& nums, int target) {
+        if(target==0)
+            return 1;
+        vector<int> dp(target+1,0);
         dp[0]=1;
         for(int i=1;i<=target;i++){
             for(int j=0;j<nums.size();j++){
@@ -38,4 +86,5 @@ public:
         }
         return dp[target];
     }
+
 };
