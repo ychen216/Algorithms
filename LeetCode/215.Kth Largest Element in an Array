@@ -45,3 +45,57 @@ public:
         return pq.top();
     }
 };
+update: 另一种写法
+class Solution {
+public:
+    // Solution 2 最小堆 优先队列默认最大堆less<int> greater<int> 为最小堆
+    int findKthLargest(vector<int>& nums, int k) {
+        priority_queue<int,vector<int>,greater<int>> pq;
+        // 队列大小为k 始终维护最大的k个数 堆顶就是Kth Largest number
+        for(auto &n:nums){
+            if(pq.size()<k)
+                pq.push(n);
+            else{
+                if(pq.top()<n){
+                    pq.push(n);
+                    pq.pop();
+                }
+            }
+        }
+        return pq.top();
+    }
+};
+
+Solution 4:partition 
+class Solution {
+public:
+    // Solution 3 partition
+    int findKthLargest(vector<int>& nums, int k) {
+        int n=nums.size();
+        int low=0,high=n-1;
+        int pos,target=n-k;
+        pos=partition(nums,low,high);
+        while(pos!=target){
+            if(pos<target){
+                low=pos+1;
+            }else{
+                high=pos-1;
+            }
+            pos=partition(nums,low,high);
+        }
+        return nums[target];
+    }
+private:
+    int partition(vector<int> &nums, int p, int q){
+        int pivot=nums[q];
+        int j=p-1;
+        for(int i=p;i<q;i++){
+            if(nums[i]<=pivot){
+                j=j+1;
+                swap(nums[j],nums[i]);
+            }
+        }
+        swap(nums[j+1],nums[q]);
+        return j+1;
+    }
+};
