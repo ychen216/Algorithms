@@ -35,25 +35,51 @@ public:
         return res;
     }
 };
+update:
+class Solution {
+public:
+    int triangleNumber(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int res=0;
+        for(int i=0;i<nums.size();i++){
+            for(int j=i+1;j<nums.size();j++){
+                for(int k=j+1;k<nums.size();k++){
+                    // nums[i]<=nums[j]<=nums[k]
+                    if(nums[i]+nums[j]>nums[k])
+                        res++;
+                    else
+                        break;
+                }
+            }
+        }
+        return res;
+    }
+};
 
 Solution 2:
 class Solution {
 public:
-    //利用二分
+    /*
+        a<=b<=c 若有a+b>c 则可以构成三角形
+        若nums是递增的 那么若 nums[i]+nums[j]>nums[k] i<j<k 那么i~j-1都可以和 j,k构成三角形
+    */
     int triangleNumber(vector<int>& nums) {
-        int res=0;
-        int size=nums.size();
         sort(nums.begin(),nums.end());
-        //遍历最长边
-        for(int i=2;i<size;i++){
-            int left=0,right=i-1;
-            while(left<right){
-                if(nums[left]+nums[right]>nums[i]){
-                    res+=right-left;//[left,right-1]这个区域的边都可以和right&i构成三角形
-                    right--;
+        int res=0;
+        // 遍历最长的边
+        for(int k=nums.size()-1;k>=2;k--){
+            int j=k-1,i=0; // 搜索剩下两条边
+            while(i<j){
+                if(nums[i]+nums[j]>nums[k]){
+                    // i~j-1都可以与 j,k构成三角形
+                    res+=j-i;
+                    // 试着缩小次小边
+                    j--;
                 }
-                else
-                    left++;
+                else{
+                    // 增大最小边
+                    i++;
+                }
             }
         }
         return res;
