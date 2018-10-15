@@ -26,23 +26,45 @@ Solution:
 class Solution {
 public:
     /*
-    关键在于维护一个boolean变量left2right来表明当前这一轮elimination是否为从左往右
-    对于当前这一step来说，如果所剩的元素个数为奇数，那么头尾元素都会被去掉，否则的话头元素被去掉，但是尾元素不变
-    相邻元素的距离随着每一步都会放大两倍
+        https://leetcode.com/problems/elimination-game/discuss/87119/JAVA:-Easiest-solution-O(logN)-with-explanation
+        idea:update and record valid head in each turn. when the total number becomes 1, head is the only number left.
+        When will head be updated?
+            if we move from left
+            if we move from right and the total remaining number % 2 == 1
+                like 2 4 6 8 10, we move from 10, we will take out 10, 6 and 2, head is deleted and move to 4
+                like 2 4 6 8 10 12, we move from 12, we will take out 12, 8, 4, head is still remaining 2
+         相邻元素之间的距离每一轮都扩大两倍
     */
     int lastRemaining(int n) {
         int remain=n;
-        int head=1;
-        int step=1;
+        int head=1,step=1;// step是针对head更新的不长 或者说是 有效的相邻元素之差
         bool left2right=true;
         while(remain>1){
-            if(left2right||remain%2==1){
+            // update head
+            if(left2right||remain&1){
                 head+=step;
             }
-            remain/=2;
-            step*=2;
+            remain>>=1; // remain/=2
+            step<<=1; // step*=2
             left2right=!left2right;
         }
         return head;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        没理解
+        https://leetcode.com/problems/elimination-game/discuss/87128/C-1-line-solution-with-explanation
+        After first elimination, all the numbers left are even numbers.
+        Divide by 2, we get a continuous new sequence from 1 to n / 2.
+        For this sequence we start from right to left as the first elimination.
+        Then the original result should be two times the mirroring result of lastRemaining(n / 2).
+        中文的解释https://blog.csdn.net/MebiuW/article/details/52713918
+    */
+    int lastRemaining(int n) {
+        return n==1 ? 1 : 2 * (n/2 + 1 - lastRemaining(n/2));
     }
 };
