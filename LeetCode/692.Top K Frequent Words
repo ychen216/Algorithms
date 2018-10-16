@@ -59,3 +59,45 @@ public:
         return res;
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    // 利用最小堆得到最大的k个
+    // 题目说找最大的k个从大到小输出 如果两个词出现次数一样 那么字符序小的排在前面
+    // 那么如果从小到大排 如果两个词出现次数一样 那么字符序大的排在前面
+    struct Node{
+        string word;
+        int cnt;
+        Node(string w,int c){
+            word=w;
+            cnt=c;
+        }
+        // 最小堆  <定义优先级小的 返回true则n1优先级小
+        bool operator<(const Node &n2)const{
+            if(cnt==n2.cnt)
+                return word<n2.word;
+            return cnt>n2.cnt;
+        }
+    };
+    vector<string> topKFrequent(vector<string>& words, int k) {
+        unordered_map<string,int> mmp;
+        for(auto &w:words)
+            mmp[w]++;
+        priority_queue<Node> pq;
+        for(auto &p: mmp){
+            pq.push(Node(p.first,p.second));
+            if(pq.size()>k)
+                pq.pop();
+        }
+        vector<string> res;
+        // 最大的k个从小到大
+        for(int i=0;i<k;i++){
+            res.push_back(pq.top().word);
+            pq.pop();
+        }
+        reverse(res.begin(),res.end());
+        return res;
+    }
+};
