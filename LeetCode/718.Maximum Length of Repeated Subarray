@@ -15,32 +15,56 @@ Note:
   0 <= A[i], B[i] < 100
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
-    //与最长公共子序列类似 dp[i][j]保存以A[i]B[j]结尾的最长公共子串长度
+    /*
+        idea类似LCS dp[i][j]为以A[i] B[j]结尾的最长公共子数组长度
+        dp[i][j]=dp[i-1][j-1]+1 if A[i-1]==B[j-1]
+        dp[i][j]=0 if A[i-1]!=B[j-1]
+        初始化 dp[i][0]=0 dp[0][j]=0
+    */
     int findLength(vector<int>& A, vector<int>& B) {
-        int lenA=A.size();
-        int lenB=B.size();
-        if(lenA==0||lenB==0)
+        int lena=A.size(),lenb=B.size();
+        if(lena==0||lenb==0)
             return 0;
-        int dp[lenA+1][lenB+1];
-        for(int i=0;i<=lenA;i++)
-            dp[i][0]=0;
-        for(int i=0;i<=lenB;i++)
-            dp[0][i]=0;
+        vector<vector<int>> dp(lena+1,vector<int>(lenb+1,0));
         int maxLen=0;
-        for(int i=1;i<=lenA;i++){
-            for(int j=1;j<=lenB;j++){
-                if(A[i-1]==B[j-1]){
-                    dp[i][j]=dp[i-1][j-1]+1;
-                    maxLen=max(maxLen,dp[i][j]);
-                }
-                else
-                    dp[i][j]=0;
+        for(int i=1;i<=lena;i++){
+            for(int j=1;j<=lenb;j++){
+                if(A[i-1]!=B[j-1])continue; // dp[i][j]=0 初始化已经完成
+                dp[i][j]=dp[i-1][j-1]+1;
+                maxLen=max(maxLen,dp[i][j]);
             }
         }
-        
+        return maxLen;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        idea类似LCS dp[i][j]为以A[i] B[j]结尾的最长公共子数组长度
+        dp[i][j]=dp[i-1][j-1]+1 if A[i-1]==B[j-1]
+        dp[i][j]=0 if A[i-1]!=B[j-1]
+        初始化 dp[i][0]=0 dp[0][j]=0
+        可以优化一下空间 每一次都只依赖前一轮状态
+    */
+    int findLength(vector<int>& A, vector<int>& B) {
+        int lena=A.size(),lenb=B.size();
+        if(lena==0||lenb==0)
+            return 0;
+        vector<int> dp(lenb+1,0);
+        int maxLen=0;
+        for(int i=1;i<=lena;i++){
+            // 要逆序更新 否则本轮更新了dp[j] 下一次更新dp[j+1]时利用的就是被覆盖过的数据
+            for(int j=lenb;j>=1;j--){
+                if(A[i-1]!=B[j-1])continue;
+                dp[j]=dp[j-1]+1;
+                maxLen=max(maxLen,dp[j]);
+            }
+        }
         return maxLen;
     }
 };
