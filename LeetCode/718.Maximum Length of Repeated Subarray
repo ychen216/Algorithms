@@ -60,9 +60,12 @@ public:
         for(int i=1;i<=lena;i++){
             // 要逆序更新 否则本轮更新了dp[j] 下一次更新dp[j+1]时利用的就是被覆盖过的数据
             for(int j=lenb;j>=1;j--){
-                if(A[i-1]!=B[j-1])continue;
-                dp[j]=dp[j-1]+1;
-                maxLen=max(maxLen,dp[j]);
+                if(A[i-1]!=B[j-1])
+                    dp[j]=0;
+                else{
+                    dp[j]=dp[j-1]+1;
+                    maxLen=max(maxLen,dp[j]);   
+                }
             }
         }
         return maxLen;
