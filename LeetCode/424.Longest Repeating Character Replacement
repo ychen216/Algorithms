@@ -36,12 +36,47 @@ public:
     int characterReplacement(string s, int k) {
         int len=s.length();
         int cnt[26]={0};
-        int maxLen=0,start=0,maxCnt=0;//最大长度 滑动窗口起始
+        int maxLen=0,start=0,maxCnt=0;//最大长度 滑动窗口起始 该滑动窗口出现最多字符的个数
         for(int end=0;end<len;end++){
-            maxCnt=max(maxCnt,++cnt[s[end]-'A']);
+            cnt[s[end]-'A']++;
+            maxCnt=0;
+            for(int i=0;i<26;i++)
+                if(cnt[i]>maxCnt)
+                    maxCnt=cnt[i];
             //移动滑动窗口的起始位置
             while(end-start+1-maxCnt>k){
                 cnt[s[start]-'A']--;
+                start++;
+            }
+            maxLen=max(maxLen,end-start+1);
+        }
+        return maxLen;
+    }
+};
+update: 更新两处
+class Solution {
+public:
+     /* 滑动窗口 https://www.cnblogs.com/wdw828/p/6896954.html
+        改动:
+        1.maxCnt是否需要每一次都更新 滑动窗口的长度只会变得比当前最优解更长,不会变的更短 所以maxCnt只有比当前最大的更大时才有可能得到更优的解
+        It depends on what you want the max_cnt to represent.
+            If it represents the max appearances in the sliding window, it should change. 
+            If it represents the max appearances by the ending pointers regardless the size of sliding window, it should not change.
+            In this problem, both solutions can pass OJ. The second get better efficiency, but I prefer to do not change. Since If we want to find a better solution, the max appearances should be greater, otherwise, just current one is optimal.
+    */
+    int characterReplacement(string s, int k) {
+        int counter[26]={0};
+        int maxLen=0,start=0,maxCnt=0; // maxCnt是从头到现在出现次数最多字符的个数
+        for(int end=0;end<s.length();end++){
+            maxCnt=max(maxCnt,++counter[s[end]-'A']);
+            /*  不需要用循环 用一次if判断即可
+                因为滑动窗口维护的一段字符串 一定是满足要求的
+                每一次更新窗口尾部加入一个s[end] 
+                所以如果不满足要求 一定是s[end]造成end-start+1-maxCnt-k==1
+                此时只要更新一次start即可
+            */
+            if(end-start+1-maxCnt>k){ 
+                counter[s[start]-'A']--;
                 start++;
             }
             maxLen=max(maxLen,end-start+1);
