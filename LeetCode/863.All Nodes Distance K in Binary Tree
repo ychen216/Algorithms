@@ -1,0 +1,101 @@
+863. All Nodes Distance K in Binary Tree
+
+/*
+We are given a binary tree (with root node root), a target node, and an integer value K.
+
+Return a list of the values of all nodes that have a distance K from the target node.  The answer can be returned in any order.
+
+ 
+Example 1:
+
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, K = 2
+        3
+      /   \
+     5     1
+   / |    / \
+  6  2   0   8
+    / \
+   7   4
+Output: [7,4,1]
+
+Explanation: 
+The nodes that are a distance 2 from the target node (with value 5)
+have values 7, 4, and 1.
+
+Note that the inputs "root" and "target" are actually TreeNodes.
+The descriptions of the inputs above are just serializations of these objects.
+
+Note:
+  The given tree is non-empty.
+  Each node in the tree has unique values 0 <= node.val <= 500.
+  The target node is a node in the tree.
+  0 <= K <= 1000.
+
+*/
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        相当于求从target走K步能走到哪些节点
+        将Tree构造成一个无向图 然后利用bfs求得从target为起点走K步能够到达的节点
+    */
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int K) {
+        if(root==NULL||target==NULL)
+            return {};
+        buildGraph(root,NULL);
+        vector<int> res;
+        bfs(res,target,K);
+        return res;
+    }
+private:
+    unordered_map<TreeNode *,vector<TreeNode*>> graph;
+    void buildGraph(TreeNode *cur, TreeNode *parent){
+        if(cur==NULL)
+            return;
+        if(parent!=NULL){
+            graph[cur].push_back(parent);
+            graph[parent].push_back(cur);
+        }
+        buildGraph(cur->left, cur);
+        buildGraph(cur->right, cur);
+    }
+    
+    void bfs(vector<int> &res, TreeNode *target, int K){
+        unordered_set<TreeNode *> visit;
+        queue<TreeNode *> q;
+        q.push(target);
+        visit.insert(target);
+        while(!q.empty()){
+            int size=q.size();
+            if(K==0){
+                for(int i=0;i<size;i++){
+                    TreeNode *cur=q.front();
+                    q.pop();
+                    res.push_back(cur->val);
+                }
+                return;
+            }
+            for(int i=0;i<size;i++){
+                TreeNode *cur=q.front();
+                q.pop();
+                for(auto node: graph[cur]){
+                    if(visit.find(node)==visit.end()){
+                        q.push(node);
+                        visit.insert(node);
+                    }
+                }
+            }
+            K--;
+        }
+    }
+};
