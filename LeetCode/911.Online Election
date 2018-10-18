@@ -1,0 +1,97 @@
+911. Online Election
+/*
+In an election, the i-th vote was cast for persons[i] at time times[i].
+
+Now, we would like to implement the following query function: TopVotedCandidate.q(int t) will return the number of the person that was leading the election at time t.  
+
+Votes cast at time t will count towards our query.  In the case of a tie, the most recent vote (among tied candidates) wins.
+
+Example 1:
+Input: ["TopVotedCandidate","q","q","q","q","q","q"], [[[0,1,1,0,0,1,0],[0,5,10,15,20,25,30]],[3],[12],[25],[15],[24],[8]]
+Output: [null,0,1,1,0,0,1]
+Explanation: 
+At time 3, the votes are [0], and 0 is leading.
+At time 12, the votes are [0,1,1], and 1 is leading.
+At time 25, the votes are [0,1,1,0,0,1], and 1 is leading (as ties go to the most recent vote.)
+This continues for 3 more queries at time 15, 24, and 8.
+
+Note:
+  1 <= persons.length = times.length <= 5000
+  0 <= persons[i] <= persons.length
+  times is a strictly increasing array with all elements in [0, 10^9].
+  TopVotedCandidate.q is called at most 10000 times per test case.
+  TopVotedCandidate.q(int t) is always called with t >= times[0].
+*/
+
+Solution 1:
+class TopVotedCandidate {
+public:
+    /*
+        题意:在选举中,第 i 张票是在时间为 times[i] 时投给 persons[i]的.且时间times是严格单调递增的
+        现在,我们想要实现下面的查询函数:TopVotedCandidate.q(int t)将返回在t时刻主导选举的候选人的编号(也就是在时刻t获得票数最多的人)
+        在平局的情况下,最近获得投票的候选人将会获胜.
+        因为投票时间是递增的 我们可以记录在当前投票时间领先的候选人
+        在查询的时候 可以利用时间的递增特性 利用二分查找来在t时刻时领先的人 这里可以利用map.upper_bound简单实现
+    */
+    TopVotedCandidate(vector<int> persons, vector<int> times) {
+        unordered_map<int,int> counter; // person voteCnt
+        int maxCnt=0,curWinner=-1; // 当前获得最多的票数 当前时间领先的人
+        for(int i=0;i<times.size();i++){
+            counter[persons[i]]++;
+            if(counter[persons[i]]>=maxCnt){
+                curWinner=persons[i];
+                maxCnt=counter[persons[i]];
+            }
+            winner[times[i]]=curWinner;
+        }
+    }
+    
+    int q(int t) {
+        return (--winner.upper_bound(t))->second;
+    }
+private:
+    map<int,int> winner; // time, winner
+};
+
+另外手工实现一个二分查找 写了很久 要好好练练二分查找
+class TopVotedCandidate {
+public:
+    /*
+        题意:在选举中,第 i 张票是在时间为 times[i] 时投给 persons[i]的.且时间times是严格单调递增的
+        现在,我们想要实现下面的查询函数:TopVotedCandidate.q(int t)将返回在t时刻主导选举的候选人的编号(也就是在时刻t获得票数最多的人)
+        在平局的情况下,最近获得投票的候选人将会获胜.
+        因为投票时间是递增的 我们可以记录在当前投票时间领先的候选人
+        在查询的时候 可以利用时间的递增特性 利用二分查找来在t时刻时领先的人 这里可以利用map.upper_bound简单实现
+    */
+    TopVotedCandidate(vector<int> persons, vector<int> times) {
+        unordered_map<int,int> counter; // person voteCnt
+        int maxCnt=0,curWinner=-1; // 当前获得最多的票数 当前时间领先的人
+        n=times.size();
+        for(int i=0;i<times.size();i++){
+            counter[persons[i]]++;
+            if(counter[persons[i]]>=maxCnt){
+                curWinner=persons[i];
+                maxCnt=counter[persons[i]];
+            }
+            winner.push_back({times[i],curWinner});
+        }
+    }
+    
+    int q(int t) {
+        int low=0,high=n-1;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(winner[mid].first==t){
+                return winner[mid].second;
+            }else if(winner[mid].first>t){
+                high=mid-1;
+            }else{
+                low=mid+1;
+            }
+        }
+        return winner[low-1].second;
+    }
+private:
+    vector<pair<int,int>> winner; // time, winner
+    int n; // 记录times的长度
+};
