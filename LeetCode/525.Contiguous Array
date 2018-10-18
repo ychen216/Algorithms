@@ -38,3 +38,34 @@ public:
     
     }
 };
+
+update: unordered_map
+class Solution {
+public:
+    /*
+        求拥有相同0,1个数的最长子字符串长度
+        可以转化为求区间元素和为0的最长子区间:遇到0则减1 遇到1加1 那么当一个区间的元素和为0的时候表示0,1个数相同
+        再进行一次转化 如果sum[0~i]==sum[0,j] 那么说明 sum[i+1,j]=0 即[i+1,j]是满足要求的区间
+        所以只需要记录最早产生的sum的下标即可
+        初始化 map[0]=-1
+    */
+    int findMaxLength(vector<int>& nums) {
+        int size=nums.size();
+        if(size<2)
+            return 0;
+        unordered_map<int,int> mmp;
+        int sum=0,maxLen=0;
+        mmp[0]=-1;
+        for(int i=0;i<size;i++){
+            if(nums[i]==0)
+                sum--;
+            else
+                sum++;
+            if(mmp.find(sum)==mmp.end())
+                mmp[sum]=i;
+            else
+                maxLen=max(maxLen,i-mmp[sum]);
+        }
+        return maxLen;
+    }
+};
