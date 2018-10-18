@@ -83,3 +83,48 @@ class Solution {
         return result.pop();
     }
 }
+
+C++ version
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<string> res;
+        stack<int> count;
+        res.push("");
+        int len=s.length(),i=0;
+        while(i<len){
+            if(isdigit(s[i])){
+                int n=0;
+                while(i<len && isdigit(s[i]))
+                    n=n*10+s[i++]-'0';
+                i--; // 指针复位
+                count.push(n);
+            }
+            else if(s[i]=='['){
+                res.push("");
+            }
+            else if(s[i]==']'){
+                // 遇到] 说明某一个pattern结束 应该结合其出现的次数将其整合到结果中
+                int n=count.top(); //该pattern应该出现的次数
+                count.pop();
+                string temp="";
+                string pattern=res.top(); 
+                res.pop();
+                for(int i=0;i<n;i++)
+                    temp+=pattern;
+                string preResult=res.top();
+                res.pop();
+                res.push(preResult+temp);
+            }
+            else{
+                // 遇到单个字符
+                string pattern=res.top();
+                res.pop();
+                pattern+=s[i];
+                res.push(pattern);
+            }
+            i++;
+        }
+        return res.top();
+    }
+};
