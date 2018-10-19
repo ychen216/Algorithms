@@ -1,0 +1,88 @@
+813. Largest Sum of Averages
+
+/*
+We partition a row of numbers A into at most K adjacent (non-empty) groups, then our score is the sum of the average of each group. What is the largest score we can achieve?
+
+Note that our partition must use every number in A, and that scores are not necessarily integers.
+
+Example:
+Input: 
+A = [9,1,2,3,9]
+K = 3
+Output: 20
+Explanation: 
+The best choice is to partition A into [9], [1, 2, 3], [9]. The answer is 9 + (1 + 2 + 3) / 3 + 9 = 20.
+We could have also partitioned A into [9, 1], [2], [3, 9], for example.
+That partition would lead to a score of 5 + 2 + 6 = 13, which is worse.
+
+Note:
+  1 <= A.length <= 100.
+  1 <= A[i] <= 10000.
+  1 <= K <= A.length.
+  Answers within 10^-6 of the correct answer will be accepted as correct.
+
+*/
+Solution:
+class Solution {
+public:
+    /*  DP
+        A[i:]至多划分k各区间的Largest Sum of Averages依赖于 A[j:](j>i)划分数小于k的情况
+        dp[k][i]表示将i~N-1至多分割k个区间时的Largest Sum of Averages
+        dp[k][i]=max(dp[k][i],dp[k-1][j]+average(i,j)) j>i
+        初始化dp[1][i]=average(i,N)/(N-i)
+        dp[k][i]=dp[k-1][i]
+        其中average(i,j)=(A[i]+A[i+1]+..+A[j-1])/(j-i) 计算i~j-1的平均数
+        为了快速计算average可以对数据进行预处理 计算出P[i]=A[0]+...+A[i-1] average(i,j)=(P[j]-P[i])/(j-i)
+        同时dp[k][i]仅依赖dp[k-1][j]的状态 可以进一步节省空间
+    */
+    double largestSumOfAverages(vector<int>& A, int K) {
+        int n=A.size();
+        vector<double> sum(n+1,0.0);
+        for(int i=0;i<n;i++)
+            sum[i+1]=sum[i]+A[i];
+        vector<vector<double>> dp(K,vector<double>(n,0.0));
+        // 初始化
+        for(int i=0;i<n;i++)
+            dp[0][i]=(sum[n]-sum[i])/(n-i);
+        for(int k=1;k<K;k++){
+            for(int i=0;i<n;i++){
+                dp[k][i]=dp[k-1][i];
+                for(int j=i+1;j<n;j++)
+                    dp[k][i]=max(dp[k][i],(sum[j]-sum[i])/(j-i)+dp[k-1][j]);
+            }
+        }
+        return dp[K-1][0];
+    }
+};
+
+空间O(n)
+class Solution {
+public:
+    /*  DP
+        A[i:]至多划分k各区间的Largest Sum of Averages依赖于 A[j:](j>i)划分数小于k的情况
+        dp[k][i]表示将i~N-1至多分割k个区间时的Largest Sum of Averages
+        dp[k][i]=max(dp[k][i],dp[k-1][j]+average(i,j)) j>i
+        初始化dp[1][i]=average(i,N)/(N-i)
+        dp[k][i]=dp[k-1][i]
+        其中average(i,j)=(A[i]+A[i+1]+..+A[j-1])/(j-i) 计算i~j-1的平均数
+        为了快速计算average可以对数据进行预处理 计算出P[i]=A[0]+...+A[i-1] average(i,j)=(P[j]-P[i])/(j-i)
+        同时dp[k][i]仅依赖dp[k-1][j]的状态 可以进一步节省空间
+    */
+    double largestSumOfAverages(vector<int>& A, int K) {
+        int n=A.size();
+        vector<double> sum(n+1,0.0);
+        for(int i=0;i<n;i++)
+            sum[i+1]=sum[i]+A[i];
+        vector<double> dp(n,0.0);
+        // 初始化
+        for(int i=0;i<n;i++)
+            dp[i]=(sum[n]-sum[i])/(n-i);
+        for(int k=1;k<K;k++){
+            for(int i=0;i<n;i++){
+                for(int j=i+1;j<n;j++)
+                    dp[i]=max(dp[i],(sum[j]-sum[i])/(j-i)+dp[j]);
+            }
+        }
+        return dp[0];
+    }
+};
