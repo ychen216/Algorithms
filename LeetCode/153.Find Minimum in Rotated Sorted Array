@@ -27,3 +27,25 @@ public:
         return nums[left];
     }
 };
+
+Solution:
+class Solution {
+public:
+    /*
+        常规方法直接遍历找到最小的数 时间复杂度O(N)
+        利用二分查找 O(logN)
+    */
+    int findMin(vector<int>& nums) {
+        int low=0,high=nums.size()-1;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(nums[low]<=nums[high]) // [low,high]有序
+                return nums[low];
+            if(nums[mid]<=nums[high])
+                high=mid;
+            else if(nums[mid]>nums[high])
+                low=mid+1;
+        }
+        return nums[low];
+    }
+};
