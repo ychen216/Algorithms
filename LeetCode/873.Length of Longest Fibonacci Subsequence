@@ -1,0 +1,103 @@
+873. Length of Longest Fibonacci Subsequence
+
+/*
+A sequence X_1, X_2, ..., X_n is fibonacci-like if:
+  n >= 3
+  X_i + X_{i+1} = X_{i+2} for all i + 2 <= n
+Given a strictly increasing array A of positive integers forming a sequence, find the length of the longest fibonacci-like subsequence of A.  If one does not exist, return 0.
+
+(Recall that a subsequence is derived from another sequence A by deleting any number of elements (including none) from A, without changing the order of the remaining elements.  For example, [3, 5, 8] is a subsequence of [3, 4, 5, 6, 7, 8].)
+
+
+Example 1:
+Input: [1,2,3,4,5,6,7,8]
+Output: 5
+Explanation:
+The longest subsequence that is fibonacci-like: [1,2,3,5,8].
+Example 2:
+Input: [1,3,7,11,12,14,18]
+Output: 3
+Explanation:
+The longest subsequence that is fibonacci-like:
+[1,11,12], [3,11,14] or [7,11,18].
+ 
+Note:
+  3 <= A.length <= 1000
+  1 <= A[0] < A[1] < ... < A[A.length - 1] <= 10^9
+  (The time limit has been reduced by 50% for submissions in Java, C, and C++.)
+
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        暴力法 枚举Fibonacci Subsequence起始两个元素x,y 不断查找是否是否存在合理的下一个元素z=x+y
+        可以通过set快速查找是否存在元素 因为A是严格递增的序列 所以只要在set中存在z就可以保证 z一定是出现在x,y后面的 保证其相对次序
+    */
+    int lenLongestFibSubseq(vector<int>& A) {
+        int n=A.size();
+        if(n<3)
+            return 0;
+        unordered_set<int> sset(A.begin(),A.end());
+        int maxLen=0;
+        // 枚举起始两个元素
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                int x,y=A[j],z=A[i]+A[j];
+                int len=2;
+                while(sset.find(z)!=sset.end()){
+                    x=y;
+                    y=z;
+                    z=x+y;
+                    len++;
+                }
+                maxLen=max(maxLen,len);
+            }
+        }
+        return maxLen>=3? maxLen:0;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        DP
+        Think of two consecutive terms A[i], A[j] in a fibonacci-like subsequence as a single node (i, j),
+        and the entire subsequence is a path between these consecutive nodes. 
+        For example, with the fibonacci-like subsequence (A[1] = 2, A[2] = 3, A[4] = 5, A[7] = 8, A[10] = 13), 
+        we have the path between nodes (1, 2) <-> (2, 4) <-> (4, 7) <-> (7, 10).
+
+        The motivation for this is that two nodes (i, j) and (j, k) are connected if and only if A[i] + A[j] == A[k], 
+        and we needed this amount of information to know about this connection. 
+        Now we have a problem similar to Longest Increasing Subsequence.
+
+        Algorithm
+        dp[a, b] represents the length of fibo sequence ends up with (a, b)
+        Then we have dp[a, b] = dp[b - a, a]+1 or 2 必须满足b-a<a && b-a存在于A中
+        利用map记录A[i]的位置 这样可以快速定位b-a的位置
+    */
+    int lenLongestFibSubseq(vector<int>& A) {
+        int n=A.size();
+        if(n<3)
+            return 0;
+        unordered_map<int,int> mmp;
+        for(int i=0;i<n;i++)
+            mmp[A[i]]=i;
+        vector<vector<int>> dp(n,vector<int>(n,0));
+        int maxLen=0;
+        // 枚举最后两个元素
+        for(int k=1;k<n;k++){
+            for(int j=0;j<k;j++){
+                if(A[k]-A[j]<A[j] && mmp.find(A[k]-A[j])!=mmp.end())
+                    dp[j][k]=dp[mmp[A[k]-A[j]]][j]+1; // mmp[A[k]-A[j]] 找到b-a的所在元素的下标
+                else
+                    dp[j][k]=2;
+                maxLen=max(maxLen,dp[j][k]);
+            }
+        }
+        return maxLen>=3? maxLen:0;
+    }
+};
