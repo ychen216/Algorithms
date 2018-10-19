@@ -12,6 +12,8 @@ Return:
 Note: All inputs will be in lower-case.
 */
 
+本题其实就是考察如何设计有着相同字符组成的字符串有相同的key
+
 Solution:map
 class Solution {
 public:
@@ -62,3 +64,39 @@ public:
         return res;
     }
 };
+
+Solution 3:
+class Solution {
+public:
+    /*
+        将有相同字符组合的词 放到一起
+        有相同字符组合的词拥有相同的key 相当于设计一个词->key的hash
+        然后可以利用map将有相同key的词组合起来
+        这里的key可以简单设计为一个vector 记录每个字符出现的情况
+        这里可以将key设计为一个字符串:记录了不同字符的个数 eg. hash(absbz)=1a2b1s1z
+    */
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string,vector<string>> mmp;
+        for(auto &str:strs){
+            vector<int> v(26,0);
+            for(auto c:str)
+                v[c-'a']++;
+            string key="";
+            for(int i=0;i<26;i++){
+                char x=i+'a';
+                if(v[i]>0)
+                    key+=to_string(v[i])+x;
+            }
+            mmp[key].push_back(str);
+        }
+        vector<vector<string>> res;
+        for(auto &p:mmp)
+            res.push_back(p.second);
+        return res;
+    }
+};
+
+Solution 4:
+可以设计将字符串映射到一个数字 比如利用不同的素数代表不同的字符 a->2 b->3 c->5 ..
+那么一个数字可以唯一的表示为 n=q1^a1 * q2^a2 * ... * qn^an
+但是这样很容易发生溢出 一般的操作时取模 但是这样容易有collision发生 要另外处理
