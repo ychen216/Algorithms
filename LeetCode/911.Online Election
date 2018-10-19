@@ -79,17 +79,16 @@ public:
     
     int q(int t) {
         int low=0,high=n-1;
+        // 找到最后一个小于等于t的
         while(low<=high){
             int mid=low+(high-low)/2;
-            if(winner[mid].first==t){
-                return winner[mid].second;
-            }else if(winner[mid].first>t){
+            if(winner[mid].first>t){
                 high=mid-1;
             }else{
                 low=mid+1;
             }
         }
-        return winner[low-1].second;
+        return winner[high].second;
     }
 private:
     vector<pair<int,int>> winner; // time, winner
