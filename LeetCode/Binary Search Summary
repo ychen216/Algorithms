@@ -1,0 +1,58 @@
+判断返回low or high:
+  1.找到第一个[condition] 返回low
+  2.找到最后一个[condition] 返回high
+  
+按照条件condition分类:
+  1.找到>=target  
+  if(mid>=target)...else...
+  2.找到<=target
+  if(mid<=target)...else...
+  3.找到>target
+  if(mid>target)...else...
+  3.找到<target
+  if(mid<target)...else...
+  总结:也就是在binary search的循环体中的判定条件和我们要寻找的目标条件是一致的
+  
+Example 1:
+查找第一个等于或者大于key的元素
+static int findFirstEqualLarger(int[] array, int key) {
+    int left = 0;
+    int right = array.length - 1;
+
+    // 这里必须是 <=
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (array[mid] >= key) {
+            right = mid - 1;
+        }
+        else {
+            left = mid + 1;
+        }
+    }
+    return left;
+}
+
+Explain:
+返回第一个所以返回left  要求>=key  所以在循环体中 判定条件>=
+
+Example 2:
+查找最后一个小于key的元素
+// 查找最后一个小于key的元素
+static int findLastSmaller(int[] array, int key) {
+    int left = 0;
+    int right = array.length - 1;
+
+    // 这里必须是 <=
+    while (left <= right) {
+        int mid = (left + right) / 2;
+        if (array[mid] >= key) {
+            right = mid - 1;
+        }
+        else {
+            left = mid + 1;
+        }
+    }
+    return right;
+}
+Explain:
+返回最后一个所以返回right  要求<key  所以在循环体中 判定条件<
