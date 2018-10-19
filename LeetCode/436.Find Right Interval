@@ -1,0 +1,144 @@
+436. Find Right Interval
+/*
+Given a set of intervals, for each of the interval i, check if there exists an interval j whose start point is bigger than or equal to the end point of the interval i, which can be called that j is on the "right" of i.
+
+For any interval i, you need to store the minimum interval j's index, which means that the interval j has the minimum start point to build the "right" relationship for interval i. If the interval j doesn't exist, store -1 for the interval i. Finally, you need output the stored value of each interval as an array.
+
+Note:
+  You may assume the interval's end point is always bigger than its start point.
+  You may assume none of these intervals have the same start point.
+
+Example 1:
+Input: [ [1,2] ]
+Output: [-1]
+Explanation: There is only one interval in the collection, so it outputs -1.
+
+Example 2:
+Input: [ [3,4], [2,3], [1,2] ]
+Output: [-1, 0, 1]
+Explanation: There is no satisfied "right" interval for [3,4].
+For [2,3], the interval [3,4] has minimum-"right" start point;
+For [1,2], the interval [2,3] has minimum-"right" start point.
+
+Example 3:
+Input: [ [1,4], [2,3], [3,4] ]
+Output: [-1, 2, -1]
+Explanation: There is no satisfied "right" interval for [1,4] and [3,4].
+For [2,3], the interval [3,4] has minimum-"right" start point.
+
+*/
+
+Solution 1: TLE
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+public:
+    /*  
+        对于第i个interval 找到最小的j使得 
+        intervals[j].start>=intervals[i].end && intervals[j].start<intervals[k].start k!=j
+        最暴力的方法两个循环
+    */
+    vector<int> findRightInterval(vector<Interval>& intervals) {
+        int n=intervals.size();
+        vector<int> res(n,-1);
+        for(int i=0;i<n;i++){
+            int minRight=INT_MAX;
+            for(int j=0;j<n;j++){
+               if(i==j) continue;
+               if(intervals[i].end<=intervals[j].start && intervals[j].start<minRight){
+                   res[i]=j;
+                   minRight=intervals[j].start;
+               }
+           }
+        }
+        return res;
+    }
+};
+
+Solution 2:
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+public:
+    /*  
+        对于第i个interval 找到最小的j使得 
+        intervals[j].start>=intervals[i].end && intervals[j].start<intervals[k].start k!=j
+        如果start按照递增排序好了 那么我们就是找到第一个>=intervals[i].end的那一个 思想是利用二分查找
+        具体实现可以利用map记录start的位置(题目指明不会有相同start) 找到第一个>=taret_end的start所在的位置 
+    */
+    vector<int> findRightInterval(vector<Interval>& intervals) {
+        int n=intervals.size();
+        map<int,int> mmp; // start,index
+        for(int i=0;i<n;i++) // 因为所有start都不同 所以start可以唯一表征intervals 同时记录位置
+            mmp[intervals[i].start]=i;
+        vector<int> res;
+        for(int i=0;i<n;i++){
+            auto it=mmp.lower_bound(intervals[i].end);
+            if(it!=mmp.end())
+                res.push_back(it->second);
+            else
+                res.push_back(-1);
+        }
+        return res;
+    }
+};
+
+// 手工实现二分查找
+/**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+public:
+    /*  
+        对于第i个interval 找到最小的j使得 
+        intervals[j].start>=intervals[i].end && intervals[j].start<intervals[k].start k!=j
+        如果start按照递增排序好了 那么我们就是找到第一个>=intervals[i].end的那一个 思想是利用二分查找
+        具体实现可以利用map记录start的位置(题目指明不会有相同start) 找到第一个>=taret_end的start所在的位置 
+    */
+    vector<int> findRightInterval(vector<Interval>& intervals) {
+        int n=intervals.size();
+        unordered_map<int,int> mmp; // start,index
+        for(int i=0;i<n;i++) // 因为所有start都不同 所以start可以唯一表征intervals
+            mmp[intervals[i].start]=i;
+        sort(intervals.begin(),intervals.end(),[&](auto &p1,auto &p2){
+            return p1.start<p2.start;
+        });// 按照start从小到大排序
+        vector<int> res(n,-1);
+        for(int i=0;i<n;i++){
+            int low=0,high=n-1;
+            int target=intervals[i].end;
+            // 二分查找 第一个.start>=target 的interval
+            while(low<=high){
+                int mid=low+(high-low)/2;
+                if(intervals[mid].start>=target){
+                    high=mid-1;
+                }else{
+                    low=mid+1;
+                }
+            }
+            if(low>=0&&low<n)
+                res[mmp[intervals[i].start]]=mmp[intervals[low].start];
+        }
+        return res;
+    }
+};
