@@ -1,0 +1,116 @@
+528. Random Pick with Weight
+
+/*
+Given an array w of positive integers, where w[i] describes the weight of index i, 
+write a function pickIndex which randomly picks an index in proportion to its weight.
+
+Note:
+  1 <= w.length <= 10000
+  1 <= w[i] <= 10^5
+  pickIndex will be called at most 10000 times.
+Example 1:
+Input: 
+["Solution","pickIndex"]
+[[[1]],[]]
+Output: [null,0]
+
+Example 2:
+Input: 
+["Solution","pickIndex","pickIndex","pickIndex","pickIndex","pickIndex"]
+[[[1,3]],[],[],[],[],[]]
+Output: [null,0,1,1,1,0]
+Explanation of Input Syntax:
+
+The input is two lists: the subroutines called and their arguments. 
+Solution's constructor has one argument, the array w. pickIndex has no arguments.
+Arguments are always wrapped with a list, even if there aren't any.
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        根据权重来随机取点:权重为 [1, 3],表示有两个点,权重分别为1和3,第一个点出现概率是四分之一,另一个出现的概率是四分之三
+        利用rand()函数是等概率的随机,那么我们如何才能有权重的随机呢
+        我们可以使用一个trick,由于权重是1和3,相加为4,那么我们现在假设有4个点,然后随机等概率取一个点,随机到第一个点后就表示原来的第一个点
+        随机到后三个点就表示原来的第二个点,这样就可以保证有权重的随机
+    */
+    Solution(vector<int> w) {
+        weight=w;
+        totalWeight=0;
+        for(auto n:w)
+            totalWeight+=n;
+    }
+    
+    int pickIndex() {
+        int score=rand()%(totalWeight) + 1; // 随机数 大小为1~ totalWeight
+        int i,cur=0;
+        for(i=0;i<weight.size();i++){
+            cur+=weight[i];
+            if(cur>=score)
+                break;
+        }
+        return i;
+    }
+private:
+    vector<int> weight;
+    int totalWeight;
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        根据权重来随机取点:权重为 [1, 3],表示有两个点,权重分别为1和3,第一个点出现概率是四分之一,另一个出现的概率是四分之三
+        利用rand()函数是等概率的随机,那么我们如何才能有权重的随机呢
+        我们可以使用一个trick,由于权重是1和3,相加为4,那么我们现在假设有4个点,然后随机等概率取一个点,随机到第一个点后就表示原来的第一个点
+        随机到后三个点就表示原来的第二个点,这样就可以保证有权重的随机
+        相当于找第一个累加和>=随机数 的下标 累加和是递增的 可以利用二分查找
+    */
+    Solution(vector<int> w) {
+        sum=w;
+        for(int i=1;i<w.size();i++)
+            sum[i]+=sum[i-1];
+    }
+    
+    int pickIndex() {
+        int score=rand()%(sum.back()) + 1; // 随机数 大小为1~allSum
+        return lower_bound(sum.begin(),sum.end(),score) - sum.begin();
+    }
+private:
+    vector<int> sum;// sum[i]记录0~i的和
+};
+
+// 手工写二分查找
+class Solution {
+public:
+    /*
+        根据权重来随机取点:权重为 [1, 3],表示有两个点,权重分别为1和3,第一个点出现概率是四分之一,另一个出现的概率是四分之三
+        利用rand()函数是等概率的随机,那么我们如何才能有权重的随机呢
+        我们可以使用一个trick,由于权重是1和3,相加为4,那么我们现在假设有4个点,然后随机等概率取一个点,随机到第一个点后就表示原来的第一个点
+        随机到后三个点就表示原来的第二个点,这样就可以保证有权重的随机
+        相当于找第一个累加和>=随机数 的下标 累加和是递增的 可以利用二分查找
+    */
+    Solution(vector<int> w) {
+        sum=w;
+        for(int i=1;i<w.size();i++)
+            sum[i]+=sum[i-1];
+    }
+    
+    int pickIndex() {
+        int score=rand()%(sum.back()) + 1; // 随机数 大小为1~allSum
+        int low=0,high=sum.size()-1;
+        // 找到第一个>=score
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(sum[mid]>=score){
+                high=mid-1;
+            }else{
+                low=mid+1;
+            }
+        }
+        return low;
+    }
+private:
+    vector<int> sum;// sum[i]记录0~i的和
+};
