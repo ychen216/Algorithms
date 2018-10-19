@@ -1,0 +1,23 @@
+map, set, multimap, and multiset
+上述四种容器采用红黑树实现，红黑树是平衡二叉树的一种。不同操作的时间复杂度近似为:
+插入: O(logN)
+
+查看:O(logN)
+
+删除:O(logN)
+
+hash_map, hash_set, hash_multimap, and hash_multiset
+上述四种容器采用哈希表实现，不同操作的时间复杂度为：
+插入:O(1)，最坏情况O(N)。
+
+查看:O(1)，最坏情况O(N)。
+
+删除:O(1)，最坏情况O(N)。
+
+记住，如果你采用合适的哈希函数，你可能永远不会看到最坏情况。但是记住这一点是有必要的。
+
+--------------------- 
+作者：ShenYounger 
+来源：CSDN 
+原文：https://blog.csdn.net/wusecaiyun/article/details/46723363 
+版权声明：本文为博主原创文章，转载请附上博文链接！
