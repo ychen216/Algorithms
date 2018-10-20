@@ -1,0 +1,85 @@
+838. Push Dominoes
+
+/*
+There are N dominoes in a line, and we place each domino vertically upright.
+
+In the beginning, we simultaneously push some of the dominoes either to the left or to the right.
+
+After each second, each domino that is falling to the left pushes the adjacent domino on the left.
+
+Similarly, the dominoes falling to the right push their adjacent dominoes standing on the right.
+
+When a vertical domino has dominoes falling on it from both sides, it stays still due to the balance of the forces.
+
+For the purposes of this question, we will consider that a falling domino expends no additional force to a falling or already fallen domino.
+
+Given a string "S" representing the initial state. S[i] = 'L', if the i-th domino has been pushed to the left; S[i] = 'R', if the i-th domino has been pushed to the right; S[i] = '.', if the i-th domino has not been pushed.
+
+Return a string representing the final state. 
+
+Example 1:
+Input: ".L.R...LR..L.."
+Output: "LL.RR.LLRRLL.."
+
+Example 2:
+Input: "RR.L"
+Output: "RR.L"
+Explanation: The first domino expends no additional force on the second domino.
+
+Note:
+  0 <= N <= 10^5
+  String dominoes contains only 'L', 'R' and '.'
+
+*/
+
+Solution:模拟
+class Solution {
+public:
+    /*
+        每过一秒，倒向左边的多米诺骨牌会推动其左侧相邻的多米诺骨牌。同样地，倒向右边的多米诺骨牌也会推动竖立在其右侧的相邻多米诺骨牌。
+        如果同时有多米诺骨牌落在一张垂直竖立的多米诺骨牌的两边，由于受力平衡， 该骨牌仍然保持不变。
+        就这个问题而言，我们会认为正在下降的多米诺骨牌不会对其它正在下降或已经下降的多米诺骨牌施加额外的力
+        如果只有L或R那么所有的domino都会向左或是向右倒
+        如果有LR混合的情况 那么我们要分析 LR还是RL 分别处理 所以需要记录上一个L或R的位置
+    */
+    string pushDominoes(string dominoes) {
+        int n=dominoes.length();
+        if(n<2)
+            return dominoes;
+        char preDir='.';//上一次推动的方向
+        int preIndex=0; // 上一次推动的domino id+1 即还未处理的 下一次要处理的位置
+        string res="";
+        for(int i=0;i<n;i++){
+            if(dominoes[i]=='.')continue;
+            if(dominoes[i]=='L'){
+                if(preDir=='R'){
+                    int interval_len=i-preIndex; // 从上一个R到这个L之间包含的元素个数不包含RL R[...]L
+                    int rNum=interval_len/2; // 区间内RL的个数是一样的 RL对称
+                    int dotNum=interval_len%2;
+                    res+=string(rNum,'R')+string(dotNum,'.')+string(rNum,'L')+'L';
+                }
+                else {
+                    res+=string(i-preIndex+1,'L');
+                }
+                preDir='L';
+            }
+            else{
+                // dominoes[i]=='R'
+                if(preDir=='R'){
+                    res+=string(i-preIndex+1,'R');
+                }
+                else{
+                    res+=string(i-preIndex, '.')+'R';
+                }
+                preDir='R';
+            }
+            preIndex=i+1; // 下一个未处理的位置
+        }
+        
+        if(preDir=='R')
+            res+=string(n-preIndex,'R');
+        else
+            res+=string(n-preIndex,'.');
+        return res;
+    }
+};
