@@ -123,3 +123,110 @@ public:
         return res;
     }
 };
+
+Solution 2:
+class Solution {
+public:
+    // 每一个grid[i][j]==1的点都去检查以(i,j)为中心的order是多少 加上一些剪枝操作
+    int orderOfLargestPlusSign(int N, vector<vector<int>>& mines) {
+        vector<vector<int>> grid(N,vector<int>(N,1));
+        for(auto &mine: mines)
+            grid[mine[0]][mine[1]]=0;
+        int order=0,maxOrder=(N+1)/2;
+        for(int i=0;i<N;i++){
+            for(int j=0;j<N;j++){
+                if(grid[i][j]==1){
+                    getOrder(grid,i,j,order);
+                    if(order==maxOrder) // 剪枝
+                        return order;
+                }
+            }
+        }
+        return order;
+    }
+private:
+    void getOrder(vector<vector<int>>& grid,int centerX,int centerY,int &order){
+        int up=1,down=1,left=1,right=1;// 从中心到上下左右的arm长度
+        int N=grid.size();
+        // 上
+        int i=centerX-1;
+        while(i>=0&&grid[i][centerY]==1){
+            up++;
+            i--;
+        }
+        // 不可能超过了
+        if(up<=order)
+            return;
+        // 下
+        i=centerX+1;
+        while(i<N&&grid[i][centerY]==1){
+            down++;
+            i++;
+        }
+        // 不可能超过了
+        if(down<=order)
+            return;
+        // 左
+        int j=centerY-1;
+        while(j>=0&&grid[centerX][j]==1){
+            left++;
+            j--;
+        }
+        // 不可能超过了
+        if(left<=order)
+            return;
+        // 右
+        j=centerY+1;
+        while(j<N&&grid[centerX][j]==1){
+            right++;
+            j++;
+        }
+        if(right<=order)
+            return;
+        order=min(up,min(down,min(left,right)));
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    /*  
+        可以利用left[i][j]=left[i][j-1]+1 if(grid[i][j]==1)
+        right[i][j]=right[i][j+1]+1 if(grid[i][j]==1)
+        up[i][j]=up[i-1][j]+1 if(grid[i][j]==1)
+        down[i][j]=down[i+1][j]+1 if(grid[i][j]==1)
+    */
+    int orderOfLargestPlusSign(int N, vector<vector<int>>& mines) {
+        vector<vector<int>> grid(N,vector<int>(N,1));
+        for(auto &mine: mines)
+            grid[mine[0]][mine[1]]=0;
+        
+        vector<vector<int>> up(N,vector<int>(N,0)),down(N,vector<int>(N,0)),
+                            left(N,vector<int>(N,0)),right(N,vector<int>(N,0));
+        // 上 左
+        for(int i=0;i<N;i++){
+            for(int j=0;j<N;j++){
+                if(grid[i][j]==1){
+                    left[i][j]=j==0?1:left[i][j-1]+1;
+                    up[i][j]=i==0?1:up[i-1][j]+1;
+                }
+            }
+        }
+        // 下 右
+        for(int i=N-1;i>=0;i--){
+            for(int j=N-1;j>=0;j--){
+                if(grid[i][j]==1){
+                    right[i][j]=j==N-1?1:right[i][j+1]+1;
+                    down[i][j]=i==N-1?1:down[i+1][j]+1;
+                }
+            }
+        }
+        int order=0;
+        for(int i=0;i<N;i++){
+            for(int j=0;j<N;j++){
+                order=max(order,min(left[i][j],min(right[i][j],min(up[i][j],down[i][j]))));
+            }
+        }
+        return order;
+    }
+};
