@@ -27,7 +27,10 @@ public:
     int numSubarrayBoundedMax(vector<int>& A, int L, int R) {
         int n=A.size();
         int s,e;//区间端点
-        int res=0,cnt=0;//cnt记录当前已有的有效区间长度 也就是有效区间的元素个数
+        int res=0,cnt=0;
+        //cnt记录当前已有的有效区间长度 也就是有效区间的元素个数 cnt区间内的每一个元素都应该能和后一个加入的构成新的区间
+        // eg. L=2,R=3  [2,3] cnt=2 后一个加入的元素是1 -> [2 3 1],[2 3] 增加两个 而1加入后cnt值不变
+        // 因为其不能保证1可以与后面的值一定构成新区间 eg 加入1,[1,1]不是合法区间 所以cnt值 只在加入的元素>=L&&<=R时才更新
         for(s=0,e=0;e<n;e++){
             if(A[e]>=L&&A[e]<=R){
                 cnt=e-s+1;
