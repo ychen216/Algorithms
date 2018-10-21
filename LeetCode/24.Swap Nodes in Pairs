@@ -10,7 +10,7 @@ Your algorithm should use only constant space. You may not modify the values in 
 
 */
 
-Solution: recursive
+Solution 1: recursive
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -29,5 +29,38 @@ public:
         head->next=swapPairs(head->next->next);
         node->next=head;
         return node;
+    }
+};
+
+Solution 2:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*  两个指针 https://leetcode.com/problems/swap-nodes-in-pairs/discuss/11046/My-simple-JAVA-solution-for-share
+        windliang的解释
+    */
+    ListNode* swapPairs(ListNode* head) {
+        if(head==NULL)
+            return NULL;
+        ListNode *feakHead=new ListNode(0);
+        feakHead->next=head;
+        ListNode *cur=feakHead;
+        while(cur->next && cur->next->next){
+            ListNode *swap1=cur->next;
+            ListNode *swap2=cur->next->next;
+            cur->next=swap2;
+            swap1->next=swap2->next;
+            swap2->next=swap1;
+            cur=swap1;
+        }
+        return feakHead->next;
+        
     }
 };
