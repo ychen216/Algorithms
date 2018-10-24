@@ -56,3 +56,32 @@ public:
         return res;
     }
 };
+
+update 解释
+class Solution {
+public:
+    /*
+        利用包含空节点的前序或者后序遍历唯一确定、表示一棵树
+        Two trees are duplicate if they have the same structure with same node values.
+        如果两个节点有相同的结构(即,他们及他们的子树完全相同) 那么他们的前序,后序表示是相同的
+        利用map记录前序or后序表示出现的次数 如果出现超过一次那么即为duplicate node
+    */
+    vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
+        vector<TreeNode *> res;
+        unordered_map<string,int> mmp;
+        preOrder(root,mmp,res);
+        return res;
+    }
+    
+private:
+    string preOrder(TreeNode *root,unordered_map<string,int> &mmp, vector<TreeNode *>&res){
+        if(root==nullptr)
+            return "#";
+        string order=to_string(root->val)+","+preOrder(root->left,mmp,res)+","+preOrder(root->right,mmp,res);
+        // 已经出现过一次 那么是duplicate node 如果mmp[order]>1说明是有多个重复的 只需要加入一次
+        if(mmp.find(order)!=mmp.end()&&mmp[order]==1)
+            res.push_back(root);
+        mmp[order]++;
+        return order;
+    }
+};
