@@ -60,8 +60,12 @@ public:
         if(pos.find(val)==pos.end())
             return false;
         //交换要删除的元素和最后一个元素
-        pos[nums[nums.size()-1]]=pos[val];
-        swap(nums[pos[val]],nums[nums.size()-1]);
+        int index=pos[val];
+        if(index!=nums.size()-1){
+            int replace=nums[nums.size()-1];
+            pos[replace]=index;
+            nums[index]=replace;
+        }
         //删除
         nums.pop_back();
         pos.erase(val);
@@ -74,7 +78,7 @@ public:
     }
 private:
     vector<int> nums;
-    unordered_map<int,int> pos;
+    unordered_map<int,int> pos;// number,index in vector
 };
 
 /**
