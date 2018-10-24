@@ -33,23 +33,61 @@ Solution:
  */
 class Solution {
 public:
-    //Greedy 按照区间终点从小到大排序
-    static bool cmp(const Interval&a,const Interval&b){
-        return a.end<b.end;
-    }
+    /**
+ * Definition for an interval.
+ * struct Interval {
+ *     int start;
+ *     int end;
+ *     Interval() : start(0), end(0) {}
+ *     Interval(int s, int e) : start(s), end(e) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        求删除最少的区间使得区间不相重叠 等价于求最多有多少个区间不重叠
+        这与活动安排是一样的 最多能安排多少活动 优先安排最早结束的活动
+    */
     int eraseOverlapIntervals(vector<Interval>& intervals) {
-        int size=intervals.size();
-        if(size==0)
+        int n=intervals.size();
+        if(n<2)
             return 0;
-        sort(intervals.begin(),intervals.end(),cmp);
-        int cnt=1;
-        int end=intervals[0].end;
-        for(int i=1;i<size;i++){
+        sort(intervals.begin(),intervals.end(),[&](auto &a,auto &b){
+           return a.end<b.end; 
+        });
+        int end=intervals[0].end, longest=1;
+        for(int i=1;i<n;i++){
             if(intervals[i].start>=end){
-                cnt++;
+                longest++;
                 end=intervals[i].end;
             }
         }
-        return size-cnt;
+        return n-longest;
+    }
+};
+
+改写直接统计remove
+class Solution {
+public:
+    /*
+        求删除最少的区间使得区间不相重叠 等价于求最多有多少个区间不重叠
+        这与活动安排是一样的 最多能安排多少活动 优先安排最早结束的活动
+    */
+    int eraseOverlapIntervals(vector<Interval>& intervals) {
+        int n=intervals.size();
+        if(n<2)
+            return 0;
+        sort(intervals.begin(),intervals.end(),[&](auto &a,auto &b){
+           return a.end<b.end; 
+        });
+        int end=intervals[0].end, remove=0;
+        for(int i=1;i<n;i++){
+            if(intervals[i].start>=end){
+                end=intervals[i].end;
+            }
+            else
+                remove++;
+        }
+        return remove;
     }
 };
