@@ -38,7 +38,7 @@ public:
     为了避免NULL造成不同的子树的遍历输出是相同的,遍历到空树时用#代替该树 那么这样对树遍历的结果可以唯一确定一棵树
     如果已经出现过那么这棵树是重复的子树
     */
-    string helper(TreeNode *root,map<string,int>&mmap,vector<TreeNode *>&res){
+    string helper(TreeNode *root,unordered_map<string,int>&mmap,vector<TreeNode *>&res){
         if(root==NULL)
             return "#";
         string order=to_string(root->val)+","+helper(root->left,mmap,res)+","+helper(root->right,mmap,res);
@@ -50,7 +50,7 @@ public:
     }
     
     vector<TreeNode*> findDuplicateSubtrees(TreeNode* root) {
-        map<string,int> mmap;
+        unordered_map<string,int> mmap;
         vector<TreeNode *> res;
         helper(root,mmap,res);
         return res;
