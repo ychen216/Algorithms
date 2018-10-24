@@ -54,3 +54,43 @@ private:
         return true;
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        从一个结点出发，最终能走到一个没有出边的点，那么这个起始点称为安全点
+        那么出度为0的节点一定是安全点 一步步将与安全节点相邻接的边删去 如果有新的节点出度为0那么该节点也是安全点
+        往复这个过程可以得到全部的安全点
+        为了方便出度的更改我们需要记录每个节点的反向边
+    */
+    vector<int> eventualSafeNodes(vector<vector<int>>& graph) {
+        int n=graph.size();
+        unordered_map<int,vector<int>> reverse_edge;
+        vector<int> out_degree;
+        queue<int> q;
+        vector<int> res;
+        for(int i=0;i<n;i++){
+            out_degree.push_back(graph[i].size()); // out_degree[i]=graph[i].size()
+            if(out_degree[i]==0)
+                q.push(i);
+            // 记录反向边
+            for(auto j:graph[i])
+                reverse_edge[j].push_back(i);
+        }
+        while(!q.empty()){
+            int zero=q.front();
+            q.pop();
+            res.push_back(zero);
+            // 将与该节点相邻接的边删去
+            for(auto i:reverse_edge[zero]){
+                out_degree[i]--;
+                if(out_degree[i]==0)
+                    q.push(i);
+            }
+        }
+        sort(res.begin(),res.end());
+        return res;
+    }
+};
