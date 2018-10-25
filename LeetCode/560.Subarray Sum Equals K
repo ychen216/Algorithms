@@ -36,23 +36,28 @@ public:
 Solution 2:改进1
 class Solution {
 public:
-    //利用map记录key为sum的子集出现的次数
+    /*
+        记录0~i元素的和sum[i] 
+        if sum[j]-sum[i]==K 那么i-1~j构成的子数组的和为k
+        那么对于sum[j]来说之前有x个i 使得sum[i]=sum[j]-K 就能构成x个子数组
+        可以利用map记录sum的个数 初始化mmp[0]=1 这样才能使得0~j的和为K时能够被成功记录
+    */
     int subarraySum(vector<int>& nums, int k) {
-        int size=nums.size();
-        if(size==0)
+        int n=nums.size();
+        if(n==0)
             return 0;
-        map<int,int> mmap;//(sum,times)
-        mmap[0]=1;//初始化 必须
-        int cnt=0,sum=0;
-        for(int i=0;i<size;i++){
-            sum+=nums[i];
-            if(mmap.count(sum-k))
-                cnt+=mmap[sum-k];
-            if(mmap.count(sum))
-                mmap[sum]++;
-            else
-                mmap[sum]=1;
+        vector<int> sum(n,0);
+        sum[0]=nums[0];
+        for(int i=1;i<n;i++)
+            sum[i]=sum[i-1]+nums[i];
+        int res=0;
+        unordered_map<int,int> mmp; // sum,occur_num
+        mmp[0]=1;
+        for(int j=0;j<n;j++){
+            if(mmp.find(sum[j]-k)!=mmp.end())
+                res+=mmp[sum[j]-k];
+            mmp[sum[j]]++;
         }
-        return cnt;
+        return res;
     }
 };
