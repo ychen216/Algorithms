@@ -61,3 +61,32 @@ public:
         return res;
     }
 };
+
+
+update:
+class Solution {
+public:
+    /*
+        记录0~i元素的和sum[i] 
+        if sum[j]-sum[i]==K 那么i-1~j构成的子数组的和为k
+        那么对于sum[j]来说之前有x个i 使得sum[i]=sum[j]-K 就能构成x个子数组
+        可以利用map记录sum的个数 初始化mmp[0]=1 这样才能使得0~j的和为K时能够被成功记录
+        为了优化空间可以将sum保存在nums中
+    */
+    int subarraySum(vector<int>& nums, int k) {
+        int n=nums.size();
+        if(n==0)
+            return 0;
+        for(int i=1;i<n;i++)
+            nums[i]=nums[i-1]+nums[i];
+        int res=0;
+        unordered_map<int,int> mmp; // sum,occur_num
+        mmp[0]=1;
+        for(int j=0;j<n;j++){
+            if(mmp.find(nums[j]-k)!=mmp.end())
+                res+=mmp[nums[j]-k];
+            mmp[nums[j]]++;
+        }
+        return res;
+    }
+};
