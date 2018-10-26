@@ -13,33 +13,35 @@ Solution 1:
 
 class Solution {
 public:
-    //计数法
+    // bucket sort O(n)
     void sortColors(vector<int>& nums) {
         int cnt[3]={0};
-        for(int i=0;i<nums.size();i++){
-            cnt[nums[i]]++;
-        }
+        for(auto n:nums)
+            cnt[n]++;
         int i=0;
-        while(cnt[0]-->0)
-            nums[i++]=0;
-        while(cnt[1]-->0)
-            nums[i++]=1;
-        while(cnt[2]-->0)
-            nums[i++]=2;
+        for(int n=0;n<3;n++){
+            while(cnt[n]-->0)
+                nums[i++]=n;
+        }
     }
 };
 
 Solution 2:
 class Solution {
 public:
-    //two pointer
+    // 利用双指针 将0放在数组左侧 2放在数组右侧 1留在中间
     void sortColors(vector<int>& nums) {
-        int zero=0,two=nums.size()-1;
+        int p0=0,p2=nums.size()-1; //初始化遇到0,2应该放的位置
         for(int i=0;i<nums.size();i++){
-            while(nums[i]==2&&i<two)
-                swap(nums[i],nums[two--]);
-            while(nums[i]==0&&i>zero)
-                swap(nums[i],nums[zero++]);
+            // 必须用循环不能用if 
+            // 因为p2处可能本来就是2
+            // 交换以后把nums[p2]==2放在了i处 需要把i处这个2再放在左右侧
+            // 且必须先检查2 再检查0 不然出错 eg[1,2,0]
+            while(i<p2 && nums[i]==2)
+                swap(nums[i],nums[p2--]);
+            while(p0<i && nums[i]==0)
+                swap(nums[i],nums[p0++]);
+            
         }
     }
 };
