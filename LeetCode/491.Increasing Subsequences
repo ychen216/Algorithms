@@ -35,3 +35,53 @@ public:
         return vector<vector<int>>(res.begin(),res.end());
     }
 };
+
+update:
+class Solution {
+public:
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        set<vector<int>> res;
+        vector<int> candidate;
+        helper(nums,0,candidate,res);
+        return vector<vector<int>> (res.begin(),res.end());
+    }
+private:
+    void helper(vector<int> &nums,int start,vector<int> &v,set<vector<int>> &res){
+        if(v.size()>=2)
+            res.insert(v);
+        for(int i=start;i<nums.size();i++){
+            if(v.empty()||v.back()<=nums[i]){
+                v.push_back(nums[i]);
+                helper(nums,i+1,v,res);
+                v.pop_back();
+            }
+        }
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    // 在dfs内部利用set去重
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> candidate;
+        helper(nums,0,candidate,res);
+        return res;
+    }
+private:
+    void helper(vector<int> &nums,int start,vector<int> &v,vector<vector<int>> &res){
+        if(v.size()>=2)
+            res.push_back(v);
+        unordered_set<int> sset;
+        for(int i=start;i<nums.size();i++){
+            // eg[3,3,4]避免出现两个[3,4]
+            if((v.empty()||v.back()<=nums[i]) && sset.find(nums[i])==sset.end()){
+                v.push_back(nums[i]);
+                sset.insert(nums[i]);
+                helper(nums,i+1,v,res);
+                v.pop_back();
+            }
+        }
+    }
+};
