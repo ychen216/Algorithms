@@ -20,23 +20,53 @@ If nums = [1,2,2], a solution is:
 Solution: dfs
 class Solution {
 public:
-    void dfs(set<vector<int>>&res,vector<int>&nums,vector<int> temp,int start){
-        res.insert(temp);
-        for(int i=start;i<nums.size();i++){
-            temp.push_back(nums[i]);
-            dfs(res,nums,temp,i+1);
-            temp.pop_back();
-        }
-    }
+    // Solution 1 利用set和sort去重 
+    // 有可能出现[4,4,4,1] 那么[4,1]和[1,4]是一样的 利用sort 排除这种情况 set可以排除多个[4,1]的情况
     vector<vector<int>> subsetsWithDup(vector<int>& nums) {
         set<vector<int>> res;
-        sort(nums.begin(),nums.end());//避免出现{4,4,1,4}出现{4,1}{1,4}重复
-        dfs(res,nums,vector<int>()={},0);
-        return vector<vector<int>>(res.begin(),res.end());
+        vector<int> v;
+        sort(nums.begin(),nums.end());
+        helper(nums,v,res,0);
+        return vector<vector<int>> (res.begin(),res.end());
+    }
+private:
+    void helper(vector<int> &nums,vector<int> &cur,set<vector<int>> &res,int start){
+        res.insert(cur);
+        for(int i=start;i<nums.size();i++){
+            cur.push_back(nums[i]);
+            helper(nums,cur,res,i+1);
+            cur.pop_back();
+        }
     }
 };
 
 Solution 2:
+class Solution {
+public:
+    // Solution 2 仅sort和条件判断去重 
+    // 有可能出现[4,4,4,1] 那么[4,1]和[1,4]是一样的 利用sort 排除这种情况
+    // 如果当前第i个元素已经插入4了 那么第i个元素为4的情况都可以不用尝试了
+    vector<vector<int>> subsetsWithDup(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> v;
+        sort(nums.begin(),nums.end());
+        helper(nums,v,res,0);
+        return res;
+    }
+private:
+    void helper(vector<int> &nums,vector<int> &cur,vector<vector<int>> &res,int start){
+        res.push_back(cur);
+        for(int i=start;i<nums.size();i++){
+            if(i==start || nums[i-1]!=nums[i]){
+                cur.push_back(nums[i]);
+                helper(nums,cur,res,i+1);
+                cur.pop_back();   
+            }
+        }
+    }
+};
+
+Solution 3:
 class Solution {
 public:
     //遇到一个元素就在之前生成的子集的基础上再加上这个元素生成新的子集
