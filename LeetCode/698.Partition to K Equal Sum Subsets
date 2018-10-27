@@ -55,3 +55,37 @@ public:
         
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    bool canPartitionKSubsets(vector<int>& nums, int k) {
+        if(k==1)
+            return true;
+        int sum=0;
+        for(auto &num:nums)
+            sum+=num;
+        // 不能整除
+        if(sum%k)
+            return false;
+        vector<bool> visited(nums.size(),false);
+        return helper(nums,visited,0,0,sum/k,k);
+    }
+private:
+    bool helper(vector<int>&nums, vector<bool> &visited,int start,int curSum,int target,int k){
+        if(k==1) // 如果已经构成了K-1个组合 那么剩下的数必然和为target 因为nums[i]>0
+            return true;
+        if(curSum==target){
+            return helper(nums,visited,0,0,target,k-1);
+        }
+        for(int i=start;i<nums.size();i++){
+            if(visited[i])continue;
+            visited[i]=true;
+            if(helper(nums,visited,i+1,curSum+nums[i],target,k))
+                return true;
+            visited[i]=false;
+        }
+        return false;
+    }
+};
