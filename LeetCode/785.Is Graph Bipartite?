@@ -40,26 +40,29 @@ Note:
 Solution:
 class Solution {
 public:
-    // 染色法 BFS
+    /*
+        利用染色法,一条边的两个节点分别染上不同颜色 并利用BFS
+        如果所有边都可以染色成功那么就是bipartite 如果出现冲突就不是
+    */
     bool isBipartite(vector<vector<int>>& graph) {
-        int n=graph.size();
-        vector<int> color(n,-1);//初始化
+        int n=graph.size(); // 节点数
+        vector<int> color(n,-1); // -1未染色 0,1分别为两种颜色
         for(int i=0;i<n;i++){
-            if(color[i]==-1&&graph[i].size()>0){
-                //还未染色
+            if(color[i]==-1 && graph[i].size()>0){
                 color[i]=1;
                 queue<int> q;
                 q.push(i);
                 while(!q.empty()){
                     int cur=q.front();
                     q.pop();
-                    for(auto j:graph[cur]){
-                        if(color[j]==-1){
-                            color[j]=1-color[cur];
-                            q.push(j);
-                        }
-                        else if(color[j]==color[cur])
+                    for(auto &v:graph[cur]){
+                        if(color[v]==-1){
+                            color[v]=1-color[cur];
+                            q.push(v);
+                        }else if(color[v]==color[cur]){
+                            // 出现冲突
                             return false;
+                        }
                     }
                 }
             }
