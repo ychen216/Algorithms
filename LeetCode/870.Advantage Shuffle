@@ -1,0 +1,124 @@
+870. Advantage Shuffle
+
+/*
+Given two arrays A and B of equal size, the advantage of A with respect to B is the number of indices i for which A[i] > B[i].
+
+Return any permutation of A that maximizes its advantage with respect to B.
+
+Example 1:
+Input: A = [2,7,11,15], B = [1,10,4,11]
+Output: [2,11,7,15]
+
+Example 2:
+Input: A = [12,24,8,32], B = [13,25,32,11]
+Output: [24,32,8,12]
+
+Note:
+  1 <= A.length = B.length <= 10000
+  0 <= A[i] <= 10^9
+  0 <= B[i] <= 10^9
+*/
+Solution 1:MEL
+class Solution {
+public:
+    /*
+        题意:给定两个大小相等的数组 A 和 B，A相对于B的优势可以用满足 A[i] > B[i] 的索引i的数目来描述。
+        返回A的任意排列，使其相对于B的优势最大化。
+        对于第i位 最经济的方式就是利用最小的A[j]>B[i]放在第i位 如果没有这样的A[j]那么就选择最小的A放在i位  类似于田忌赛马
+    */
+    vector<int> advantageCount(vector<int>& A, vector<int>& B) {
+        int n=A.size();
+        unordered_map<int,int> mmp; // number,index in B
+        for(int i=0;i<n;i++)
+            mmp[B[i]]=i;
+        sort(A.begin(),A.end());
+        sort(B.begin(),B.end());
+        vector<int> res(n,-1);
+        vector<int> nouse;
+        int i=0,j=0;
+        while(i<n && j<n){
+            if(A[i]>B[j]){
+                res[mmp[B[j]]]=A[i];
+                i++;j++;
+            }else{
+                nouse.push_back(A[i]);
+                i++;
+            }
+        }
+
+        for(int i=0;i<n && nouse.size()>0;i++){
+            if(res[i]==-1){
+                res[i]=nouse.back(); // 可以随意放入任意一个
+                nouse.pop_back();
+            }
+        }
+        return res;
+    }
+};
+
+update:
+class Solution {
+public:
+    /*
+        题意:给定两个大小相等的数组 A 和 B，A相对于B的优势可以用满足 A[i] > B[i] 的索引i的数目来描述。
+        返回A的任意排列，使其相对于B的优势最大化。
+        对于第i位 最经济的方式就是利用最小的A[j]>B[i]放在第i位 如果没有这样的A[j]那么就选择最小的A放在i位  类似于田忌赛马
+    */
+    vector<int> advantageCount(vector<int>& A, vector<int>& B) {
+        int n=A.size();
+        vector<pair<int,int>> pairB; // number,index in B
+        for(int i=0;i<n;i++)
+            pairB.push_back({B[i],i});
+        sort(A.begin(),A.end());
+        sort(pairB.begin(),pairB.end());
+        vector<int> res(n,-1);
+        vector<int> nouse;
+        int i=0,j=0;
+        while(i<n && j<n){
+            if(A[i]>pairB[j].first){
+                res[pairB[j].second]=A[i];
+                i++;j++;
+            }else{
+                nouse.push_back(A[i]);
+                i++;
+            }
+        }
+
+        for(int i=0;i<n && nouse.size()>0;i++){
+            if(res[i]==-1){
+                res[i]=nouse.back(); // 可以随意放入任意一个
+                nouse.pop_back();
+            }
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        题意:给定两个大小相等的数组 A 和 B，A相对于B的优势可以用满足 A[i] > B[i] 的索引i的数目来描述。
+        返回A的任意排列，使其相对于B的优势最大化。
+        对于第i位 最经济的方式就是利用最小的A[j]>B[i]放在第i位 如果没有这样的A[j]那么就选择最小的A放在i位  类似于田忌赛马
+    */
+    vector<int> advantageCount(vector<int>& A, vector<int>& B) {
+        int n=A.size();
+        map<int,int> mmp; // number,counter
+        for(auto &a:A)
+            mmp[a]++;
+        vector<int> res;
+        for(auto &b:B){
+            auto p=mmp.upper_bound(b);
+            auto target=p;
+            if(target==mmp.end()) // 没有可以战胜的 就选择最小的
+                target=mmp.begin();
+            res.push_back(target->first);
+            if(target->second==1)
+                mmp.erase(target->first);
+            else
+                mmp[target->first]--;
+        }
+        return res;
+    }
+};
