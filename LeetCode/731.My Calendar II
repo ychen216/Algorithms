@@ -50,7 +50,7 @@ class MyCalendarTwo {
         for(Integer i:map.values()){
             cnt+=i;//记录当前已开始但未结束的事件个数
             if(cnt>2){//如果事件个数>2，则说明有三个或者以上的重叠，不满足条件，要取消刚刚的插入
-                if(a==0)
+                if(a==0)//如果插入前的个数为0则可以直接删除这条记录，否则对次数进行更改
                     map.remove(start);
                 else
                     map.put(start,a);
@@ -64,9 +64,72 @@ class MyCalendarTwo {
         return true;
     }
 }
+C++ version:
+class MyCalendarTwo {
+public:
+    // TreeMap记录事件开始和结束时间 维护当前还未结束的事件数目
+    MyCalendarTwo() {
+        
+    }
+    
+    bool book(int start, int end) {
+        auto ps=books.find(start);
+        auto pe=books.find(end);
+        int a=0,b=0;
+        if(ps!=books.end())
+            a=ps->second;
+        if(pe!=books.end())
+            b=pe->second;
+        books[start]=a+1;
+        books[end]=b-1;
+        int unfinished=0;
+        for(auto &p: books){
+            unfinished+=p.second;
+            if(unfinished>2){
+                // 有3或3个以上重叠发生
+                if(a==0) // 原来不存在 直接移除
+                    books.erase(start);
+                else
+                    books[start]=a;
+                if(b==0)
+                    books.erase(end);
+                else
+                    books[end]=b;
+                return false;
+            }
+        }
+        return true;
+    }
+private:
+    map<int,int> books;
+};
 
-/**
- * Your MyCalendarTwo object will be instantiated and called as such:
- * MyCalendarTwo obj = new MyCalendarTwo();
- * boolean param_1 = obj.book(start,end);
- */
+
+Solution 2:
+class MyCalendarTwo {
+public:
+    /*
+        利用两个vector:overlap存储已经overlap的区间的位置,books存储成功加入的events
+    */
+    MyCalendarTwo() {
+        
+    }
+    
+    bool book(int start, int end) {
+        // overlap中的子区间都是已经有两个event重叠了,如果还有重叠的就到达3个
+        for(auto &p:overlap){
+            if(max(start,p.first) < min(end,p.second))
+                return false;
+        }
+        // [start,end)可以成功插入 更新overlap
+        for(auto &p:books){
+            if(max(start,p.first) < min(end,p.second))
+                overlap.push_back({max(start,p.first),min(end,p.second)});
+        }
+        books.push_back({start,end});
+        return true;
+    }
+private:
+    vector<pair<int,int>> books;
+    vector<pair<int,int>> overlap;
+};
