@@ -1,0 +1,81 @@
+915. Partition Array into Disjoint Intervals
+
+/*
+Given an array A, partition it into two (contiguous) subarrays left and right so that:
+
+Every element in left is less than or equal to every element in right.
+left and right are non-empty.
+left has the smallest possible size.
+Return the length of left after such a partitioning.  It is guaranteed that such a partitioning exists.
+
+Example 1:
+Input: [5,0,3,8,6]
+Output: 3
+Explanation: left = [5,0,3], right = [8,6]
+
+Example 2:
+Input: [1,1,1,0,6,12]
+Output: 4
+Explanation: left = [1,1,1,0], right = [6,12]
+
+Note:
+  2 <= A.length <= 30000
+  0 <= A[i] <= 10^6
+  It is guaranteed there is at least one way to partition A as described.
+
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        要求left数组的每一个元素都不大于right数组的每一个元素 即左边元素的最大值不大于右边元素的最小值
+        分别统计左边子数组元素的最大值和右边子数组的最小值
+        left[i]表示在i元素之前且包含i的数字中 最大值
+        right[j]表示在j元素之后的数字中 最小值
+    */
+    int partitionDisjoint(vector<int>& A) {
+        int n=A.size();
+        vector<int> left(n,-1),right(n,INT_MAX);
+        left[0]=A[0];
+        for(int i=1;i<n;i++)
+            left[i]=max(left[i-1],A[i]);
+        for(int j=n-2;j>=0;j--)
+            right[j]=min(right[j+1],A[j+1]);
+        for(int i=0;i<n;i++)
+            if(left[i]<=right[i])
+                return i+1;
+        return 0;
+    }
+};
+
+Solution 2: one-pass
+class Solution {
+public:
+    /*
+        要求left数组的每一个元素都不大于right数组的每一个元素 即左边元素的最大值不大于右边元素的最小值
+        suppose the original left subarray is from 0 to partitionIdx, the max value of that is localMax. 
+        If it is a valid partition, every value from partitionIdx + 1 to end should be >= localMax. 
+        But if we find a value in the right part, a[i], is smaller than localMax, which means the partition is not correct 
+        and we have to incorporate a[i] to form the left subarray. So the partitionIdx is set to be i, 
+        and we have to recalculate the max value of the new left subarray.(recorded in max)
+    */
+    int partitionDisjoint(vector<int>& A) {
+        int n=A.size();
+        int leftMax=A[0],partition=0,globalMax=A[0];
+        // partition是划分点 leftMax记录[0,partition]的最大值
+        // globalMax记录所有已经见过的元素中的最大值 globalMax必然出现在右边
+        for(int i=1;i<n;i++){
+            if(leftMax>A[i]){
+                // 在右侧出现元素A[i]小于左侧元素 则要重新划分 使得左侧元素包含A[i]
+                // 且更新左侧元素的最大值 为当前见过的所有元素中的最大值
+                partition=i;
+                leftMax=globalMax;
+            }else{
+                // localMax<=A[i]
+                globalMax=max(globalMax,A[i]);
+            }
+        }
+        return partition+1;
+    }
+};
