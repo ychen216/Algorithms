@@ -33,3 +33,19 @@ public:
         return left;  
     }
 };
+update: 二分的不同写法
+class Solution {
+public:
+    // 找到第一个下降的元素 nums[mid]>nums[mid+1]
+    int findPeakElement(vector<int>& nums) {
+        int low=0,high=nums.size()-1;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(mid==nums.size()-1 || nums[mid]>nums[mid+1])
+                high=mid-1;
+            else
+                low=mid+1;
+        }
+        return low;
+    }
+};
