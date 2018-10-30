@@ -28,17 +28,52 @@ Solution:
  */
 class Solution {
 public:
-    //sum代表上层节点之和
+    //sum代表上层路径之和
     int helper(TreeNode*root,int sum){
         if(root==NULL)
             return 0;
-        else if(!root->left&&!root->right)
-            return sum*10+root->val;
+        sum=sum*10+root->val;
+        if(!root->left&&!root->right)
+            return sum;
         else
-            return helper(root->left,sum*10+root->val)+helper(root->right,sum*10+root->val);
+            return helper(root->left,sum)+helper(root->right,sum);
     }
     
     int sumNumbers(TreeNode* root) {
         return helper(root,0);
+    }
+};
+
+update:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int sumNumbers(TreeNode* root) {
+        int res=0;
+        helper(root,0,res);
+        return res;
+    }
+private:
+    void helper(TreeNode *root,int preSum,int &res){
+        if(!root)
+            return;
+        // update preSum
+        preSum=preSum*10+root->val;
+        if(!root->left&&!root->right){
+            res+=preSum;
+            return;
+        }
+        if(root->left)
+            helper(root->left,preSum,res);   
+        if(root->right)
+            helper(root->right,preSum,res);
     }
 };
