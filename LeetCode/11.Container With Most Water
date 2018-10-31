@@ -34,3 +34,25 @@ public:
         return ans;
     }
 };
+
+Solution 2:
+class Solution {
+public:
+    /*
+        从两端开始遍历 逐渐将范围向中间缩 
+        两根柱子能够蓄水的多少取决于: 1.柱子之间的距离 2.两个柱子中较短的那个的高度
+        在两端的柱子i,j之间距离远 中间的柱子i',j'想要蓄水比他多 
+        那么必须i',j'中最短柱子比两端的柱子的最小值都高才有可能也就是i'j'都要高于min(i,j)
+    */
+    int maxArea(vector<int>& height) {
+        int area=0;
+        int i=0,j=height.size()-1;
+        while(i<j){
+            int minHeight=min(height[i],height[j]);
+            area=max(area,minHeight*(j-i));
+            while(i<j&&height[i]<=minHeight)i++;
+            while(i<j&&height[j]<=minHeight)j--;
+        }
+        return area;
+    }
+};
