@@ -34,3 +34,86 @@ public:
         return maxLen;
     }
 };
+另一种写法：
+class Solution {
+public:
+    // 最长递增子序列
+    // dp[i]=max(dp[j]+1,dp[i]) j<i &&dp[j]<dp[i]
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return n;
+        vector<int> dp(n,1);
+        int longest=1;
+        for(int i=1;i<n;i++){
+            for(int j=0;j<i;j++)
+                if(nums[j]<nums[i]&&dp[j]>=dp[i])
+                    dp[i]=dp[j]+1;
+            longest=max(longest,dp[i]);
+        }
+        return longest;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*  最长递增子序列 O(NlgN)
+        tails[i]存储长度为i+1的LIS中末尾元素最小的元素,那么tails是一个递增序列 
+        比如要形成长度为2的LIS那么 序列中的第二个元素的最小值必然要大于长度为1的LIS序列的最小值
+        我们可以利用二分查找第一个>=当前number的(再往前一个就小于number 那么number必然就是比前一个能构成的LIS长一个长度 也就是更新在第一个>=的地方)
+        eg:nums = [4,5,6,3], then all the available increasing subsequences are:
+        len = 1   :      [4], [5], [6], [3]   => tails[0] = 3
+        len = 2   :      [4, 5], [5, 6]       => tails[1] = 5
+        len = 3   :      [4, 5, 6]            => tails[2] = 6
+    */
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return n;
+        vector<int> tails(n,0);
+        int curLen=0;
+        for(int i=0;i<n;i++){
+            int low=0,high=curLen-1;
+            while(low<=high){
+                int mid=low+(high-low)/2;
+                if(tails[mid]>=nums[i])
+                    high=mid-1;
+                else
+                    low=mid+1;
+            }
+            tails[low]=nums[i];
+            if(low==curLen)
+                curLen++;
+        }
+        return curLen;
+    }
+};
+
+或
+class Solution {
+public:
+    /*  最长递增子序列 O(NlgN)
+        tails[i]存储长度为i+1的LIS中末尾元素最小的元素,那么tails是一个递增序列 
+        比如要形成长度为2的LIS那么 序列中的第二个元素的最小值必然要大于长度为1的LIS序列的最小值
+        我们可以利用二分查找第一个>=当前number的(再往前一个就小于number 那么number必然就是比前一个能构成的LIS长一个长度 也就是更新在第一个>=的地方)
+        eg:nums = [4,5,6,3], then all the available increasing subsequences are:
+        len = 1   :      [4], [5], [6], [3]   => tails[0] = 3
+        len = 2   :      [4, 5], [5, 6]       => tails[1] = 5
+        len = 3   :      [4, 5, 6]            => tails[2] = 6
+    */
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return n;
+        vector<int> tails;
+        for(int i=0;i<n;i++){
+            auto bigger=lower_bound(tails.begin(),tails.end(),nums[i]);
+            if(bigger==tails.end())
+                tails.push_back(nums[i]);
+            else
+                *bigger=nums[i];
+        }
+        return tails.size();
+    }
+};
