@@ -117,3 +117,39 @@ public:
         return tails.size();
     }
 };
+
+Solution 3:
+也可以是查找最后一个小于number的数
+class Solution {
+public:
+    /*  最长递增子序列 O(NlgN)
+        tails[i]存储长度为i+1的LIS中末尾元素最小的元素,那么tails是一个递增序列 
+        比如要形成长度为2的LIS那么 序列中的第二个元素的最小值必然要大于长度为1的LIS序列的最小值
+        我们可以利用二分查找最后一个<当前number的
+        eg:nums = [4,5,6,3], then all the available increasing subsequences are:
+        len = 1   :      [4], [5], [6], [3]   => tails[0] = 3
+        len = 2   :      [4, 5], [5, 6]       => tails[1] = 5
+        len = 3   :      [4, 5, 6]            => tails[2] = 6
+    */
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return n;
+        vector<int> tails(n,0);
+        int curLen=0;
+        for(int i=0;i<n;i++){
+            int low=0,high=curLen-1;
+            while(low<=high){
+                int mid=low+(high-low)/2;
+                if(tails[mid]<nums[i])
+                    low=mid+1;
+                else
+                    high=mid-1;
+            }
+            tails[high+1]=nums[i];
+            if(high+1==curLen)
+                curLen++;
+        }
+        return curLen;
+    }
+};
