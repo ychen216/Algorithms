@@ -22,6 +22,7 @@ class Solution {
 public:
     /*
         通过观察可以看出：出现次数最多的字母个数 - 1 > 其他所有字母出现次数和,此时必有两个出现次数最多的字母连在一起.反之，必能形成一个隔一个的情形
+        或是 出现次数最多的字母个数超过总数的一半
         贪心 利用最大堆实现 先尽量用频次高的元素；若一轮使用后还有剩余，则交给子问题
         将字母按照出现次数从大到小排序,每次优先选择剩余次数最多,且与新字符串末尾字符串不重复的字符,排在末尾
         若某次选择无法找出这样的字符,则返回空串
@@ -60,6 +61,51 @@ public:
                 if(--node2.second>0)
                     pq.push(node2);
                 pq.push(node1);//node1没有被消耗 需要入队
+            }
+        }
+        return res;
+    }
+};
+
+改写:
+class Solution {
+public:
+    // 当出现次数最多的字符超过总长度一半的时候 必然不能满足要求;反之,必然可以满足要求
+    // 构建结果字符串的时候 可以按照最常出现的字符a 次常出现的字符b这样交替组合 按照 a,b,a,b,a,c,d
+    // 可以利用最大堆完成该操作
+    // 构建字符串时要注意 每次优先选择剩余次数最多的字符,且与结果串末尾字符串不重复的字符,排在末尾
+    string reorganizeString(string S) {
+        int cnt[26]={0};
+        int len=S.length();
+        for(auto c:S){
+            cnt[c-'a']++;
+            if(cnt[c-'a']>(len+1)/2)
+                return "";
+        }
+        // 定义最大堆的
+        priority_queue<pair<int,char>> pq;
+        for(int i=0;i<26;i++){
+            if(cnt[i]>0)
+                pq.push({cnt[i],i+'a'});
+        }
+        string res="";
+        while(!pq.empty()){
+            pair<int,char> cur=pq.top();
+            pq.pop();
+            if(res.length()==0||res.back()!=cur.second){
+                res+=cur.second;
+                cur.first--;
+                if(cur.first>0)
+                    pq.push(cur);
+            }else{
+                // 取当前有着次多次数的
+                pair<int,char> nextBig=pq.top();
+                pq.pop();
+                res+=nextBig.second;
+                nextBig.first--;
+                if(nextBig.first>0)
+                    pq.push(nextBig);
+                pq.push(cur);
             }
         }
         return res;
