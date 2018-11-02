@@ -138,3 +138,35 @@ public:
     }
     
 };
+update:
+
+class Solution {
+public:
+    // BFS
+    int widthOfBinaryTree(TreeNode* root) {
+        if(!root)
+            return 0;
+        int maxWidth=0;
+        queue<pair<TreeNode *,int>> q; // node,id
+        q.push({root,1});
+        // cur id=x 则 cur的左孩子id 2*x 右孩子 2*x+1
+        while(!q.empty()){
+            int size=q.size();
+            int firstId,lastId;
+            for(int i=0;i<size;i++){
+                auto cur=q.front();
+                q.pop();
+                if(i==0)
+                    firstId=cur.second;
+                if(i==size-1)
+                    lastId=cur.second;
+                if(cur.first->left)
+                    q.push({cur.first->left,cur.second*2});
+                if(cur.first->right)
+                    q.push({cur.first->right,cur.second*2+1});
+            }
+            maxWidth=max(maxWidth,lastId-firstId+1);
+        }
+        return maxWidth;
+    }
+};
