@@ -14,7 +14,7 @@ Given [5, 4, 3, 2, 1],
 return false.
 */
 
-Solution:TLE 最长不递减子序列
+Solution:TLE 最长递增子序列
 class Solution {
 public:
     bool increasingTriplet(vector<int>& nums) {
@@ -34,6 +34,70 @@ public:
         return false;
     }
 };
+
+update 改写为nlgn的算法 可以通过
+以下是两种实现
+class Solution {
+public:
+    /*
+        有2种方式
+        1. 最长递增子序列 看其长度是否>=3 O(nlgn)
+        2. 利用两个变量记录目前遇到的最小值和次小值 O(n) 具体参见代码
+    */
+    bool increasingTriplet(vector<int>& nums) {
+        // LIS  O(nlgn)
+        int n=nums.size();
+        if(n<3)
+            return false;
+        int tails[n]={0};
+        int curLen=0;
+        for(auto num:nums){
+            int low=0,high=curLen-1;
+            // 找到第一个>=num的
+            while(low<=high){
+                int mid=low+(high-low)/2;
+                if(tails[mid]>=num)
+                    high=mid-1;
+                else
+                    low=mid+1;
+            }
+            tails[low]=num;
+            if(low==curLen)
+                curLen++;
+            if(curLen>=3)
+                return true;
+        }
+        return false;
+    }
+};
+
+class Solution {
+public:
+    /*
+        有2种方式
+        1. 最长递增子序列 看其长度是否>=3 O(nlgn)
+        2. 利用两个变量记录目前遇到的最小值和次小值 O(n) 具体参见代码
+    */
+    bool increasingTriplet(vector<int>& nums) {
+        // LIS  O(nlgn)
+        int n=nums.size();
+        if(n<3)
+            return false;
+        vector<int> tails;
+        for(auto num:nums){
+            // 第一个>=num的
+            auto p=lower_bound(tails.begin(),tails.end(),num);
+            if(p==tails.end())
+                tails.push_back(num);
+            else
+                *p=num;
+            if(tails.size()>=3)
+                return true;
+        }
+        return false;
+    }
+};
+
 
 Solution 2:
 class Solution {
@@ -55,3 +119,43 @@ public:
         return false;
     }
 };
+
+
+
+class Solution {
+public:
+    /*
+        有2种方式
+        1. 最长递增子序列 看其长度是否>=3 O(nlgn)
+        2. 利用两个变量记录目前遇到的最小值和次小值 O(n) 具体参见代码
+    */
+    bool increasingTriplet(vector<int>& nums) {
+        int size=nums.size();
+        if(size<3)
+            return false;
+        int m1=INT_MAX,m2=INT_MAX;
+        for(int i=0;i<size;i++){
+            if(nums[i]>m2) // 此时已经构成长度为3的递增子序列
+                return true;
+            /*
+                如果当前数字num<=m1 那么更新m1 更新后记为m1' 这里必须是<=条件 否则m2可能被更新为等于m1的数字 不满足递增条件
+                此时m2还维护着一个值保持 m1<m2 如果后面遇到一个值x>m2 
+                那么还是能够构成长度为3的递增子序列 m1<m2<x
+            */
+            if(nums[i]<=m1)
+                m1=nums[i];
+            else if(nums[i]<=m2){
+                /*  
+                    如果当前数字num=>m1 && num<m2 那么更新m2 更新后记为m2'
+                    m1<m2'<m2  如果后面遇到一个值x>m2'
+                    那么还是能够构成长度为3的递增子序列 m1<m2'<x
+                */
+                m2=nums[i];
+            }
+            /*
+                这样使得m2维护着一个值使得存在一个数 x使得 x<m2 且x出现在m2之前
+            */
+        }
+        return false;
+    }
+};update:
