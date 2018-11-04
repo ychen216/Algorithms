@@ -59,3 +59,64 @@ class Solution {
         return res;
     }
 }
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        很直接的方式 一个个字符遍历 分别统计x的系数和实数的和
+        要注意在等号右边的 各个系数都应该乘以-1 以示区别
+        x+2x-6+3=x-10+3
+        x的系数 1+2-1(右边的一个x)=2
+        实数 -6+3+10-3(加上右边的两个数的相反数)=4
+        最后的解 应该为 2x=-4 x=-2 就是 x的系数=我们统计的实数的相反数
+        在实现的时候要注意sign每使用一次就要复位一次 否则会传递
+    */
+    string solveEquation(string equation) {
+        int x_coeff=0,real=0; // x的系数 实数
+        int isleft=1,sign=1; // 等式左边还是右边 是正负号
+        int len=equation.length();
+        for(int i=0;i<len;i++){
+            // 首先判定 等式左边还是右边 然后判定系数的符号
+            if(equation[i]=='='){
+                isleft=-1; //转变 所有系数都取相反数
+            }
+            else if(equation[i]=='+'){
+                sign=1; // 系数是正的
+            }
+            else if(equation[i]=='-'){
+                sign=-1; //系数是负数
+            }
+            else if(isdigit(equation[i])){
+                int temp=0; // 统计系数或者实数
+                while(i<len&&isdigit(equation[i])){
+                    temp=temp*10+equation[i]-'0';
+                    i++;
+                }
+                if(i<len&&equation[i]=='x')
+                    x_coeff+=isleft*sign*temp;
+                else{
+                    real+=isleft*sign*temp;
+                    // 此时i已经跳到数字以后的下一个字符了 再加上for循环自动的i++
+                    // 就跳到下下个字符了 所以应该减一个
+                    i--;
+                }
+                // 在每一个sign用完后都要复位成1 避免前一个数的符号影响到后一个数
+                // eg. 2x+3x-6x=x-2 在-6x的时候会把sign=1带到x
+                sign=1;
+            }else{
+                // equation[i]==x 没有数字系数 系数为1
+                x_coeff+=isleft*sign;
+                sign=1; //同理要复位1 -x=1 -1会传给1
+            }
+        }
+        
+        if(x_coeff==0&&real==0)
+            return "Infinite solutions";
+        else if(x_coeff==0&&real!=0)
+            return "No solution";
+        else
+            return "x="+to_string(-1*real/x_coeff);
+    }
+};
