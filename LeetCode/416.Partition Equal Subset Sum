@@ -68,3 +68,23 @@ public:
         return dp[target];
     }
 };
+
+class Solution {
+public:
+    // 是否可以将一个数组分成两个子数组 他们的元素和相等
+    // 利用0/1背包 看是否能构成容量恰好为 sum/2的背包
+    bool canPartition(vector<int>& nums) {
+        int sum=0;
+        for(auto num:nums)
+            sum+=num;
+        if(sum&1)
+            return false;
+        int target=sum/2;
+        vector<bool> dp(target+1,false);
+        dp[0]=true;
+        for(auto num:nums)
+            for(int i=target;i>=num;i--)
+                dp[i]=dp[i]||dp[i-num];
+        return dp[target];
+    }
+};
