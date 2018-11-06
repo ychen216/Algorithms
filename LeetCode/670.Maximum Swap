@@ -18,26 +18,29 @@ The given number is in the range [0, 108]
 
 Solution:
 class Solution {
-    //记录0-9每个数字最后出现的位置 因为要得到最大数字 一定是从最低位交换最大数字到最高位
-    //然后再次扫描数字 要确保要交换的数字在当前位置的右边
-    public int maximumSwap(int num) {
-        char[] snum=Integer.toString(num).toCharArray();
-        int []pos = new int[10];
-        //记录每个数字出现的最后位置
-        for(int i=0;i<snum.length;i++)
-            pos[snum[i]-'0']=i;
-        //从高位到低位寻找要替换的数字
-        for(int i=0;i<snum.length;i++){
-            //寻找比该位大的数字
-            for(int k=9;k>snum[i]-'0';k--){
+public:
+    /*
+        最多交换两个数 构成最大的数
+        我们很自然想到 优先将最高位换成较大的数 
+        那么从低位选择一个比最高位大的数中最大的数x 有可能有多个x 那么我们要选择较低位的x 比如 1299 -> 9291 > 9219
+        记录下每个数字出现的最低位的位置
+    */
+    int maximumSwap(int num) {
+        string digit=to_string(num);
+        vector<int> pos(10,-1);
+        for(int i=0;i<digit.length();i++)
+            pos[digit[i]-'0']=i;
+        // 从高位找要替换的数字
+        for(int i=0;i<digit.length();i++){
+            // 找到比该位数字大的 且在低位的数字(在右侧)
+            for(int k=9;k>digit[i]-'0';k--){
                 if(pos[k]>i){
-                    char temp=snum[i];
-                    snum[i]=snum[pos[k]];
-                    snum[pos[k]]=temp;
-                    return Integer.valueOf(new String(snum));
+                    swap(digit[i],digit[pos[k]]);
+                    return stoi(digit);
                 }
             }
         }
+        // 原数字已经是最大的 eg.9921
         return num;
     }
-}
+};
