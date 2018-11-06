@@ -23,27 +23,34 @@ Output: 2
 Explanation: You could form "10", but then you'd have nothing left. Better form "0" and "1".
 */
 
-Solution:
 class Solution {
 public:
-    // 01 背包问题
+    /*
+        一个二维的0,1背包问题 每一个串就是放或者不放
+        第一个背包装0 容量为m 第二个背包装1 容量为n
+        求dp[m][n]最多能装多少个东西
+        dp[i][j]=max(dp[i][j],dp[i-a][j-b]+1) a个0 b个1的串 a<=i && b<=j
+    */
     int findMaxForm(vector<string>& strs, int m, int n) {
-        int dp[m+1][n+1];
-        memset(dp,0,sizeof(dp));
-        int zeronum,onenum;
-        for(auto &s:strs){
-            zeronum=onenum=0;
-            for(auto &c:s){
-                if(c=='0')
-                    zeronum++;
-                else
-                    onenum++;
-            }
-            for(int i=m;i>=zeronum;i--){
-                for(int j=n;j>=onenum;j--)
-                    dp[i][j]=max(dp[i-zeronum][j-onenum]+1,dp[i][j]);
-            }
+        vector<vector<int>> dp(m+1,vector<int>(n+1,0));
+        int num0,num1;
+        for(auto &str:strs){
+            cal01(str,num0,num1);
+            for(int c0=m;c0>=num0;c0--)
+                for(int c1=n;c1>=num1;c1--){
+                    dp[c0][c1]=max(dp[c0][c1],dp[c0-num0][c1-num1]+1);
+                }
         }
         return dp[m][n];
+    }
+private:
+    void cal01(const string &s,int &num0, int &num1){
+        num0=num1=0;
+        for(auto c:s){
+            if(c=='0')
+                num0++;
+            else
+                num1++;
+        }
     }
 };
