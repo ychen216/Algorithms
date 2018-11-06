@@ -14,42 +14,42 @@ Although the above answer is in lexicographical order, your answer could be in a
 Solution 1：
 class Solution {
 public:
-    //利用queue
+    // 利用队列
     vector<string> letterCombinations(string digits) {
-        int len=digits.length();
-        if(len==0)
+        if(digits=="")
             return {};
-        map<char,vector<char>> mmap;
-        mmap['1']={'1'};
-        mmap['2']={'a','b','c'};
-        mmap['3']={'d','e','f'};
-        mmap['4']={'g','h','i'};
-        mmap['5']={'j','k','l'};
-        mmap['6']={'m','n','o'};
-        mmap['7']={'p','q','r','s'};
-        mmap['8']={'t','u','v'};
-        mmap['9']={'w','x','y','z'};
-        mmap['0']={'0'};
+        unordered_map<char,vector<char>> dic;
+        init(dic);
+        vector<string> res;
         queue<string> q;
         q.push("");
-        for(int i=0;i<len;i++){
-            vector<char> v=mmap[digits[i]];//第i个数字可能对应的字母
-            int qsize=q.size();
-            for(int j=0;j<qsize;j++){
-                string base=q.front();
+        // 相当于一层一层构建 在原来的字符串基础上加上当前数字能转换的字符
+        for(int i=0;i<digits.length();i++){
+            int size=q.size();
+            for(int j=0;j<size;j++){
+                string cur=q.front();
                 q.pop();
-                for(auto&c:v){
-                    string temp=base+c;
-                    q.push(temp);
+                for(auto c:dic[digits[i]]){
+                    q.push(cur+c);
                 }
             }
         }
-        vector<string> res;
         while(!q.empty()){
             res.push_back(q.front());
             q.pop();
         }
         return res;
+    }
+private:
+    void init(unordered_map<char,vector<char>> &dic){
+        dic['2']={'a','b','c'};
+        dic['3']={'d','e','f'};
+        dic['4']={'g','h','i'};
+        dic['5']={'j','k','l'};
+        dic['6']={'m','n','o'};
+        dic['7']={'p','q','r','s'};
+        dic['8']={'t','u','v'};
+        dic['9']={'w','x','y','z'};
     }
 };
 
@@ -87,5 +87,44 @@ public:
         }
         
         return res;
+    }
+};
+
+
+Solution 3: recursive
+class Solution {
+public:
+    vector<string> letterCombinations(string digits) {
+        if(digits=="")
+            return {};
+        unordered_map<char,vector<char>> dic;
+        init(dic);
+        vector<string> res;
+        string cur="";
+        helper(digits,dic,res,0,cur);
+        return res;
+    }
+private:
+    void helper(const string &digit,unordered_map<char,vector<char>> &dic,vector<string>&res,int start,string &cur){
+        if(start==digit.length()){
+            res.push_back(cur);
+            return;
+        }
+        // 选择该位数字 可以映射的字母
+        for(auto c:dic[digit[start]]){
+            cur+=c;
+            helper(digit,dic,res,start+1,cur);
+            cur.pop_back();
+        }
+    }
+    void init(unordered_map<char,vector<char>> &dic){
+        dic['2']={'a','b','c'};
+        dic['3']={'d','e','f'};
+        dic['4']={'g','h','i'};
+        dic['5']={'j','k','l'};
+        dic['6']={'m','n','o'};
+        dic['7']={'p','q','r','s'};
+        dic['8']={'t','u','v'};
+        dic['9']={'w','x','y','z'};
     }
 };
