@@ -76,3 +76,47 @@ public:
         return right;  
     }
 };
+
+
+Solution 2:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // 删除key 返回树的根节点
+    TreeNode* deleteNode(TreeNode* root, int key) {
+        if(!root)
+            return NULL;
+        if(root->val==key){
+            if(!root->left)
+                return root->right;
+            if(!root->right)
+                return root->left;
+            // 既有左节点又有右节点 利用右子树的最小节点(最左节点)替代root
+            int minValue=findMin(root->right);
+            root->val=minValue;
+            //要递归的删去被替换的最小值节点 不能直接将他的值赋值为null 会破坏结构 
+            //比如最小值节点还有右子树 直接设为null 则会丢失右子树
+            root->right=deleteNode(root->right,minValue);
+        }else if(root->val > key){
+            root->left=deleteNode(root->left,key);
+        }else{
+            root->right=deleteNode(root->right,key);
+        }
+        return root;
+    }
+private:
+    // 找到root的最左节点
+    int findMin(TreeNode *root){
+        while(root->left)
+            root=root->left;
+        return root->val;
+    }
+};
