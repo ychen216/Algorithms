@@ -19,7 +19,8 @@ One possible answer is: [0,-3,9,-10,null,5], which represents the following heig
  -10  5
 
 */
-Solution:
+
+Solution 1:
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -39,19 +40,50 @@ Solution:
  */
 class Solution {
 public:
+    // 将元素保存在数组中 利用数组构建BST 每次取子数组的中间元素构建子树的根节点
+    TreeNode* sortedListToBST(ListNode* head) {
+        if(head==NULL)
+            return NULL;
+        vector<int> nums;
+        while(head){
+            nums.push_back(head->val);
+            head=head->next;
+        }
+        TreeNode *root=buildBST(nums,0,nums.size()-1);
+        return root;
+    }
+private:
+    TreeNode *buildBST(vector<int>&nums,int s,int e){
+        if(s>e)
+            return NULL;
+        int mid=s+(e-s)/2;
+        TreeNode *root=new TreeNode(nums[mid]);
+        root->left=buildBST(nums,s,mid-1);
+        root->right=buildBST(nums,mid+1,e);
+        return root;
+    }
+};
+
+
+Solution 2:
+
+class Solution {
+public:
+    // 利用快慢指针找中间节点 构建BST
     TreeNode* sortedListToBST(ListNode* head) {
         if(head==NULL)
             return NULL;
         return buildBST(head,NULL);
     }
+private:
+    // tail指的是在构建区间后的一个节点 eg 1->2->3->NULL  起始调用为 buildBST(1,NULL) 构建的区间为1~3
     TreeNode *buildBST(ListNode *head,ListNode *tail){
         if(head==tail)
             return NULL;
         ListNode *fast=head,*slow=head;
-        //找中间节点
-        while(fast!=tail&&fast->next!=tail){
-            slow=slow->next;
+        while(fast->next!=tail&&fast->next->next!=tail){
             fast=fast->next->next;
+            slow=slow->next;
         }
         TreeNode *root=new TreeNode(slow->val);
         root->left=buildBST(head,slow);
