@@ -49,3 +49,41 @@ public:
         return res;
     }
 };
+
+update: 更新 将划分的数组用引用变量
+class Solution {
+public:
+    /*
+        其实就是求字符串切割的所有可能 只是每一个子串都要是回文串
+        利用recursive求解
+    */
+    vector<vector<string>> partition(string s) {
+        vector<vector<string>> res;
+        vector<string> curPartition;
+        helper(res,curPartition,s,0);
+        return res;
+    }
+private:
+    void helper(vector<vector<string>> &res, vector<string> &curPartition, string &str, int start){
+        if(start == str.length()){
+            res.push_back(curPartition);
+            return;
+        }
+        // 当前要划分的字符串从start开始 尝试可行的所有
+        for(int i=start;i<str.length();i++){
+            if(!isPalindrome(str,start,i)) continue;
+            curPartition.push_back(str.substr(start, i-start+1));
+            helper(res,curPartition,str,i+1);
+            curPartition.pop_back();
+        }
+    }
+    bool isPalindrome(const string &str, int s, int e){
+        if(s>e)
+            return false;
+        while(s<e){
+            if(str[s++]!=str[e--])
+                return false;
+        }
+        return true;
+    }
+};
