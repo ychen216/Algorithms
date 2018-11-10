@@ -4,7 +4,7 @@
 Given a m x n matrix, if an element is 0, set its entire row and column to 0. Do it in place.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     //用行列数组记录 该行列是否在更新后需要变成零
@@ -23,5 +23,69 @@ public:
             for(int j=0;j<col;j++)
                 if(rowIsZero[i]||colIsZero[j])
                     matrix[i][j]=0;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        空间开销O(m+n)的方法很容易想到
+        这里要求空间开销为O(1),假设m*n的matrix
+        我们可以利用 matrix第一行n个元素 第一列m个元素分别记录 每一列、每一行是否需要置为0
+        同时matrix[0][0]同时记录了第0行和第0列是否需要置为0,会有冲突 我们还需要记录第一行第一列是否需要置为0 需要额外的两个变量
+        O(1)
+    */
+    void setZeroes(vector<vector<int>>& matrix) {
+        int m=matrix.size();
+        if(m==0)
+            return;
+        int n=matrix[0].size();
+        if(n==0)
+            return;
+        bool first_row=false, first_col=false;
+        
+        // 判断第一行
+        for(int j=0;j<n;j++){
+            if(matrix[0][j]==0){
+                first_row=true;
+                break;
+            }
+        }
+        // 判断第一列
+        for(int i=0;i<m;i++){
+            if(matrix[i][0]==0){
+                first_col=true;
+                break;
+            }   
+        }
+        
+        // 其他行列
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                if(matrix[i][j]==0){
+                    matrix[i][0]=0;
+                    matrix[0][j]=0;
+                }
+            }
+        }
+        
+        for(int i=1;i<m;i++){
+            for(int j=1;j<n;j++){
+                if(matrix[i][0]==0||matrix[0][j]==0)
+                    matrix[i][j]=0;
+            }
+        }
+        
+        // 看是否要设置第一行第一列
+        if(first_row){
+            for(int j=0;j<n;j++)
+                matrix[0][j]=0;
+        }
+        if(first_col){
+            for(int i=0;i<m;i++)
+                matrix[i][0]=0;
+        }
     }
 };
