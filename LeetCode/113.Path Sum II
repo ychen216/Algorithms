@@ -18,7 +18,7 @@ return
 ]
 */
 
-Solution:
+Solution 1:
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -51,5 +51,42 @@ public:
         vector<int> temp;
         travel(root,temp,0,sum,res);
         return res;
+    }
+};
+
+
+Solution 2：
+记录path的数组利用引用变量
+class Solution {
+public:
+    vector<vector<int>> pathSum(TreeNode* root, int sum) {
+        vector<vector<int>> res;
+        vector<int> path;
+        travel(res, root, path, 0, sum);
+        return res;
+    }
+private:
+    // 这里要注意 path用的是引用 所以要记得pop 否则就会记录所有经过的node
+    // path也可以不用引用 这样不需要额外的处理 但是要多次对数组进行赋值操作
+    void travel(vector<vector<int>> &res, TreeNode *root, vector<int> &path ,int curSum, int target){
+        if(root==NULL)
+            return;
+        curSum+=root->val;
+        path.push_back(root->val);
+        // 叶节点
+        if(!root->left && !root->right){
+            if(curSum==target){
+                res.push_back(path);   
+            }
+            return;
+        }
+        if(root->left){
+            travel(res, root->left, path, curSum,target);
+            path.pop_back(); // 避免引用带来的问题
+        }
+        if(root->right){
+            travel(res, root->right, path, curSum, target);
+            path.pop_back();
+        }
     }
 };
