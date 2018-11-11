@@ -60,3 +60,42 @@ public:
         return true;
     }
 };
+same idea 
+class Solution {
+public:
+    /*
+        判断一个不递减数组(可能包含重复元素)能否被分割成1个或是几个 连续递增的子序列 要求子序列的长度>=3且是连续的
+        满足要求的 数组eg.[1,2,3,4,5]可以分成1个长度为5的连续递增序列 [1,2,3,3,4,5]--> 1,2,3 3,4,5
+        那么分析一下做法 由于原数组是不递减的 那么碰上一个元素num 只有两种情况 符合要求:
+            1. 将num加入到一个已有序列的末尾
+            2. 以num为一个新序列的起始元素
+        利用两个map 一个map记录num出现的次数 
+        另一个map need维护当前已有的子序列期望的下一个元素的个数 
+        eg 已有的子序列有 [1,2,3] 那么need[4]=1 已有子序列[1,2,3,4] need[5]=1 
+        已有子序列 [1,2,3] [0,1,2,3] need[4]=2 如果加入一个4 --> [1,2,3,4] [0,1,2,3] 那么need[4]=1 need[5]=1
+        
+    */
+    bool isPossible(vector<int>& nums) {
+        unordered_map<int,int> count, need;
+        for(auto &num:nums)
+            count[num]++;
+        for(auto &num:nums){
+            if(count[num]==0) continue;
+            // 加入到已有序列后面
+            if(need.find(num)!=need.end()&&need[num]>0){
+                need[num]--;
+                need[num+1]=need[num+1]+1;
+            } // 作为新序列的起始元素 要保证至少有3个连续的元素
+            else if(count.find(num+1)!=count.end() && count[num+1]>0 
+                    && count.find(num+2)!=count.end()&&count[num+2]>0){
+                count[num+1]--;
+                count[num+2]--;
+                need[num+3]++;
+            }
+            else
+                return false;
+            count[num]--;
+        }
+        return true;
+    }
+};
