@@ -52,3 +52,21 @@ class Solution {
         return diff==0;
     }
 }
+
+C++ version
+class Solution {
+public:
+    // diff=sum(outdegree-indegree) for all node
+    bool isValidSerialization(string preorder) {
+        stringstream ss(preorder);
+        int diff=1;
+        string cur;
+        while(getline(ss,cur,',')){
+            // 一个新节点不论是否是null 增加一个入度
+            if(--diff<0)return false;
+            // 非空节点 增加两个入度
+            if(cur!="#") diff+=2;
+        }
+        return diff==0;
+    }
+};
