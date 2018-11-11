@@ -12,6 +12,35 @@ For example,
 ]
 */
 
+Solution 1:
+class Solution {
+public:
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        if(nums.size()==0)
+            return {};
+        set<vector<int>> res;
+        vector<bool> visit(nums.size(),false);
+        vector<int> cur;
+        helper(res,nums,visit,cur);
+        return vector<vector<int>> (res.begin(),res.end());
+    }
+private:
+    void helper(set<vector<int>> &res, vector<int> &nums,vector<bool> &visit,vector<int> &cur){
+        if(cur.size()==nums.size()){
+            res.insert(cur);
+            return;
+        }
+        for(int i=0;i<nums.size();i++){
+            if(visit[i]) continue;
+            cur.push_back(nums[i]);
+            visit[i]=true;
+            helper(res,nums,visit,cur);
+            cur.pop_back();
+            visit[i]=false;
+        }
+    }
+};
+
 Solution:
 class Solution {
 public:
@@ -45,5 +74,41 @@ public:
         vector<bool> visit(size,0);
         dfs(temp,visit,nums,res);
         return res;
+    }
+};
+update:
+class Solution {
+public:
+    // 为了避免重复元素造成结果中有重复的元组 我们必须要先做排序操作
+    vector<vector<int>> permuteUnique(vector<int>& nums) {
+        if(nums.size()==0)
+            return {};
+        vector<vector<int>> res;
+        sort(nums.begin(),nums.end()); 
+        vector<bool> visit(nums.size(),false);
+        vector<int> cur;
+        helper(res,nums,visit,cur);
+        return res;
+    }
+private:
+    void helper(vector<vector<int>> &res, vector<int> &nums,vector<bool> &visit,vector<int> &cur){
+        if(cur.size()==nums.size()){
+            res.push_back(cur);
+            return;
+        }
+        // 选择一个元素加入到cur中的末尾
+        for(int i=0;i<nums.size();i++){
+            if(visit[i]) continue;
+            // 为了避免重复 
+            // 如果i>0&&nums[i]==nums[i-1]&& visit[i-1]==false visit[i-1]==false说明在当前位置放nums[i-1]的遍历已经结束了
+            // 说明在当前位置上放nums[i]的所有可能都已经在遍历nums[i]时结束了 不需要再进行一次
+            if(i==0 || nums[i]!=nums[i-1] || visit[i-1]){
+                cur.push_back(nums[i]);
+                visit[i]=true;
+                helper(res,nums,visit,cur);
+                cur.pop_back();
+                visit[i]=false;   
+            }
+        }
     }
 };
