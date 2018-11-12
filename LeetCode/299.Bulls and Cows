@@ -21,7 +21,7 @@ In this case, the 1st 1 in friend's guess is a bull, the 2nd or 3rd 1 is a cow, 
 You may assume that the secret number and your friend's guess only contain digits, and their lengths are always equal.
 */
 
-Solution:
+Solution 1: two pass
 class Solution {
 public:
     //数字正确但是位置不正确的数字个数为 两个字符串中该字符除去正确位置的个数后 最小的个数
@@ -45,5 +45,55 @@ public:
                 B+=min(map1[i],map2[i]);
         }
         return to_string(A)+"A"+to_string(B)+"B";
+    }
+};
+
+update:
+class Solution {
+public:
+    string getHint(string secret, string guess) {
+        int bull=0,cow=0;
+        vector<int> cnts(10,0), cntg(10,0);
+        for(int i=0;i<secret.size();i++){
+            if(secret[i]==guess[i]){
+                bull++;
+            }
+            else{
+                cnts[secret[i]-'0']++;
+                cntg[guess[i]-'0']++;
+            }
+        }
+        for(int i=0;i<10;i++){
+            if(cnts[i]>0&&cntg[i]>0) // 也可以不加判断
+                cow+=min(cnts[i],cntg[i]);
+        }
+        return to_string(bull)+"A"+to_string(cow)+"B";
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        改进 one-pass
+        利用一个counter记录访问过的数字 secret++ 说明对secret的数字需求增加 guess-- guess的需求满足了一个
+        如果counter[secret]<0 那么cow++ 说明之前已经有guess满足了该位secret的需求
+        如果counter[guess]>0 cwo++ 说明之前存在对guess的需求 现在满足了
+    */
+    string getHint(string secret, string guess) {
+        int bull=0,cow=0;
+        vector<int> cnt(10,0);
+        for(int i=0;i<secret.size();i++){
+            if(secret[i]==guess[i]){
+                bull++;
+            }
+            else{
+                if(cnt[secret[i]-'0']<0) cow++;
+                if(cnt[guess[i]-'0']>0) cow++;
+                cnt[secret[i]-'0']++;
+                cnt[guess[i]-'0']--;
+            }
+        }
+        return to_string(bull)+"A"+to_string(cow)+"B";
     }
 };
