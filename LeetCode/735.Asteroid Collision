@@ -71,3 +71,24 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    // 由于星星的速率相同所以同方向的星星不会相撞 利用栈完成操作 遇到两个相向的星星发生碰撞(只有前面的星星向右后面的星星向左的情况才会发生)
+    vector<int> asteroidCollision(vector<int>& stars) {
+        vector<int> st; // vector 模拟stack 存储没有爆炸的stars
+        for(auto &star: stars){
+            // 发生碰撞 栈顶star爆炸且current star继续向前的情况 栈顶元素向右当前元素向左 且当前元素直径大于栈顶元素
+            // 条件可以写为!st.empty()&&st.back()>0&&star<0&&st.back()<-star
+            while(!st.empty()&&st.back()>0&&st.back()<-star){
+                st.pop_back();
+            }
+            if(st.empty()||st.back()<0 || star>0)
+                st.push_back(star);
+            else if(star<0&&-star==st.back())
+                st.pop_back();
+        }
+        return st;
+    }
+};
