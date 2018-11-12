@@ -27,13 +27,64 @@ Note:
   N will be an integer in the range [1, 30].
   K will be an integer in the range [1, 2^(N-1)].
 */
-
-Solution:
+Solution 1: MEL
 class Solution {
 public:
     int kthGrammar(int N, int K) {
-        if(N==1)return 0;
-        else if(K%2)return kthGrammar(N-1,(K+1)/2)==0?0:1;
-        else return kthGrammar(N-1,K/2)==0?1:0;
+        if(N==1)
+            return 0;
+        vector<string> str(2);
+        str[0]="0";
+        int pre=0;
+        for(int i=2;i<N;i++){
+            str[1-pre]="";
+            for(int j=0;j<str[pre].length();j++){
+                if(str[pre][j]=='0')
+                    str[1-pre]+="01";
+                else
+                    str[1-pre]+="10";
+            }
+            pre=1-pre;
+        }
+        /*  
+            这里K和N由下标1开始 而我们描述字符串时由下标0开始
+            eg N=3 0110
+            求N=4 K=5 则K由 字符串中下标2产生(1) targetId=2
+            1产生字符串 10 K=5指向10中的第0个字符 first=0 
+        */
+        int targetId=(K-1)/2; // 指第K个字符有前一个字符串的targetId字符产生
+        int index= K&1 ? 0 : 1; // 由target字符产生的 01串中的第0个或第1个
+        string gen= str[pre][targetId]=='0'? "01" : "10";
+        return gen[index]-'0';   
+    }
+};
+
+Solution 2: O(lgK)
+将上面的idea改写成递归的形式 不需要保存str
+class Solution {
+public:
+    // 找到第N行第K个元素 找N-1行 第K+1/2元素
+    int kthGrammar(int N, int K) {
+        if(N==1)
+            return 0;
+        if(K&1) return kthGrammar(N-1, (K+1)>>1)==0 ? 0 : 1;
+        else return kthGrammar(N-1, (K+1)>>1)==0 ? 1 : 0;
+    }
+};
+
+Solution 3: O(lgK)
+其实和Solution 2是一种方法 只是理解方式变了
+class Solution {
+public:
+    /*
+        很容易发现，比如第5个字符串的前半段刚好是第4个字符串的所有答案，后半段是前半段每位取反。
+        所以，如果K是后半段，我们把它转成前半段求解，既然前半段是上一个字符串的答案，就可以直接转去求解上一个字符串
+    */
+    int kthGrammar(int N, int K) {
+        if(N==1)
+            return 0;
+        int halfLen= 1<<(N-2);
+        if(K<=halfLen) return kthGrammar(N-1,K);
+        else return kthGrammar(N-1,K-halfLen) ^1;
     }
 };
