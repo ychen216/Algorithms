@@ -87,3 +87,45 @@ public:
         return res;
     }
 };
+
+update: AC 0ms beat 100%
+class Solution {
+public:
+    /*
+        建立一个数组来统计每个字母出现的次数，对于出现次数少于K次的，我们把它们当做间隔，从而把原数列分为几段.
+        要找的满足重复的最长的子序列一定在这几段其中。对于分开的每段，又是一个同样性质的子问题.
+        如果一段中没有小于K的间隔，那么直接返回这一段的长度，更新最大长度
+    */
+    int longestSubstring(string s, int k) {
+        return helper(s, 0, s.length()-1, k);   
+    }
+private:
+    int helper(string &s, int start, int end, int K){
+        if(end<start)
+            return 0;
+        vector<int> cnt(26,0);
+        for(int i=start;i<=end;i++)
+            cnt[s[i]-'a']++;
+        bool valid=true;
+        for(int i=0;i<26;i++)
+            // cnt[i]==0 不用考虑 string里没有该字符 直接skip
+            if(cnt[i]<K && cnt[i]>0){
+                valid=false;
+                break;
+            }
+        if(valid)
+            return end-start+1;
+        int maxLen=0,left=start,right; // 定义最大长度 双指针边界
+        for(right=start;right<=end;right++){
+            if(cnt[s[right]-'a']<K && cnt[s[right]-'a']>0){
+                maxLen=max(maxLen,helper(s,left,right-1,K));
+                left=right+1; // 更新区间
+            }
+        }
+        // 如果在原数列中出现了间隔，那么最后一个间隔到end之间这一段是没有参与计数，这个很容易被忽视
+        if(left<=end)
+            return max(maxLen, helper(s,left,end,K));
+        else
+            return maxLen;
+    }
+};
