@@ -66,3 +66,52 @@ private:
         return root[s];
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        利用并查集 同属于一个人的email将会属于一个连通集合里
+        那么节点就是email 我们要确定哪些email在一个连通集 同属于一个人的email之间有边连接 属于一个父亲节点
+        同时我们要记录每一个email属于哪一个人
+    */
+    vector<vector<string>> accountsMerge(vector<vector<string>>& accs) {
+        unordered_map<string,string> parent;
+        unordered_map<string,string> owner;
+        // 并查集初始化
+        for(int i=0;i<accs.size();i++){
+            for(int j=1;j<accs[i].size();j++){
+                parent[accs[i][j]]=accs[i][j];
+                owner[accs[i][j]]=accs[i][0];
+            }
+        }
+        
+        // 并查操作
+        for(int i=0;i<accs.size();i++){
+            string p=find(accs[i][1],parent);
+            for(int j=2;j<accs[i].size();j++){
+                string pj=find(accs[i][j],parent);
+                parent[pj]=p;
+            }
+        }
+        // 将同一个连通集的email放在一起
+        unordered_map<string,set<string>> group;
+        for(int i=0;i<accs.size();i++){
+            for(int j=1;j<accs[i].size();j++){
+                group[find(accs[i][j],parent)].insert(accs[i][j]);
+            }
+        }
+        vector<vector<string>> res;
+        for(auto &it: group){
+            vector<string> v;
+            v.push_back(owner[it.first]);
+            v.insert(v.begin()+1,it.second.begin(),it.second.end());
+            res.push_back(v);
+        }
+        return res;
+    }
+private:
+    string find(string &node,unordered_map<string,string> &parent){
+        return parent[node]==node? node: parent[node]=find(parent[node],parent);
+    }
+};
