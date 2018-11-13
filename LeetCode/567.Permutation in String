@@ -102,3 +102,43 @@ public:
         return true;
     }
 };
+
+
+Solution 4:
+class Solution {
+public:
+    /*  
+      要求在s2长度为s1.length的子串中包含所有s1的所有字符
+        利用滑动窗口 一旦左右指针范围内的任何一个元素x 超过s1中x出现的次数 就移动指针
+    */
+    bool checkInclusion(string s1, string s2) {
+        int len1=s1.length(),len2=s2.length();
+        if(len1>len2)
+            return false;
+        vector<int> cnt1(26,0);
+        for(auto &c: s1)
+            cnt1[c-'a']++;
+        vector<int> cnt2(26,0);
+        for(int left=0,right=0;right<len2;right++){
+            int i=s2[right]-'a';
+            cnt2[i]++;
+            // 区间出现s1不包含的元素 那么包含该元素的区间都不可能是符合要求的
+            // 移动整个指针区间到该元素右侧
+            if(cnt1[i]==0){
+                left=right+1;
+                //cnt2.clear();  clear只能将vector的size设为0 实际值存在那里的值没有消失
+                cnt2=vector<int>(26,0);
+            }
+            else if(cnt2[i]>cnt1[i]){
+                while(left<=right&&cnt2[i]>cnt1[i]){
+                    cnt2[s2[left]-'a']--;
+                    left++;
+                }
+            }
+            // cnt2[i]==cnt1[i]刚好凑齐了一个元素 检查一下
+            else if(right-left+1==len1)
+                return true;
+        }
+        return false;
+    }
+};
