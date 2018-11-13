@@ -109,7 +109,7 @@ class Solution {
 public:
     /*  
       要求在s2长度为s1.length的子串中包含所有s1的所有字符
-        利用滑动窗口 一旦左右指针范围内的任何一个元素x 超过s1中x出现的次数 就移动指针
+        利用双指针 一旦左右指针范围内的任何一个元素x 超过s1中x出现的次数 就移动指针
     */
     bool checkInclusion(string s1, string s2) {
         int len1=s1.length(),len2=s2.length();
