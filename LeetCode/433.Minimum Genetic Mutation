@@ -1,0 +1,146 @@
+433.Minimum Genetic Mutation
+
+/*
+A gene string can be represented by an 8-character long string, with choices from "A", "C", "G", "T".
+
+Suppose we need to investigate about a mutation (mutation from "start" to "end"), where ONE mutation is defined as ONE single character changed in the gene string.
+
+For example, "AACCGGTT" -> "AACCGGTA" is 1 mutation.
+
+Also, there is a given gene "bank", which records all the valid gene mutations. A gene must be in the bank to make it a valid gene string.
+
+Now, given 3 things - start, end, bank, your task is to determine what is the minimum number of mutations needed to mutate from "start" to "end". If there is no such a mutation, return -1.
+
+Note:
+
+Starting point is assumed to be valid, so it might not be included in the bank.
+If multiple mutations are needed, all mutations during in the sequence must be valid.
+You may assume start and end string is not the same.
+ 
+
+Example 1:
+start: "AACCGGTT"
+end:   "AACCGGTA"
+bank: ["AACCGGTA"]
+return: 1
+
+Example 2:
+start: "AACCGGTT"
+end:   "AAACGGTA"
+bank: ["AACCGGTA", "AACCGCTA", "AAACGGTA"]
+return: 2
+
+Example 3:
+start: "AAAAACCC"
+end:   "AACCCCCC"
+bank: ["AAAACCCC", "AAACCCCC", "AACCCCCC"]
+return: 3
+
+*/
+
+Solution 1: 不知道为什么一个测试用例在run code通过在submit就不过
+class Solution {
+public:
+    /*
+        一个基因字符串可以用8个字符组成的字符串表示，每个字符可以是"A","C","G","T"
+        加入我们需要研究基因突变（从"start"到"end"的突变）
+        其中一次突变是指基因字符串中的某一个位置字符的改变
+        eg. "AACCGGTT" -> "AACCGGTA"是1次突变
+        并且，给定一个基因“银行”，记录了所有有效的基因突变
+        只有突变成银行中的基因才是有效基因。
+        现在，给定3个参数-start, end, bank,你的任务是求出从start到end的最少突变次数。如果不存在则返回-1
+        利用bfs
+    */
+    int minMutation(string start, string end, vector<string>& bank) {
+        unordered_set<string> non_visit(bank.begin(),bank.end()); // 一个set两用 既是bank 也是还未访问的
+        queue<string> q;
+        q.push(start);
+        if(non_visit.find(start)!=non_visit.end())
+            non_visit.erase(start);
+        int res=0;
+        while(!q.empty()){
+            int n=q.size();
+            for(int i=0;i<n;i++){
+                auto &cur=q.front();
+                q.pop();
+                if(cur==end)
+                    return res;
+                for(auto it:non_visit){
+                    if(isMutation(cur,it)){
+                        q.push(it);
+                        non_visit.erase(it);
+                        //if(non_visit.begin()==non_visit.end())
+                        // 必须加这一句 因为当set里所有元素都删光的时候
+                        // 跳到外层大循环会报错 具体原因不知
+                        if(non_visit.size()==0)
+                            break;
+                    }
+                }
+            }
+            res++;
+        }
+        return -1;
+    }
+private:
+    // 判断两个字符串是否是mutation 及 是否只相差一个字符
+    bool isMutation(string &s1,string &s2){
+        if(s1.length()!=s2.length())
+            return false;
+        int diff=0;
+        for(int i=0;i<s1.length();i++){
+            if(s1[i]!=s2[i])
+                diff++;
+            if(diff>1)
+                break;
+        }
+        return diff==1;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        一个基因字符串可以用8个字符组成的字符串表示，每个字符可以是"A","C","G","T"
+        加入我们需要研究基因突变（从"start"到"end"的突变）
+        其中一次突变是指基因字符串中的某一个位置字符的改变
+        eg. "AACCGGTT" -> "AACCGGTA"是1次突变
+        并且，给定一个基因“银行”，记录了所有有效的基因突变
+        只有突变成银行中的基因才是有效基因。
+        现在，给定3个参数-start, end, bank,你的任务是求出从start到end的最少突变次数。如果不存在则返回-1
+        利用bfs
+    */
+    int minMutation(string start, string end, vector<string>& bank) {
+        unordered_set<string> visit; 
+        unordered_set<string> bank_set(bank.begin(),bank.end());
+        queue<string> q;
+        q.push(start);
+        visit.insert(start);
+        char gene[]={'A','C','G','T'};
+        int LEN=8;
+        int res=0;
+        while(!q.empty()){
+            int n=q.size();
+            for(int i=0;i<n;i++){
+                auto &cur=q.front();
+                q.pop();
+                if(cur==end)
+                    return res;
+                for(int j=0;j<LEN;j++){
+                    char old=cur[j];
+                    for(auto c:gene){
+                        cur[j]=c;
+                        if(bank_set.find(cur)!=bank_set.end()&&visit.find(cur)==visit.end()){
+                            q.push(cur);
+                            visit.insert(cur);
+                        }
+                    }
+                    cur[j]=old; // 不能漏 要恢复
+                }
+            }
+            res++;
+        }
+        return -1;
+    }
+
+};
