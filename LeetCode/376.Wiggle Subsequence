@@ -129,3 +129,27 @@ public:
         return max(down[n-1], up[n-1]);
     }
 };
+
+advance:
+class Solution {
+public:
+    /*
+        up[i]代表到i为止 所有wiggle subsequent最后两个元素是上升的最大长度 这类型记为type U
+        down[i]代表..... 最后两个元素是下降的最大长度 这种类型记为type D
+        可以做空间上的优化 O(1)
+    */
+    int wiggleMaxLength(vector<int>& nums) {
+        int n=nums.size();
+        if(n<=1)
+            return n;
+        int up=1,down=1; // 第0的元素可以认为上升或下降
+        for(int i=1;i<n;i++){
+            if(nums[i]>nums[i-1]){
+                up=down+1;
+            }else if(nums[i]<nums[i-1]){
+                down=up+1;
+            }
+        }
+        return max(up,down);
+    }
+};
