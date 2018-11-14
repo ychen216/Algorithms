@@ -89,7 +89,7 @@ public:
         if(n<=1)
             return n;
         vector<int> up(n,0),down(n,0);
-        up[0]=down[0]=1; // 第0的元素可以认为上升或下降
+        up[0]=down[0]=1; // 第0个元素可以认为上升或下降
         for(int i=1;i<n;i++){
              /** If nums[i] > nums[i-1], then we can use nums[i] to make a longer subsequence of type U
                 Proof: We consider a subsequence of type D in {0,...,i-1} (its length is down[i-1]).
@@ -98,8 +98,10 @@ public:
                 valid subsequence of type U.
                 - If nums[i] <= N, then:
                 (1) N cannot be nums[i-1], because nums[i-1] < nums[i] <= N i.e. nums[i-1] < N
-                (2) We can replace N with nums[i-1] (we still have a valid
-                subsequence of type D since N >= nums[i] > nums[i-1] i.e. N > nums[i-1]),
+                (2) 我们可以利用nums[i-1]替换N,既然最后一个元素为N可以构成长度为down[i-1]的type D序列 那么nums[i-1]<N,与N构成down的元素x
+                (x在N之前,且x>N)必然可以与nums[i-1]构成 type D 即, x > nums[i-1] <nums[i]
+                We can replace N with nums[i-1] (we still have a valid
+                subsequence of type D, since N >= nums[i] > nums[i-1] i.e. N > nums[i-1]),
                 and then add nums[i] to the subsequence, and we have a longer subsequence of type U.
                 Therefore up[i] = down[i-1] + 1
 
