@@ -23,7 +23,7 @@ Note:
   The time limit for this problem has been reduced.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     //利用归并排序求逆序数
@@ -35,33 +35,78 @@ public:
         for(int i=1;i<n;i++)
             if(A[i]<A[i-1])
                 local++;
-        global=0;
-        getGlobal(A,0,n-1);
+        int global=0;
+        getGlobal(A,0,n-1,global);
         return local==global;
     }
 
 private:
-    int global;
-    void merge(vector<int>&A,int s,int mid,int e){
-        int p1=s,q1=mid,p2=mid+1,q2=e;
+    void merge(vector<int>&A,int s,int mid,int e,int &global){
+        int s1=s,e1=mid,s2=mid+1,e2=e;
         vector<int> temp;
-        while(p1<=q1||p2<=q2){
-            if(p2>q2||p1<=q1&&A[p1]<=A[p2]){
-                temp.push_back(A[p1++]);
-                global+=p2-mid-1;
-            }else{
-                temp.push_back(A[p2++]);
+        while(s1<=e1||s2<=e2){
+            if(s2>e2||s1<=e1&&A[s1]<=A[s2]){
+                temp.push_back(A[s1++]);
+                // 在[mid+1,s2)之间的数都比A[s1]小 构成逆序
+                global+=s2-mid-1;
+            }
+            else{
+                temp.push_back(A[s2++]);
             }
         }
-        for(int i=0;i<temp.size();i++)
-            A[i+s]=temp[i];
+        for(int i=s;i<=e;i++)
+            A[i]=temp[i-s];
     }
-    void getGlobal(vector<int>&A,int i,int j){
+    void getGlobal(vector<int>&A,int i,int j,int &global){
         if(i<j){
             int mid=i+(j-i)/2;
-            getGlobal(A,i,mid);
-            getGlobal(A,mid+1,j);
-            merge(A,i,mid,j);
+            getGlobal(A,i,mid,global);
+            getGlobal(A,mid+1,j,global);
+            merge(A,i,mid,j,global);
         }
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        local必然是global,但是global不一定是local 所以必然有global>=local
+        我们只要check global是否>local 
+        但凡出现非相邻的元素是逆序数那么这一对逆序数就是global 而非local 故global>local
+        也就是对于元素A[j]只要存在 A[i]>A[j] i+1<j 就必然有global>local
+    */
+    bool isIdealPermutation(vector<int>& A) {
+        int n=A.size();
+        if(n<=2)
+            return true;
+        int maxN=-1;
+        for(int i=0;i<n-2;i++){
+            maxN=max(maxN,A[i]);
+            if(maxN > A[i+2])
+                return false;
+        }
+        return true;
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    /*
+        local必然是global,但是global不一定是local 所以必然有global>=local
+        我们只要check global是否>local
+        A是[0,n-1]的一个排列 
+        满足local==global的A,必定有A[i]只能在它本应在的位置i或i的左边一个或者右边一个
+        否则必定会把比它大的数字挤到前面或者把比它小的数字挤到后面 
+        且两者的距离>1 形成global
+    */
+    bool isIdealPermutation(vector<int>& A) {
+        int n=A.size();
+        for(int i=0;i<n;i++){
+            if(abs(A[i]-i)>1)
+                return false;
+        }
+        return true;
     }
 };
