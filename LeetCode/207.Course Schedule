@@ -65,3 +65,37 @@ public:
         return indegree0==numCourses;
     }
 };
+
+update:
+class Solution {
+public:
+    // 判断有向图是否有环 是否有能够拓扑
+    // 每一个pair(i,j) 构成边 j->i
+    bool canFinish(int numCourses, vector<pair<int, int>>& prerequisites) {
+        vector<int> indegree(numCourses,0);
+        unordered_map<int,vector<int>> graph; // 记录每一个节点的后续课程
+        for(auto &p: prerequisites){
+            indegree[p.first]++;
+            graph[p.second].push_back(p.first);
+        }
+        queue<int> q;
+        int takenCourse=0;
+        for(int i=0;i<numCourses;i++){
+            if(indegree[i]==0){
+                q.push(i);
+                takenCourse++;
+            }
+        }
+        while(!q.empty()){
+            int cur=q.front();
+            q.pop();
+            for(auto j:graph[cur]){
+                if(--indegree[j]==0){
+                    q.push(j);
+                    takenCourse++;
+                }
+            }
+        }
+        return takenCourse==numCourses;
+    }
+};
