@@ -38,3 +38,32 @@ public:
         return helper(superPow(a,b),10)*helper(a,last_digit)%1337;
     }
 };
+
+update: log(K) K为次幂的方式 求幂乘
+class Solution {
+public:
+    /*  同余定理 (a*b)%m=(a%m)*(b%m) % m
+        a^1234567 % k = (a^1234560 % k) * (a^7 % k) % k = (a^123456 % k)^10 % k * (a^7 % k) % k
+    */
+    int superPow(int a, vector<int>& b) {
+        if(b.size()==0)
+            return 1;
+        int cur_last=b.back();
+        b.pop_back();
+        return cal(superPow(a,b),10)*cal(a,cur_last)%mod;
+    }
+private:
+    int mod=1337;
+    // base 底数 cnt次幂
+    int cal(int base,int cnt){
+        int res=1;
+        base%=mod;
+        while(cnt){
+            if(cnt&1)
+                res=(res*base)%mod;
+            base=(base*base)%mod;
+            cnt>>=1;
+        }
+        return res;
+    }
+};
