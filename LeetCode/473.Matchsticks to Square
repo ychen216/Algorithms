@@ -56,6 +56,46 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    /*
+        一个数组给了火柴长度 问是否能利用这所有的火柴组成正方形
+        即 是否能组成四个长度相同的线段
+    */
+    bool makesquare(vector<int>& nums) {
+        int n=nums.size();
+        if(n<4)
+            return false;
+        int sum=0;
+        for(auto num:nums)
+            sum+=num;
+        if(sum%4!=0)
+            return false;
+        vector<bool> visit(n,false);
+        return helper(nums,visit,0,sum/4,0,4);
+    }
+private:
+    // start也是必要的剪枝操作 每次一组的元素都从前往后添加 不走回头路
+    bool helper(vector<int> &nums, vector<bool> &visit, int curSum, int target, int start, int k){
+        if(k==1)
+            return true;
+        if(curSum>target) // 必要的剪枝操作 不然超时
+            return false;
+        if(curSum==target){
+            return helper(nums,visit,0,target,0,k-1);
+        }
+        for(int i=start;i<nums.size();i++){
+            if(visit[i]) continue;
+            visit[i]=true;
+            if(helper(nums,visit,curSum+nums[i],target,i+1,k))
+                return true;
+            visit[i]=false;
+        }
+        return false;
+    }
+};
+
 Solution 2:
 class Solution {
 public:
