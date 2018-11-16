@@ -21,23 +21,24 @@ Solution:
  */
 class Solution {
 public:
-    //分别用两个指针指向小于x的链和 大于等于x的链
+    // 设置两个链表 一个记录num<x的元素 一个记录num>=x的元素 然后拼接起来可以保证相对顺序
     ListNode* partition(ListNode* head, int x) {
-        ListNode *headsmall=new ListNode(0),*headbig=new ListNode(0);
-        ListNode *ps=headsmall,*pb=headbig;
-        while(head){
-            if(head->val<x){
-                ps->next=head;
-                ps=ps->next;
+        ListNode *lessHead=new ListNode(0), *biggerHead=new ListNode(0);
+        ListNode *cur=head;
+        ListNode *p=lessHead,*q=biggerHead;
+        while(cur){
+            if(cur->val<x){
+                p->next=cur;
+                p=p->next;
+            }else{
+                q->next=cur;
+                q=q->next;
             }
-            else{
-                pb->next=head;
-                pb=pb->next;
-            }
-            head=head->next;
+            cur=cur->next;
         }
-        pb->next=NULL;
-        ps->next=headbig->next;
-        return headsmall->next;
+        // 拼接两个链表 注意要处理biggerList的最后一个节点 next置为NULL
+        q->next=NULL;
+        p->next=biggerHead->next;
+        return lessHead->next;
     }
 };
