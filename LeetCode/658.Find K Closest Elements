@@ -101,3 +101,35 @@ public:
         return res;
     }
 };
+update: 自己实现二分查找
+class Solution {
+public:
+    // 二分查找找到 第一个>=x的位置j 然后利用两个指针i,j向两侧扩展
+    // 题目要求结果要按照递增的顺序出现 记录指针的位置 最后的结果应该是(i,j)之间的元素
+    vector<int> findClosestElements(vector<int>& arr, int k, int x) {
+        int n=arr.size();
+        int low=0,high=arr.size()-1;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(arr[mid]>=x)
+                high=mid-1;
+            else
+                low=mid+1;
+        }
+        int j=low;
+        int i=j-1;
+        vector<int> res;
+        // 找到k个最接近的元素
+        for(int p=0;p<k;p++){
+            // 选择arr[i]加入
+            if(j>=n|| i>=0 && x-arr[i]<= arr[j]-x)
+                i--;
+            else
+                j++;
+        }
+        // 将[i+1,j-1]之间的元素加入
+        for(i=i+1;i<j;i++)
+            res.push_back(arr[i]);
+        return res;
+    }
+};
