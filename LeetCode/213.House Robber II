@@ -14,21 +14,29 @@ determine the maximum amount of money you can rob tonight without alerting the p
 Solution:
 class Solution {
 public:
-    //将这个问题分解成House Robber子问题来解决
-    //因为现在是一个环 所以0和i-i不能同时偷 将问题分解为[0,i-2],[1,i-1]
-    int robhelper(vector<int>&nums,int s,int e){
-        int prerob=0,prenotrob=0;
-        for(int i=s;i<=e;i++){
-            int r=prerob,nr=prenotrob;
-            prerob=prenotrob+nums[i];
-            prenotrob=max(r,nr);
-        }
-        return max(prerob,prenotrob);
-    }
+    /*
+        现在是一个环 所以0和n-1户不能同时偷
+        即按照0和n-1的偷盗情况 有三种可能 结果为 max(偷0不偷n-1, 偷n-1不偷0, 0和n-1都不偷)
+        那么将问题转换为House Robber问题 求解[0,n-2]和[1,n-1]子问题 
+        [0,n-2]的最优解等价于max(偷0不偷n-1,0和n-1都不偷) [1,n-1]的最优解等价于max(偷n-1不偷0,0和n-1都不偷)
+    */
     int rob(vector<int>& nums) {
-        int size=nums.size();
-        if(size<2)
-            return size?nums[0]:0;
-        return max(robhelper(nums,0,size-2),robhelper(nums,1,size-1));
+        int n=nums.size();
+        if(n==0)
+            return 0;
+        if(n==1)
+            return nums[0];
+        // n > 1 偷了第一个就不能偷最后一个
+        return max(helper(nums,0,n-2), helper(nums,1,n-1));
+    }
+private:
+    int helper(vector<int>&nums, int s, int e){
+        int rob=0,skip=0,pre_rob=0;
+        for(int i=s;i<=e;i++){
+            pre_rob=rob;
+            rob=skip+nums[i];
+            skip=max(pre_rob,skip);
+        }
+        return max(skip,rob);
     }
 };
