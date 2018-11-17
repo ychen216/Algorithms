@@ -1,0 +1,101 @@
+808. Soup Servings
+/*
+There are two types of soup: type A and type B. Initially we have N ml of each type of soup. There are four kinds of operations:
+
+Serve 100 ml of soup A and 0 ml of soup B
+Serve 75 ml of soup A and 25 ml of soup B
+Serve 50 ml of soup A and 50 ml of soup B
+Serve 25 ml of soup A and 75 ml of soup B
+When we serve some soup, we give it to someone and we no longer have it.  Each turn, we will choose from the four operations with equal probability 0.25. If the remaining volume of soup is not enough to complete the operation, we will serve as much as we can.  We stop once we no longer have some quantity of both types of soup.
+
+Note that we do not have the operation where all 100 ml's of soup B are used first.  
+
+Return the probability that soup A will be empty first, plus half the probability that A and B become empty at the same time.
+
+Example:
+Input: N = 50
+Output: 0.625
+Explanation: 
+If we choose the first two operations, A will become empty first. For the third operation, A and B will become empty at the same time. For the fourth operation, B will become empty first. So the total probability of A becoming empty first plus half the probability that A and B become empty at the same time, is 0.25 * (1 + 1 + 0.5 + 0) = 0.625.
+
+Notes:
+  0 <= N <= 10^9. 
+  Answers within 10^-6 of the true value will be accepted as correct.
+
+*/
+
+Solution 1: MEL
+class Solution {
+public:
+    struct Node{
+        int A, B;
+        double pro; // probability
+        Node(int a,int b, double p){
+            A=a;B=b;pro=p;
+        }
+    };
+    // BFS 每一个状态都是上一个状态的概率*0.25
+    double soupServings(int N) {
+        if(N==0)
+            return 0.5;
+        Node node(N,N,1);
+        queue<Node> q;
+        q.push(node);
+        double res=0;
+        while(!q.empty()){
+            Node cur=q.front();
+            q.pop();
+            if(cur.A==0&&cur.B==0)
+                res+=0.5*cur.pro;
+            else if(cur.A==0&&cur.B!=0)
+                res+=cur.pro;
+            else if(cur.A!=0&&cur.B==0)
+                ;
+            else{
+                // cur.A!=0 && cur.B!=0
+                for(int i=0;i<4;i++){
+                    int a=max(0,cur.A-da[i]);
+                    int b=max(0,cur.B-db[i]);
+                    q.push(Node(a,b,cur.pro*0.25));
+                }
+            }
+        }
+        return res;
+    }
+private:
+    int da[4]={100,75,50,25},db[4]={0,25,50,75};
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        memorized dfs
+        trick: when N>5000 probability is very close to 1
+    */
+    double soupServings(int N) {
+        if(N>5000)
+            return 1.0;
+        return helper(N,N);
+    }
+private:
+    unordered_map<int,unordered_map<int,double>> mmp;
+    int da[4]={100,75,50,25},db[4]={0,25,50,75};
+    double helper(int A,int B){
+        if(A==0&B==0)
+            return 0.5;
+        if(A==0&&B!=0)
+            return 1.0;
+        if(A!=0&&B==0)
+            return 0;
+        if(mmp.find(A)!=mmp.end()&&mmp[A].find(B)!=mmp[A].end())
+            return mmp[A][B];
+        double pro=0;
+        for(int i=0;i<4;i++){
+            pro+=helper(A-min(A,da[i]),B-min(B,db[i]));
+        }
+        mmp[A][B]=0.25*pro;
+        return mmp[A][B];
+    }
+};
