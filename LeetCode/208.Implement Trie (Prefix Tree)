@@ -6,8 +6,69 @@ Note:
 You may assume that all inputs are consist of lowercase letters a-z.
 
 */
-
 Solution:
+class Trie {
+public:
+    struct Node{
+        Node *next[26];
+        bool is_word;
+        Node(){
+            for(int i=0;i<26;i++)
+                next[i]=NULL;
+            is_word=false;
+        }
+    };
+    
+    /** Initialize your data structure here. */
+    Trie() {
+        root=NULL;
+    }
+    
+    /** Inserts a word into the trie. */
+    void insert(string word) {
+        if(root==NULL){
+            root=new Node();
+        }
+        Node *cur=root;
+        for(auto c: word){
+            if(cur->next[c-'a']==NULL){
+                cur->next[c-'a']=new Node();
+            }
+            cur=cur->next[c-'a'];
+        }
+        cur->is_word=true;
+    }
+    
+    /** Returns if the word is in the trie. */
+    bool search(string word) {
+        if(root==NULL)
+            return false;
+        Node *cur=root;
+        for(auto c: word){
+            if(cur->next[c-'a']==NULL)
+                return false;
+            cur=cur->next[c-'a'];
+        }
+        return cur->is_word;
+    }
+    
+    /** Returns if there is any word in the trie that starts with the given prefix. */
+    bool startsWith(string prefix) {
+        if(root==NULL)
+            return false;
+        Node *cur=root;
+        for(auto c: prefix){
+            if(cur->next[c-'a']==NULL)
+                return false;
+            cur=cur->next[c-'a'];
+        }
+        return true;
+    }
+private:
+    Node *root;
+};
+
+update: 对startsWith && search 做一个封装
 struct TrieNode{
     TrieNode *next[26];
     bool is_word;
