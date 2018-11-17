@@ -1,6 +1,27 @@
 223. Rectangle Area
 
-Solution:
+Solution 1:
+class Solution {
+public:
+    int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
+        // 上下左右指 overlap部分的边界
+        int area1 = (C - A) * (D - B);
+        int area2 = (G - E) * (H - F);
+        
+        int left = max(A, E);
+        int right = min(C, G);
+        int up = min(D, H);
+        int down = max(B, F);
+        
+        int overlap = 0;
+        if (left < right && down < up)
+            overlap = (right - left) * (up - down);
+        
+        return area1 + area2 - overlap;   
+    }
+};
+
+update:
 class Solution {
 public:
     int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
