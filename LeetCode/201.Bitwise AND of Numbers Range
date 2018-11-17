@@ -25,8 +25,22 @@ Solution 2:
 class Solution {
 public:
     /*
-    The idea is to use a mask to find the leftmost common digits of m and n.
-    Example: m=1110001, n=1110111, and you just need to find 1110000 and it will be the answer.
+        The idea is to use a mask to find the leftmost common digits of m and n.
+        Example: m=1110001, n=1110111, and you just need to find 1110000 and it will be the answer.
+        要找到m和n最左边的相同的二进制表示 因为从m~n会经历很多数字 m m+1 m+2 ... n那么 二进制就会逐位变化 
+        一个位有了01变化 相与结果就是0 所以只要找不变的位就行
+        eg: 5: 0101
+            6: 0110
+            7: 0111
+            不变的就是 高位的01
+        位移操作总结:
+        右移：x >> n 
+            正数移位：右边（低位）移出部分，直接舍弃，左边（高位）移入部分全部补0。（正数的符号为是0）
+            负数移位：右边（低位）移出部分，直接舍弃，左边（高位）移入部分全部补1。（负数的符号为是1）
+            移位结果：相当于num除以2的n次方后，向下取整。正负数通用 
+        左移: x << n
+            左边（高位）移出部分，直接舍弃；右边（低位）移入部分全部补0。
+            移位结果：相当于num乘以2的n次方，移位足够大时，结果为其本身（暂未深入研究）。正负数通用；
     */
     int rangeBitwiseAnd(int m, int n) {
         int mask=INT_MAX;
