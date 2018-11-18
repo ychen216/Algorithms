@@ -33,3 +33,47 @@ public:
         return ans;
     }
 };
+
+
+class Solution {
+public:
+    // 双指针
+    int numSubarrayProductLessThanK(vector<int>& nums, int k) {
+        int left=0,right=0,n=nums.size();
+        int res=0, multi=1;
+        for(;right<n;right++){
+            multi*=nums[right];
+            if(multi<k)
+                res+=right-left+1;
+            else{
+                while(left<=right&&multi>=k){
+                    multi/=nums[left++];
+                }
+                if(left<=right)
+                    res+=right-left+1;
+            }
+        }
+        return res;
+    }
+};
+
+update:
+class Solution {
+public:
+    // 双指针
+    int numSubarrayProductLessThanK(vector<int>& nums, int k) {
+        int left=0,right=0,n=nums.size();
+        int res=0, multi=1;
+        for(;right<n;right++){
+            multi*=nums[right];
+            while(left<=right&&multi>=k){
+                multi/=nums[left++];
+            }
+            
+            // if(left<=right) left最大的情况就是left==right+1 此时不能构成任何区间 即 right-left+1=0
+            res+=right-left+1;
+            
+        }
+        return res;
+    }
+};
