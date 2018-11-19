@@ -1,0 +1,159 @@
+935. Knight Dialer
+/*
+
+A chess knight can move as indicated in the chess diagram below:
+[picture][picture]
+
+This time, we place our chess knight on any numbered key of a phone pad (indicated above), and the knight makes N-1 hops.  Each hop must be from one key to another numbered key.
+
+Each time it lands on a key (including the initial placement of the knight), it presses the number of that key, pressing N digits total.
+
+How many distinct numbers can you dial in this manner?
+
+Since the answer may be large, output the answer modulo 10^9 + 7.
+
+Example 1:
+Input: 1
+Output: 10
+
+Example 2:
+Input: 2
+Output: 20
+
+Example 3:
+Input: 3
+Output: 46
+
+Note:
+  1 <= N <= 5000
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        题意:我们将 “骑士” 放在电话拨号盘的任意数字键（如上图所示）上，接下来，骑士将会跳 N-1 步。每一步必须是从一个数字键跳到另一个数字键。
+        每当它落在一个键上（包括骑士的初始位置），都会拨出键所对应的数字，总共按下 N 位数字。
+        你能用这种方式拨出多少个不同的号码？因为答案可能很大，所以输出答案模 10^9 + 7
+        可以用dp[k][i]=sum(dp[k-1][j]) 代表能够k跳到达i的不同方案数 j为所有能够1跳到达i的位置(也是i能够一跳到达j的位置,是完全对称的)
+        dp[0][i]=1;
+        edge[0]={4,6};edge[1]={6,8};edge[2] = {7,9};edge[3] = {4,8}
+        edge[4] = {3,9,0};edge[5] = {};edge[6] = {1,7,0};
+        edge[7] = {2,6};edge[8] = {1,3};edge[9] = {2,4};
+    */
+    int knightDialer(int N) {
+        vector<vector<int> > dp(2,vector<int>(10,1)); //初始化
+        unordered_map<int,vector<int>> edge;
+        init(edge);
+        int target=0;
+        // N-1跳
+        for(int i=1;i<N;i++){
+            target=1-target;
+            for(int j=0;j<10;j++){
+                dp[target][j]=0;
+                for(auto e:edge[j]){
+                    dp[target][j]+=dp[1-target][e];
+                    dp[target][j]%=mod;
+                }
+            }
+        }
+        int res=0; // target指需要用dp第0 or 1个数组的结果计算
+        for(int i=0;i<10;i++){
+            res+=dp[target][i];
+            res%=mod;
+        }
+        return res;
+    }
+private:
+    const int mod=1e9+7;
+    void init(unordered_map<int,vector<int>> &edge){
+        edge[0].push_back(4);
+        edge[0].push_back(6);
+        edge[1].push_back(6);
+        edge[1].push_back(8);
+        edge[2].push_back(7);
+        edge[2].push_back(9);
+        edge[3].push_back(4);
+        edge[3].push_back(8);
+        edge[4].push_back(3);
+        edge[4].push_back(9);
+        edge[4].push_back(0);
+        edge[6].push_back(1);
+        edge[6].push_back(7);
+        edge[6].push_back(0);
+        edge[7].push_back(2);
+        edge[7].push_back(6);
+        edge[8].push_back(1);
+        edge[8].push_back(3);
+        edge[9].push_back(2);
+        edge[9].push_back(4);
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        题意:我们将 “骑士” 放在电话拨号盘的任意数字键（如上图所示）上，接下来，骑士将会跳 N-1 步。每一步必须是从一个数字键跳到另一个数字键。
+        每当它落在一个键上（包括骑士的初始位置），都会拨出键所对应的数字，总共按下 N 位数字。
+        你能用这种方式拨出多少个不同的号码？因为答案可能很大，所以输出答案模 10^9 + 7
+        可以用dp[k][i]=sum(dp[k-1][j]) 代表能够k跳到达i的不同方案数 j为所有能够1跳到达i的位置(也是i能够一跳到达j的位置,是完全对称的)
+        dp[0][i]=1;
+        edge[0]={4,6};edge[1]={6,8};edge[2] = {7,9};edge[3] = {4,8}
+        edge[4] = {3,9,0};edge[5] = {};edge[6] = {1,7,0};
+        edge[7] = {2,6};edge[8] = {1,3};edge[9] = {2,4};
+        memorized dfs
+    */
+    int knightDialer(int N) {
+        vector<vector<int> > dp(N,vector<int>(10,-1)); //初始化
+        unordered_map<int,vector<int>> edge;
+        init(edge);
+        int res=0;
+        // 起始位置的遍历
+        for(int i=0;i<10;i++){
+            res+=helper(i,N-1,dp,edge);
+            res%=mod;
+        }
+        return res;
+    }
+private:
+    const int mod=1e9+7;
+    // cur 从当前位置跳 hop 能产生多少不同的N位的结果
+    int helper(int cur, int hop, vector<vector<int>> &dp, unordered_map<int,vector<int>> &edge){
+        if(dp[hop][cur]!=-1)
+            return dp[hop][cur];
+        if(hop==0)
+            dp[hop][cur]=1;
+        else{
+            int res=0;
+            for(auto e:edge[cur]){
+                res+=helper(e,hop-1,dp,edge);
+                res%=mod;
+            }
+            dp[hop][cur]=res;
+        }
+        return dp[hop][cur];
+    }
+    void init(unordered_map<int,vector<int>> &edge){
+        edge[0].push_back(4);
+        edge[0].push_back(6);
+        edge[1].push_back(6);
+        edge[1].push_back(8);
+        edge[2].push_back(7);
+        edge[2].push_back(9);
+        edge[3].push_back(4);
+        edge[3].push_back(8);
+        edge[4].push_back(3);
+        edge[4].push_back(9);
+        edge[4].push_back(0);
+        edge[6].push_back(1);
+        edge[6].push_back(7);
+        edge[6].push_back(0);
+        edge[7].push_back(2);
+        edge[7].push_back(6);
+        edge[8].push_back(1);
+        edge[8].push_back(3);
+        edge[9].push_back(2);
+        edge[9].push_back(4);
+    }
+};
