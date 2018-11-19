@@ -13,7 +13,7 @@ and the remaining two with no more than 3 citations each, his h-index is 3.
 Note: If there are several possible values for h, the maximum one is taken as the h-index.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     //有h篇文章的引用>=h n-h篇文章引用<h  h的范围[0,n]
@@ -32,5 +32,26 @@ public:
                 break;
         }
         return maxH;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    // 参考 H-Index Ⅱ
+    int hIndex(vector<int>& citations) {
+        sort(citations.begin(),citations.end());
+        // binary search
+        int n=citations.size();
+        int low=0,high=n-1;
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            int cnt=n-mid;
+            if(citations[mid]>=cnt)
+                high=mid-1;
+            else
+                low=mid+1;
+        }
+        return n-low;
     }
 };
