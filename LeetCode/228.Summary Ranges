@@ -39,3 +39,59 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    // 双指针
+    vector<string> summaryRanges(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return {};
+        vector<pair<int,int>> index; // 一个区间的左右边界
+        int left,right;
+        for(left=0,right=0;right<n;right++){
+            if(left<right&&nums[right]!=nums[right-1]+1){
+                index.push_back({left,right-1});
+                left=right;
+            }
+        }
+        // 不要漏了最后一个
+        index.push_back({left,right-1});
+        vector<string> res;
+        for(auto &p:index){
+            if(p.first==p.second)
+                res.push_back(to_string(nums[p.first]));
+            else
+                res.push_back(to_string(nums[p.first])+"->"+to_string(nums[p.second]));
+        }
+        return res;
+    }
+};
+
+update: 节省空间 将结果in-place生成 不再存储下来
+class Solution {
+public:
+    // 双指针
+    vector<string> summaryRanges(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return {};
+        vector<string> res;
+        int left,right; // 一个区间的左右边界
+        for(left=0,right=0;right<n;right++){
+            if(left<right&&nums[right]!=nums[right-1]+1){
+                if(left==right-1)
+                    res.push_back(to_string(nums[left]));
+                else
+                    res.push_back(to_string(nums[left])+"->"+to_string(nums[right-1]));           left=right;
+            }
+        }
+        // 不要漏了最后一个
+        if(left==right-1)
+            res.push_back(to_string(nums[left]));
+        else
+            res.push_back(to_string(nums[left])+"->"+to_string(nums[right-1]));
+        return res;
+    }
+};
