@@ -1,0 +1,75 @@
+930. Binary Subarrays With Sum
+/*
+In an array A of 0s and 1s, how many non-empty subarrays have sum S?
+
+Example 1:
+Input: A = [1,0,1,0,1], S = 2
+Output: 4
+Explanation: 
+The 4 subarrays are bolded below:
+[1,0,1,0,1]
+[1,0,1,0,1]
+[1,0,1,0,1]
+[1,0,1,0,1]
+
+Note:
+  A.length <= 30000
+  0 <= S <= A.length
+  A[i] is either 0 or 1.
+
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        记录从0~i的sum[i] 
+        那么满足要求的以第i个元素结尾的子数组为[j,i] sum[i]-sum[j-1]=S 必须有i>j
+        其个数为sum[j-1]=sum[i]-S的j个数
+        要注意按顺序计算cnt[sum] 否则不能保证是连续子数组 后加入的影响到前面的计算
+    */
+    int numSubarraysWithSum(vector<int>& A, int S) {
+        unordered_map<int,int> mmp;//sum, count
+        int sum=0,res=0,n=A.size();
+        mmp[0]=1; // 初始化
+        for(int i=0;i<n;i++){
+            sum+=A[i]; // sum[i]
+            if(mmp.find(sum-S)!=mmp.end())
+                res+=mmp[sum-S];
+            mmp[sum]++; // 注意顺序
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        双指针 [left,right]之间是符合条件的子数组
+    */
+    int numSubarraysWithSum(vector<int>& A, int S) {
+        int sum=0,left=0,res=0,n=A.size();
+        // 每次移动右指针 寻找左指针的可行范围
+        for(int right=0;right<n;right++){
+            sum+=A[right];
+            // 移动左指针
+            while(left<right&&sum>S){
+                sum-=A[left];
+                left++;
+            }
+            if(sum==S){
+                res++;
+            /*  符合条件的区间可能有多个 eg 1,[0,0,1,1] valid left points=2
+                这时应该计算区间内连续的0的个数 而不能直接移动left  否则加入下一个元素的时候有效区间可能被漏算
+                eg 新加入一个0: 1,[0,0,1,1,0] 如果上一步将left移动了这一步计算有效区间的个数就是1 其实应该是3: 0,0,1,1,0; 0,1,1,0; 1,1,0
+            */
+                // 计算可以将多少个left A[left]==0删去 且i<right 不能将i==right删去 因为该轮操作就是计算以right结尾的子数组的个数 必须包含right
+                for(int i=left;sum==S&&i<right&&A[i]==0;i++){
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+};
