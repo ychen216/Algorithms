@@ -60,3 +60,48 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    /*  
+        将数组排序得到A 那么满足情况的子集一定满足后一个元素是前一个元素的倍数
+        类似于最长公共子序列LIS 我们记录以A[i]结尾的最长子集长度为dp[i]
+        由于要得到具体的子集 我们还要记录以A[i]结尾的子集中前一个元素的下标parent[i]
+        dp[i]=max(dp[j]+1,dp[i]) A[i]%A[j]==0
+        parent[i]=argmax dp[j] j<i A[i]%A[j]==0 or parent[i]=i if only one element(A[i]) in the subset
+    */
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return nums;
+        sort(nums.begin(),nums.end());
+        vector<int> dp(n,0);
+        vector<int> parent(n);
+        int maxLen=0,maxLenIndex=-1;
+        for(int i=0;i<n;i++){
+            int curLen=0;
+            parent[i]=i; // 初始化前一个节点的下标
+            for(int j=0;j<i;j++){
+                if(nums[i]%nums[j]==0&&dp[j]>curLen){
+                    curLen=dp[j];
+                    parent[i]=j;
+                }
+            }
+            dp[i]=curLen+1;
+            if(dp[i]>maxLen){
+                maxLen=dp[i];
+                maxLenIndex=i;
+            }
+        }
+        
+        vector<int> res;
+        int pre=maxLenIndex;
+        // 最大子集中一共maxLen个元素
+        for(int i=0;i<maxLen;i++){
+            res.push_back(nums[pre]);
+            pre=parent[pre];
+        }
+        return res;
+    }
+};
