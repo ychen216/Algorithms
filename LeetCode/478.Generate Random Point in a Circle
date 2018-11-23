@@ -1,0 +1,104 @@
+478. Generate Random Point in a Circle
+
+/*
+Given the radius and x-y positions of the center of a circle, write a function randPoint which generates a uniform random point in the circle.
+
+Note:
+  input and output values are in floating-point.
+  radius and x-y position of the center of the circle is passed into the class constructor.
+  a point on the circumference of the circle is considered to be in the circle.
+  randPoint returns a size 2 array containing x-position and y-position of the random point, in that order.
+
+Example 1:
+Input: 
+["Solution","randPoint","randPoint","randPoint"]
+[[1,0,0],[],[],[]]
+Output: [null,[-0.72939,-0.65505],[-0.78502,-0.28626],[-0.83119,-0.19803]]
+
+Example 2:
+Input: 
+["Solution","randPoint","randPoint","randPoint"]
+[[10,5,-7.5],[],[],[]]
+Output: [null,[11.52438,-8.33273],[2.46992,-16.21705],[11.13430,-12.42337]]
+Explanation of Input Syntax:
+
+The input is two lists: the subroutines called and their arguments. Solution's constructor has three arguments, 
+the radius, x-position of the center, and y-position of the center of the circle. randPoint has no arguments. 
+Arguments are always wrapped with a list, even if there aren't any.
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        有两种方法：
+        1.拒绝采样: 保证采样到的点都是等概率的 那么在圆内的点概率也是等概率的
+        2.极坐标法：一个圆内的点可以由圆心角度和半径确定 
+        但是要注意对于角度来说不同的单位角度范围内的点都是被采集到的概率都是相等的
+        (比如把一块饼按照角度平分成10块扇形,那么一个点落在任何一个扇形的概率是相等的)
+        但是对于半径来说就不一样了 如果随机选择半径random()*R 那么显然约远离圆心的部分即半径越大的地方被采集的概率越大   
+        (r*r)/(R*R) 不能保证每个点的概率都相等
+        为了使得在任何半径处sample的概率都一致 需要将采样方式 sqrt(random())*R
+        具体的分析可以参考(结合着看):http://www.cnblogs.com/liaohuiqiang/p/9858394.html
+        https://zhanghuimeng.github.io/post/leetcode-478-generate-random-point-in-a-circle/
+    */
+    // 拒绝采样
+    Solution(double radius, double x_center, double y_center) {
+        this->radius=radius;
+        this->x_center=x_center;
+        this->y_center=y_center;
+    }
+    
+    // 将采样的正方形中点定在原点 然后在根据圆心将得到的点(x,y)进行平移
+    vector<double> randPoint() {
+        double x,y;
+        while(true){
+            x = 2*radius*((double)rand()/RAND_MAX)-radius; // 减一个radius为了得到正负半轴的结果
+            y = 2*radius*((double)rand()/RAND_MAX)-radius; // eg.半径为1 随机数为0.1 那么结果x=-0.8在负半轴;随机数为0.9 则x=0.8在正半轴 互相对称    
+            if(x*x+y*y<=radius*radius)
+                return {x_center+x,y_center+y};
+        }
+        
+    }
+private:
+    double radius, x_center, y_center;
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        有两种方法：
+        1.拒绝采样: 保证采样到的点都是等概率的 那么在圆内的点概率也是等概率的
+        2.极坐标法：一个圆内的点可以由圆心角度和半径确定 
+        但是要注意对于角度来说不同的单位角度范围内的点都是被采集到的概率都是相等的
+        (比如把一块饼按照角度平分成10块扇形,那么一个点落在任何一个扇形的概率是相等的)
+        但是对于半径来说就不一样了 如果随机选择半径random()*R 那么显然约远离圆心的部分即半径越大的地方被采集的概率越大   
+        (r*r)/(R*R) 不能保证每个点的概率都相等
+        为了使得在任何半径处sample的概率都一致 需要将采样方式 sqrt(random())*R
+        具体的分析可以参考(结合着看):http://www.cnblogs.com/liaohuiqiang/p/9858394.html
+        https://zhanghuimeng.github.io/post/leetcode-478-generate-random-point-in-a-circle/
+    */
+    // 极坐标
+    Solution(double radius, double x_center, double y_center) {
+        this->radius=radius;
+        this->x_center=x_center;
+        this->y_center=y_center;
+    }
+
+    vector<double> randPoint() {
+        // 随机取角度
+        double angle=2*M_PI*((double)rand()/RAND_MAX); // M_PI是数学库宏定义的π RAND_MAX也是宏定义随机数的最大值
+        // 取半径
+        double r=sqrt((double)rand()/RAND_MAX)*radius;
+        return {x_center+r*cos(angle),y_center+r*sin(angle)};
+    }
+private:
+    double radius, x_center, y_center;
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution obj = new Solution(radius, x_center, y_center);
+ * vector<double> param_1 = obj.randPoint();
+ */
