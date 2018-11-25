@@ -1,0 +1,80 @@
+842. Split Array into Fibonacci Sequence
+
+/*
+Given a string S of digits, such as S = "123456579", we can split it into a Fibonacci-like sequence [123, 456, 579].
+
+Formally, a Fibonacci-like sequence is a list F of non-negative integers such that:
+
+0 <= F[i] <= 2^31 - 1, (that is, each integer fits a 32-bit signed integer type);
+F.length >= 3;
+and F[i] + F[i+1] = F[i+2] for all 0 <= i < F.length - 2.
+Also, note that when splitting the string into pieces, each piece must not have extra leading zeroes, except if the piece is the number 0 itself.
+
+Return any Fibonacci-like sequence split from S, or return [] if it cannot be done.
+
+Example 1:
+Input: "123456579"
+Output: [123,456,579]
+
+Example 2:
+Input: "11235813"
+Output: [1,1,2,3,5,8,13]
+
+Example 3:
+Input: "112358130"
+Output: []
+Explanation: The task is impossible.
+
+Example 4:
+Input: "0123"
+Output: []
+Explanation: Leading zeroes are not allowed, so "01", "2", "3" is not valid.
+
+Example 5:
+Input: "1101111"
+Output: [110, 1, 111]
+Explanation: The output [11, 0, 11, 11] would also be accepted.
+
+Note:
+  1 <= S.length <= 200
+  S contains only digits.
+
+*/
+
+Solution:
+class Solution {
+public:
+    // backtracking 回溯
+    vector<int> splitIntoFibonacci(string S) {
+        vector<int> res;
+        helper(S,0,res);
+        return res;
+    }
+private:
+    // 从S的start位置为起始向后寻找切分位置 构成当前res的下一个可能的元素
+    bool helper(string &S, int start, vector<int> &res){
+        int size=res.size();
+        if(start>=S.length()&&size>=3)
+            return true;
+        
+        // 找到一个切分位置i
+        for(int i=start;i<S.length();i++){
+            // 不能有前导的0
+            if(S[start]=='0'&&i>start)
+                break;
+            long cur=stol(S.substr(start,i-start+1));
+            if(cur>INT_MAX)
+                break;
+            // 剪枝操作 cur已经大于前两个数之和sum 那么继续向后寻找的结果只会>cur>sum
+            if(size>=2&&res[size-1]+res[size-2]<cur)
+                break;
+            if(size<2||res[size-1]+res[size-2]==cur){
+                res.push_back(cur);
+                if(helper(S,i+1,res))
+                    return true;
+                res.pop_back();
+            }
+        }
+        return false;
+    }
+};
