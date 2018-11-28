@@ -27,6 +27,27 @@ public:
         return nums[left];
     }
 };
+update:
+class Solution {
+public:
+    /*
+        常规方法直接遍历找到最小的数 时间复杂度O(N)
+        利用二分查找 O(logN) low high分别代表当前搜索子数组的第一个和最后一个元素
+    */
+    int findMin(vector<int>& nums) {
+        int low=0,high=nums.size()-1;
+        while(low<high){
+            if(nums[low]<nums[high]) // [low,high]有序
+                return nums[low];
+            int mid=low+(high-low)/2;
+            if(nums[mid]<=nums[high]) // eg[mid,high]->[3,4,5]最小的元素在[3]
+                high=mid;
+            else // nums[mid]>nums[high] eg[mid,high]->[4,1,2,3] 最小元素在[mid+1,high] 
+                low=mid+1;
+        }
+        return nums[low];
+    }
+};
 
 Solution:
 class Solution {
