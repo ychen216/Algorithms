@@ -57,3 +57,39 @@ public:
         return helper(1,n);
     }
 };
+
+update:
+
+class Solution {
+public:
+    vector<TreeNode*> generateTrees(int n) {
+        if(n<=0)
+            return {};
+        return generator(1,n);
+    }
+    
+private:
+    // 生成元素为[s,e]的所有可能的BST
+    vector<TreeNode*> generator(int s,int e) {
+        // 必须要放一个NULL 才能在生成父节点的子树的时候赋值
+        if(s>e)
+            return {NULL};
+        vector<TreeNode*> res;
+        // 选择1~n其中一个作为根节点
+        for(int i=s;i<=e;i++){
+            // 以i为根节点 生成所有可能的左、右子树
+            vector<TreeNode *> leftChilds, rightChilds;
+            leftChilds=generator(s,i-1);
+            rightChilds=generator(i+1,e);
+            for(auto left:leftChilds){
+                for(auto right:rightChilds){
+                    TreeNode *root=new TreeNode(i);
+                    root->left=left;
+                    root->right=right;
+                    res.push_back(root);
+                }
+            }
+        }
+        return res;
+    }
+};
