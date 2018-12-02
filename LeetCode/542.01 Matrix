@@ -61,3 +61,83 @@ public:
         return matrix;
     }
 };
+
+
+update:
+class Solution {
+public:
+    /*
+        最短距离 可以想到用BFS
+        matrix[i][j]==0那么 dis[i][j]=0,到最近的0就是自身
+        那么对于matrix[i][j]!=0 最近的0 
+        可以利用BFS利用已经确定最短距离的点 来拓展这些未确定的节点最近的0的距离
+        为了节省空间 我们在in-place改动distance, 同时将还未拓展,还未确定距离的节点值设为INT_MAX
+    */
+    vector<vector<int>> updateMatrix(vector<vector<int>>& matrix) {
+        int m=matrix.size(),n=matrix[0].size();
+        queue<pair<int,int>> q;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]==0){
+                    // distance[i][j]=0 不用更改
+                    q.push({i,j});
+                }else{
+                    matrix[i][j]=INT_MAX;
+                }
+            }
+        }
+        int dx[4]={-1,1,0,0}, dy[4]={0,0,-1,1};
+        while(!q.empty()){
+            pair<int,int> cur=q.front();
+            q.pop();
+            // 向四周邻接的地方拓展
+            for(int i=0;i<4;i++){
+                int x=cur.first+dx[i];
+                int y=cur.second+dy[i];
+                if(x<0||x>=m||y<0||y>=n||matrix[x][y]!=INT_MAX)
+                    continue;
+                matrix[x][y]=matrix[cur.first][cur.second]+1;
+                q.push({x,y});
+            }
+        }
+        return matrix;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        matrix[i][j]==0那么 dis[i][j]=0,到最近的0就是自身
+        那么对于matrix[i][j]!=0 最近的0 可以通过(i,j)的上下左右相邻元素来更新
+        distance[i][j]=min(distance of all 相邻元素)+1
+        1.从上到下从 左到右遍历matrix 此时可以确定0元素的distance,同时由于遍历顺序非0元素(i,j)可以利用(i-1,j)和(i,j-1) 上和左元素来更新distance[i][j]
+        2.同理从下到上 从右到左遍历matrix 可以利用遍历顺序 利用右边和下方元素更新非0元素distance of(i,j)
+    */
+    vector<vector<int>> updateMatrix(vector<vector<int>>& matrix) {
+        int m=matrix.size(),n=matrix[0].size();
+        int maxDis=m+n;//矩阵中两个元素的最远距离
+        int up,left,down,right;
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(matrix[i][j]!=0){
+                    // 利用上、左元素更新
+                    up = i > 0 ? matrix[i-1][j]: maxDis;
+                    left = j > 0? matrix[i][j-1]: maxDis;
+                    matrix[i][j]=min(up, left)+1;
+                }
+            }
+        }
+        for(int i=m-1;i>=0;i--){
+            for(int j=n-1;j>=0;j--){
+                if(matrix[i][j]!=0){
+                    // 利用下、右元素更新 同时还要比较已经利用上左元素更新的结果
+                    down = i!=m-1 ? matrix[i+1][j]: maxDis;
+                    right = j != n-1 ? matrix[i][j+1]: maxDis;
+                    matrix[i][j]=min(matrix[i][j],min(down, right)+1);
+                }
+            }
+        }
+        return matrix;
+    }
+};
