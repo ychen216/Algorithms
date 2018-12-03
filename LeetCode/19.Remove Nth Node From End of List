@@ -38,3 +38,25 @@ public:
         return preHead->next;
     }
 };
+
+update:
+class Solution {
+public:
+    // 利用快慢指针 快指针先走n步 当快指针走到末尾时慢指针指向要删除元素的前一个元素
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        // 增加假头结点 方便处理删除的元素是头元素的情况
+        ListNode *feakHead=new ListNode(0);
+        feakHead->next=head;
+        ListNode *slow=feakHead, *fast=feakHead;
+        for(int i=0;i<n;i++)
+            fast=fast->next;
+        while(fast->next){
+            slow=slow->next;
+            fast=fast->next;
+        }
+        ListNode *target=slow->next;
+        slow->next=slow->next->next;
+        delete target;
+        return feakHead->next;
+    }
+};
