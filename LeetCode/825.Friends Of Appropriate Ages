@@ -1,0 +1,98 @@
+825. Friends Of Appropriate Ages
+
+/*
+Some people will make friend requests. The list of their ages is given and ages[i] is the age of the ith person. 
+
+Person A will NOT friend request person B (B != A) if any of the following conditions are true:
+
+age[B] <= 0.5 * age[A] + 7
+age[B] > age[A]
+age[B] > 100 && age[A] < 100
+Otherwise, A will friend request B.
+
+Note that if A requests B, B does not necessarily request A.  Also, people will not friend request themselves.
+
+How many total friend requests are made?
+
+Example 1:
+Input: [16,16]
+Output: 2
+Explanation: 2 people friend request each other.
+
+Example 2:
+Input: [16,17,18]
+Output: 2
+Explanation: Friend requests are made 17 -> 16, 18 -> 17.
+
+Example 3:
+Input: [20,30,100,110,120]
+Output: 
+Explanation: Friend requests are made 110 -> 100, 120 -> 110, 120 -> 100.
+
+Notes:
+  1 <= ages.length <= 20000.
+  1 <= ages[i] <= 120.
+
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        首先我们注意到 AB不能做朋友的条件2,3是冗余的 都可以归结为ageB > ageA
+        所以A和B可以做朋友的条件为 ageB > 0.5*ageA +7 && ageB <= ageA
+        ==> 0.5*ageA + 7 < ageB <= ageA
+        且要ageA > 0.5*ageA + 7 成立 ==> ageA > 14
+        记录不同age的人数 及[1,age]范围内的人 对每一个ageA寻找可能的ageB的范围 
+        可以构成的朋友对为 可能的ageB的范围的人数*ageA的人数-ageA的人数 (题目要求自己不能和自己做朋友)
+    */
+    int numFriendRequests(vector<int>& ages) {
+        vector<int> sum(121,0), ageNum(121,0);
+        // 统计age和 累积的人数
+        for(auto age: ages)
+            ageNum[age]++;
+        for(int i=1;i<=120;i++){
+            sum[i]=sum[i-1]+ageNum[i];
+        }
+        int res=0;
+        for(int A=15;A<=120;A++){
+            if(ageNum[A]==0) continue;
+            int ageBRangePeople=sum[A]-sum[A/2+7];
+            res+=ageBRangePeople*ageNum[A]-ageNum[A];
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*  
+        可以直接记录每一个年龄的人数 然后遍历a,b看其是否满足要求
+        满足要求则 增加 counter[a]*(couter[b] - 0 if a!=b else 1)
+        要注意自己不能和自己做朋友
+    */
+    int numFriendRequests(vector<int>& ages) {
+        unordered_map<int,int> counter;
+        // 统计age
+        for(auto age: ages)
+            counter[age]++;
+        
+        int res=0;
+        for(auto a: counter){
+            for(auto b:counter){
+                if(isSatisfied(a.first,b.first)){
+                    res+=a.second*b.second;
+                    if(a.first==b.first)
+                        res-=a.second;
+                }
+            }
+        }
+        return res;
+    }
+private:
+    bool isSatisfied(int a,int b){
+        // 条件2和3是冗余的 统一表示为b>a即可
+        return !( b <= 0.5*a + 7 || b > a);
+    }
+};
