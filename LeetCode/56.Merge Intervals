@@ -7,7 +7,6 @@ Given [1,3],[2,6],[8,10],[15,18],
 return [1,6],[8,10],[15,18].
 */
 
-Solution:
 /**
  * Definition for an interval.
  * struct Interval {
@@ -17,6 +16,39 @@ Solution:
  *     Interval(int s, int e) : start(s), end(e) {}
  * };
  */
+class Solution {
+public:
+    vector<Interval> merge(vector<Interval>& intervals) {
+        int n=intervals.size();
+        if(n<2)
+            return intervals;
+        // 按照区间起始位置 从小到大排序 如果起始位置相同按照结束位置从小打大排序
+        sort(intervals.begin(),intervals.end(),[&](auto &a,auto &b){
+            if(a.start!=b.start)
+                return a.start<b.start;
+            return a.end<b.end;
+        });
+        vector<Interval> res;
+        res.push_back(intervals[0]);
+        int last=intervals[0].end;
+        for(int i=1;i<n;i++){
+            if(intervals[i].start>last){
+                // 没有重叠
+                res.push_back(intervals[i]);
+                last=intervals[i].end;
+            }else{
+                // intervals[i].start<=last 
+                // 并且由排序保证了前一个区间的start<=intervals[i].start
+                int end=max(intervals[i].end,last); // 区间终点由当前区间和前一个区间的终点决定
+                res[res.size()-1].end=end;
+                last=end;
+            }
+        }
+        return res;
+    }
+};
+
+update:
 class Solution {
 public:
     vector<Interval> merge(vector<Interval>& ins) {
