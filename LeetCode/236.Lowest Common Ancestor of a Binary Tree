@@ -40,3 +40,26 @@ public:
         return left == NULL ? right : left;
     }
 };
+
+
+update: 一样的思路 理顺一下思路 O(N)
+class Solution {
+public:
+    /*  
+        如果两个节点根节点有其中之一是root 那么LCA就是根节点
+        如果不是 就要继续往左右子树搜索,有以下三种情况:
+            1.两个节点分别在根节点root的左右子树 对左右子树搜索的时候会在左右子树分别找到一个节点 那么LCA就是根节点
+            2、3.如果两个节点分别在根节点的左(右)子树 对左右子树搜索的时候 右(左)子树的搜索结果会是null 那么LCA就在左(右)子树中
+    */
+    TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
+        if(root==NULL || root==p || root==q)
+            return root;
+        TreeNode *findLeft=lowestCommonAncestor(root->left,p,q);
+        TreeNode *findRight=lowestCommonAncestor(root->right,p,q);
+        // 左右子树各找到一个
+        if(findLeft&&findRight)
+            return root;
+        return findLeft? findLeft:findRight;
+        
+    }
+};
