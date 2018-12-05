@@ -7,7 +7,8 @@ If there isn't one, return 0 instead.
 For example, given the array [2,3,1,2,4,3] and s = 7,
 the subarray [4,3] has the minimal length under the problem constraint.
 */
-Solution:
+
+Solution 1:
 class Solution {
 public:
     //计算以nums[i]为区间终点满足条件的最小区间长度
@@ -23,5 +24,76 @@ public:
             }
         }
         return minLen==INT_MAX?0:minLen;
+    }
+};
+
+update:
+class Solution {
+public:
+    // 利用双指针 逐步拓展区间
+    int minSubArrayLen(int s, vector<int>& nums) {
+        int n=nums.size();
+        int i=0, j=0, sum=0; //区间端点 区间内元素和
+        int minLen=n+1;
+        for(;j<n;j++){
+            // 加入第j个元素
+            sum+=nums[j];
+            // 对于j找到满足sum>=s的最小区间 即最大的左区间端点
+            while(i<j&&sum-nums[i]>=s){
+                sum-=nums[i];
+                i++;
+            }
+            if(sum>=s)
+                minLen=min(minLen, j-i+1);
+        }
+        return minLen==n+1 ? 0 : minLen;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        O(nlogn)的做法:如果存在满足条件的连续子数组 那么其长度必然在[1,n]
+        [1,n]这是一个递增序列 那么我们可以利用二分搜索查找满足条件的长度
+        同时为了查找高效 我们记录一个数组sum[j]表示从0元素到j元素的和
+        查找是否存在长度为x符合条件的子数组 我们可以check sum[j+x]-sum[j]>=s
+    */
+    int minSubArrayLen(int s, vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return 0;
+        // n>=1
+        vector<int> sum(n,0); // sum[i]记录[0,i]的元素和
+        sum[0]=nums[0];
+        for(int i=1;i<n;i++)
+            sum[i]=nums[i]+sum[i-1];
+        int i=1, j=n; //最小、最大长度
+        int minLen=n+1;
+        while(i<=j){
+            int midLen=i+(j-i)/2;
+            if(check(sum,midLen,s)){
+                minLen=midLen;
+                j=midLen-1;
+            }
+            else
+                i=midLen+1;
+        }
+        return minLen==n+1 ? 0 : minLen;
+    }
+private:
+    bool check(vector<int> &sum, int len, int target){
+        int n=sum.size();
+        if(len>n)
+            return false;
+        // 查看[0, len-1]这len个元素是否满足条件
+        if(sum[len-1]>=target)
+            return true;
+        for(int i=len;i<n;i++){
+            if(sum[i]-sum[i-len]>=target)
+                return true;
+        }
+        return false;
     }
 };
