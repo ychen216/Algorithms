@@ -32,3 +32,31 @@ public:
         return dp[len];
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        DP dp[i+1]表示[0,i]范围的字符串能不能被dict完美划分
+        判断dp[i]，则需要遍历0~i-1中是否存在一个j，使得dp[j]=true而且j~i-1存在于dict中
+        要注意初始化 空串是必然可以被划分的dp[0]=true
+    */
+    bool wordBreak(string s, vector<string>& wordDict) {
+        int n=s.length();
+        set<string> sset(wordDict.begin(),wordDict.end());
+        vector<bool> dp(n+1,false);
+        dp[0]=true; //在第0个字符之前的字符串(即空串,初始状态)能够被划分完成 
+        // 遍历[0~n-1]范围的字符串是否能被划分 i属于[1,n]
+        for(int i=1;i<=n;i++){
+            // check[0~i-1]字符串是否能被切分完全
+            for(int j=i-1;j>=0;j--){
+                // [0~j-1]的字符串能够被切分完全 判断[j,i-1]是否存在于word_set中
+                if(dp[j]&&sset.find(s.substr(j,i-j))!=sset.end()){
+                    dp[i]=true;
+                    break;
+                }
+            }
+        }
+        return dp[n];
+    }
+};
