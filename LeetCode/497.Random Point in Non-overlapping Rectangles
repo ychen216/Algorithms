@@ -1,0 +1,108 @@
+497. Random Point in Non-overlapping Rectangles
+
+/*
+Given a list of non-overlapping axis-aligned rectangles rects, write a function pick which randomly and uniformily picks an integer point in the space covered by the rectangles.
+
+Note:
+  An integer point is a point that has integer coordinates. 
+  A point on the perimeter of a rectangle is included in the space covered by the rectangles. 
+  ith rectangle = rects[i] = [x1,y1,x2,y2], where [x1, y1] are the integer coordinates of the bottom-left corner, and [x2, y2] are the integer coordinates of the top-right corner.
+  length and width of each rectangle does not exceed 2000.
+  1 <= rects.length <= 100
+  pick return a point as an array of integer coordinates [p_x, p_y]
+  pick is called at most 10000 times.
+
+Example 1:
+Input: 
+["Solution","pick","pick","pick"]
+[[[[1,1,5,5]]],[],[],[]]
+Output: 
+[null,[4,1],[4,1],[3,3]]
+
+Example 2:
+Input: 
+["Solution","pick","pick","pick","pick","pick"]
+[[[[-2,-2,-1,-1],[1,0,3,0]]],[],[],[],[],[]]
+Output: 
+[null,[-1,-2],[2,0],[-2,-1],[3,0],[-2,-2]]
+Explanation of Input Syntax:
+
+The input is two lists: the subroutines called and their arguments. Solution's constructor has one argument, the array of rectangles rects. pick has no arguments. Arguments are always wrapped with a list, even if there aren't any.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        在不重叠的矩形中随机选取一个点 weighted probability
+        那么点落在每一个矩形x的概率应该是area(x)/totalArea x的面积/所有矩形的面积和
+        按照概率选定一个矩形 然后在该矩形中随机选择一个点P(x,y)
+        按照概率选择矩形的思路:在[0,totalArea)范围随机生成一个数r 遍历不同矩形累积面积值sum 当sum>r时 选择该矩形
+        eg. 矩形面积[3,5,2] totalArea=10 每个矩形的概率为[0.3,0.5,0.2]
+        随机数r=[0,1,2] r的范围在[0,2]概率为0.3 sum=3 > r 选择第0个
+        随机数r=[3,4,5,6,7] r的范围在[3,7]概率为0.5 sum=3+5=8 > r 选第1个
+        随机数r=[8,9] r的范围在[8,9]概率为0.2 sum=3+5+2=10 > r 选第2个
+    */
+    Solution(vector<vector<int>> rectangles) {
+        this->rects=rectangles;
+        totalArea=0;
+        for(auto &v: rectangles)
+            totalArea+=(v[2]-v[0]+1)*(v[3]-v[1]+1); // 不知道为什么要+1
+    }
+    
+    vector<int> pick() {
+        //srand(time(0)); //不知道为什么加了这个就WA
+        int r=rand()%totalArea;
+        int i,sum=0;
+        for(i=0;i<rects.size();i++){
+            sum+=(rects[i][2]-rects[i][0]+1)*(rects[i][3]-rects[i][1]+1);
+            if(sum>r){
+                break;
+            }
+        }
+        int x=rand()%(rects[i][2]-rects[i][0]+1)+rects[i][0];
+        int y=rand()%(rects[i][3]-rects[i][1]+1)+rects[i][1];
+        return {x,y};
+    }
+private:
+    vector<vector<int>> rects;
+    int totalArea;
+};
+
+update:
+class Solution {
+public:
+    /*
+        在不重叠的矩形中随机选取一个点 weighted probability
+        那么点落在每一个矩形x的概率应该是area(x)/totalArea x的面积/所有矩形的面积和
+        按照概率选定一个矩形 然后在该矩形中随机选择一个点P(x,y)
+        按照概率选择矩形的思路:在[0,totalArea)范围随机生成一个数r 遍历不同矩形累积面积值sum 当sum>r时 选择该矩形
+        eg. 矩形面积[3,5,2] totalArea=10 每个矩形的概率为[0.3,0.5,0.2]
+        随机数r=[0,1,2] r的范围在[0,2]概率为0.3 sum=3 > r 选择第0个
+        随机数r=[3,4,5,6,7] r的范围在[3,7]概率为0.5 sum=3+5=8 > r 选第1个
+        随机数r=[8,9] r的范围在[8,9]概率为0.2 sum=3+5+2=10 > r 选第2个
+        为了便于得到sum>r的矩形下标 我们利用map记录累积面积sum的值和对于矩形下标 利用upper_bound将查找时间降到O(lgn)
+    */
+    Solution(vector<vector<int>> rectangles) {
+        rects=rectangles;
+        totalArea=0;
+        for(int i=0;i<rects.size();i++){
+            totalArea+=(rects[i][2]-rects[i][0]+1)*(rects[i][3]-rects[i][1]+1);     
+            sum2Index[totalArea]=i;
+        }
+    }
+    
+    vector<int> pick() {
+        int r=rand()%totalArea;
+        auto it=sum2Index.upper_bound(r); // 找到第一个sum > r的矩形
+        int i=it->second;
+        int x=rand()%(rects[i][2]-rects[i][0]+1)+rects[i][0];
+        int y=rand()%(rects[i][3]-rects[i][1]+1)+rects[i][1];
+        return {x,y};
+    }
+private:
+    vector<vector<int>> rects;
+    map<int,int> sum2Index;
+    int totalArea;
+};
+
