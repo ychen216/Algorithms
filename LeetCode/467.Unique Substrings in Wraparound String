@@ -32,19 +32,20 @@ public:
     那么题目就可以转换为分别求出以每个字符(a-z)为结束字符的最长连续字符串就行了
     */
     int findSubstringInWraproundString(string p) {
-        int cnt[26]={0};
-        int len=1;
-        int size=p.length();
-        for(int i=0;i<size;i++){
-            if(i>0&&(p[i]==p[i-1]+1||p[i-1]-p[i]==25))
+        int dp[26]={0};//以字符i结尾的子串个数
+        int len=0;
+        for(int i=0;i<p.length();i++){
+            // 对应abc和za的情况
+            if(i>0&&(p[i]==p[i-1]+1||p[i]==p[i-1]-25)) // 可以直接p[i-1]=='z'&&p[i]=='a'
                 len++;
             else
                 len=1;
-            cnt[p[i]-'a']=max(cnt[p[i]-'a'],len);
+            //以字符p[i]结尾的符合条件的子字符串个数 unique
+            dp[p[i]-'a']=max(dp[p[i]-'a'],len);
         }
         int res=0;
         for(int i=0;i<26;i++)
-            res+=cnt[i];
+            res+=dp[i];
         return res;
     }
 };
