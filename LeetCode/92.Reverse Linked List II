@@ -47,3 +47,38 @@ public:
         return dummy->next;
     }
 };
+
+Solution 2:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    // m~n的节点利用头插法reverse
+    ListNode* reverseBetween(ListNode* head, int m, int n) {
+        ListNode* feakNode=new ListNode(0);
+        feakNode->next=head;
+        ListNode* pre=feakNode;//pre记录当前节点的前一个节点
+        // pre走到第m-1个节点
+        for(int i=1;i<m;i++){
+            pre=pre->next;
+        }
+        ListNode *cur=pre->next, *last=pre->next;//cur为要reverse的节点 last为第一个reverse的节点 也就是reverse结束后在reverse链最后一个的节点
+        pre->next=NULL;
+        // 头插法 这时候的头结点是pre
+        for(int i=m;i<=n;i++){
+            ListNode* next=cur->next;
+            cur->next=pre->next;
+            pre->next=cur;
+            cur=next;
+        }
+        //链接
+        last->next=cur;
+        return feakNode->next;
+    }
+};
