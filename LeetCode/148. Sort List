@@ -54,3 +54,48 @@ public:
         return feakHead->next;
     }
 };
+
+
+update:
+class Solution {
+public:
+    // 利用merge sort思想排序 基于快慢指针找到中点
+    ListNode* sortList(ListNode* head) {
+        // 头指针为空或只有一个节点 无序排序直接返回
+        if(!head || !head->next)
+            return head;
+        // 将原链表平均拆分成两半
+        ListNode *fast=head,*slow=head;
+        while(fast->next&&fast->next->next){
+            slow=slow->next;
+            fast=fast->next->next;
+        }
+        // slow指向第一个链表的最后一个节点 fast指向最后一个节点
+        ListNode *head2=slow->next;
+        slow->next=NULL; // 拆分 要将第一个链表的尾部置为NULL
+        ListNode *l1=sortList(head);
+        ListNode *l2=sortList(head2);
+        return merge(l1,l2);
+    }
+private:
+    ListNode *merge(ListNode *l1,ListNode *l2){
+        ListNode *feakNode=new ListNode(0);
+        ListNode *cur=feakNode;
+        while(l1&&l2){
+            if(l1->val<l2->val){
+                cur->next=l1;
+                l1=l1->next;
+            }
+            else{
+                cur->next=l2;
+                l2=l2->next;
+            }
+            cur=cur->next;
+        }
+        if(l1)
+            cur->next=l1;
+        if(l2)
+            cur->next=l2;
+        return feakNode->next;
+    }
+};
