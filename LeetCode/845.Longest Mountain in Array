@@ -1,0 +1,140 @@
+845. Longest Mountain in Array
+
+/*
+Let's call any (contiguous) subarray B (of A) a mountain if the following properties hold:
+
+B.length >= 3
+There exists some 0 < i < B.length - 1 such that B[0] < B[1] < ... B[i-1] < B[i] > B[i+1] > ... > B[B.length - 1]
+(Note that B could be any subarray of A, including the entire array A.)
+
+Given an array A of integers, return the length of the longest mountain. 
+
+Return 0 if there is no mountain.
+
+Example 1:
+Input: [2,1,4,7,3,2,5]
+Output: 5
+Explanation: The largest mountain is [1,4,7,3,2] which has length 5.
+
+Example 2:
+Input: [2,2,2]
+Output: 0
+Explanation: There is no mountain.
+
+Note:
+  0 <= A.length <= 10000
+  0 <= A[i] <= 10000
+
+Follow up:
+  Can you solve it using only one pass?
+  Can you solve it in O(1) space?
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*
+        每一个mountain都有唯一的一个山峰(最大值处) 
+        遍历所有元素A[i] 计算i元素为山峰的山的最长长度 
+        那么我们需要知道A[i]左侧有有多少连续递增的元素 右侧有多少连续递减的元素 分别记录在left,right两个数组中
+        left[i](right[i])表示元素i左(右)侧,有多少个连续递增(减)的元素
+        那么以A[i]为山峰的山最长长度为 left[i]+right[i]+1
+        注意: 山的定义,长度要>=3且 山峰两侧必须有元素 不能是单侧的 eg. 1 2 3(山峰) 这样只有一边的也不行
+    */
+    int longestMountain(vector<int>& A) {
+        int n=A.size();
+        if(n<3)
+            return 0;
+        vector<int> left(n,0), right(n,0);
+        // left[0]=0,right[n-1]=0; 初始化
+        for(int i=1;i<n;i++){
+            if(A[i]>A[i-1])
+                left[i]=left[i-1]+1;
+        }
+        for(int i=n-2;i>=0;i--){
+            if(A[i]>A[i+1])
+                right[i]=right[i+1]+1;
+        }
+        int res=0;
+        for(int i=0;i<n;i++){
+            // 山峰两侧必须有元素 不能是单侧的 
+            if(left[i]>0&&right[i]>0)
+                res=max(res,left[i]+right[i]+1);
+        }
+        // 必须长度>=3才是一个mountain
+        return res>=3 ? res:0;
+    }
+};
+
+update: 小改进
+class Solution {
+public:
+    /*
+        每一个mountain都有唯一的一个山峰(最大值处) 
+        遍历所有元素A[i] 计算i元素为山峰的山的最长长度 
+        那么我们需要知道A[i]左侧有有多少连续递增的元素 右侧有多少连续递减的元素 分别记录在left,right两个数组中
+        left[i](right[i])表示元素i左(右)侧,有多少个连续递增(减)的元素
+        那么以A[i]为山峰的山最长长度为 left[i]+right[i]+1
+        注意: 山的定义,长度要>=3且 山峰两侧必须有元素 不能是单侧的 eg. 1 2 3(山峰) 这样只有一边的也不行
+    */
+    int longestMountain(vector<int>& A) {
+        int n=A.size();
+        if(n<3)
+            return 0;
+        vector<int> left(n,0), right(n,0);
+        // left[0]=0,right[n-1]=0; 初始化
+        for(int i=n-2;i>=0;i--){
+            if(A[i]>A[i+1])
+                right[i]=right[i+1]+1;
+        }
+        int res=0;
+        // 可以合并一下 求left和最后一趟求最终结果
+        // 由于mountain不能是单侧的 所以0和n-1元素是不可能做山峰的 只需遍历1~n-1
+        for(int i=1;i<n-1;i++){
+            if(A[i]>A[i-1])
+                left[i]=left[i-1]+1;
+            // 山峰两侧必须有元素 不能是单侧的 该条件满足了必然有res>=3
+            if(left[i]&&right[i])
+                res=max(res,left[i]+right[i]+1);
+        }
+        return res;
+    }
+};
+
+Solution 2: one-pass
+class Solution {
+public:
+    /*
+        每一个mountain都有唯一的一个山峰(最大值处) 
+        注意: 山的定义,长度要>=3且 山峰两侧必须有元素 不能是单侧的 eg. 1 2 3(山峰) 这样只有一边的也不行
+        可以优化为空间O(1) 且 one-pass
+        有上坡有下坡的还要是连续的才能是mountain 那么每次我们寻找一个mountain而且是该mountain是在这一段数字中能够构成的最长mountain 
+        即找到最长的上坡和接下来最长的下坡 然后就跳过了这一个mountain 继续寻找下一个mountain
+    */
+    int longestMountain(vector<int>& A) {
+        int maxMnt = 0;
+        int i = 1;
+        while (i < A.size()) {
+            // 要找一个上坡
+            // 跳过数值相等的 数值相等的一定不能构成mountain 必然至少有一侧被截断
+            while(i < A.size() && A[i-1] == A[i])
+                ++i;
+            int up = 0;
+            while(i < A.size() && A[i-1] < A[i]) {
+                ++up;
+                ++i;
+            }
+            // 跳出时i-1是山峰
+            // 找属于这个山峰的最长下坡
+            int down = 0;
+            while(i < A.size() && A[i-1] > A[i]) {
+                ++down;
+                ++i;
+            }
+            // 跳出时 i属于另一个mountain了
+            if (up > 0 && down > 0)  
+                maxMnt = max(maxMnt, up+down+1);
+        }
+        return maxMnt;
+    }
+};
