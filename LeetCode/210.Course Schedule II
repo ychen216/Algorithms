@@ -65,3 +65,46 @@ public:
         return {};
     }
 };
+
+
+update:
+class Solution {
+public:
+    /*
+        判断是否有环 是否能够拓扑排序
+        如果没有环 那么输出任意一种拓扑排序:
+            可以判断节点入度是否为0 然后删除与入度为0的节点相接的边 直到所有节点的入度都为零
+            实现时 可以利用队列保存入度为0的节点 同时利用map实现邻接链表保存{pre-coures,[courese]}
+        如果有环 输出空数组
+    */
+    vector<int> findOrder(int numCourses, vector<pair<int, int>>& prerequisites) {
+        unordered_map<int,vector<int>> edges;
+        vector<int> inDegree(numCourses,0);
+        // 统计入度 构建图的邻接链表
+        for(auto& p:prerequisites){
+            edges[p.second].push_back(p.first);
+            inDegree[p.first]++;
+        }
+        queue<int> q;
+        vector<int> res;
+        // 入度为0的节点入队
+        for(int i=0;i<numCourses;i++){
+            if(inDegree[i]==0){
+                q.push(i);
+                res.push_back(i);
+            }
+        }
+        while(!q.empty()){
+            int preCourse=q.front();
+            q.pop();
+            // 将于preCourse相邻接的节点入度减少1
+            for(auto &nextCourse:edges[preCourse]){
+                if(--inDegree[nextCourse]==0){
+                    q.push(nextCourse);
+                    res.push_back(nextCourse);
+                }
+            }
+        }
+        return res.size()==numCourses ? res: vector<int>();
+    }
+};
