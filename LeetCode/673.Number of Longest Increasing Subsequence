@@ -16,32 +16,76 @@ Note: Length of the given array will be not exceed 2000 and the answer is guaran
 Solution:
 class Solution {
 public:
-    //DP 用两个数组len[i],cnt[i]分别记录以nums[i]为结尾的最长子序列长度,机最长子序列个数
+    /*
+        最长公共子序列
+        除了len[i]记录以i结尾的最长公共子序列长度
+        还有cnt[i]记录以i结尾的LIS的个数
+    */
     int findNumberOfLIS(vector<int>& nums) {
-        int size=nums.size();
-        if(size==0)
-            return 0;
-        int len[size],cnt[size];
+        int n=nums.size();
+        vector<int> len(n,0), cnt(n,0);
         int maxLen=0;
-        for(int i=0;i<size;i++){
-            len[i]=1;
-            cnt[i]=1;
+        for(int i=0;i<n;i++){
+            int curLen=1,curCnt=1; //记录当前以元素i结尾的LIS长度以及该长度LIS的个数
             for(int j=0;j<i;j++){
                 if(nums[j]<nums[i]){
-                    if(len[j]+1>len[i]){
-                        len[i]=len[j]+1;
-                        cnt[i]=cnt[j];
+                    if(len[j]+1>curLen){
+                        curLen=len[j]+1;
+                        curCnt=cnt[j];
                     }
-                    else if(len[j]+1==len[i])
-                        cnt[i]+=cnt[j];
+                    else if(len[j]+1==curLen){
+                        curCnt+=cnt[j];
+                    }
                 }
             }
+            len[i]=curLen;
+            cnt[i]=curCnt;
             maxLen=max(maxLen,len[i]);
         }
         int res=0;
-        for(int i=0;i<size;i++)
+        for(int i=0;i<n;i++)
             if(len[i]==maxLen)
                 res+=cnt[i];
         return res;
     }
 };
+
+可以将最后一个for循坏合并到找LIS的过程中
+class Solution {
+public:
+    /*
+        最长公共子序列
+        除了len[i]记录以i结尾的最长公共子序列长度
+        还有cnt[i]记录以i结尾的LIS的个数
+    */
+    int findNumberOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> len(n,0), cnt(n,0);
+        int maxLen=0,res=0;
+        for(int i=0;i<n;i++){
+            int curLen=1,curCnt=1; //记录当前以元素i结尾的LIS长度以及该长度LIS的个数
+            for(int j=0;j<i;j++){
+                if(nums[j]<nums[i]){
+                    if(len[j]+1>curLen){
+                        curLen=len[j]+1;
+                        curCnt=cnt[j];
+                    }
+                    else if(len[j]+1==curLen){
+                        curCnt+=cnt[j];
+                    }
+                }
+            }
+            len[i]=curLen;
+            cnt[i]=curCnt;
+            if(maxLen==len[i])
+                res+=cnt[i];
+            else if(maxLen<len[i]){
+                res=cnt[i];
+                maxLen=len[i];
+            }
+        }
+        return res;
+    }
+};
+
+Solution 2: O(nlgn)
