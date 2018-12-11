@@ -52,3 +52,57 @@ public:
         return false;
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        这里的Uncommon Subsequence Su指Su只是某一个字符串S的子序列，但不是任何其他字符串S'的子序列
+        首先分析一下最长非公共子串的特征，假设有若干个字符串，其中最长非公共子串为Sm，它的长度为Sm.length()。从子串的定义上，我们可以知道Sm有两种可能的构成：
+            1. Sm为某一个字符串本身。
+            2. Sm为某一个小于父串长度的子串。
+        我们可以证明Sm只能为第一种情况。 
+        首先我们假设 2 是成立的，其中 Sm 的父串是 Sf，那么说明 Sf 是某一个更长字符串的字串，所以导致 Sf 本身不能最为最长非公共子串。
+        而由于 Sf 是某一个字符串的字串，那么 Sm 理应也是这一个字符串的子串，因为他们是包含关系，所以 Sm 是最长非公共子串跟假设 2 是矛盾的。
+        所以Uncommon Subsequence是n个字符串中的其中一个 我们可以按照字符串长度从大到小排序遍历找到LUS
+        那么长度大的字符串S必然不会是长度小的字符串S'的子串 我们只需要验证S是否是长度不小于S的S''的子序列即可 
+        但是要注意的是可能会有重复字符串 重复的字符串必然不可能是LUS eg. ['aaa','aaa','aa']正确长度应该是-1 而不是3
+        为了排除重复元素的影响 利用map记录每个字符串出现的次数
+    */
+    int findLUSlength(vector<string>& strs) {
+        unordered_map<string,int> counter;
+        for(auto &s:strs)
+            counter[s]++;
+        vector<pair<string,int>> pairStrs;
+        for(auto &p:counter)
+            pairStrs.push_back(p);
+        sort(pairStrs.begin(),pairStrs.end(),
+             [&](const pair<string,int>&p1,const pair<string,int>&p2){
+                 return p1.first.length() > p2.first.length();
+             });
+        for(int i=0,j=0;i<pairStrs.size();i++){
+            // 必须是无重复的字符串才有可能是LUS
+            if(pairStrs[i].second!=1) continue;
+            // 比较i是否是长度不小于len(str[i])的字符串的子序列
+            for(j=0;j<i;j++){
+                // 验证strs[i]是否是strs[j]的子序列
+                if(isSubsequence(pairStrs[i].first,pairStrs[j].first))
+                    break;
+            }
+            if(j==i)
+                return pairStrs[i].first.length();
+        }
+        return -1;
+    }
+private:
+    // s1是否是s2的子序列
+    bool isSubsequence(const string&s1, const string& s2){
+        int p1=0,p2=0,len1=s1.length(),len2=s2.length();
+        while(p1<len1&&p2<len2){
+            if(s1[p1]==s2[p2])
+                p1++;
+            p2++;
+        }
+        return p1==len1;
+    }
+};
