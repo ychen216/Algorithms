@@ -29,7 +29,11 @@ All possible pairs are returned from the sequence:
 Solution 1:
 class Solution {
 public:
-    //暴力解 找出所有的对 排序后删除多余的部分
+    /*
+        暴力解 找出所有的对 排序后删除多余的部分
+        因为nums1,nums2是有序的 所以k个pair必然由nums1的前min(k,#nums1)和nums2的前min(k,#nums2)元素组合而成
+        所以可以直接对这些元素两两组合 排序后得到前k个
+    */
     vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
         vector<pair<int, int>> res;
         for (int i = 0; i < min((int)nums1.size(), k); ++i) {
@@ -65,4 +69,47 @@ public:
         }
         return res;
     }
+};
+
+
+Solution 3:
+class Solution {
+public:
+    /*
+        参考 https://leetcode.com/problems/find-k-pairs-with-smallest-sums/discuss/84551/simple-Java-O(KlogK)-solution-with-explanation
+       Basic Idea: Use min_heap to keep track on next minimum pair sum, and we only need to maintain K possible candidates in the data structure.
+       因为nums1,nums2是有序的 所以k个pair必然由nums1的前min(k,#nums1)和nums2的前min(k,#nums2)元素组合而成
+       好好思考 想象一下过程
+    */
+    vector<pair<int, int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+        if(k==0||nums1.size()==0||nums2.size()==0) // 任何一个数组都不能为空
+            return {};
+        priority_queue<vector<int>,vector<vector<int>>,cmp> pq; //min_heap
+        // 初始化 将nums1的元素和nums2[0]的组合放入队列中成为候选的min(k,nums1.size())个pair 最小的组合{nums1[0],nums2[0]}必然包含在里面
+        for(int i=0;i< min(k, (int)nums1.size());i++){
+            vector<int> v(3);
+            v[0]=nums1[i];v[1]=nums2[0];v[2]=0; // {nums1[i],nums2[0],0}三元组 第三个元素指明和哪一个nums2元素匹配了
+            pq.push(v);
+        }
+        vector<pair<int,int>> res;
+        while(k-->0&&!pq.empty()){
+            // pq每次出队的都是和最小的pair
+            vector<int> cur=pq.top();
+            pq.pop();
+            res.push_back({cur[0],cur[1]});
+            // nums1的元素继续和nums2的元素拓展组成较大的pair
+            if(cur[2]==nums2.size()-1) continue; //nums1[i]在nums2中没有可以继续扩展的元素了
+            vector<int> next(3);
+            next[0]=cur[0],next[1]=nums2[cur[2]+1],next[2]=cur[2]+1;
+            pq.push(next);
+        }
+        return res;
+    }
+private:
+    struct cmp{
+        // 定义优先级小 最小堆 大的元素优先级小
+        bool operator()(const vector<int>&v1,const vector<int> &v2){
+            return v1[0]+v1[1] > v2[0]+v2[1];
+        }  
+    };
 };
