@@ -23,27 +23,28 @@ The string size will be in the range [1, 100].
 Solution 1:
 class Solution {
 public:
-    //在任何位置 都必须保证'('的数量大于等于')'的数量 并且在遍历完字符串时 两字符的数量要相等
+    /*
+        有效的括号字符串要时刻保持 左括号的数量>=右括号 遍历结束时 左右括号数要相等
+    */
     bool checkValidString(string s) {
         return check(s,0,0);
     }
-    //cnt为左右括号个数的差值
-    bool check(string s,int start,int cnt){
-        if(cnt<0)
+private:
+    // diff是目前左右括号的差值
+    bool check(string &s,int start,int diff){
+        if(diff<0)
             return false;
-        int len=s.length();
-        for(int i=start;i<len;i++){
+        for(int i=start;i<s.length();i++){
             if(s[i]=='(')
-                cnt++;
+                diff++;
             else if(s[i]==')'){
-                cnt--;
-                if(cnt<0)
+                diff--;
+                if(diff<0)
                     return false;
-            }
-            else// '*'
-                return check(s,i+1,cnt+1)||check(s,i+1,cnt-1)||check(s,i+1,cnt);
+            }else // 当前* 当成( or ) or空的情况
+                return check(s,i+1,diff+1) || check(s,i+1,diff-1) || check(s,i+1,diff);
         }
-        return cnt==0;
+        return diff==0;
     }
 };
 
