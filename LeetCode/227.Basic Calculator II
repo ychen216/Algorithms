@@ -97,6 +97,7 @@ public:
                 opSt.push(op);   
             }
         }
+        // 此时运算符栈中 从栈底到栈顶按照优先级从小到大的顺序排列 直接从栈顶开始逐步计算即可
         while(!opSt.empty()){
             calTop2Num(numSt,opSt);
         }
