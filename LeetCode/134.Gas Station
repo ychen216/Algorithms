@@ -14,22 +14,26 @@ The solution is guaranteed to be unique.
 Solution:
 class Solution {
 public:
-    //参考 http://www.cnblogs.com/felixfang/p/3814463.html 有两种解法
-    //依托于一个数学命题：
-    //对于一个循环数组，如果这个数组整体和 SUM >= 0，那么必然可以在数组中找到这么一个元素：
-    //从这个数组元素出发，绕数组一圈，能保证累加和一直是出于非负状态。
+    /*  参考 http://www.cnblogs.com/felixfang/p/3814463.html 有两种解法
+        1.依托于一个数学命题：对于一个循环数组，如果这个数组整体和 SUM >= 0，那么必然可以在数组中找到这么一个元素：
+            从这个数组元素出发，绕数组一圈，能保证累加和一直是出于非负状态。
+            该命题保证了有解的条件
+        2.同时，如果从A出发无法到达B(到达B时 加油后油箱里的油<开销) A->C1->C2->... ->B 那么在AB之间的所有站点不能到达B
+        证明:假设C1能够达到B 那么A能够到达C1 那么A能够到达B 矛盾
+        由2可以求解 起始站点 如果走到一个地方pos tank<cost 那么起始站点只有可能从pos+1开始中间站点都无法到达pos
+        同时如果又有条件1成立(整个数组中totalCost<=totalGas) 就保证了有解
+    */
     int canCompleteCircuit(vector<int>& gas, vector<int>& cost) {
-        int size=gas.size();
-        int start=0,total=0,sum=0;
-        for(int i=0;i<size;i++){
-            total+=gas[i]-cost[i];
-            if(sum<0){
-                sum=gas[i]-cost[i];
-                start=i;
+        int totalLeft=0,startIndex=0,curTank=0;
+        // totalLeft走完一周剩下的gas startIndex起始位置 curTank从起始位置开始走 油箱里剩下的油
+        for(int i=0;i<gas.size();i++){
+            totalLeft+=gas[i]-cost[i];
+            curTank+=gas[i]-cost[i];
+            if(curTank<0){
+                startIndex=i+1;
+                curTank=0;
             }
-            else
-                sum+=gas[i]-cost[i];
         }
-        return total>=0?start:-1;
+        return totalLeft>=0?startIndex:-1;
     }
 };
