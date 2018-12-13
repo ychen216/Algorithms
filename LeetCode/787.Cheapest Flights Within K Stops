@@ -58,3 +58,81 @@ public:
         return dp[dst][K]==INT_MAX?-1:dp[dst][K];
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        可以利用Bellman-Ford算法 得到单元最短路径 还可以判断是否有负环
+        在这里只需要将拓展松弛的轮数#vertex-1(存在无环最短路径最多有#vertex-1条边 中间有#vertex-2个节点也就是这里说的stop)设置为k+1即可
+        同时要注意 每一轮松弛的时候要和上一轮松弛的结果作比较 而不是在本轮松弛的基础上比较
+        比如example2里 第一轮松弛时 松弛了节点1，2 dis[1]=100 dis[2]=500 同时edge(1,2,100)的松弛会改变dis[2]=200
+        我们需要控制每一轮松弛对每一条路径最多加入一条边
+    */
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K){
+        if(src==dst)
+            return 0;
+        vector<int> dis(n,INT_MAX);
+        dis[src]=0;
+        int u,v,w;
+        // 最多松弛k+1次
+        for(int i=0;i<K+1;i++){
+            vector<int> copy(dis.begin(),dis.end()); // 必须与本次松弛之前的数据进行比较
+            bool isUpdated=false; // 不能继续松弛就直接跳出
+            for(auto &edge:flights){
+                u=edge[0],v=edge[1],w=edge[2];
+                if(dis[u]!=INT_MAX&&copy[v]>dis[u]+w){
+                    copy[v]=dis[u]+w;
+                    isUpdated=true;
+                }
+            }
+            dis=copy;
+            if(!isUpdated)
+                break;
+        }
+        return dis[dst]==INT_MAX? -1: dis[dst];
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    /*  
+        可以利用Dijkstra算法 查找最短路径 同时记录下该路径中还有多少可以松弛的余地(还有几个stop可以消耗)， Dijkstra每一次出队的都确定了一个节点x src->x的最短距离
+        stop的概念是src->dst中途经过的节点 不包括src和des 所以除开src 到达dst的路径上最多有K+1个节点 K+1条边
+    */
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K){
+        if(src==dst)
+            return 0;
+        unordered_map<int,unordered_map<int,int>> graph;
+        for(auto&edge:flights){
+            graph[edge[0]][edge[1]]=edge[2];
+        }
+        priority_queue<vector<int>,vector<vector<int>>,cmp> pq; //{v,dis of v to src, left stop}
+        vector<int> init(3);
+        init[0]=src,init[1]=0,init[2]=K+1; // 注意初始stop初始化为K+1
+        pq.push(init);
+        while(!pq.empty()){
+            vector<int> pre=pq.top();
+            pq.pop();
+            // 出队的就是剩下的节点中 从src出发最近的节点x 确定了src->x的最短路径
+            if(pre[0]==dst)
+                return pre[1];
+            if(pre[2]==0) continue; // 不能继续拓展了
+            for(auto & edge:graph[pre[0]]){
+                vector<int> next(3);
+                next[0]=edge.first, next[1]=pre[1]+edge.second, next[2]=pre[2]-1;
+                pq.push(next);
+            }
+        }
+        return -1;
+    }
+private:
+    struct cmp{
+        // 最小堆 定义优先级小的
+        bool operator()(const vector<int>&v1,const vector<int> &v2){
+            return v1[1] > v2[1];
+        }
+    };
+};
