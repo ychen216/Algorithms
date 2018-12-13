@@ -16,24 +16,31 @@ Solution 1:
  *     ListNode(int x) : val(x), next(NULL) {}
  * };
  */
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
 class Solution {
 public:
     ListNode* deleteDuplicates(ListNode* head) {
-        if(head==NULL)
-            return NULL;
+        if(!head||!head->next)
+            return head;
         ListNode *feakHead=new ListNode(0);
         feakHead->next=head;
-        ListNode *cur=head,*pre=feakHead;
-        while(cur!=NULL){
-            while(cur->next!=NULL&&cur->val==cur->next->val){
+        ListNode *pre=feakHead,*cur=head; // pre指向的是确定是非重复的节点
+        while(cur){
+            // 找到重复元素区间
+            while(cur->next&&cur->val==cur->next->val)
                 cur=cur->next;
-            }
-            //非重复元素
+            // 跳出时分两种情况
+            // 1.如果cur不是重复元素 2.cur是重复元素 cur指向最后一个重复元素
             if(pre->next==cur){
-                pre=pre->next;
-            }
-            //是重复元素
-            else{
+                pre=pre->next; // 确定一个非重复节点pre向后走
+            }else{
                 pre->next=cur->next;
             }
             cur=cur->next;
@@ -58,5 +65,32 @@ public:
             head->next=deleteDuplicates(head->next);
         }
         return head;
+    }
+};
+
+Solution 3: 很慢
+class Solution {
+public:
+    // 利用map记录每个元素出现的次数来判断是否是Duplicated
+    ListNode* deleteDuplicates(ListNode* head) {
+        if(!head||!head->next)
+            return head;
+        unordered_map<int,int> counter; //{val,occur times}
+        ListNode *cur=head;
+        while(cur){
+            counter[cur->val]++;
+            cur=cur->next;
+        }
+        ListNode *feakHead=new ListNode(0);
+        cur=feakHead;
+        while(head){
+            if(counter[head->val]==1){
+                cur->next=head;
+                cur=cur->next;
+            }
+            head=head->next;
+        }
+        cur->next=NULL; //必须的 否则如果最后存在重复将无法删除 eg[1,2,3,3]
+        return feakHead->next;
     }
 };
