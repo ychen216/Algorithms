@@ -123,3 +123,53 @@ public:
         return maxSize*maxSize;
     }
 };
+
+update: 空间复杂度降为O(2n)
+class Solution {
+public:
+     /*DP
+        dp[i][j]代表以matrix[i][j]为矩阵右下角的正方形的最大边长
+        第一行和第一列元素的dp[i][j]值为matrix[i][j] 初始化dp
+        dp[0][j]=matrix[0][j] i=0
+        dp[i][0]=matrix[i][0] j=0
+        dp[i][j]=min(dp[i-1][j-1],dp[i-1][j],dp[i][j-1])+1 i>0&&j>0&&matrix[i][j]==1
+        i>0&&j>0时 dp[i][j]只与当前行和前一行的状态有关 用两行保存状态
+    */
+    int maximalSquare(vector<vector<char>>& matrix) {
+        int m=matrix.size();
+        if(m==0)
+            return 0;
+        int n=matrix[0].size();
+        if(n==0)
+            return 0;
+        int maxEdge=0;
+        vector<vector<int>> dp(2,vector<int>(n,0)); //两行交替保存状态 分别存储上一行和当前行的状态
+        int preIndex=0; //表示上一行的状态存储在dp[preIndex]中
+        // 初始化
+        for(int j=0;j<n;j++){
+            if(matrix[0][j]=='1'){
+                dp[preIndex][j]=1;
+                maxEdge=1;
+            }
+        }
+        
+        // 遍历1~m-1行
+        for(int i=1;i<m;i++){
+            // 初始化第一列元素
+            int curIndex=1-preIndex;
+            dp[curIndex][0]=matrix[i][0]-'0';
+            if(dp[curIndex][0]==1)
+                maxEdge=max(maxEdge,1);
+            for(int j=1;j<n;j++){
+                if(matrix[i][j]=='1'){
+                    dp[curIndex][j]=min(dp[preIndex][j-1],min(dp[preIndex][j],dp[curIndex][j-1]))+1;
+                    maxEdge=max(maxEdge,dp[curIndex][j]);
+                }else
+                    dp[curIndex][j]=0;
+            }
+            // 当前行的状态是下一个行的上一个状态 更新preIndex
+            preIndex=curIndex;
+        }
+        return maxEdge*maxEdge;
+    }
+};
