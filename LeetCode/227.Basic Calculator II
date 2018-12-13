@@ -71,3 +71,58 @@ private:
         numSt.push(cal(n1,n2,op));
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        利用两个栈 数字和运算符栈进行运算 同时利用stringstream方便的处理数字和运算符
+    */
+    Solution(){
+        priority['+']=0,priority['-']=0,priority['/']=1,priority['*']=1;
+    }
+    int calculate(string s) {
+        stack<int> numSt;
+        stack<char> opSt;
+        stringstream ss(s);
+        char op;
+        int num;
+        while(ss>>num){
+            numSt.push(num);
+            if(ss>>op){
+                while(!opSt.empty()&&priority[opSt.top()]>=priority[op]){
+                    calTop2Num(numSt,opSt);
+                }
+                opSt.push(op);   
+            }
+        }
+        while(!opSt.empty()){
+            calTop2Num(numSt,opSt);
+        }
+        return numSt.top();
+    }
+private:
+    // 利用opSt的栈顶运算符和numSt计算栈顶的两个元素 并将结果放入numSt中
+    void calTop2Num(stack<int> &numSt, stack<char>&opSt){
+        int num2=numSt.top();
+        numSt.pop();
+        int num1=numSt.top();
+        numSt.pop();
+        int result=calHelper(num1,num2,opSt.top());
+        opSt.pop();
+        numSt.push(result);
+    }
+    
+    int calHelper(int num1,int num2,char op){
+        if(op=='+')
+            return num1+num2;
+        else if(op=='-')
+            return num1-num2;
+        else if(op=='*')
+            return num1*num2;
+        else
+            return num1/num2;
+    }
+    unordered_map<char,int> priority;
+};
