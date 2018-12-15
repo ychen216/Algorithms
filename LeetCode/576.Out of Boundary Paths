@@ -43,3 +43,54 @@ public:
         return dp[N][i][j];
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+         DP 
+         dp[step][i][j]表示从i,j至多走step步到出边界的路径数 注意要用long 或者unsigned
+         如果(i,j)是四个方向的边界之一 那么path就+1, 否则dp[step][i][j]由上下左右各走一步dp[step-1][i+dx][j+dy]能得到的路径总和:
+         dp[step][i][j]=((row == 0? 1 : dp[step - 1][row - 1][col]) 
+                        + (row == m - 1? 1 : dp[step - 1][row + 1][col])
+                        + (col == 0? 1 : dp[step - 1][row][col - 1])
+                        + (col == n - 1? 1 : dp[step - 1][row][col + 1])) % 1000000007;
+        同时每一次状态更新只涉及到step-1 可以将空间降到O(n*m)
+    */
+    int findPaths(int m, int n, int N, int sx, int sy) {
+        long MOD=1e9+7;
+        vector<vector<vector<long>>> dp(2,vector<vector<long>>(m,vector<long>(n,0)));
+        int preIndex=0; // 指明上一个状态step-1在dp的哪一个维度
+        for(int k=1;k<=N;k++){
+            int curIndex=1-preIndex;
+            for(int i=0;i<m;i++){
+                for(int j=0;j<n;j++){
+                    dp[curIndex][i][j]=0;
+                    // 上走一步
+                    if(i==0)
+                        dp[curIndex][i][j]++;
+                    else
+                        dp[curIndex][i][j]+=dp[preIndex][i-1][j];
+                    // 下走一步
+                    if(i==m-1)
+                        dp[curIndex][i][j]++;
+                    else
+                        dp[curIndex][i][j]+=dp[preIndex][i+1][j];
+                    // 左
+                    if(j==0)
+                        dp[curIndex][i][j]++;
+                    else
+                        dp[curIndex][i][j]+=dp[preIndex][i][j-1];
+                    // 右
+                    if(j==n-1)
+                        dp[curIndex][i][j]++;
+                    else
+                        dp[curIndex][i][j]+=dp[preIndex][i][j+1];
+                    dp[curIndex][i][j]%=MOD;
+                }
+            }
+            preIndex=curIndex;
+        }
+        return dp[preIndex][sx][sy];
+    }
+};
