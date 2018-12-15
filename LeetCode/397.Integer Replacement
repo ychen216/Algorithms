@@ -79,3 +79,84 @@ class Solution {
         return res;
     }
 }
+
+Solution 3: dp
+class Solution {
+public:
+    /*
+        dp(n) = dp(n/2)+1 n is even
+        dp(n) = min(dp(n-1), dp(n+1)) +1 n is odd, we can not resolve dp(n+1). so :
+        dp(n) = min(dp(n-1), dp((n+1)/2)+1)+1 n is odd, now we just need to resolve dp((n+1)/2).
+        any way, you can still use dp((n-1)/2) i think:
+        dp(n) = min(dp((n-1)/2)+1, dp((n+1)/2)+1)+1 n is odd
+              = min(dp((n-1)/2),dp((n+1)/2))+2;
+    */
+    int integerReplacement(int n) {
+        if(n==1)
+            return 0;
+        if(n==INT_MAX)
+            return 32;
+        if(n&1)
+            return min(integerReplacement((n-1)>>1),integerReplacement((n+1)>>1))+2;
+        else
+            return integerReplacement(n>>1)+1;
+    }
+};
+
+update:
+class Solution {
+public:
+    /*
+        dp(n) = dp(n/2)+1 n is even
+        dp(n) = min(dp(n-1), dp(n+1)) +1 n is odd, we can not resolve dp(n+1). so :
+        dp(n) = min(dp(n-1), dp((n+1)/2)+1)+1 n is odd, now we just need to resolve dp((n+1)/2).
+        any way, you can still use dp((n-1)/2) i think:
+        dp(n) = min(dp((n-1)/2)+1, dp((n+1)/2)+1)+1 n is odd
+              = min(dp((n-1)/2),dp((n+1)/2))+2;
+        (n+1)/2会溢出 if n==INT_MAX
+        (n-1)/2 == n/2 and (n+1)/2 == n/2 +1 if n is odd
+    */
+    int integerReplacement(int n) {
+        if(n==1)
+            return 0;
+        if(n&1)
+            // return min(integerReplacement((n-1)>>1),integerReplacement((n+1)>>1))+2;
+            // 为了解决INT_MAX+1溢出的情况 将上式改写
+            return min(integerReplacement(n>>1),integerReplacement((n>>1)+1))+2;
+        else
+            return integerReplacement(n>>1)+1;
+    }
+};
+
+update 2: 0ms beat 10% 
+class Solution {
+public:
+    /*
+        dp(n) = dp(n/2)+1 n is even
+        dp(n) = min(dp(n-1), dp(n+1)) +1 n is odd, we can not resolve dp(n+1). so :
+        dp(n) = min(dp(n-1), dp((n+1)/2)+1)+1 n is odd, now we just need to resolve dp((n+1)/2).
+        any way, you can still use dp((n-1)/2) i think:
+        dp(n) = min(dp((n-1)/2)+1, dp((n+1)/2)+1)+1 n is odd
+              = min(dp((n-1)/2),dp((n+1)/2))+2;
+        (n+1)/2会溢出 if n==INT_MAX
+        (n-1)/2 == n/2 and (n+1)/2 == n/2 +1 if n is odd
+        可以用memorized dfs加速
+    */
+    int integerReplacement(int n) {
+        if(n==1)
+            return 0;
+        if(dp.find(n)==dp.end()){
+            int res=0;
+            if(n&1)
+            // return min(integerReplacement((n-1)>>1),integerReplacement((n+1)>>1))+2;
+            // 为了解决INT_MAX+1溢出的情况 将上式改写
+                res=min(integerReplacement(n>>1),integerReplacement((n>>1)+1))+2;
+            else
+                res=integerReplacement(n>>1)+1;   
+            dp[n]=res;
+        }
+        return dp[n];
+    }
+private:
+    unordered_map<int,int> dp;
+};
