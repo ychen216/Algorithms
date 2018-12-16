@@ -20,6 +20,43 @@ Solution:
 class Solution {
 public:
     ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode *feakNode=new ListNode(0);
+        ListNode *cur=feakNode;
+        int cnt=0;
+        while(l1&&l2){
+            int num=l1->val+l2->val+cnt;
+            cnt=num/10;
+            cur->next=new ListNode(num%10);
+            cur=cur->next;
+            l1=l1->next;
+            l2=l2->next;
+        }
+        while(l1){
+            int num=l1->val+cnt;
+            cnt=num/10;
+            cur->next=new ListNode(num%10);
+            cur=cur->next;
+            l1=l1->next;
+        }
+        while(l2){
+            int num=l2->val+cnt;
+            cnt=num/10;
+            cur->next=new ListNode(num%10);
+            cur=cur->next;
+            l2=l2->next;
+        }
+        if(cnt>0){
+            cur->next=new ListNode(cnt);
+            cur=cur->next;
+        }
+        return feakNode->next;
+    }
+};
+
+update:
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
         ListNode *feakHead=new ListNode(0);
         ListNode *cur=feakHead;
         int jinwei=0;
