@@ -47,3 +47,24 @@ public:
         return false;
     }
 };
+
+update:
+class Solution {
+public:
+    // 不断更新能够到达的最远的位置 如果>=n-1则能够到达
+    bool canJump(vector<int>& nums) {
+        int far=0,n=nums.size();
+        for(int i=0;i<n;i++){
+            if(i<=far){
+                // 确保能够到达该位置 进行更远的探索
+                // 如果不能到达当前位置 后面的位置就更不能达到了
+                far=max(far,i+nums[i]); // 更新最远能达到的位置
+            }
+            else
+                return false;
+            if(far>=n-1)
+                return true;
+        }
+        return false;
+    }
+};
