@@ -44,3 +44,45 @@ public:
         return sp;
     }
 };
+
+update:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        利用快慢指针确定是否有环
+        如果有环 将慢指针移到head 快慢指针的step-size设置为1 当快慢指针相遇时到达环的起点
+        Let the distance from the first node to the the node where cycle begins be A,and let say the slow pointer travels travels A+B. 
+        The fast pointer must travel 2A+2B to catch up. The cycle size is N.
+        Full cycle is also how much more fast pointer has traveled than slow pointer at meeting point.
+        画个图看一下
+            A+B+N = 2A+2B
+            N=A+B
+        环的长度为A+B 而快指针与慢指针相遇后 在环长度为B的位置 那么走完这个环还需要N-B=A步, 慢指针从head开始走A步就能跟快指针重合,重合处就是环的起始位置
+    */
+    ListNode *detectCycle(ListNode *head) {
+        if(!head||!head->next)
+            return NULL;
+        ListNode *slow=head,*fast=head;
+        while(fast->next&&fast->next->next){
+            fast=fast->next->next;
+            slow=slow->next;
+            if(fast==slow){
+                slow=head;
+                while(slow!=fast){
+                    slow=slow->next;
+                    fast=fast->next;
+                }
+                return slow;
+            }
+        }
+        return NULL;
+    }
+};
