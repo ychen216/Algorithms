@@ -54,7 +54,7 @@ public:
         //n已经是最大排列
         if(index==-1)
             return -1;
-        //找到升序序列中比index大的最小的数
+        //从右向左找到升序序列中比index大的第一个数
         int small=len-1;
         while(sNum[small]<=sNum[index])
             small--;
