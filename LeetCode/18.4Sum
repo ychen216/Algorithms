@@ -76,3 +76,48 @@ public:
         return vector<vector<int> > (res.begin(), res.end());
     }
 };
+
+
+Solution 3: 还有问题 需要调试
+class Solution {
+public:
+    // 手动去除重复的元组 不用set 并加入一些剪枝操作
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        int n=nums.size();
+        if(n<4)
+            return {};
+        sort(nums.begin(),nums.end());
+        if(nums[0]+nums[1]+nums[2]+nums[3]>target||nums[n-1]+nums[n-2]+nums[n-3]+nums[n-4]<target)
+            return {};
+        vector<vector<int>> res;
+        for(int i=0;i<n-3;i++){
+            if(i>0&&nums[i-1]==nums[i]) continue; // 元组第一个元素是nums[i]的所有可能情况已经在搜索nums[i-1]时包含了
+            if(nums[i]+nums[i+1]+nums[i+2]+nums[i+3]>target) break; // 后续的更大都不可能了
+            if(nums[i]+nums[n-1]+nums[n-2]+nums[n-3]<target) continue; // 需要更大的第一个元素
+            for(int j=i+1;j<n-2;j++){
+                if(j>i+1&&nums[j-1]==nums[j]) continue; //同理
+                int sum2=target-nums[i]-nums[j];
+                int left=j+1,right=n-1;
+                while(left<right){
+                    int curSum=nums[left]+nums[right];
+                    if(sum2==curSum){
+                        vector<int> cand(4);
+                        cand[0]=nums[i],cand[1]=nums[j],cand[2]=nums[left],cand[3]=nums[right];
+                        res.push_back(cand);
+                        left++;right--;
+                        // 避免重复
+                        while(left<right&&nums[left-1]==nums[left])left++;
+                        while(left<right&&nums[right+1]==nums[right])right--;
+                    }else if(sum2<curSum){
+                        left++;
+                        while(left<right&&nums[left-1]==nums[left])left++;
+                    }else{
+                        right--;
+                        while(left<right&&nums[right+1]==nums[right])right--;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
