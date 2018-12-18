@@ -21,75 +21,56 @@ Output: False
 Solution 1：
 class Solution {
 public:
-    //BFS  记录每次操作 两个水杯的容量状态  不知为何WA
+    /* 
+        BFS  记录每次操作 两个水杯的容量状态
+        为了避免对unordered_set中pair类型定义hash函数 我们将{x,y}映射为kx+y 其中k=y+1 且类型要为long long 因为x,y的乘积范围超过int long eg.x=104597 y=104623
+        同时记录状态时一定要是以联合的形式记录 eg.{1,2}代表第一个杯子有1L且第二个杯子有2L. 
+        不能是visitx[1]=true visity[2]=true这样分开记录 因为我们需要判断的是:{1,2}是否同时出现过,而不是是否出现过杯子1里有1L且杯子2里有2L的情况(可能杯子1在上一次操作中1L,杯子2在上上次操作中2L也会有visitx[1]==visity[2]==1)
+    */
     bool canMeasureWater(int x, int y, int z) {
-        int maxV=max(x,y);
         //要获得的水比两个杯子的容积都大
-        if(z>maxV)
+        if(z>x+y)
             return false;
-        bool visitx[x+1]={0};
-        bool visity[y+1]={0};
+        privateKey=y+1;
+        unordered_set<long long> visit;
         queue<pair<int,int>> q;
         q.push({0,0});
-        visitx[0]=visity[0]=true;
+        visit.insert(0);
         while(!q.empty()){
             pair<int,int> pre=q.front();
             q.pop();
             if(pre.first==z||pre.second==z||pre.first+pre.second==z)
                 return true;
             //fill full water x
-            if(!visitx[x]||!visity[pre.second]){
-                visitx[x]=true;
-                visity[pre.second]=true;
-                q.push({x,pre.second});
-            }
+            addNode(x,pre.second,visit,q);
             //fill full water y
-            if(!visitx[pre.first]||!visity[y]){
-                visitx[pre.first]=true;
-                visity[y]=true;
-                q.push({pre.first,y});
-            }
-            //fill full water x&&y
-            if(!visitx[x]||!visity[y]){
-                visitx[x]=true;
-                visity[y]=true;
-                q.push({x,y});
-            }
+            addNode(pre.first,y,visit,q);
             //empty x
-            if(!visitx[0]||!visity[pre.second]){
-                visitx[0]=true;
-                visity[pre.second]=true;
-                q.push({0,pre.second});
-            }
+            addNode(0,pre.second,visit,q);
             //empty y
-            if(!visitx[pre.first]||!visity[0]){
-                visitx[pre.first]=true;
-                visity[0]=true;
-                q.push({pre.first,0});
-            }
-            //empty x&&y
-            if(!visitx[0]||!visity[0]){
-                visitx[0]=true;
-                visity[0]=true;
-                q.push({0,0});
-            }
+            addNode(pre.first,0,visit,q);
             //pour x to y
-            int tempy=min(pre.second+pre.first,y);
-            int tempx=pre.second+pre.first<y?0:pre.first-(y-pre.second);
-            if(!visitx[tempx]||!visity[tempy]){
-                visitx[tempx]=visity[tempy]=true;
-                q.push({tempx,tempy});
-            }
+            int tempy=pre.second+min(pre.first,y-pre.second);
+            int tempx=pre.first-min(pre.first,y-pre.second);
+            addNode(tempx,tempy,visit,q);
             //pour y to x
-            tempx=min(pre.first+pre.second,x);
-            tempy=pre.second+pre.first<x?0:pre.second-(x-pre.first);
-            if(!visitx[tempx]||!visity[tempy]){
-                visitx[tempx]=visity[tempy]=true;
-                q.push({tempx,tempy});
-            }
+            tempx=pre.first+min(x-pre.first,pre.second);
+            tempy=pre.second-min(pre.second,x-pre.first);
+            addNode(tempx,tempy,visit,q);
         }
-        
         return false;
+    }
+private:
+    long long privateKey;
+    void addNode(int x,int y, unordered_set<long long>&visit,queue<pair<int,int>>&q){
+        long long key=getKey(x,y); //注意返回类型long long
+        if(visit.find(key)!=visit.end())
+            return;
+        q.push({x,y});
+        visit.insert(key);
+    }
+    long long getKey(int x,int y){
+        return privateKey*x+y;
     }
 };
 
@@ -97,10 +78,11 @@ Solution 2:
 class Solution {
 public:
     /*
-    这道问题其实可以转换为有一个很大的容器，我们有两个杯子，容量分别为x和y，问我们通过用两个杯子往里倒水，和往出舀水，问能不能使容器中的水刚好为z升。
-    那么我们可以用一个公式来表达：
-    z = m * x + n * y
-其中m，n为舀水和倒水的次数，正数表示往里舀水，负数表示往外倒水，那么题目中的例子可以写成: 4 = (-2) * 3 + 2 * 5，即3升的水罐往外倒了两次水，5升水罐往里舀了两次水。那么问题就变成了对于任意给定的x,y,z，存不存在m和n使得上面的等式成立。根据裴蜀定理，ax + by = d的解为 d = gcd(x, y)，那么我们只要只要z % d == 0，上面的等式就有解，所以问题就迎刃而解了，我们只要看z是不是x和y的最大公约数的倍数就行了，别忘了还有个限制条件x + y >= z，因为x和y不可能称出比它们之和还多的水
+        这道问题其实可以转换为有一个很大的容器，我们有两个杯子，容量分别为x和y，问我们通过用两个杯子往里倒水，和往出舀水，问能不能使容器中的水刚好为z升。
+        那么我们可以用一个公式来表达：
+        z = m * x + n * y
+        其中m，n为x,y舀水和倒水的次数，正数表示往里舀水，负数表示往外倒水，那么题目中的例子可以写成: 4 = (-2) * 3 + 2 * 5，即3升的水罐往外倒了两次水，5升水罐往里舀了两次水。
+        那么问题就变成了对于任意给定的x,y,z，存不存在m和n使得上面的等式成立。根据裴蜀定理，ax + by = d的解为 d = gcd(x, y)，那么我们只要只要z % d == 0，上面的等式就有解，所以问题就迎刃而解了，我们只要看z是不是x和y的最大公约数的倍数就行了，别忘了还有个限制条件x + y >= z，因为x和y不可能称出比它们之和还多的水
     */
     //两个瓶子可能量出的水是两个瓶子容量最大公约数的倍数。所以只要判断z是否可以被x，y的最大公约数整除即可。
     bool canMeasureWater(int x, int y, int z) {
