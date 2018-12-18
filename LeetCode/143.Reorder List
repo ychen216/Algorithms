@@ -58,3 +58,45 @@ public:
         
     }
 };
+
+update: 一样的思路 换一种写法
+class Solution {
+public:
+    // 快慢指针找中点将链表分为两个部分 将后半部分reverse 然后将两个链表交叉串起来
+    void reorderList(ListNode* head) {
+        if(!head&&!head->next)
+            return;
+        ListNode *fast=head,*slow=head;
+        while(fast->next&&fast->next->next){
+            fast=fast->next->next;
+            slow=slow->next;
+        }
+        // slow是前半链表的最后一个节点slow->next是后半链表的头结点
+        ListNode *p1=head,*p2=slow->next;
+        slow->next=NULL; // 截断前半部分
+        ListNode *head2=new ListNode(0);
+        // reverse
+        while(p2){
+            ListNode* next=head2->next;
+            head2->next=p2;
+            p2=p2->next;
+            head2->next->next=next;
+        }
+        // 交叉合并
+        p2=head2->next;
+        ListNode *cur=head2;
+        while(p1||p2){
+            if(p1){
+                cur->next=p1;
+                p1=p1->next;
+                cur=cur->next;
+            }
+            if(p2){
+                cur->next=p2;
+                p2=p2->next;
+                cur=cur->next;
+            }
+        }
+        head=head2->next;
+    }
+};
