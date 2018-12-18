@@ -49,3 +49,37 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    vector<int> spiralOrder(vector<vector<int>>& matrix) {
+        vector<int> res;
+        int m=matrix.size();
+        if(m==0)
+            return {};
+        int n=matrix[0].size();
+        if(n==0)
+            return {};
+        int minRow=0,maxRow=m-1,minCol=0,maxCol=n-1;
+        for(int k=0;k<m*n;){
+            for(int j=minCol;j<=maxCol;j++,k++)
+                res.push_back(matrix[minRow][j]);
+            minRow++;
+            for(int i=minRow;i<=maxRow;i++,k++)
+                res.push_back(matrix[i][maxCol]);
+            maxCol--;
+            if(minRow<=maxRow){
+                for(int j=maxCol;j>=minCol;j--,k++)
+                    res.push_back(matrix[maxRow][j]);
+                maxRow--;
+            }
+            if(minCol<=maxCol){
+                for(int i=maxRow;i>=minRow;i--,k++)
+                    res.push_back(matrix[i][minCol]);
+                minCol++;
+            }
+        }
+        return res;
+    }
+};
