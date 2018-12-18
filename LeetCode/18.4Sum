@@ -78,7 +78,7 @@ public:
 };
 
 
-Solution 3: 还有问题 需要调试
+Solution 3:
 class Solution {
 public:
     // 手动去除重复的元组 不用set 并加入一些剪枝操作
@@ -96,6 +96,8 @@ public:
             if(nums[i]+nums[n-1]+nums[n-2]+nums[n-3]<target) continue; // 需要更大的第一个元素
             for(int j=i+1;j<n-2;j++){
                 if(j>i+1&&nums[j-1]==nums[j]) continue; //同理
+                if(nums[i]+nums[j]+nums[j+1]+nums[j+2]>target) break; // 后续的更大都不可能了
+            if(nums[i]+nums[j]+nums[n-2]+nums[n-1]<target) continue; // 需要更大的第一个元素
                 int sum2=target-nums[i]-nums[j];
                 int left=j+1,right=n-1;
                 while(left<right){
@@ -108,7 +110,7 @@ public:
                         // 避免重复
                         while(left<right&&nums[left-1]==nums[left])left++;
                         while(left<right&&nums[right+1]==nums[right])right--;
-                    }else if(sum2<curSum){
+                    }else if(sum2>curSum){
                         left++;
                         while(left<right&&nums[left-1]==nums[left])left++;
                     }else{
