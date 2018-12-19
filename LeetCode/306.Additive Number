@@ -56,3 +56,39 @@ class Solution {
         return true;
     }
 }
+
+
+Solution 2:
+class Solution {
+public:
+    // 至少包含三个数字 那么前两个数字的长度必定不能超过字符总长度的一半 
+    // 不加上这个限制条件 容易溢出 eg."11235813213455890144"-> 1和1235813213455890144
+    bool isAdditiveNumber(string num) {
+        if(num.length()<3)
+            return false;
+        vector<long> preNum;
+        return check(preNum,num,0);
+    }
+private:
+    // 现在从start位置开始寻找合适的切割位置 
+    bool check(vector<long>&preNum,string &num,int start){
+        if(start>=num.length())
+            return true;
+        for(int i=start;i<num.length();i++){
+            // 不能有前导的零
+            if(i>start&&num[start]=='0') break;
+            if(i-start+1>num.length()/2) break;
+            long curNum=stol(num.substr(start,i-start+1));
+            int size=preNum.size();
+            // 剪枝 往后面切curNum会更大
+            if(size>=2&&curNum>preNum[size-1]+preNum[size-2]) break;
+            if(size<2||curNum==preNum[size-1]+preNum[size-2]){
+                preNum.push_back(curNum);
+                if(check(preNum,num,i+1))
+                    return preNum.size()>=3;//要保证>=3
+                preNum.pop_back();
+            }
+        }
+        return false;
+    }
+};
