@@ -102,6 +102,45 @@ public:
     }  
 };
 
+update:
+class Solution {
+public:
+    vector<int> findMinHeightTrees(int n, vector<pair<int, int>>& edges) {
+        if(n==1)
+            return {0};
+        if(n==2)
+            return {0,1};
+        unordered_map<int,unordered_set<int>> graph;
+        for(auto &p:edges){
+            graph[p.first].insert(p.second);
+            graph[p.second].insert(p.first);
+        }
+        // 找到叶子
+        vector<vector<int>> leafs(2); // 两个数组分别存放当前叶子和新叶子
+        int cur=0,next;
+        for(auto &mmp:graph){
+            if(graph[mmp.first].size()==1)
+                leafs[cur].push_back(mmp.first);
+        }
+        // 不断删除叶子 得到新叶子
+        while(true){
+            next=1-cur;
+            for(auto &leaf:leafs[cur]){
+                // 删除与该叶子相连的边
+                for(auto &node:graph[leaf]){
+                    graph[node].erase(leaf);
+                    if(graph[node].size()==1)
+                        leafs[next].push_back(node);
+                }
+            }
+            if(leafs[next].size()==0)
+                break;
+            leafs[cur].clear();
+            cur=next;
+        }
+        return leafs[cur];
+    }
+};
 
 Solution 2: 一样的思想 java
 class Solution {
