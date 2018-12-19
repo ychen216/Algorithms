@@ -30,3 +30,26 @@ public:
         return ans;
     }
 };
+
+update:
+class Solution {
+public:
+    double myPow(double x, int n) {
+        if(n==0)
+            return 1;
+        bool isNeg=false;
+        if(n<0)
+            isNeg=true;
+        long power=abs((long)n); // 避免n==INT_MIN -214748348 取绝对值之后超过了int的范围
+        double res=1.0;
+        while(power>0){
+            if(power&1)
+                res*=x;
+            x*=x;
+            power>>=1;
+        }
+        if(isNeg)
+            res=1/res;
+        return res;
+    }
+};
