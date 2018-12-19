@@ -16,7 +16,7 @@ You may assume that you have an infinite number of each kind of coin.
 Solution:
 class Solution {
 public:
-    //完全背包
+    //完全背包 dp[x]=min(dp[x],dp[x-coins[i]]+1) if coins[i]<=x&&dp[x-coins[i]] can be change
     int coinChange(vector<int>& coins, int amount) {
         if(amount<0)
             return -1;
@@ -33,25 +33,26 @@ public:
     }
 };
 
-Solution:
+Solution 2: memorized dfs
 class Solution {
 public:
-    //DP dp[x]=min(dp[x-coins[i]]+1);
+    //完全背包
+    unordered_map<int,int> dp;
     int coinChange(vector<int>& coins, int amount) {
+        if(amount<0)
+            return -1;
         if(amount==0)
             return 0;
-        int len=coins.size();
-        if(len==0)
-            return -1;
-        int dp[amount+1];
-        dp[0]=0;
-        for(int i=1;i<=amount;i++){
-            dp[i]=INT_MAX;
-            for(int j=0;j<len;j++){
-                if(i>=coins[j]&&dp[i-coins[j]]!=INT_MAX)
-                    dp[i]=min(dp[i],dp[i-coins[j]]+1);
-            }
+        if(dp.find(amount)!=dp.end())
+            return dp[amount];
+        int minExchange=INT_MAX;
+        for(auto &coin:coins){
+            if(coin>amount) continue;
+            int exchange=coinChange(coins,amount-coin);
+            if(exchange>=0)
+                minExchange=min(minExchange,exchange+1);
         }
-        return dp[amount]==INT_MAX?-1:dp[amount];
+        minExchange==INT_MAX?dp[amount]=-1:dp[amount]=minExchange;
+        return dp[amount];
     }
 };
