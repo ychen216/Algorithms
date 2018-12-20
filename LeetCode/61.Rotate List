@@ -40,3 +40,44 @@ public:
         return newHead;
     }
 };
+
+Solution 2:跟上一个一样的思路
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        if(!head||!head->next||k==0) // 空节点或一个节点 那么怎么选择都是自己
+            return head;
+        int len=0;
+        ListNode *cur=head;
+        ListNode *last=NULL; //记录最后一个节点
+        while(cur){
+            len++;
+            last=cur;
+            cur=cur->next;
+        }
+        k=k%len;
+        if(k==0) // k是len的整数倍相当于不旋转
+            return head;
+        int needGo=len-k;
+        ListNode *feakNode=new ListNode(0);
+        feakNode->next=head;
+        cur=feakNode;
+        // cur找到新的头结点的前一个节点
+        for(int i=0;i<needGo;i++){
+            cur=cur->next;
+        }
+        // 拼接
+        ListNode *newHead=cur->next;
+        cur->next=NULL;
+        last->next=feakNode->next;
+        return newHead;
+    }
+};
