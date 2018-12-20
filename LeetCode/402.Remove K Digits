@@ -52,3 +52,60 @@ public:
         return string(st+p,st+newLen);
     }
 };
+
+update:
+class Solution {
+public:
+    /* 
+        可以认为是长度为n的字符串 每次删除一个字符 获得最小的数字 删除k次
+        每次删除第一个下降(最后一个上升)的数字(第一个是因为我们希望数字的高位尽可能小) 如果是递增序列 那么就从后向前删除
+        eg. 12346578 k=3 第一次删除6 下降序列65 这个8位数删除一个数字后得到7位数 
+        1234不管删除哪一个数字都会使得后面更大的数字23456替换当前位置 得到该位更大的结果
+        删除57也是一样的道理 
+        有两个第一个下降(最后一个上升)的数字6,8 我们删除第一个也就是6 这样高位会尽量小
+        删除6或8得到的结果分别是 1234578 < 12346578
+        可以利用栈来保存一个递增序列
+    */
+    string removeKdigits(string num, int k) {
+        int len = num.length();
+        //corner case
+        if(k==len)        
+            return "0";
+            
+        stack<char> st;
+        int i =0;
+        while(i<len){
+            //whenever meet a digit which is less than the previous digit, discard the previous one
+            while(k>0 && !st.empty() && st.top()>num[i]){
+                st.pop();
+                k--;
+            }
+            st.push(num[i]);
+            i++;
+        }
+        
+        // corner case like "1111" "12345"
+        while(k>0){
+            st.pop();
+            k--;            
+        }
+        
+        //construct the number from the stack
+        int resLen=st.size();
+        string res(resLen,'0');
+        i=0;
+        while(!st.empty()){
+            res[resLen-i-1]=st.top();
+            st.pop();
+            i++;
+        }
+        
+        //remove all the 0 at the head
+        i=0;
+        while(resLen>1&&res[i]=='0')i++;
+        // corner case like "100" k=1 return "0"
+        if(i==resLen)
+            return "0";
+        return res.substr(i);
+    }
+};
