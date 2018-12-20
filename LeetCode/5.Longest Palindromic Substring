@@ -45,4 +45,40 @@ public:
     }
 };
 
-Solution 2:
+Solution 2: 更高效 O(n^2)
+class Solution {
+public:
+    // 从中心拓展
+    string longestPalindrome(string s) {
+        int len=s.length();
+        if(len<2)
+            return s;
+        int maxLen=1,begin=0; // 初始化长度为1的结果
+        for(int i=0;i<len-1;i++){
+            findPalFromCenter(s,i,i,maxLen,begin);
+            findPalFromCenter(s,i,i+1,maxLen,begin);
+        }
+        return s.substr(begin,maxLen);
+    }
+private:
+    void findPalFromCenter(string&s,int left,int right,int &maxLen,int &begin){
+        int curLen;
+        if(left==right){
+            curLen=1;
+            left--;
+            right++;
+        }
+        else
+            curLen=0;
+        while(left>=0&&right<s.length()){
+            if(s[left]!=s[right])
+                break;
+            left--;right++;
+            curLen+=2;
+        }
+        if(maxLen<curLen){
+            maxLen=curLen;
+            begin=left+1;
+        }
+    }
+};
