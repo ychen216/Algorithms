@@ -30,28 +30,41 @@ Same with other integers chosen by the first player, the second player will alwa
 */
 Solution:
 class Solution {
+    
 public:
-    map<int,bool> m;
-    //参考http://blog.csdn.net/liuchuo/article/details/54729227
+    /*
+        memorized dfs  
+        参考 http://blog.csdn.net/liuchuo/article/details/54729227
+        https://leetcode.com/problems/can-i-win/discuss/95277/Java-solution-using-HashMap-with-detailed-explanation
+        考虑状态如何选择
+        1.每一个数字是否被使用过  2. 使用过那些数字后剩下的要达到目标target
+        其实这两个信息可以用1.来表达 因为desiredTotal是一个固定数值 在用过了特定的数字以后剩下target就确定了
+        1.作为状态 eg.true false true false... 因为范围为[1-20]这可以转化为01串 1010.. 1表示使用过 0表示未被使用
+        利用map<int,bool>记录在状态为s的10串时第一个玩家是否能获胜
+    */
     bool canIWin(int maxChoosableInteger, int desiredTotal) {
-        int maxn=maxChoosableInteger;
-        if(maxn>=desiredTotal)
-            return true;
-        if((1+maxn)*maxn/2<desiredTotal)
+        if((1+maxChoosableInteger)*maxChoosableInteger/2<desiredTotal)
             return false;
-        return helper(desiredTotal,0,maxn);
+        if(maxChoosableInteger>=desiredTotal)
+            return true;
+        unordered_map<int,bool> memo;
+        return dfs(desiredTotal,0,maxChoosableInteger,memo);
     }
-    bool helper(int target,int visited,int maxn){
-        if(m.find(visited)!=m.end())return m[visited];
+private:
+    // 判断当前玩家在visit的状态下 能否获胜
+    bool dfs(int target,int visit,int maxn,unordered_map<int,bool>&memo){
+        if(memo.find(visit)!=memo.end())
+            return memo[visit];
         for(int i=1;i<=maxn;i++){
-            int mask=(1<<i);
-            //自己赢或者对手输
-            if((visited&mask)==0&&(i>=target||helper(target-i,visited|mask,maxn)==false)){
-                m[visited]=true;
+            int mask=1<<i;
+            // 数字i还未被使用过 
+            // 当前玩家都能够获胜:当前玩家自己可以马上获胜 or 当前玩家采取动作i后另一个玩家输了
+            if(!(visit&mask)&&(i>=target||!dfs(target-i,visit|mask,maxn,memo))){
+                memo[visit]=true;
                 return true;
             }
         }
-        m[visited]=false;
+        memo[visit]=false;
         return false;
     }
 };
