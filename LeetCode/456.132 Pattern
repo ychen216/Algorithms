@@ -51,26 +51,60 @@ public:
     }
 };
 
-
-Solution 2:  不是很理解
+Solution 2:
 class Solution {
 public:
-    //设132分别为 s1, s2, s3，且满足 s1<s3<s2。
-    //每次找到符合条件的s3，即右侧有比它小的元素，然后判断下一个数是否比s3小，如果存在，则返回true。
+    /*
+        依次寻找ai,aj,ak三个数 类似于greedy
+        是否存在132pattern我们只需要找到一个pattern就行
+        对于ai我们需要找到第一个降序的数字(找尽可能小的) a>b>c>d<e 我们就要选取d作为ai 因为d作为a,b,c,d当中最小的,如果a能够找到132pattern组成 a aj' ak'那么必然有aj'>ak'>a>d也能组成132pattern
+        同理选择最后一个升序的元素作为aj(找尽可能大的)
+        然后顺序遍历ak看是否有符合条件的ak
+        如果这样找到的ai,aj找不到132pattern 那么将i设置为j+1 因为在当前的[i,j]中ai很小都没有这样的pattern [i+1,j]当中都是比ai大的数字就更不可能了
+        即找尽可能大的aj和尽可能小的ai
+    */
     bool find132pattern(vector<int>& nums) {
-        int len=nums.size();
-        if(len<3)
+        int n=nums.size();
+        if(n<3)
             return false;
-        stack<int> s2;
+        int i=0,j,k;
+        while(i<n-2){
+            while(i<n-2&&nums[i]>=nums[i+1])i++;
+            j=i+1;
+            while(j<n-1&&nums[j]<=nums[j+1])j++;
+            k=j+1;
+            while(k<n){
+                if(nums[i]<nums[k]&&nums[k]<nums[j])
+                    return true;
+                k++;
+            }
+            i=j+1;
+        }
+        return false;
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    /*
+        我们要找到s1,s2,s3 满足s1<s3<s2
+        我们先确定s3 从右向左遍历 将>s3的保存在栈里 这个栈顶的元素是>s3且在s3左侧的可以认为是s2的候选 
+        如果当前数字大于栈顶元素 那么我们按顺序将栈顶数字取出赋值给s3，然后将该数字压入栈，这样保证了栈里的元素仍然都是大于s3的
+        我们想要的顺序依旧存在 并且我们获得了更优的s2 s3因为s2>s3且s2 s3更大有利于我们找到符合条件的s1
+        如果遍历发现一个元素<s3 那么我们就找到了s1
+    */
+    bool find132pattern(vector<int>& nums) {
+        int n=nums.size();
+        if(n<3)
+            return false;
         int s3=INT_MIN;
-        for(int i=len-1;i>=0;i--){
-           if(nums[i]<s3)
-               return true;
-            else{
-                while(!s2.empty()&&s2.top()<nums[i]){// top is candidate for s3
-                    s3=s2.top();
-                    s2.pop();
-                }
+        stack<int> s2;
+        for(int i=n-1;i>=0;i--){
+            if(nums[i]<s3) return true;
+            while(!s2.empty()&&nums[i]>s2.top()){
+                s3=s2.top();
+                s2.pop();
             }
             s2.push(nums[i]);
         }
