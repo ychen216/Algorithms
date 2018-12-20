@@ -8,7 +8,31 @@ Examples:
   Given "pwwkew", the answer is "wke", with the length of 3. Note that the answer must be a substring, 
   "pwke" is a subsequence and not a substring.
 */
-Solution:class Solution {
+
+Solution 1:
+class Solution {
+public:
+    // 双指针
+    int lengthOfLongestSubstring(string s) {
+        int n=s.length();
+        if(n<2)
+            return n;
+        int left,right,maxLen=1;
+        unordered_map<char,int> mmp;//记录区间里每个字母出现的次数
+        for(left=right=0;right<n;right++){
+            // 每一次将right元素加入
+            mmp[s[right]]++;
+            while(left<right&&mmp[s[right]]>1){
+                mmp[s[left++]]--;
+            }
+            maxLen=max(right-left+1,maxLen);
+        }
+        return maxLen;
+    }
+};
+
+Solution 2:
+class Solution {
 public:
     int lengthOfLongestSubstring(string s) {
         int len=s.length();
@@ -21,6 +45,27 @@ public:
                 start = dict[s[i]];
             dict[s[i]] = i;
             maxLen = max(maxLen, i - start);
+        }
+        return maxLen;
+    }
+};
+
+update:
+class Solution {
+public:
+    // 双指针
+    int lengthOfLongestSubstring(string s) {
+        int n=s.length();
+        if(n<2)
+            return n;
+        int left,right,maxLen=1;
+        unordered_map<char,int> mmp;//记录每一个字符上一次出现的位置
+        for(left=right=0;right<n;right++){
+            // 如果right在区间内已经出现在i位置 那么区间要移动到[i+1,right]这样才能保证不重复
+            if(mmp.find(s[right])!=mmp.end()&&mmp[s[right]]>=left)
+                left=mmp[s[right]]+1;
+            mmp[s[right]]=right;
+            maxLen=max(right-left+1,maxLen);
         }
         return maxLen;
     }
