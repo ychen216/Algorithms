@@ -67,3 +67,18 @@ public:
         return helper(root->left,minNum,root->val)&&helper(root->right,root->val,maxNum);
     }
 };
+
+update: 用指针表示区间
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        return travel(root,NULL,NULL);
+    }
+private:
+    bool travel(TreeNode *root,TreeNode* mina,TreeNode* maxa){
+        if(!root)
+            return true;
+        if(maxa&&root->val>=maxa->val||mina&&root->val<=mina->val) return false;
+        return travel(root->left,mina,root)&&travel(root->right,root,maxa);
+    }
+};
