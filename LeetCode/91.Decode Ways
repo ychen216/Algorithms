@@ -22,7 +22,7 @@ public:
     回想爬楼梯问题一样，number[i] = number[i-1] + number[i-2]
     但不同的是本题有多种限制：
     第一： s[i-1]不能是0，如果s[i-1]是0的话，number[i]就只能等于number[i-2]
-    第二，s[i-2,i-1]中的第一个字符不能是0，而且Integer.parseInt(s.substring(i-2,i))获得的整数必须在0到26之间。   
+    第二，s[i-2,i-1]中的第一个字符不能是0，而且Integer.parseInt(s.substring(i-2,i))获得的整数必须在1到26之间。   
     */
     int numDecodings(string s) {
         int len=s.length();
@@ -41,5 +41,74 @@ public:
                 dp[i]+=dp[i-2];
         }
         return dp[len];
+    }
+};
+
+update:一样的思路 自己重写了一遍
+class Solution {
+public:
+    /*
+        类似于一次只能走一步或是两步的爬楼梯问题
+        从左向右转化 第i位可以由i-1位转化完成到达 第i位自己构成一个字符
+        也可以是i-2位转换完成到达 然后i-1和i位两位数字构成一个字符
+    */
+    int numDecodings(string s) {
+        int n=s.length();
+        if(n==0||s[0]=='0')
+            return 0;
+        if(n==1)
+            return 1;
+        // n > 1 && s[0] != '0'
+        // dp[i]==0说明无法到达s[i-1]位
+        vector<int> dp(n+1,0);
+        dp[0]=1;
+        for(int i=1;i<=n;i++){
+            // 由前一位传递过来 自己是一位
+            if(s[i-1]!='0'&&dp[i-1]!=0)
+                dp[i]+=dp[i-1];
+            // 由前两位传递过来 自己和前一位构成一个字符
+            // 两位数不能有前导0 且应该处于[1,26]的区间
+            if(i>=2&&s[i-2]!='0'){
+                int num2Digit=stoi(s.substr(i-2,2));
+                if(num2Digit>=1&&num2Digit<=26&&dp[i-2]!=0)
+                    dp[i]+=dp[i-2];
+            }
+        }
+        return dp[n];
+    }
+};
+
+update:
+class Solution {
+public:
+    /*
+        类似于一次只能走一步或是两步的爬楼梯问题
+        从左向右转化 第i位可以由i-1位转化完成到达 第i位自己构成一个字符
+        也可以是i-2位转换完成到达 然后i-1和i位两位数字构成一个字符
+    */
+    int numDecodings(string s) {
+        int n=s.length();
+        if(n==0||s[0]=='0')
+            return 0;
+        if(n==1)
+            return 1;
+        // n > 1 && s[0] != '0'
+        // dp[i]==0说明无法到达s[i-1]位
+        vector<int> dp(n+1,0);
+        dp[0]=1;
+        for(int i=1;i<=n;i++){
+            // 由前一位传递过来 自己是一位
+            // 可以简化 不需要判断dp[i-1]和dp[i-2]因为如果无法到达他们的值为0 本来就不会增加dp[i]
+            if(s[i-1]!='0')
+                dp[i]+=dp[i-1];
+            // 由前两位传递过来 自己和前一位构成一个字符
+            // 两位数不能有前导0 且应该处于[1,26]的区间
+            if(i>=2&&s[i-2]!='0'){
+                int num2Digit=stoi(s.substr(i-2,2));
+                if(num2Digit>=1&&num2Digit<=26)
+                    dp[i]+=dp[i-2];
+            }
+        }
+        return dp[n];
     }
 };
