@@ -47,6 +47,35 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    bool checkSubarraySum(vector<int>& nums, int k) {
+        int n=nums.size();
+        if(n<2)
+            return false;
+        // sum[i+1] 记录[0,i]区间元素的和 
+        vector<int> sum(n+1,0); //避免处理sum[0]
+        for(int i=0;i<n;i++)
+            sum[i+1]=sum[i]+nums[i];
+        // ij为nums中长度>=2的区间
+        for(int i=0;i<n-1;i++){
+            for(int j=i+1;j<n;j++){
+                int rangeSum=sum[j+1]-sum[i];
+                if(k==0){
+                    if(rangeSum==0)
+                        return true;
+                }
+                else{
+                    if(rangeSum%k==0)
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+};
+
 Solution 2:trick
 class Solution {
 public:
@@ -58,13 +87,14 @@ public:
     bool checkSubarraySum(vector<int>& nums, int k) {
         int sum=0;
         unordered_map<int,int> m;//存储得到余数的对应下标
-        m[0]=-1;
+        m[0]=-1;//初始化 为了处理[0,i]这个区间的和是kn时 长度为i-(-1)=i+1
         int len=nums.size();
         for(int i=0;i<len;i++){
             sum+=nums[i];
             if(k!=0)
                 sum%=k;
             if(m.find(sum)!=m.end()){
+                // 找到了一个区间[modIndex[sum]+1,i]的和是k的倍数
                 if(i-m[sum]>1)
                     return true;
             }
