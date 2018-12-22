@@ -44,3 +44,39 @@ public:
         return 0;
     }
 };
+
+update:
+class Solution {
+public:
+    // BSF
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> wordSet(wordList.begin(),wordList.end());
+        // endWord不在wordList中 那么必然不存在转换 剪枝
+        if(wordSet.find(endWord)==wordSet.end())
+            return 0;
+        queue<pair<string,int>> q;
+        unordered_set<string> visit;
+        q.push({beginWord,1});
+        visit.insert(beginWord);
+        while(!q.empty()){
+            auto cur=q.front();
+            q.pop();
+            if(cur.first==endWord)
+                return cur.second;
+            for(int i=0;i<cur.first.length();i++){
+                char origin=cur.first[i];
+                for(char c='a';c<='z';c++){
+                    if(c==origin)continue;
+                    cur.first[i]=c;//在原串上做变换 避免了字符串重复复制
+                    if(wordSet.find(cur.first)!=wordSet.end()&&visit.find(cur.first)==visit.end()){
+                        q.push({cur.first, cur.second+1});
+                        visit.insert(cur.first);
+                    }
+                }
+                cur.first[i]=origin;//将该位设置为原来的值
+                
+            }
+        }
+        return 0;
+    }
+};
