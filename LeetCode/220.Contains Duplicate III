@@ -24,12 +24,37 @@ public:
     }
 };
 
+update：TLE
+class Solution {
+public:
+    // 注意两数的绝对距离可能会超过INT_MAX
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int indexDis, int valueDis) {
+        int n=nums.size();
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j-i<=indexDis&&j<n;j++){
+                if(abs((long)nums[i]-(long)nums[j])<=valueDis)
+                    return true;
+            }
+        }
+        return false;
+    }
+};
+
 Solution 2:
 class Solution {
 public:
-    //暴力超时  边界 包含测试数据[-1,INT_MIN]要用long
+    /*  k是indexDistance t是valueDistance
+        要注意可能有[-1,INT_MAX]的测试用例 两者绝对距离超过INT_MAX要用long
+        同时利用set维护一个长度为k的窗口 对于利用set可能有以下顾虑:
+            I have one concern about removing element values.remove(nums[ind - k]) that may delete an element that should remain in the set, if nums[ind-k] is the same as some num[x] s.t. ind-k < x <ind.
+            Reply:If that is the case, the algorithm has returned in previous stage, since it finds two same values, within window size k.
+            因为绝对距离t>=0所以在窗口k内出现两个相等的元素 必然在之前已经返回true了
+    */
     bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
-        set<long> window; // set is ordered automatically 
+        int n = nums.size();
+        if(k < 1 || t < 0 || n < 2)
+            return false;
+        set<long> window; // set is ordered automatically 维护一个大小为k的窗口
         for (int i = 0; i < nums.size(); i++) {
             if (i > k) window.erase(nums[i-k-1]); // keep the set contains nums i j at most k
             // |x - nums[i]| <= t  ==> -t <= x - nums[i] <= t;
@@ -41,3 +66,34 @@ public:
         return false;
     }
 };
+
+Solution 3: 没理解
+public class Solution {
+    /*
+        我们可以构建一个大小为t+1的bucket, 比如[0, 1, 2, 3, ... , t] 最大绝对值差的两个数就是t和0. 
+        如果两个数字出现在同一个Bucket内，说明我们已经找到了。 如果不是，则在相邻的两个bucket内再找。
+        如果相邻的bucket内元素绝对值只差在t以内，说明我们知道到了，返回true.
+        为了保证j - i <= k，我们在i>=k时，删除 nums[i-k]对应的Bucket.
+    */
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        if( k < 1 || t < 0) return false;
+        Map<Long, Long> map = new HashMap<>();
+        for(int i = 0; i < nums.length; i++){
+            // [-t, 0] [0, t] 的元素都会落在bucket[0]里。
+            // 为了解决这个问题，所有元素横移Integer.MIN_VALUE。
+            long remappedNum = (long) nums[i] - Integer.MIN_VALUE;
+            long bucket = remappedNum / ((long)t + 1);
+            if(map.containsKey(bucket) 
+                ||(map.containsKey(bucket-1) && remappedNum - map.get(bucket-1) <= t)
+                    || (map.containsKey(bucket+1) && map.get(bucket+1) - remappedNum <= t) )
+                    return true;
+            if(i >= k) {
+                long lastBucket = ((long) nums[i-k] - Integer.MIN_VALUE) / ((long)t + 1);
+                map.remove(lastBucket);
+            }
+            map.put(bucket,remappedNum);
+        }
+        
+        return false;
+    }
+}
