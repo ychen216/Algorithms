@@ -77,3 +77,56 @@ public:
         }
     }
 };
+
+update:
+class Solution {
+public:
+    /* 
+        将不包含在边界O的所有O连通集都翻转为X 
+        反着想一下 我们可以从边界找到包含边界O的连通集 排除掉这部分的O不翻转 其他的都进行翻转
+    */
+    void solve(vector<vector<char>>& board) {
+        int m=board.size();
+        if(m<2) // m==0 or m==1时所有边界上的都不需要翻转直接返回
+            return;
+        int n=board[0].size();
+        if(n<2)
+            return;
+        // 确保了至少有两行两列
+        // 找到包含边界O的连通集
+        // 找第一行和最后一行
+        for(int j=0;j<n;j++){
+            if(board[0][j]=='O')
+                dfs(board,0,j,m,n);
+            if(board[m-1][j]=='O')
+                dfs(board,m-1,j,m,n);
+        }
+        // 找第一列和最后一列
+        for(int i=1;i<m-1;i++){
+            if(board[i][0]=='O')
+                dfs(board,i,0,m,n);
+            if(board[i][n-1]=='O')
+                dfs(board,i,n-1,m,n);
+        }
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                // 恢复边界O连通集
+                if(board[i][j]=='#')
+                    board[i][j]='O';
+                // 将非边界的连通集置为X
+                else if(board[i][j]=='O')
+                    board[i][j]='X';
+            }
+        }
+    }
+private:
+    void dfs(vector<vector<char>> &board,int x,int y,int m,int n){
+        if(x<0||x>=m||y<0||y>=n||board[x][y]!='O')
+            return;
+        board[x][y]='#';//标记该位置包含在边界连通集中
+        dfs(board,x-1,y,m,n);
+        dfs(board,x+1,y,m,n);
+        dfs(board,x,y-1,m,n);
+        dfs(board,x,y+1,m,n);
+    }
+};
