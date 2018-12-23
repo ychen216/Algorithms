@@ -50,3 +50,38 @@ class Solution {
         }
     }
 }
+
+update: same idea C++ version
+class Solution {
+public:
+    /*
+        思路就是 如果小数部分有循环 那么在小数部分 必然会出现余数重复的地方 重复的地方就是循环节开始的地方
+        同时为了避免numerator是INT_MIN在取绝对值后溢出 将接口变量类型改成long
+    */
+    string fractionToDecimal(long numerator, long denominator) {
+        if(numerator==0)
+            return "0";
+        string res="";
+        if((numerator<0)^(denominator<0))
+            res+="-";
+        numerator=labs(numerator),denominator=labs(denominator);
+        res+=to_string(numerator/denominator);
+        long r=numerator%denominator;
+        if(r==0)
+            return res;
+        res+=".";
+        unordered_map<long,int> remainderIndex; // 记录小数部分
+        while(r!=0){
+            if(remainderIndex.find(r)!=remainderIndex.end()){
+                res.insert(remainderIndex[r],1,'(');
+                res+=")";
+                break;
+            }
+            remainderIndex[r]=res.length();
+            r*=10;
+            res+=to_string(r/denominator);
+            r%=denominator;
+        }
+        return res;
+    }
+};
