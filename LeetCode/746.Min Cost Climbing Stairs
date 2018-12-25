@@ -18,22 +18,54 @@ cost will have a length in the range [2, 1000].
 Every cost[i] will be an integer in the range [0, 999].
 */
 
-Solution:
+Solution 1:
 class Solution {
-    public int minCostClimbingStairs(int[] cost) {
-        int n=cost.length;
-        int []dp=new int[n+1];
-        dp[0]=cost[0];
-        dp[1]=cost[1];
+public:
+    /*
+        这题要注意的是:
+        1.到达第i层只有继续往i+1或i+2层走 第i层才需要支付cost[i],也就是只站着是不收费的！
+        2.cost的长度为n最后一个元素是cost[n-1] 而我们要到达的top是n+1层 所以到了第n-1还需要继续向上爬还需要pay cost
+        dp[i]设置为到达第i层的最少花费 以为起始时刻 可以选择从第0 or 1层开始,所以
+        dp[0]=dp[1]=0, 继续往上走dp[i]=min(dp[i-1]+cost[i-1],dp[i-2]+cost[i-2])
+        站在i-1时最少开销 加上 从i-1往上走的cost
+    */
+    int minCostClimbingStairs(vector<int>& cost) {
+        int n=cost.size();
+        vector<int> dp(n+1,0);
+        // dp[0]=dp[1]=0;
         for(int i=2;i<=n;i++){
-            int curCost=i==n?0:cost[i];
-            dp[i]=Math.min(dp[i-1],dp[i-2])+curCost;
+            dp[i]=min(dp[i-1]+cost[i-1],dp[i-2]+cost[i-2]);
         }
         return dp[n];
     }
-}
+};
 
 Solution 2:
+class Solution {
+public:
+    /*
+        这题要注意的是:
+        1.到达第i层只有继续往i+1或i+2层走 第i层才需要支付cost[i],也就是只站着是不收费的！
+        2.cost的长度为n最后一个元素是cost[n-1] 而我们要到达的top是n+1层 所以到了第n-1还需要继续向上爬还需要pay cost
+        dp[i]设置为到达第i层的最少花费 以为起始时刻 可以选择从第0 or 1层开始,所以
+        dp[0]=dp[1]=0, 继续往上走dp[i]=min(dp[i-1]+cost[i-1],dp[i-2]+cost[i-2])
+        站在i-1时最少开销 加上 从i-1往上走的cost
+        状态i只依赖与i-1和i-2状态 可以简化空间开销O(n)-->O(1)
+    */
+    int minCostClimbingStairs(vector<int>& cost) {
+        int n=cost.size();
+        int ppre=0,pre=0;//表示当前位置(i=2)到达前两个位置时的开销
+        for(int i=2;i<=n;i++){
+            int tmp=ppre;
+            ppre=pre;
+            pre=min(pre+cost[i-1],tmp+cost[i-2]);
+        }
+        return pre;
+    }
+};
+
+// 2018-12-25 时 重写了Solution 1&2 对于以前的方法表示看不懂 Solution3也是
+Solution 3:
 class Solution {
 public:
     // 给出0~n-1的cost 求到达顶点n的最小cost 每次可以走一步或两步
@@ -50,3 +82,4 @@ public:
         return min(ppre,pre);
     }
 };
+
