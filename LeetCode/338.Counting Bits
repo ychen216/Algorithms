@@ -15,6 +15,7 @@ Follow up:
 Solution 1:naive
 class Solution {
 public:
+    // 直接对每一个数字i 计算i的二进制表示包含几个1
     vector<int> countBits(int num) {
         vector<int> v;
         v.push_back(0);
