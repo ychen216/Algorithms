@@ -34,6 +34,8 @@ public:
         int maxSum=nums[0];
         int preSum=nums[0];
         for(int i=1;i<n;i++){
+            // 对于第i个元素来说以i结尾的subarray有两种情况
+            // 1.自己一个元素  2.拼接到i-1元素结尾的subarray后面
             preSum=preSum<=0?nums[i]:preSum+nums[i];
             maxSum=max(preSum,maxSum);
         }
