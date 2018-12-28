@@ -57,3 +57,30 @@ public:
         return ans;
     }
 };
+
+Solution 2:
+class Solution {
+public:
+    // 除了贪心的做法也可以用dp
+    int findLongestChain(vector<vector<int>>& pairs) {
+        int n=pairs.size();
+        if(n<2)
+            return n;
+        // [a,b]按照b从小打到大排序
+        sort(pairs.begin(),pairs.end(),[](vector<int>&p1,vector<int>&p2){
+            return p1[1]<p2[1];
+        });
+        vector<int> dp(n,1);
+        int res=1;
+        for(int i=1;i<n;i++){
+            int cur=0;
+            for(int j=0;j<i;j++){
+                if(pairs[j][1]<pairs[i][0]&&dp[j]>cur)
+                    cur=dp[j];
+            }
+            dp[i]=cur+1;
+            res=max(res,dp[i]);
+        }
+        return res;
+    }
+};
