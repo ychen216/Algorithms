@@ -104,3 +104,28 @@ public:
         return true;
     }
 };
+
+update:
+class Solution {
+public:
+    bool isSubsequence(string s, string t) {
+        int lens=s.length(),lent=t.length();
+        if(lens>lent)
+            return false;
+        unordered_map<char,vector<int>> char2Index;
+        for(int i=0;i<lent;i++){
+            char2Index[t[i]].push_back(i);
+        }
+        int prePos=-1;//上一个check到的s中的字符 在t中最早出现的合法位置
+        for(int i=0;i<lens;i++){
+            if(char2Index.find(s[i])==char2Index.end())
+                return false;
+            auto &indexArray=char2Index[s[i]];
+            auto pointer=upper_bound(indexArray.begin(),indexArray.end(),prePos);
+            if(pointer==indexArray.end())
+                return false;
+            prePos=*pointer;
+        }
+        return true;
+    }
+};
