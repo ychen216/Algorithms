@@ -7,7 +7,30 @@ Example:
 Given n = 2, return 91. (The answer should be the total numbers in the range of 0 ≤ x < 100, excluding [11,22,33,44,55,66,77,88,99])
 */
 
-Solution:
+Solution 1:
+class Solution {
+public:
+    // dp[i]表示长度<=i的unique digits有多少个
+    int countNumbersWithUniqueDigits(int n) {
+        if(n==0)
+            return 1;
+        int maxDiffLen=n>10?10:n;//0~9一共十个数字 超过10的时候就不可能再有不重复的数字了
+        vector<int> dp(maxDiffLen+1,0);
+        dp[1]=10;//长度为1的可以是0~9
+        // 长度>1的要求首位不能是0
+        for(int i=2;i<=maxDiffLen;i++){
+            int cur=9,useNum=1;//初始化首位只能是1-9
+            for(int j=1;j<i;j++){
+                cur*=(10-useNum);
+                useNum++;
+            }
+            dp[i]=dp[i-1]+cur;
+        }
+        return dp[maxDiffLen];
+    }
+};
+
+update:
 class Solution {
 public:
     //dp i位数中UniqueDigits 就是要第i位数和前i-1位数都不一样
