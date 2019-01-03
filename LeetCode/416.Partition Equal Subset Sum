@@ -45,6 +45,40 @@ public:
     }
 };
 
+update: TLE
+class Solution {
+public:
+    bool canPartition(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return false;
+        int sum=0;
+        for(auto&num:nums)
+            sum+=num;
+        if(sum&1)
+            return false;
+        int target=sum/2;
+        vector<bool> visit(n,false);
+        return helper(nums,visit,0,target,0);
+    }
+private:
+    bool helper(vector<int>&nums,vector<bool>&visit,int curSum,int target,int start){
+        if(curSum>=target){
+            if(curSum==target)
+                return true;
+            return false;
+        }
+        for(int i=start;i<nums.size();i++){
+            if(visit[i]) continue;
+            visit[i]=true;
+            if(helper(nums,visit,curSum+nums[i],target,i+1))
+                return true;
+            visit[i]=false;
+        }
+        return false;
+    }
+};
+
 Solution 2: DP
 class Solution {
 public:
