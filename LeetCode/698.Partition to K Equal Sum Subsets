@@ -89,3 +89,44 @@ private:
         return false;
     }
 };
+
+update:
+题设中
+1 <= k <= len(nums) <= 16.
+0 < nums[i] < 10000 
+len(nums)>0
+nums[i]>0 --> curSum越加越大在超过target的时候就不可能了
+class Solution {
+public:
+    bool canPartitionKSubsets(vector<int>& nums, int k) {
+        if(k==1)
+            return true;
+        int sum=0;
+        for(auto&num:nums)
+            sum+=num;
+        if(sum%k)
+            return false;
+        int target=sum/k;
+        vector<bool> visit(nums.size(),false);
+        return dfs(nums,visit,0,target,0,k);
+    }
+private:
+    bool dfs(vector<int>&nums,vector<bool>&visit,int curSum,int target,int start,int k){
+        if(k==1)
+            return true;
+        if(curSum>=target){
+            if(curSum==target)
+                return dfs(nums,visit,0,target,0,k-1);
+            return false;
+        }
+        for(int i=start;i<nums.size();i++){
+            if(!visit[i]){
+                visit[i]=true;
+                if(dfs(nums,visit,curSum+nums[i],target,i+1,k))
+                    return true;
+                visit[i]=false;
+            }
+        }
+        return false;
+    }
+};
