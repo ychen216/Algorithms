@@ -93,3 +93,35 @@ private:
         return res;
     }
 };
+
+update:利用传引用 避免传值的复制操作
+class Solution {
+public:
+    vector<TreeNode*> generateTrees(int n) {
+        if(n<=0)
+            return {};
+        vector<TreeNode*> res;
+        generator(1,n,res);
+        return res;
+    }
+private:
+    void generator(int a,int b,vector<TreeNode*>&res){
+        if(a>b){
+            res.push_back(NULL);
+            return;
+        }
+        for(int i=a;i<=b;i++){
+            vector<TreeNode *>leftChilds,rightChilds;
+            generator(a,i-1,leftChilds);
+            generator(i+1,b,rightChilds);
+            for(auto left:leftChilds){
+                for(auto right:rightChilds){
+                    TreeNode *root=new TreeNode(i);
+                    root->left=left;
+                    root->right=right;
+                    res.push_back(root);
+                }
+            }
+        }
+    }
+};
