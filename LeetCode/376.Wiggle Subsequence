@@ -80,6 +80,33 @@ public:
 Solution 3:
 class Solution {
 public:
+    // DP 类似于最长递增子序列 up[i]表示到i为止的最后是上升的最长序列长度 down[i]表示到i为止的最后是下降的最长序列长度
+    // up[0]=down[0]=1 单个元素可以认为是上升或者下降的
+    int wiggleMaxLength(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return n;
+        vector<int> up(n,0),down(n,0);
+        up[0]=down[0]=1;
+        for(int i=1;i<n;i++){
+            if(nums[i]>nums[i-1]){
+                up[i]=max(up[i-1],down[i-1]+1);
+                down[i]=down[i-1];
+            }else if(nums[i]<nums[i-1]){
+                down[i]=max(down[i-1],up[i-1]+1);
+                up[i]=up[i-1];
+            }else{
+                down[i]=down[i-1];
+                up[i]=up[i-1];
+            }
+        }
+        return max(up[n-1],down[n-1]);
+    }
+};
+
+update:
+class Solution {
+public:
     /*
         up[i]代表到i为止 所有wiggle subsequent最后两个元素是上升的最大长度 这类型记为type U
         down[i]代表..... 最后两个元素是下降的最大长度 这种类型记为type D
@@ -153,5 +180,37 @@ public:
             }
         }
         return max(up,down);
+    }
+};
+
+Solution 4:
+class Solution {
+public:
+    // DP 类似于最长递增子序列 up[i]表示以i结尾的最后是上升的最长序列长度 down[i]表示以i结尾的最后是下降的最长序列长度
+    // up[0]=down[0]=1 单个元素可以认为是上升或者下降的
+    int wiggleMaxLength(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2)
+            return n;
+        vector<int> up(n,0),down(n,0);
+        up[0]=down[0]=1;
+        int maxLen=1;
+        for(int i=1;i<n;i++){
+            int preUp=0,preDown=0;
+            for(int j=0;j<i;j++){
+                // check在j,i间上升
+                if(nums[j]<nums[i]&&preDown<down[j]){
+                    preDown=down[j];
+                }
+                // check在j,i间下降
+                if(nums[j]>nums[i]&&preUp<up[j]){
+                    preUp=up[j];
+                }
+            }
+            up[i]=preDown+1;
+            down[i]=preUp+1;
+            maxLen=max(maxLen,max(up[i],down[i]));
+        }
+        return maxLen;
     }
 };
