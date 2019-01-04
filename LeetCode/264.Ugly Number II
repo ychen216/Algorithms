@@ -15,7 +15,7 @@ public:
         if(n==1)
             return 1;
         int prime[3]={2,3,5};
-        int index[3]={0,0,0};//第i个质数应该和第index[i]个丑数相乘生成下一个比较小的丑数
+        int index[3]={0,0,0};//第i个质数应该和第index[k]个丑数相乘生成下一个比较小的丑数
         int ugly[n];
         ugly[0]=1;
         for(int i=1;i<n;i++){
@@ -27,6 +27,26 @@ public:
             for(int j=0;j<3;j++){
                 while(ugly[index[j]]*prime[j]<=ugly[i])index[j]++;
             }
+        }
+        return ugly[n-1];
+    }
+};
+
+update:
+class Solution {
+public:
+    int nthUglyNumber(int n) {
+        if(n==1)
+            return 1;
+        vector<int> ugly(n);
+        ugly[0]=1;
+        int p2=0,p3=0,p5=0;//表示已有丑数的下标,2,3,5和对应的下标丑数相乘可能得到当前没出现过的最小丑数
+        for(int i=1;i<n;i++){
+            ugly[i]=min(ugly[p2]*2,min(ugly[p3]*3,ugly[p5]*5));
+            // update pointer
+            if(ugly[p2]*2==ugly[i])p2++;
+            if(ugly[p3]*3==ugly[i])p3++;
+            if(ugly[p5]*5==ugly[i])p5++;
         }
         return ugly[n-1];
     }
