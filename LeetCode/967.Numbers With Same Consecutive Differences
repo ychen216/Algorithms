@@ -1,0 +1,132 @@
+967. Numbers With Same Consecutive Differences
+
+/*
+Return all non-negative integers of length N such that the absolute difference between every two consecutive digits is K.
+
+Note that every number in the answer must not have leading zeros except for the number 0 itself. For example, 01 has one leading zero and is invalid, but 0 is valid.
+
+You may return the answer in any order.
+
+Example 1:
+Input: N = 3, K = 7
+Output: [181,292,707,818,929]
+Explanation: Note that 070 is not a valid number, because it has leading zeroes.
+
+Example 2:
+Input: N = 2, K = 1
+Output: [10,12,21,23,32,34,43,45,54,56,65,67,76,78,87,89,98]
+
+Note:
+  1 <= N <= 9
+  0 <= K <= 9
+*/
+
+Solution 1:
+class Solution {
+public:
+    vector<int> numsSameConsecDiff(int N, int K) {
+        //长度为1 有0~9 10种可能
+        if(N==1)
+            return vector<int>({0,1,2,3,4,5,6,7,8,9});
+        //长度>=2 那么首位不能是0
+        if(K==0){
+            vector<int> res;
+            for(int i=1;i<10;i++)
+                res.push_back(stoi(string(N,i+'0')));
+            return res;
+        }
+        unordered_map<int,vector<int>> res;
+        helper(res,N,K,0);
+        return res[N-1];
+    }
+private:
+    void helper(unordered_map<int,vector<int>> &res,int N,int K,int curLen){
+        if(curLen>=N)
+            return;
+        //构造第1位 不能为0
+        if(curLen==0){
+            vector<int> v({1,2,3,4,5,6,7,8,9});//首位不能有前导0
+            res[curLen]=v;
+        }
+        else{
+            /*  构造后面的数字要依赖长度curLen-1的结果
+                且新的数字要和前一位的绝对值差为K
+                之前处理了K==0的情况 如果不处理 那么这里要做一个去重的操作即K==0的时候lastDigit+K==lastDigit-K将会构成两个相等的数字
+            */
+            vector<int> next;
+            for(auto &num:res[curLen-1]){
+                int lastDigit=num%10;
+                if(lastDigit+K<10)
+                    next.push_back(num*10+lastDigit+K);
+                if(lastDigit-K>=0)
+                    next.push_back(num*10+lastDigit-K);
+            }
+            res[curLen]=next;
+        }
+        helper(res,N,K,curLen+1);
+    }
+};
+
+update:
+class Solution {
+public:
+    vector<int> numsSameConsecDiff(int N, int K) {
+        //长度为1 有0~9 10种可能
+        if(N==1)
+            return vector<int>({0,1,2,3,4,5,6,7,8,9});
+        //长度>=2 那么首位不能是0
+        unordered_map<int,vector<int>> res;
+        helper(res,N,K,0);
+        return res[N-1];
+    }
+private:
+    void helper(unordered_map<int,vector<int>> &res,int N,int K,int curLen){
+        if(curLen>=N)
+            return;
+        //构造第1位 不能为0
+        if(curLen==0){
+            vector<int> v({1,2,3,4,5,6,7,8,9});//首位不能有前导0
+            res[curLen]=v;
+        }
+        else{
+            /*  构造后面的数字要依赖长度curLen-1的结果
+                且新的数字要和前一位的绝对值差为K
+                之前处理了K==0的情况 如果不处理 那么这里要做一个去重的操作即K==0的时候lastDigit+K==lastDigit-K将会构成两个相等的数字
+            */
+            vector<int> next;
+            for(auto &num:res[curLen-1]){
+                int lastDigit=num%10;
+                int addK=lastDigit+K,subK=lastDigit-K;
+                if(addK<10)
+                    next.push_back(num*10+addK);
+                if(subK>=0&&subK!=addK)
+                    next.push_back(num*10+subK);
+            }
+            res[curLen]=next;
+        }
+        helper(res,N,K,curLen+1);
+    }
+};
+
+update: iterative
+class Solution {
+public:
+    // 要注意去除前导0 即N>1时首位不能为0 且K==0时不能加入重复的数字
+    vector<int> numsSameConsecDiff(int N, int K) {
+        vector<int>cur({0,1,2,3,4,5,6,7,8,9});
+        // 长度>1时不能有前导0
+        for(int i=2;i<=N;i++){
+            vector<int> next;
+            for(auto &num:cur){
+                int lastDigit=num%10;
+                int addK=lastDigit+K,subK=lastDigit-K;
+                if(num>0&&addK<10)
+                    next.push_back(num*10+addK);
+                if(num>0&&K>0&&subK>=0)
+                    next.push_back(num*10+subK);
+            }
+            cur=next;
+        }
+        return cur;
+    }
+};
