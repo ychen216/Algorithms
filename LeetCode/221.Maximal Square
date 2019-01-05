@@ -72,7 +72,7 @@ public:
             for(int j=0;j<col;j++){
                 dp[i][j]=matrix[i][j]-'0';
                 if(dp[i][j]&&i>0&&j>0)
-                    dp[i][j]=max(dp[i][j],min(dp[i-1][j],min(dp[i-1][j-1],dp[i][j-1]))+1);
+                    dp[i][j]=min(dp[i-1][j],min(dp[i-1][j-1],dp[i][j-1]))+1;
                 res=max(res,dp[i][j]);
             }
         }
