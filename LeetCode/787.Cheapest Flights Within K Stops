@@ -95,6 +95,37 @@ public:
     }
 };
 
+update:更新算法解释
+class Solution {
+public:
+    /*
+        利用Bellman-Ford算法,进行K+1次松弛操作(K个stop相当于最长路径为K+1)
+        因为要保证最多K stop,要避免在某一轮松弛时更新了某条路径上的超过一个结点
+        更新时要保证每一轮松弛时以节点a出发的每个路径上至多松弛一个节点(一条边)
+        所以更新时要保存两个前后两轮的状态 当前的更新操作 都要基于上一轮的更新结果
+    */
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K) {
+        if(src==dst)
+            return 0;
+        vector<int> dist(n,INT_MAX);
+        dist[src]=0;
+        for(int i=0;i<=K;i++){
+            vector<int> copy(dist.begin(),dist.end());
+            bool isUpdate=false;
+            for(auto& f:flights){
+                int u=f[0],v=f[1],fee=f[2];
+                if(dist[u]!=INT_MAX&&copy[v]>dist[u]+fee){
+                    copy[v]=dist[u]+fee;
+                    isUpdate=true;
+                }
+            }
+            dist=copy;
+            if(!isUpdate)
+                break;
+        }
+        return dist[dst]==INT_MAX?-1:dist[dst];
+    }
+};
 Solution 3:
 class Solution {
 public:
