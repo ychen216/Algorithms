@@ -30,3 +30,23 @@ public:
         return maxAll;
     }
 };
+
+update:
+class Solution {
+public:
+    int maxProduct(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return 0;
+        if(n==1)
+            return nums[0];
+        int minima=nums[0],maxima=nums[0],res=maxima;
+        for(int i=1;i<n;i++){
+            int tmp=minima;
+            minima=min(minima*nums[i],min(nums[i],maxima*nums[i]));
+            maxima=max(tmp*nums[i],max(nums[i],maxima*nums[i]));
+            res=max(maxima,res);
+        }
+        return res;
+    }
+};
