@@ -59,6 +59,39 @@ public:
     }
 };
 
+update:减小空间开销到O(N) 增加剪枝操作 当距离不再更新时 跳出循环
+class Solution {
+public:
+    int findCheapestPrice(int n, vector<vector<int>>& flights, int src, int dst, int K) {
+        if(src==dst)
+            return 0;
+        vector<vector<int>> dist(2,vector<int>(n,INT_MAX));
+        dist[0][src]=0;
+        //初始化
+        for(auto &f:flights){
+            if(f[0]==src)
+                dist[0][f[1]]=min(dist[0][f[1]],dist[0][src]+f[2]);
+        }
+        int pre=0;
+        for(int i=1;i<=K;i++){
+            int cur=1-pre;
+            for(int j=0;j<n;j++)
+                dist[cur][j]=dist[pre][j];
+            bool isUpdate=false;
+            for(auto& f:flights){
+                int u=f[0],v=f[1],fee=f[2];
+                if(dist[pre][u]!=INT_MAX&&dist[cur][v]>dist[pre][u]+fee){
+                    dist[cur][v]=dist[pre][u]+fee;
+                    isUpdate=true;
+                }
+            }
+            pre=cur;
+            if(!isUpdate)
+                break;
+        }
+        return dist[pre][dst]==INT_MAX?-1:dist[pre][dst];
+    }
+};
 
 Solution 2:
 class Solution {
@@ -126,6 +159,7 @@ public:
         return dist[dst]==INT_MAX?-1:dist[dst];
     }
 };
+
 Solution 3:
 class Solution {
 public:
