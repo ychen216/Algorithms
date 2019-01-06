@@ -49,6 +49,30 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    int findMin(vector<int>& nums) {
+        int high=nums.size()-1,low=0;
+        while(low<=high){
+            if(nums[low]<=nums[high])
+                return nums[low];
+            //nums[low]>nums[high] eg.4 5 0 1 2
+            int mid=low+(high-low)/2;
+            //左边是递增的 但是由于nums[low]>nums[high] 所以Min落在右侧
+            if(nums[low]<=nums[mid]){
+                low=mid+1;
+            }else{
+                //nums[low]>nums[mid]
+                //说明在mid的右侧是递增的 Min在low和mid之间
+                high=mid;
+            }
+        }
+        return nums[low];
+    }
+};
+
+
 Solution:
 class Solution {
 public:
