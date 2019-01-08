@@ -31,6 +31,24 @@ public:
     }
 };
 
+update:双指针 利用set来保存区间里出现过的字符
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) {
+        int left,right,maxLen=0;
+        unordered_set<char> charSet;//存储该区间已经出现过的字符
+        for(left=0,right=0;right<s.length();right++){
+            while(left<right&&charSet.find(s[right])!=charSet.end()){
+                charSet.erase(s[left]);
+                left++;
+            }
+            charSet.insert(s[right]);
+            maxLen=max(maxLen,right-left+1);
+        }
+        return maxLen;
+    }
+};
+
 Solution 2:
 class Solution {
 public:
@@ -38,7 +56,7 @@ public:
         int len=s.length();
         if(len<2)
             return len;
-        vector<int> dict(256, -1);//字符出现的下标
+        vector<int> dict(256, -1);//字符出现下标的前一位
         int maxLen = 0, start = -1;
         for (int i = 0; i<len; i++) {
             if (dict[s[i]] > start)
