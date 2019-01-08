@@ -62,14 +62,12 @@ public:
     }
 private:
     void findPalFromCenter(string&s,int left,int right,int &maxLen,int &begin){
-        int curLen;
+        int curLen=0;
         if(left==right){
             curLen=1;
             left--;
             right++;
         }
-        else
-            curLen=0;
         while(left>=0&&right<s.length()){
             if(s[left]!=s[right])
                 break;
@@ -79,6 +77,41 @@ private:
         if(maxLen<curLen){
             maxLen=curLen;
             begin=left+1;
+        }
+    }
+};
+
+update:
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        int n=s.length();
+        if(n<2)
+            return s;
+        int maxLen=1,start=0;
+        for(int i=0;i<n;i++){
+            //剪枝操作
+            if(n-i<=maxLen/2)break;
+            extendPalindromic(s,i,i,start,maxLen);
+            extendPalindromic(s,i,i+1,start,maxLen);
+        }
+        return s.substr(start,maxLen);
+    }
+private:
+    void extendPalindromic(string &s,int i,int j,int &start,int &maxLen){
+        int curLen=0;
+        if(i==j){
+            curLen=1;
+            i--;j++;
+        }
+        while(i>=0&&j<s.length()){
+            if(s[i]!=s[j])break;
+            curLen+=2;
+            i--;j++;
+        }
+        if(maxLen<curLen){
+            maxLen=curLen;
+            start=i+1;
         }
     }
 };
