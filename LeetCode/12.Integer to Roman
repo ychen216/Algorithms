@@ -4,7 +4,7 @@ Given an integer, convert it to a roman numeral.
 Input is guaranteed to be within the range from 1 to 3999.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     /*
@@ -23,6 +23,48 @@ public:
                 num-=value[i];
                 res+=numstr[i];
             }
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    string intToRoman(int num) {
+        unordered_map<int,vector<string>> num2Roman;//保存从低位到高位的每一位数字可能用到的罗马字符
+        num2Roman[1]=vector<string>({"I","V","X"});//1-9
+        num2Roman[2]=vector<string>({"X","L","C"});//10-90
+        num2Roman[3]=vector<string>({"C","D","M"});//100-900
+        num2Roman[4]=vector<string>({"M"});//1000
+        int numLen=1;
+        string res="";
+        while(num){
+            int tail=num%10;
+            num/=10;
+            //避免10050这样的case
+            if(tail==0){
+                numLen++;
+                continue;
+            }
+            string cur="";
+            if(tail<4){
+                for(int i=0;i<tail;i++)
+                    cur.append(num2Roman[numLen][0]);
+            }
+            else if(tail==4)
+                cur=num2Roman[numLen][0]+num2Roman[numLen][1];
+            else if(tail==5)
+                cur=num2Roman[numLen][1];
+            else if(tail<9){
+                cur=num2Roman[numLen][1];
+                for(int i=tail-5;i>0;i--)
+                    cur.append(num2Roman[numLen][0]);
+            }      
+            else //tail==9
+                cur=num2Roman[numLen][0]+num2Roman[numLen][2];
+            res=cur+res;
+            numLen++;
         }
         return res;
     }
