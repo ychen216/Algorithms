@@ -45,6 +45,41 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    // 按顺序找到中位数 按照总长度为奇偶分类中位数由一个还是两个数字确定
+    // 要注意的是可能有一个vector是空 一个长度为1 这样一共只有1个数字
+    // 复杂度O((m+n)/2)
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int n1=nums1.size(),n2=nums2.size();
+        int index1=(n1+n2)/2-1,index2=index1+1;
+        bool isOdd=(n1+n2)&1;
+        vector<double> v; // 存储中间两个数
+        int p1=0,p2=0,p=0;
+        while(p1<n1||p2<n2){
+            if(p2>=n2||p1<n1&&nums1[p1]<nums2[p2]){
+                if(p==index1||p==index2){
+                    v.push_back(nums1[p1]);
+                }
+                p1++;
+            }else{
+                if(p==index1||p==index2){
+                    v.push_back(nums2[p2]);
+                }
+                p2++;
+            }
+            p++;
+            if(p>index2)
+                break;
+            
+        }
+        if(isOdd)
+            return index1==-1?v[0]:v[1]; // 处理总共只有一个元素的情况
+        return (v[0]+v[1])/2;
+    }
+};
+
 Solution 2:
 class Solution {
 public:
@@ -81,3 +116,4 @@ public:
             return (findKthSmall(nums1,0,nums2,0,len/2)+findKthSmall(nums1,0,nums2,0,len/2+1))/2;
     }
 };
+
