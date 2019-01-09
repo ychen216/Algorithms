@@ -83,3 +83,22 @@ public:
         return (x==sum)||(x==sum/10);
     }
 };
+
+update:
+class Solution {
+public:
+    // 将数字翻转 但只比较翻转一半的结果
+    bool isPalindrome(int x) {
+        if(x<0||(x!=0&&x%10==0))
+            return false;
+        if(x<10)
+            return true;
+        // x>=10&&末尾非零
+        int rev=0;
+        while(x>rev){
+            rev=rev*10+x%10;
+            x/=10;
+        }
+        return rev==x||rev/10==x;
+    }
+};
