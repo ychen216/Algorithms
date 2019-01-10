@@ -107,7 +107,9 @@ public:
                         cand[0]=nums[i],cand[1]=nums[j],cand[2]=nums[left],cand[3]=nums[right];
                         res.push_back(cand);
                         left++;right--;
-                        // 避免重复
+                        // 去重 前两个元素确定了 第三个元素如果是num[left]那么第四个元素必然是num[right]
+                        // num[left]+num[right]==target-nums[i]-nums[j]
+                        // 为了去重第三个元素不能是nums[left] 那么第三个元素改变了 第四个元素必然也变了 不能是num[right]
                         while(left<right&&nums[left-1]==nums[left])left++;
                         while(left<right&&nums[right+1]==nums[right])right--;
                     }else if(sum2>curSum){
@@ -116,6 +118,47 @@ public:
                     }else{
                         right--;
                         while(left<right&&nums[right+1]==nums[right])right--;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
+
+class Solution {
+public:
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int>> res;
+        sort(nums.begin(),nums.end());
+        int n=nums.size();
+        for(int i=0;i+3<n;i++){
+            if(i>0&&nums[i]==nums[i-1]) continue; //去重
+            //剪枝
+            if(nums[i]+nums[i+1]+nums[i+2]+nums[i+3]>target) break;
+            if(nums[i]+nums[n-1]+nums[n-2]+nums[n-3]<target) continue;
+            for(int j=i+1;j+2<n;j++){
+                if(j>i+1&&nums[j]==nums[j-1]) continue;
+                int sum=target-nums[i]-nums[j];
+                int left=j+1,right=n-1;
+                while(left<right){
+                    int cur=nums[left]+nums[right];
+                    if(cur==sum){
+                        vector<int> candidate({nums[i],nums[j],nums[left],nums[right]});
+                        res.push_back(candidate);
+                        left++;right--;
+                        // 去重 前两个元素确定了 第三个元素如果是num[left]那么第四个元素必然是num[right]
+                        // num[left]+num[right]==target-nums[i]-nums[j]
+                        // 为了去重第三个元素不能是nums[left] 那么第三个元素改变了 第四个元素必然也变了 不能是num[right]
+                        while(left<right&&nums[left]==nums[left-1]) left++;
+                        while(left<right&&nums[right]==nums[right+1]) right--;
+                    }else if(cur<sum){
+                        left++;
+                        while(left<right&&nums[left]==nums[left-1]) left++;
+                    
+                    }else{
+                        right--;
+                        while(left<right&&nums[right]==nums[right+1]) right--;
                     }
                 }
             }
