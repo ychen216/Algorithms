@@ -16,7 +16,7 @@ Solution 1:
 class Solution {
 public:
     /*
-    利用最小堆每一次给出最小的元素
+        利用最小堆每一次给出最小的元素
     */
     ListNode* mergeKLists(vector<ListNode*>& lists) {
         int size=lists.size();
@@ -43,15 +43,43 @@ public:
     }
 };
 
+update:
+// 更新最小堆的定义方式
+class Solution {
+public:
+    struct cmp{
+        bool operator()(ListNode* a,ListNode *b){
+            return a->val > b->val;
+        }
+    };
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        int n=lists.size();
+        if(n==0)
+            return NULL;
+        if(n==1)
+            return lists[0];
+        priority_queue<ListNode*,vector<ListNode*>,cmp> pq;//最小堆
+        for(auto node:lists){
+            if(node)
+                pq.push(node);
+        }
+        ListNode *feakHead=new ListNode(0);
+        ListNode *cur=feakHead;
+        while(!pq.empty()){
+            ListNode *small=pq.top();
+            pq.pop();
+            cur->next=small;
+            cur=cur->next;
+            if(small->next)
+                pq.push(small->next);
+        }
+        //cur->next=NULL;
+        //可以不要 因为最后一个元素必然是k个List中某个List的最后一个 最有一个元素的next==NULL
+        return feakHead->next;
+    }
+};
+
 Solution 2:
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     /*
