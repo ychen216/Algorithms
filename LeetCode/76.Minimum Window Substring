@@ -53,3 +53,43 @@ public:
         return d==INT_MAX?"":s.substr(head,d);
     }
 };
+
+update:
+class Solution {
+public:
+    string minWindow(string s, string t) {
+        unordered_map<char,int> need;//记录t中每个字符的个数
+        for(auto&c:t)
+            need[c]++;
+        int cnt=t.length();//当前子数组还差cnt个string t中的元素成为valid substr
+        int lens=s.length();
+        int minLen=lens+1,begin=-1;//最短有效窗口的长度和起始位置
+        int left,right; //区间端点
+        // need[c]>0 需要c need[c]<0 c有富余 need[c]==0 供求平衡 
+        for(left=0,right=0;right<lens;right++){
+            //加入s[right]是否对构造valid window有贡献
+            if(need.find(s[right])!=need.end()){
+                if(need[s[right]]>0)
+                    cnt--;
+                need[s[right]]--;
+            }
+            while(cnt==0){
+                if(right-left+1<minLen){
+                    minLen=right-left+1;
+                    begin=left;
+                }
+                //去掉left 缩短窗口 是否会对供求关系造成影响
+                if(need.find(s[left])!=need.end()){
+                    //进入这个循环 cnt==0那么必然对s[left]的需求是<=0
+                    //只有当need[s[left]]==0时 cnt才增加
+                    //当need[s[left]]<0时 s[left]有富余 cnt不增加
+                    if(need[s[left]]==0)
+                        cnt++;
+                    need[s[left]]++;
+                }
+                left++;
+            }
+        }
+        return begin==-1?"":s.substr(begin,minLen);
+    }
+};
