@@ -46,3 +46,33 @@ public:
         return res;
     }
 };
+
+update: 加入剪枝操作
+class Solution {
+public:
+    vector<vector<int>> combinationSum2(vector<int>& nums, int target) {
+        sort(nums.begin(),nums.end());
+        vector<vector<int>> res;
+        vector<int> cand;
+        helper(nums,0,target,cand,res);
+        return res;
+    }
+private:
+    void helper(vector<int>& nums,int start,int leftNum,vector<int>&cand,vector<vector<int>>&res){
+        if(leftNum<=0){
+            if(leftNum==0)
+                res.push_back(cand);
+            return;
+        }
+        for(int i=start;i<nums.size();i++){
+            //去重
+            if(i>start&&nums[i]==nums[i-1])continue;
+            //剪枝
+            if(leftNum-nums[i]<0)
+                break;
+            cand.push_back(nums[i]);
+            helper(nums,i+1,leftNum-nums[i],cand,res);
+            cand.pop_back();
+        }
+    }
+};
