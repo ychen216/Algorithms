@@ -70,6 +70,33 @@ private:
     }
 };
 
+update: 可以利用sort来完成剪枝
+class Solution {
+public:
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> res;
+        sort(candidates.begin(),candidates.end());
+        vector<int> v;
+        helper(candidates,0,target,v,res);
+        return res;
+    }
+private:
+    void helper(vector<int>& nums,int start,int leftSum,vector<int> &cand,vector<vector<int>>&res){
+        if(leftSum<=0){
+            if(leftSum==0)
+                res.push_back(cand);
+            return;
+        }
+        for(int i=start;i<nums.size();i++){
+            //剪枝 num经过排序 如果当前位置加入nums[i]已经超过target那么加入后面的元素只会更大
+            if(leftSum-nums[i]<0)
+                break;
+            cand.push_back(nums[i]);
+            helper(nums,i,leftSum-nums[i],cand,res);
+            cand.pop_back();
+        }
+    }
+};
 
 Solution 2:
 class Solution {
