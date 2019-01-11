@@ -49,3 +49,38 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    vector<int> findSubstring(string s, vector<string>& words) {
+        int lens=s.length();
+        if(lens==0)
+            return {};
+        int wNum=words.size();
+        if(wNum==0)
+            return {};
+        int lenw=words[0].length();
+        int subLen=lenw*wNum;
+        // 统计words中每个词出现的次数即 valid substring中每个词出现的次数
+        unordered_map<string,int> wordCnt;
+        for(auto &s:words)
+            wordCnt[s]++;
+        vector<int> res;
+        for(int i=0;i+subLen<=lens;i++){
+            unordered_map<string,int> leftCnt(wordCnt.begin(),wordCnt.end());
+            // 检查[i,i+wNum*lenw)子串是否符合条件
+            bool ok=true;
+            for(int j=0;j<wNum;j++){
+                string curWord=s.substr(i+j*lenw,lenw);
+                if(leftCnt.find(curWord)==leftCnt.end()||--leftCnt[curWord]<0){
+                    ok=false;
+                    break;
+                }
+            }
+            if(ok)
+                res.push_back(i);
+        }
+        return res;
+    }
+};
