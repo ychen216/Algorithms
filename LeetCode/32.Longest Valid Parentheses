@@ -37,3 +37,50 @@ public:
         return longest;
     }
 };
+
+Solution 2:DP
+class Solution {
+public:
+    /*
+         I construct a array longest[], for any longest[i], it stores the longest length of valid parentheses which is end at i.
+
+        And the DP idea is :
+
+        If s[i] is '(', set longest[i] to 0,because any string end with '(' cannot be a valid one.
+
+        Else if s[i] is ')'
+
+             If s[i-1] is '(', longest[i] = longest[i-2] + 2
+
+             Else if s[i-1] is ')' and s[i-longest[i-1]-1] == '(', longest[i] = longest[i-1] + 2 + longest[i-longest[i-1]-2]
+
+        For example, input "()(())", at i = 5, longest array is [0,2,0,0,2,0], longest[5] = longest[4] + 2 + longest[1] = 6
+    */
+    int longestValidParentheses(string s) {
+        int n=s.length();
+        if(n<2)
+            return 0;
+        vector<int> dp(n,0);
+        int maxLen=0;
+        for(int i=1;i<n;i++){
+            if(s[i]==')'){
+                if(s[i-1]=='('){
+                    dp[i]=2;
+                    if(i-2>=0)
+                        dp[i]+=dp[i-2];
+                }
+                else{
+                    // s[i-1]==')' 
+                    // 那么1.dp[i-1]>0(说明有(和s[i-1]匹配) 且2. i-1-dp[i-1]=='('和s[i]匹配才行
+                    // dp[i-1]>0的条件可以和i-1-dp[i-1]=='('合并 如果dp[i-1]==0 那么i-1-dp[i-1]==i-1 s[i-1]==')'
+                    // 如果满足1,2条件 那么还需要加上i-1-dp[i-1]-1的结果
+                    if(i-1-dp[i-1]>=0&&s[i-1-dp[i-1]]=='(')
+                        dp[i]=2+dp[i-1]+(i-dp[i-1]-2>=0?dp[i-dp[i-1]-2]:0);
+                }
+                maxLen=max(maxLen,dp[i]);
+            }
+            // if s[i]=='(' 不可能有以'('结尾的子串
+        }
+        return maxLen;
+    }
+};
