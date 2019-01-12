@@ -65,8 +65,7 @@ private:
 };
 
 
-Solution 2:
-
+Solution 2:比较好 不改变原链表 不容易出问题的方法
 class Solution {
 public:
     // 利用快慢指针找中间节点 构建BST
@@ -88,6 +87,28 @@ private:
         TreeNode *root=new TreeNode(slow->val);
         root->left=buildBST(head,slow);
         root->right=buildBST(slow->next,tail);
+        return root;
+    }
+};
+
+Solution 3:对原链表进行了改变
+class Solution {
+public:
+    TreeNode* sortedListToBST(ListNode* head) {
+        if(!head)
+            return NULL;
+        if(!head->next)
+            return new TreeNode(head->val);
+        ListNode *fast=head->next,*slow=head;//slow指向中点前一个节点
+        while(fast->next&&fast->next->next){
+            fast=fast->next->next;
+            slow=slow->next;
+        }
+        ListNode *mid=slow->next;
+        slow->next=NULL;
+        TreeNode *root=new TreeNode(mid->val);
+        root->left=sortedListToBST(head);
+        root->right=sortedListToBST(mid->next);
         return root;
     }
 };
