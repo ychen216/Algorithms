@@ -17,7 +17,55 @@ Given board =
   word = "ABCB", -> returns false.
 */
 
-Solution:
+Solution 1:
+class Solution {
+public:
+    bool exist(vector<vector<char>>& board, string word) {
+        int n=word.length();
+        if(n==0)
+            return false;
+        int r=board.size();
+        if(r==0)
+            return false;
+        int c=board[0].size();
+        if(c==0)
+            return false;
+        if(n>c*r)
+            return false;
+        vector<vector<bool>> visit(r,vector<bool>(c,false));
+        for(int i=0;i<r;i++){
+            for(int j=0;j<c;j++){
+                if(board[i][j]==word[0]){
+                    if(helper(word,board,visit,0,i,j))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+private:
+    bool helper(string &word,vector<vector<char>>& board,vector<vector<bool>>& visit,int cur,int x,int y){
+        if(cur==word.length())
+            return true;
+        int r=board.size();
+        int c=board[0].size();
+        if(x<0||x>=r||y<0||y>=c||visit[x][y]||word[cur]!=board[x][y])
+            return false;
+        visit[x][y]=true;
+        if(helper(word,board,visit,cur+1,x-1,y))
+            return true;
+        if(helper(word,board,visit,cur+1,x+1,y))
+            return true;
+        if(helper(word,board,visit,cur+1,x,y-1))
+            return true;
+        if(helper(word,board,visit,cur+1,x,y+1))
+            return true;
+        visit[x][y]=false;
+        return false;
+    }
+};
+
+Solution 2: 删去visit数组 利用board记录是否访问过
 class Solution {
 public:
     bool helper(vector<vector<char>>& board,string &word,int row,int col,int x,int y,int pos){
@@ -44,6 +92,54 @@ public:
                 if(helper(board,word,row,col,i,j,0))
                     return true;
         }
+        return false;
+    }
+};
+
+update:
+class Solution {
+public:
+    bool exist(vector<vector<char>>& board, string word) {
+        int n=word.length();
+        if(n==0)
+            return false;
+        int r=board.size();
+        if(r==0)
+            return false;
+        int c=board[0].size();
+        if(c==0)
+            return false;
+        if(n>c*r)
+            return false;
+        for(int i=0;i<r;i++){
+            for(int j=0;j<c;j++){
+                if(board[i][j]==word[0]){
+                    if(helper(word,board,0,i,j))
+                        return true;
+                }
+            }
+        }
+        return false;
+    }
+private:
+    bool helper(string &word,vector<vector<char>>& board,int cur,int x,int y){
+        if(cur==word.length())
+            return true;
+        int r=board.size();
+        int c=board[0].size();
+        if(x<0||x>=r||y<0||y>=c||board[x][y]=='#'||word[cur]!=board[x][y])
+            return false;
+        char origin=board[x][y];
+        board[x][y]='#';
+        if(helper(word,board,cur+1,x-1,y))
+            return true;
+        if(helper(word,board,cur+1,x+1,y))
+            return true;
+        if(helper(word,board,cur+1,x,y-1))
+            return true;
+        if(helper(word,board,cur+1,x,y+1))
+            return true;
+        board[x][y]=origin;
         return false;
     }
 };
