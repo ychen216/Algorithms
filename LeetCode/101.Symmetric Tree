@@ -32,24 +32,24 @@ Solution 1: Recursive
  */
 class Solution {
 public:
-    bool isSymmetricHelper(TreeNode *lChild,TreeNode *rChild){
-        if(lChild==NULL||rChild==NULL)
-            return lChild==rChild;//只有一个子树 必然是非镜像的
-        if(lChild->val==rChild->val)
-            return isSymmetricHelper(lChild->left,rChild->right)&&isSymmetricHelper(lChild->right,rChild->left);
-        else
-            return false;
-    }
-    
     bool isSymmetric(TreeNode* root) {
-        if(root)
-            return isSymmetricHelper(root->left,root->right);
-        return true;
+        if(!root)
+            return true;
+        return helper(root->left,root->right);
+    }
+private:
+    // 判断以lChild为根的树和以rChild为根的树是否互成镜像
+    bool helper(TreeNode *lChild,TreeNode* rChild){
+        if(!lChild||!rChild)//左右子树至少一个为空 只有当两个都为空的时候 才有可能是对称的 只有一个为空不可能是镜像
+            return lChild==rChild;
+        if(lChild->val!=rChild->val)
+            return false;
+        return helper(lChild->left,rChild->right)&&helper(lChild->right,rChild->left);
     }
 };
 
 
-Solution 2:
+Solution 2: Solution3比较make sense
 class Solution {
 public:
     // BFS
@@ -80,4 +80,53 @@ public:
         return true;
     }
 
+};
+
+Solution 3：
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        利用BFS 
+        镜像对称 那么从根节点切开分为左半边L和右半边R
+        将右半边的树各个节点的左右子树对调得到R' 
+        如果L和R'相同那么就是镜像对称的
+        可以用两个queue存储L和R'
+    */
+    bool isSymmetric(TreeNode* root) {
+        if(!root)
+            return true;
+        queue<TreeNode*> q1,q2;
+        q1.push(root->left);
+        q2.push(root->right);
+        while(!q1.empty()&&!q2.empty()){
+            auto node1=q1.front();
+            q1.pop();
+            auto node2=q2.front();
+            q2.pop();
+            //都为空
+            if(!node1&&!node2)
+                continue;
+            //只有一个为空
+            if(!node1||!node2)
+                return false;
+            //if(node1&&node2)
+            if(node1->val!=node2->val)
+                return false;
+            q1.push(node1->left);
+            q1.push(node1->right);
+            //q2从右向左
+            q2.push(node2->right);
+            q2.push(node2->left);
+        }
+        return true;
+    }
 };
