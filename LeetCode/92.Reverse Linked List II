@@ -82,3 +82,33 @@ public:
         return feakNode->next;
     }
 };
+
+update:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int m, int n) {
+        ListNode *feakHead=new ListNode(0);
+        feakHead->next=head;
+        ListNode *cur=feakHead;
+        for(int i=1;i<m;i++)
+            cur=cur->next;
+        ListNode *rev=cur->next;
+        ListNode *first=cur->next;//要反转的第一个元素 也是翻转完成的最后一个元素 要将该元素和剩下不需要翻转的链连接起来
+        for(int i=m;i<=n;i++){
+            ListNode *tmp=rev->next;
+            rev->next=cur->next;
+            cur->next=rev;
+            rev=tmp;
+        }
+        first->next=rev;//完成翻转部分和不需要翻转部分的连接
+        return feakHead->next;
+    }
+};
