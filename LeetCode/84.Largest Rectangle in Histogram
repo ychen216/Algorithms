@@ -65,16 +65,17 @@ public:
     
     为了方便处理栈空 在heights加入一个哨兵元素
     */
-    int largestRectangleArea(vector<int>& heights) {
-        heights.push_back(0);
+    int largestRectangleArea(vector<int>& height) {
+        int res=0;
+        height.push_back(0);//避免处理最后一个元素 加入的哨兵
         stack<int> st;//存储递增序列的下标
-        int res=0,area=0,h=0;
-        for(int i=0;i<heights.size();i++){
-            while(!st.empty()&&heights[st.top()]>=heights[i]){
-                h=heights[st.top()];
+        for(int i=0;i<height.size();i++){
+            // height[i]>height[st.top()]栈顶元素可以作为终点 并找到以该元素作为终点的最大矩形
+            while(!st.empty()&&height[st.top()]>height[i]){
+                int h=height[st.top()];
                 st.pop();
-                area=h*(st.empty()?i:(i-st.top()-1));
-                res=max(res,area);
+                int width=st.empty()?i:i-st.top()-1;
+                res=max(res,width*h);
             }
             st.push(i);
         }
