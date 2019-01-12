@@ -48,3 +48,43 @@ public:
         return i;
     }
 };
+
+Solution 2：
+update:
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int n=nums.size();
+        if(n<3)
+            return n;
+        int p=1;//p表示下一个合法元素要放入位置的前一位 初始化为1 因为前两个元素必然是合法的
+        for(int i=2;i<n;i++){
+            //在合法数组里已经有了两个相同的元素了 不应该再加入
+            if(nums[i]==nums[p]&&nums[i]==nums[p-1])continue;
+            p++;
+            nums[p]=nums[i];
+        }
+        return p+1;
+    }
+};
+
+update:
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int n=nums.size();
+        if(n<3)
+            return n;
+        int p=1;//p表示下一个合法元素要放入位置的前一位 初始化为1 因为前两个元素必然是合法的
+        for(int i=2;i<n;i++){
+            //在合法数组里已经有了两个相同的元素了 不应该再加入
+            //if(nums[i]==nums[p]&&nums[i]==nums[p-1])continue;
+            //可以简化条件 因为nums是排好序的数组 nums[p-1]<=nums[p]<=nums[i]
+            // 如果nums[p-1]==nums[i] 那么必然有nums[p]==nums[i]
+            if(nums[i]==nums[p-1]) continue;
+            p++;
+            nums[p]=nums[i];
+        }
+        return p+1;
+    }
+};
