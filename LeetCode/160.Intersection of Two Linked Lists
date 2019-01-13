@@ -73,6 +73,50 @@ public:
     }
 };
 
+update:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+        if(!headA||!headB)
+            return NULL;
+        int lena=getLen(headA);
+        int lenb=getLen(headB);
+        ListNode *p1=headA,*p2=headB;
+        if(lena<lenb){
+            p1=headB;
+            p2=headA;
+        }
+        int k=abs(lena-lenb);
+        while(k){
+            p1=p1->next;
+            k--;
+        }
+        while(p1!=p2){
+            p1=p1->next;
+            p2=p2->next;
+        }
+        return p1;
+    }
+private:
+    int getLen(ListNode *head){
+        int len=0;
+        while(head){
+            len++;
+            head=head->next;
+        }
+        return len;
+    }
+};
+
+update:
 相同思路但是更巧妙
 class Solution {
 public:
@@ -99,14 +143,6 @@ public:
 
 
 Solution 2：
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     // 有交集的两个链 必然从交点到链尾都是共享的 
