@@ -80,3 +80,37 @@ public:
         return 0;
     }
 };
+
+update:
+class Solution {
+public:
+    int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
+        unordered_set<string> dict(wordList.begin(),wordList.end());//当做词典 也当做visit数组 在dict中的说明还未使用过
+        if(dict.find(endWord)==dict.end())
+            return 0;
+        if(dict.find(beginWord)!=dict.end())
+            dict.erase(beginWord);
+        int wordLen=wordList[0].length();
+        queue<pair<string,int>> q;
+        q.push({beginWord,1});
+        while(!q.empty()){
+            auto cur=q.front();
+            q.pop();
+            if(cur.first==endWord)
+                return cur.second;
+            for(int i=0;i<wordLen;i++){
+                char c=cur.first[i];
+                for(int j=0;j<26;j++){
+                    cur.first[i]=j+'a';
+                    if(cur.first[i]==c) continue;
+                    if(dict.find(cur.first)!=dict.end()){
+                        q.push({cur.first,cur.second+1});
+                        dict.erase(cur.first);
+                    }
+                }
+                cur.first[i]=c;
+            }
+        }
+        return 0;
+    }
+};
