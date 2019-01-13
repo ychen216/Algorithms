@@ -18,6 +18,12 @@ The array may contain duplicates
 Solution:
 class Solution {
 public:
+    /*
+        idea: 有序的循环数组 有三种形态 选择mid和high比较 然后缩小最小值所在的范围
+        \         /           /
+         \       /          \/
+          \     /
+    */
     int findMin(vector<int> &num) {
         int lo = 0;
         int hi = num.size() - 1;
