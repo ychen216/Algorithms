@@ -27,3 +27,30 @@ public:
         return res.substr(index);
     }
 };
+
+update:处理前导零的部分
+class Solution {
+public:
+    /*
+        最大的数字 --> 高位的数字越大越好
+        将数字转化为字符串然后排序 s1,s2的排序原则是:s1+s2和s2+s1的比较 s1+s2>s2+s1时s1排在前面
+        按照从大到小拼接起来 去掉前导的0
+    */
+    string largestNumber(vector<int>& nums) {
+        vector<string> numStrs;
+        for(auto &num:nums)
+            numStrs.push_back(to_string(num));
+        // 排序
+        sort(numStrs.begin(),numStrs.end(),[](auto &s1,auto&s2){
+            return s1+s2>s2+s1;
+        });
+        string res="";
+        for(auto &s:numStrs)
+            res.append(s);
+        // 去掉前导0
+        int pos=res.find_first_not_of("0");
+        if(pos==string::npos)
+            return "0";
+        return res.substr(pos);       
+    }
+};
