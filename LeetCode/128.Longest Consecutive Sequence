@@ -42,7 +42,7 @@ public:
     }
 };
 
-Solution 2: 和1相同的思想 只是进行了代码改写
+update: 和1相同的思想 只是进行了代码改写
 class Solution {
 public:
     /*
@@ -59,6 +59,37 @@ public:
             sset.insert(n);
         int res=0;
         for(auto &n:nums){
+            int pre=n-1,next=n+1;
+            sset.erase(n);
+            while(sset.find(pre)!=sset.end()){
+                sset.erase(pre--);
+            }
+            while(sset.find(next)!=sset.end()){
+                sset.erase(next++);
+            }
+            res=max(res,next-pre-1);
+        }
+        return res;
+    }
+};
+
+update:
+class Solution {
+public:
+    /*
+        http://blog.csdn.net/zhyh1435589631/article/details/50976165
+        使用hash表来保存数组中的每一个数，每次遍历到一个数的时候看往上找到所有连续的数最多有几个，往下找比他小的数最多有几个．
+        为了避免连续的序列中的数重复查找，在找到一个相邻的数之后就把他从hash表中删除，也就是一个连续的序列只会被查找一次．因此时间复杂度为O(n)
+    */
+    int longestConsecutive(vector<int>& nums) {
+        int size=nums.size();
+        if(size<2)
+            return size;
+        unordered_set<int> sset(nums.begin(),nums.end());
+        int res=0;
+        for(auto &n:nums){
+            //如果包含n的连续序列之前已经被检查过了
+            if(sset.find(n)==sset.end()) continue;
             int pre=n-1,next=n+1;
             sset.erase(n);
             while(sset.find(pre)!=sset.end()){
