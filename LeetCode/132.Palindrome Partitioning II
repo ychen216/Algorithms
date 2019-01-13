@@ -8,18 +8,19 @@ For example, given s = "aab",
 Return 1 since the palindrome partitioning ["aa","b"] could be produced using 1 cut.
 */
 
+Solution 1:
 class Solution {
 public:
     /*
-    参考 http://blog.csdn.net/jin_kwok/article/details/51423222
-    更详细 http://blog.csdn.net/yutianzuijin/article/details/16850031
-    首先判断字符串各部分是否是回文串
-    dp[i][j]表示s[i..j]是否是一个回文串 
-    dp[i][j]=true 当s[i]==s[j]&&(j-i<=1||dp[i+1][j-1]) j-i<=1说明s[i..j]是一个形如 aa或a这样的回文串
-    cut[i]表示从第i位到最后一位所用的最少切割数
-    cut[i]=min(cut[i],cut[j+1]+1) i<=j<len且dp[i][j]=true 即s[i..j]是一个回文串 在i处做一个切割
-    为了避免j+1在j==len-1时溢出 要做边界处理及初始化 cut[len]=0
-    最后的结果为cut[0]-1首位的切割应该删去  |aa|b
+        参考 http://blog.csdn.net/jin_kwok/article/details/51423222
+        更详细 http://blog.csdn.net/yutianzuijin/article/details/16850031
+        首先判断字符串各部分是否是回文串
+        dp[i][j]表示s[i..j]是否是一个回文串 
+        dp[i][j]=true 当s[i]==s[j]&&(j-i<=1||dp[i+1][j-1]) j-i<=1说明s[i..j]是一个形如 aa或a这样的回文串
+        cut[i]表示从第i位到最后一位所用的最少切割数
+        cut[i]=min(cut[i],cut[j+1]+1) i<=j<len且dp[i][j]=true 即s[i..j]是一个回文串 在i处做一个切割
+        为了避免j+1在j==len-1时溢出 要做边界处理及初始化 cut[len]=0
+        最后的结果为cut[0]-1首位的切割应该删去  |aa|b
     */
     int minCut(string s) {
         int len=s.length();
@@ -38,3 +39,76 @@ public:
     }
 };
 
+Solution 2:
+class Solution {
+public:
+    /*  
+        dp[i]表示从s[0,i)切成回文划分最少的划分数
+        dp[i]=min(dp[i],dp[j]+1) 其中dp[j]<INT_MAX(表示[0,j)是可划分的且s[j,i-1]是回文串
+        初始化dp[0]=0 空串不需要划分
+        最后的结果为cut[len]-1最末位的切割应该删去 aa|b|
+    */
+    int minCut(string s) {
+        int len=s.length();
+        vector<int> dp(len+1,INT_MAX);
+        dp[0]=0;
+        for(int i=1;i<=len;i++){
+            for(int j=0;j<i;j++){
+                if(dp[j]!=INT_MAX&&check(s,j,i-1)){
+                    dp[i]=min(dp[i],dp[j]+1);
+                }
+            }
+        }
+        //最后要减掉末尾处的一刀 因为末尾处的一刀是不必要的 eg"aa|b|"
+        return dp[len]-1;
+    }
+private:
+    bool check(string &s,int i,int j){
+        if(i>j)
+            return false;
+        while(i<j){
+            if(s[i]!=s[j])
+                return false;
+            i++;j--;
+        }
+        return true;
+    }
+};
+
+update:
+class Solution {
+public:
+    /*  
+        dp[i]表示从s[0,i)切成回文划分最少的划分数
+        dp[i]=min(dp[i],dp[j]+1) 其中dp[j]<INT_MAX(表示[0,j)是可划分的且s[j,i-1]是回文串
+        初始化dp[0]=0 空串不需要划分
+        最后的结果为cut[len]-1最末位的切割应该删去 aa|b|
+        为了避免每一次都检查一个子串是否是回文串 我们用check[i][j]记录[i-1,j-1]是否是回文串
+        check[i][i]=true
+        check[i][j]=check[i+1][j-1] if s[i-1]==s[j-1] else false
+    */
+    int minCut(string s) {
+        int len=s.length();
+        vector<vector<bool>> check(len+1,vector<bool>(len+1,false));
+        for(int i=0;i<=len;i++)
+            check[i][i]=true;
+        for(int k=2;k<=len;k++){
+            for(int i=1;i+k-1<=len;i++){
+                int j=i+k-1;
+                if(s[i-1]==s[j-1]) //长度为2时可能出现i+1>j-1
+                    check[i][j]=i+1>j-1?true:check[i+1][j-1];
+            }
+        }
+        vector<int> dp(len+1,INT_MAX);
+        dp[0]=0;
+        for(int i=1;i<=len;i++){
+            for(int j=0;j<i;j++){
+                if(dp[j]!=INT_MAX&&check[j+1][i]){
+                    dp[i]=min(dp[i],dp[j]+1);
+                }
+            }
+        }
+        //最后要减掉末尾处的一刀 因为末尾处的一刀是不必要的 eg"aa|b|"
+        return dp[len]-1;
+    }
+};
