@@ -30,6 +30,25 @@ public:
 update:
 class Solution {
 public:
+    int minSubArrayLen(int s, vector<int>& nums) {
+        int n=nums.size();
+        int left,right,sum=0,minLen=n+1;
+        for(left=0,right=0;right<n;right++){
+            //每一次加入nums[right]然后找到以nums[right]结尾的最短区间
+            sum+=nums[right];
+            //条件是left<=right
+            while(left<=right&&sum>=s){
+                minLen=min(minLen,right-left+1);
+                sum-=nums[left];
+                left++;
+            }
+        }
+        return minLen==n+1?0:minLen;
+    }
+};
+update:
+class Solution {
+public:
     // 利用双指针 逐步拓展区间
     int minSubArrayLen(int s, vector<int>& nums) {
         int n=nums.size();
