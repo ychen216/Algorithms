@@ -26,6 +26,25 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    bool containsNearbyDuplicate(vector<int>& nums, int k) {
+        int n=nums.size();
+        if(k<1||n<2)
+            return false;
+        if(k>=n)
+            k=n-1;
+        unordered_map<int,int> num2Index;
+        for(int i=0;i<n;i++){
+            if(num2Index.find(nums[i])!=num2Index.end()&&i-num2Index[nums[i]]<=k)
+                return true;
+            num2Index[nums[i]]=i;
+        }
+        return false;
+    }
+};
+
 
 Solution 2:
 class Solution {
