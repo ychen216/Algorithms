@@ -114,3 +114,28 @@ private:
         return 1+getHeight(root->left); //由于完全二叉树的性质 可以确定树高由左子树确定
     }
 };
+
+update:
+class Solution {
+public:
+    int countNodes(TreeNode* root) {
+        if(!root)
+            return 0;
+        int leftLeft=getLeftHeight(root->left);
+        int rightLeft=getLeftHeight(root->right);
+        if(leftLeft==rightLeft)//左子树是满的
+            //return 1+(1<<leftLeft)-1+countNodes(root->right);
+            return (1<<leftLeft)+countNodes(root->right);
+        else //右子树是满的
+            return (1<<rightLeft)+countNodes(root->left);
+    }
+private:
+    int getLeftHeight(TreeNode *root){
+        int h=0;
+        while(root){
+            h++;
+            root=root->left;
+        }
+        return h;
+    }
+};
