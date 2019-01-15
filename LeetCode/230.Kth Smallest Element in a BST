@@ -67,6 +67,7 @@ class Solution {
 public:
     /*
         BST中序遍历的结果是递增序列所以遍历的第k个数就是Kth smallest element
+        k必须用引用或是全局变量 要将先遍历左节点排除的small element从k里减掉 而不是保持原来的大小
     */
     int kthSmallest(TreeNode* root, int k) {
         int res;
@@ -88,5 +89,29 @@ private:
         }
         if(node->right)
             helper(node->right,cnt,res);
+    }
+};
+
+Solution 3:
+class Solution {
+public:
+    //利用栈将左孩子都压入栈 栈顶元素p是最小的元素
+    //出栈后 将p->right及其左孩子都压入栈 栈顶为次小元素
+    int kthSmallest(TreeNode* root, int k) {
+        stack<TreeNode *> st;
+        pushLeftNode(st,root);
+        for(int i=1;i<k;i++){
+            TreeNode *small=st.top();
+            st.pop();
+            pushLeftNode(st,small->right);
+        }
+        return st.top()->val;        
+    }
+private:
+    void pushLeftNode(stack<TreeNode *> &st,TreeNode *root){
+        while(root){
+            st.push(root);
+            root=root->left;
+        };
     }
 };
