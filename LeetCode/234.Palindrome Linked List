@@ -37,14 +37,6 @@ public:
 
 
 Solution 2:
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     // 利用快慢指针找到链表的中点 翻转后半部分 然后前后两部分比较
@@ -80,5 +72,50 @@ private:
             next=temp;
         }
         return feakHead->next;
+    }
+};
+
+update:加一点注释
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    bool isPalindrome(ListNode* head) {
+        if(!head||!head->next)
+            return true;
+        //快慢指针找中点 slow->next是后半段的起始位置
+        ListNode *slow=head,*fast=head;
+        while(fast->next&&fast->next->next){
+            fast=fast->next->next;
+            slow=slow->next;
+        }
+        ListNode *head2=slow->next;
+        slow->next=NULL;
+        //翻转后半段
+        ListNode *feakHead=new ListNode(0);
+        ListNode *cur=feakHead,*p2=head2;
+        while(p2){
+            ListNode *tmp=p2->next;
+            p2->next=cur->next;
+            cur->next=p2;
+            p2=tmp;
+        }
+        ListNode *p1=head;
+        p2=feakHead->next;
+        //前后半段长度相同 或是 前半段比后半段多一个节点
+        //两两比较 跳出循环或是两个都走到结尾 或是一个走到结尾 分别对应以上两种情况
+        while(p1&&p2){
+            if(p1->val!=p2->val)
+                return false;
+            p1=p1->next;
+            p2=p2->next;
+        }
+        return true;
     }
 };
