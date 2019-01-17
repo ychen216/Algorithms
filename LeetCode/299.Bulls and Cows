@@ -97,3 +97,68 @@ public:
         return to_string(bull)+"A"+to_string(cow)+"B";
     }
 };
+
+Solution 3:
+class Solution {
+public:
+    /*
+        记录secret每个字符出现的次数
+        然后两次遍历 第一次将bull选出来 
+        第二次检验是否存在cow 不能同时进行 否则 可能先把应该assign给bull的数字当成bull
+        eg. secret 1231  guess 1334
+        同时找的话 会将第一个3当做cow 其实应该是第二个3是bull
+    */
+    string getHint(string secret, string guess) {
+        int cow=0,bull=0;
+        unordered_map<char,int> cnt;
+        for(auto c:secret)
+            cnt[c]++;
+        for(int i=0;i<secret.length();i++){
+            if(secret[i]==guess[i]){
+                cnt[secret[i]]--;
+                bull++;
+            }
+        }
+        for(int i=0;i<guess.length();i++){
+            if(secret[i]!=guess[i]){
+                if(cnt[guess[i]]>0){
+                    cow++;
+                    cnt[guess[i]]--;
+                }
+            }
+        }
+        return to_string(bull)+"A"+to_string(cow)+"B";
+    }
+};
+
+update: 将记录cnt的操作合并到第一轮遍历中
+class Solution {
+public:
+    /*
+        记录secret每个字符出现的次数
+        然后两次遍历 第一次将bull选出来 
+        第二次检验是否存在cow 不能同时进行 否则 可能先把应该assign给bull的数字当成bull
+        eg. secret 1231  guess 1334
+        同时找的话 会将第一个3当做cow 其实应该是第二个3是bull
+    */
+    string getHint(string secret, string guess) {
+        int cow=0,bull=0;
+        unordered_map<char,int> cnt;
+        for(int i=0;i<secret.length();i++){
+            if(secret[i]==guess[i]){
+                bull++;
+            }else{
+                cnt[secret[i]]++;
+            }
+        }
+        for(int i=0;i<guess.length();i++){
+            if(secret[i]!=guess[i]){
+                if(cnt[guess[i]]>0){
+                    cow++;
+                    cnt[guess[i]]--;
+                }
+            }
+        }
+        return to_string(bull)+"A"+to_string(cow)+"B";
+    }
+};
