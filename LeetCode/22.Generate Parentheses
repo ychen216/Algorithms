@@ -60,7 +60,7 @@ private:
     }
 };
 
-update:
+update: 利用传引用减少内存消耗
 class Solution {
 public:
     vector<string> generateParenthesis(int n) {
