@@ -59,3 +59,33 @@ private:
         generator(res,format+"(",left+1,right,n);
     }
 };
+
+update:
+class Solution {
+public:
+    vector<string> generateParenthesis(int n) {
+        vector<string> res;
+        string cand="";
+        int left=n,right=n;
+        helper(cand,res,left,right);
+        return res;
+    }
+private:
+    void helper(string &cand,vector<string>&res,int left,int right){
+        if(left==0&&right==0){
+            res.push_back(cand);
+            return;
+        }
+        //时刻保持左括号多于右括号 即剩下的左括号小于剩下的右括号
+        if(left>0){
+            cand.push_back('(');
+            helper(cand,res,left-1,right);
+            cand.pop_back();
+        }
+        if(left<right&&right>0){
+            cand.push_back(')');
+            helper(cand,res,left,right-1);
+            cand.pop_back();
+        }
+    }
+};
