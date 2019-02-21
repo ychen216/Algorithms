@@ -76,3 +76,31 @@ private:
         }
     }
 };
+
+update:暂存的结果数组可以用引用
+class Solution {
+public:
+    vector<vector<int>> permute(vector<int>& nums) {
+        int n=nums.size();
+        vector<vector<int>> res;
+        vector<int> cand;
+        vector<bool> visit(n, false);
+        helper(nums,visit,cand,res);
+        return res;
+    }
+private:
+    void helper(vector<int> &nums,vector<bool>&visit,vector<int> &cand,vector<vector<int>> &res){
+        if(cand.size()==nums.size()){
+            res.push_back(cand);
+            return;
+        }
+        for(int i=0;i<nums.size();i++){
+            if(visit[i]) continue;
+            visit[i]=true;
+            cand.push_back(nums[i]);
+            helper(nums,visit,cand,res);
+            visit[i]=false;
+            cand.pop_back();
+        }
+    }
+};
