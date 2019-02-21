@@ -14,29 +14,34 @@ Note:
 Solution 1:
 class Solution {
 public:
-    //桶排序
+    // 桶排序
     vector<int> topKFrequent(vector<int>& nums, int k) {
-        int size=nums.size();
-        vector<vector<int>> bucket(size+1);//桶的大小应该为0-n n+1个
-        map<int,int> m;
-        for(int i=0;i<size;i++){
-            if(m.count(nums[i]))
-                m[nums[i]]++;
-            else
-                m[nums[i]]=1;
+        int n=nums.size();
+        unordered_map<int,int> mmp;
+        vector<vector<int>> bucket(n+1);//桶的大小应该为0-n n+1个
+        for(auto num:nums){
+            mmp[num]++;
         }
         //按照出现频率加入元素
-        for(auto p:m){
+        for(auto &p:mmp){
             bucket[p.second].push_back(p.first);
         }
         vector<int> res;
-        for(int i=size;i>=0;i--){
+        for(int cnt=n;cnt>0&&k>0;cnt--){
+            for(int i=0;i<bucket[cnt].size()&&k>0;i++){
+                res.push_back(bucket[cnt][i]);
+                k--;
+            }
+        }
+        /*
+          for(int i=size;i>=0;i--){
             for(int j=0;j<bucket[i].size();j++){
                 res.push_back(bucket[i][j]);
                 if(res.size()==k)
                     return res;
             }
-        }
+          }
+        */
         return res;
     }
 };
