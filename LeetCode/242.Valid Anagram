@@ -17,6 +17,7 @@ public:
         int lent=t.length();
         if(lens!=lent)
             return false;
+        // 保证长度相同
         int cnt[26]={0};
         for(int i=0;i<lens;i++){
             cnt[s[i]-'a']++;
