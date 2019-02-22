@@ -47,3 +47,20 @@ public:
         return max(buy,sell);
     }
 };
+
+update: 最后一天后 没有持有股票的时候必定是收益最多的 如果还持有股票相当于永远烂在手上没有卖出去的一天
+class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        int n=prices.size();
+        if(n==0)
+            return 0;
+        int sell=0,buy=-prices[0],tmp;
+        for(int i=1;i<n;i++){
+            tmp=sell;
+            sell=max(sell,buy+prices[i]);
+            buy=max(buy,tmp-prices[i]);
+        }
+        return sell;
+    }
+};
