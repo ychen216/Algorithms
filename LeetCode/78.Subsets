@@ -21,6 +21,7 @@ If nums = [1,2,3], a solution is:
 Solution:
 class Solution {
 public:
+    // 选一个元素加入当前temp
     void helper(vector<vector<int>>&res,int start,vector<int>&temp,vector<int>&nums){
         res.push_back(temp);
         for(int i=start;i<nums.size();i++){
