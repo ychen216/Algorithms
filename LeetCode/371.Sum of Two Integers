@@ -14,3 +14,53 @@ public:
         return b==0? a:getSum(a^b, (a&b)<<1); //be careful about the terminating condition;
     }
 };
+
+update：
+class Solution {
+public:
+    /*
+        参考 https://leetcode.com/problems/sum-of-two-integers/discuss/84290/Java-simple-easy-understand-solution-with-explanation
+        For this, problem, for example, we have a = 1, b = 3,
+        In bit representation, a = 0001, b = 0011,
+        First, we can use "and"("&") operation between a and b to find a carry.
+            carry = a & b, then carry = 0001
+
+        Second, we can use "xor" ("^") operation between a and b to find the different bit, and assign it to a,
+        Then, we shift carry one position left and assign it to b, b = 0010.
+        Iterate until there is no carry (or b == 0)
+    */
+    int getSum(int a, int b) {
+        return b==0 ? a : getSum(a^b, (a&b)<<1);
+    }
+};
+
+// iteration
+class Solution {
+public:
+    /*
+        参考 https://leetcode.com/problems/sum-of-two-integers/discuss/84290/Java-simple-easy-understand-solution-with-explanation
+        For this, problem, for example, we have a = 1, b = 3,
+        In bit representation, a = 0001, b = 0011,
+        First, we can use "and"("&") operation between a and b to find a carry.
+            carry = a & b, then carry = 0001
+
+        Second, we can use "xor" ("^") operation between a and b to find the different bit, and assign it to a,
+        Then, we shift carry one position left and assign it to b, b = 0010.
+        Iterate until there is no carry (or b == 0)
+    */
+    int getSum(int a, int b) {
+        if(a==0)
+            return b;
+        if(b==0)
+            return a;
+        int carry=0;
+        while(b!=0){
+            carry=a&b;
+            a=a^b;
+            b=carry<<1;
+        }
+        return a;
+    }
+};
+
+update:增加-1 + 1的测试用例 上述方法在(a&b)<<1的操作会溢出  
