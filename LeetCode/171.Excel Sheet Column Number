@@ -16,6 +16,8 @@ For example:
     AA -> 27
     AB -> 28 
 */
+
+//只要思想就是转化为26进制
 Solution 1:
 class Solution {
 public:
