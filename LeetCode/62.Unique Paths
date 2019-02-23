@@ -59,8 +59,9 @@ public:
     int uniquePaths(int m, int n) {
         if(m==1||n==1)
             return 1;
-        vector<int> dp(n,1);
+        vector<int> dp(n,1);//初始化第一行的状态
         for(int i=1;i<m;i++){
+            //跳过第一列的处理 第一列的值一直是1
             for(int j=1;j<n;j++){
                 dp[j]+=dp[j-1];
             }
