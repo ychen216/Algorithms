@@ -15,7 +15,7 @@ The relative order inside both the even and odd groups should remain as it was i
 The first node is considered odd, the second node even and so on ...
 */
 
-Solution:
+Solution 1:
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -42,14 +42,8 @@ public:
     }
 };
 
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
+
+Solution 2:
 class Solution {
 public:
     /*
@@ -76,6 +70,33 @@ public:
         }
         // odd even list link
         curOdd->next=evenHead->next;
+        return oddHead->next;
+    }
+};
+
+update:
+class Solution {
+public:
+    ListNode* oddEvenList(ListNode* head) {
+        // 少于3个节点时 不需要转换
+        if(!head||!head->next||!head->next->next)
+            return head;
+        ListNode* oddHead=new ListNode(0);
+        ListNode* evenHead=new ListNode(0);
+        ListNode* cur=head, *p1=oddHead, *p2=evenHead;
+        while(cur){
+            p1->next=cur;
+            p1=p1->next;
+            cur=cur->next;
+            if(cur){
+                p2->next=cur;
+                p2=p2->next;
+                cur=cur->next;
+            }
+        }
+        // 处理两个链表的尾巴
+        p1->next=evenHead->next;
+        p2->next=NULL;
         return oddHead->next;
     }
 };
