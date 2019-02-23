@@ -47,9 +47,9 @@ Solution 2: Heap
 class Solution {
 public:
     /*
-    用大根堆来存储当前最小的k个数字，然后遍历矩阵
-    如果遍历位置数字大于等于堆顶元素，跳过该行继续遍历,否则将数字存入堆中并删除堆顶数字（保证堆中有k个数字）
-    最终堆顶数字即是第k小的数字
+       用大根堆来存储当前最小的k个数字，然后遍历矩阵
+       如果遍历位置数字大于等于堆顶元素，跳过该行继续遍历,否则将数字存入堆中并删除堆顶数字（保证堆中有k个数字）
+       最终堆顶数字即是第k小的数字
     */
     int kthSmallest(vector<vector<int>>& matrix, int k) {
         int n=matrix.size();
@@ -71,6 +71,28 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        priority_queue<int> pq;
+        for(auto&row:matrix){
+            for(auto&cell:row){
+                pq.push(cell);
+                // 维护一个大小为k的最大堆 存着当前最小的k个数
+                if(pq.size()>k){
+                    pq.pop();
+                    //后续的元素只会>=cell 如果栈顶元素(当前最大的元素)<=cell 后续的元素就不可能是最小的k的元素了
+                    if(pq.top()<=cell){
+                        break;
+                    }
+                }
+            }
+        }
+        return pq.top();
+    }
+};
+
 Solution 3: Binary Search
 class Solution {
 public:
@@ -83,11 +105,34 @@ public:
         while(low<high){
             int mid=low+(high-low)/2;
             int cnt=0;
-            // 统计每一行>=mid 的数字个数
+            // 统计每一行<=mid 的数字个数
             // upper_bound 利用二分查找返回的是有序数组中第一个>mid的元素的iterator
             for(auto &row:matrix)
                 cnt+=upper_bound(row.begin(),row.end(),mid)-row.begin();
             // kth smallest element must be bigger than mid
+            if(cnt<k)
+                low=mid+1;
+            else
+                high=mid;
+        }
+        return low;
+    }
+};
+
+update:
+class Solution {
+public:
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        int low=matrix[0][0],high=matrix.back().back();
+        while(low<high){
+            int mid=low+(high-low)/2;
+            int cnt=0;
+            // 逐行统计<=mid的元素个数累加起来 cnt既是所有<=mid的元素个数也说明了mid是第几小的数
+            for(auto&row:matrix){
+                cnt+=upper_bound(row.begin(),row.end(),mid)-row.begin();
+                if(cnt>k)
+                    break;
+            }
             if(cnt<k)
                 low=mid+1;
             else
