@@ -47,3 +47,21 @@ public:
         return maxPro;
     }
 };
+
+update:
+class Solution {
+public:
+    //对某一天i卖出的一笔 其最多能够获得的利润就是在[0,i-1]中价格最低的那一天买入
+    int maxProfit(vector<int>& prices) {
+        int n=prices.size();
+        if(n==0)
+            return 0;
+        int profit=0;
+        int minPrice=prices[0];
+        for(int i=1;i<n;i++){
+            profit=max(profit,prices[i]-minPrice);
+            minPrice=min(minPrice,prices[i]);
+        }
+        return profit;
+    }
+};
