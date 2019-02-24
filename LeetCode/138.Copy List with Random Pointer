@@ -84,3 +84,53 @@ public:
         return newHead;
     }
 };
+
+Solution 2:
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* next;
+    Node* random;
+
+    Node() {}
+
+    Node(int _val, Node* _next, Node* _random) {
+        val = _val;
+        next = _next;
+        random = _random;
+    }
+};
+*/
+class Solution {
+public:
+    /*
+        和133. Clone Graph类似，分两步走：
+        1.克隆节点，建立新节点和原节点的映射
+        2.克隆边
+    */
+    Node* copyRandomList(Node* head) {
+        if(!head){
+            return NULL;
+        }
+        unordered_map<Node*,Node*> mmp;
+        Node* cur=head;
+        //克隆节点
+        while(cur){
+            Node* newNode=new Node(cur->val,NULL,NULL);
+            mmp[cur]=newNode;
+            cur=cur->next;
+        }
+        //克隆边
+        cur=head;
+        while(cur){
+            if(cur->next)
+                mmp[cur]->next=mmp[cur->next];
+            if(cur->random)
+                mmp[cur]->random=mmp[cur->random];
+            cur=cur->next;
+        }
+        return mmp[head];
+    }
+};
