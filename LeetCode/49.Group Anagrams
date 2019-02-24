@@ -48,7 +48,7 @@ public:
     //相似的字符串 就是组成的字母类型和个数一样
     vector<vector<string>> groupAnagrams(vector<string>& strs) {
         int size=strs.size();
-        map<string,vector<string>> mmap;//有相同字符组成的字符串在 strs中的下标
+        unordered_map<string,vector<string>> mmap;//有相同字符组成的字符串在 strs中的下标
         for(int i=0;i<size;i++){
             string s=strs[i];
             sort(s.begin(),s.end());
@@ -92,6 +92,36 @@ public:
         vector<vector<string>> res;
         for(auto &p:mmp)
             res.push_back(p.second);
+        return res;
+    }
+};
+
+or
+class Solution {
+public:
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        unordered_map<string,int> key2Index;//同一个key对应在结果数组中的index
+        vector<vector<string>> res;
+        for(auto &str:strs){
+            vector<int> cnt(26,0);
+            for(auto &c:str)
+                cnt[c-'a']++;
+            string key;
+            for(int i=0;i<26;i++){
+                if(cnt[i]>0){
+                    key.push_back(i+'a');
+                    key.append(to_string(cnt[i]));
+                }
+            }
+            if(key2Index.find(key)==key2Index.end()){
+                key2Index[key]=res.size();
+                res.push_back({});
+                res.back().push_back(str);
+            }
+            else{
+                res[key2Index[key]].push_back(str);
+            }
+        }
         return res;
     }
 };
