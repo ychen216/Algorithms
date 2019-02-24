@@ -55,3 +55,58 @@ public:
         
     }
 };
+
+Solution 2:BFS 两步克隆 先克隆点再克隆边
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    vector<Node*> neighbors;
+
+    Node() {}
+
+    Node(int _val, vector<Node*> _neighbors) {
+        val = _val;
+        neighbors = _neighbors;
+    }
+};
+*/
+class Solution {
+public:
+    /*
+        给定一张图的一个节点 克隆该图，可以分为两个步骤：
+        1.克隆节点，建立新图和原图节点的映射关系
+        2.克隆边
+        1,2,都需要遍历整个图，推荐用BFS遍历
+    */
+    Node* cloneGraph(Node* node) {
+        unordered_map<Node*,Node*> mmp;//既可以保存映射关系 也可以判断是否已经遍历过该节点起到visit数组的作用
+        queue<Node*>q;
+        //克隆点
+        q.push(node);
+        Node *newNode=new Node();
+        newNode->val=node->val;
+        mmp[node]=newNode;
+        while(!q.empty()){
+            auto cur=q.front();
+            q.pop();
+            //复制邻接节点
+            for(auto neighbor:cur->neighbors){
+                if(mmp.find(neighbor)==mmp.end()){
+                    newNode=new Node();
+                    newNode->val=neighbor->val;
+                    mmp[neighbor]=newNode;
+                    q.push(neighbor);
+                }
+            }
+        }
+        //克隆边
+        for(auto &p:mmp){
+            for(auto neighbor:p.first->neighbors){
+                p.second->neighbors.push_back(mmp[neighbor]);
+            }
+        }
+        return mmp[node];
+    }
+};
