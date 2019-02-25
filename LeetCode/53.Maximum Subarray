@@ -42,3 +42,19 @@ public:
         return maxSum;
     }
 };
+
+class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return 0;
+        int dp=nums[0];//以nums[i]结尾的maxSubArray的和
+        int res=nums[0];
+        for(int i=1;i<n;i++){
+            dp=max(nums[i],nums[i]+dp);
+            res=max(dp,res);
+        }
+        return res;
+    }
+};
