@@ -64,6 +64,7 @@ public:
         return res;
     }
 private:
+    // 从start开始下一个划分
     void helper(vector<vector<string>> &res, vector<string> &curPartition, string &str, int start){
         if(start == str.length()){
             res.push_back(curPartition);
@@ -83,6 +84,47 @@ private:
         while(s<e){
             if(str[s++]!=str[e--])
                 return false;
+        }
+        return true;
+    }
+};
+
+or 避免不断进行substr截取 字符串赋值
+class Solution {
+public:
+    vector<vector<string>> partition(string s) {
+        vector<vector<string>> res;
+        if(s.length()==0)
+            return res;
+        vector<string> cand;
+        helper(res,cand,s,0);
+        return res;
+    }
+private:
+    // 从start开始下一个划分
+    void helper(vector<vector<string>> &res,vector<string> &cand,string &s,int start){
+        if(start==s.length()){
+            res.push_back(cand);
+            return;
+        }
+        //避免不断执行 cur=s.substr()
+        string cur;
+        // 该划分的最后一个元素是s[i]
+        for(int i=start;i<s.length();i++){
+            cur+=s[i];
+            if(isValid(cur)){
+                cand.push_back(cur);
+                helper(res,cand,s,i+1);
+                cand.pop_back();
+            }
+        }
+    }
+    bool isValid(const string &s){
+        int i=0,j=s.length()-1;
+        while(i<j){
+            if(s[i]!=s[j])
+                return false;
+            i++;j--;
         }
         return true;
     }
