@@ -70,14 +70,14 @@ public:
                     end=mid;
                 }
             }
-            if(nums[start]==target){
-                return start;
-            }
-            if(nums[end]==target){
-                return end;
-            }
-            return -1;
         }
+        if(nums[start]==target){
+            return start;
+        }
+        if(nums[end]==target){
+            return end;
+        }
+        return -1;
     }
 };
 
