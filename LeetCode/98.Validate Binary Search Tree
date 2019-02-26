@@ -82,3 +82,27 @@ private:
         return travel(root->left,mina,root)&&travel(root->right,root,maxa);
     }
 };
+
+Solution 3:
+class Solution {
+public:
+    bool isFirst=true;
+    int lastVal=INT_MIN;
+    bool isValidBST(TreeNode* root) {
+        if(root==NULL){
+            return true;
+        }
+        if(!isValidBST(root->left)){
+            return false;
+        }
+        if(!isFirst&&lastVal>=root->val){
+            return false;
+        }
+        isFirst=false;
+        lastVal=root->val;
+        if(!isValidBST(root->right)){
+            return false;
+        }
+        return true;
+    }
+};
