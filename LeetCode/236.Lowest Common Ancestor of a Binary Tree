@@ -51,6 +51,7 @@ public:
             1.两个节点分别在根节点root的左右子树 对左右子树搜索的时候会在左右子树分别找到一个节点 那么LCA就是根节点
             2、3.如果两个节点分别在根节点的左(右)子树 对左右子树搜索的时候 右(左)子树的搜索结果会是null 那么LCA就在左(右)子树中
     */
+    //函数定义:如果pq都在以root为根的树中 则返回pq的LCA;如果只有p or q在那么返回p or q;都不在 返回null
     TreeNode* lowestCommonAncestor(TreeNode* root, TreeNode* p, TreeNode* q) {
         if(root==NULL || root==p || root==q)
             return root;
