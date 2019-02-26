@@ -49,6 +49,8 @@ public:
     */
     int search(vector<int>& nums, int target) {
         int start=0,end=nums.size()-1,mid;
+        if(end<start)//排除空元素的情况
+            return -1;
         while(start+1<end){
             mid=start+(end-start)/2;
             if(nums[mid]==target){
@@ -64,7 +66,7 @@ public:
                 }
             }else{
                 // nums[mid]<nums[end]mid在后半段
-                if(nums[mid]<target&&nums[end]<=target){
+                if(nums[mid]<target&&target<=nums[end]){
                     start=mid;
                 }else{
                     end=mid;
@@ -80,4 +82,3 @@ public:
         return -1;
     }
 };
-
