@@ -98,3 +98,24 @@ private:
         return 1+max(left,right);
     }
 };
+
+update:
+class Solution {
+public:
+    // 平衡二叉树 abs(leftDepth-rightDepth)<=1&&isBalanced(root->left)&&isBalanced(root->right)
+    bool isBalanced(TreeNode* root) {
+        return maxDepth(root)!=-1;
+    }
+private:
+    // 返回-1表示该节点的左右子树不平衡
+    int maxDepth(TreeNode* root){
+        if(root==NULL){
+            return 0;
+        }
+        int left=maxDepth(root->left);
+        int right=maxDepth(root->right);
+        if(abs(left-right)>1 || left==-1 || right==-1)
+            return -1;
+        return max(left,right)+1;
+    }
+};
