@@ -34,3 +34,50 @@ public:
         return -1;
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        重点在于想到sorted rotated array的形式：
+        1. array被minimal分成两节递增的子数组 前半部分比后半部分大 eg. 4 5 1 2 3
+        /
+          /
+        2. 极端情况就是一个递增数组 1 2 3 4 5  / 这样递增的形式
+        考虑到情况2  我们利用mid和end比较 因为在情况2中不存在前半段 那么start就有可能出现在两个部分不好处理 我们用end来比较 在1,2中end都在后半段
+        比较mid和end的大小情况 判断mid在前后哪一段 然后缩小target所在的范围
+    */
+    int search(vector<int>& nums, int target) {
+        int start=0,end=nums.size()-1,mid;
+        while(start+1<end){
+            mid=start+(end-start)/2;
+            if(nums[mid]==target){
+                return mid;
+            }
+            //mid在前半段
+            if(nums[mid]>nums[end]){
+                if(nums[start]<=target&&target<nums[mid]){
+                    end=mid;
+                }
+                else{
+                    start=mid;
+                }
+            }else{
+                // nums[mid]<nums[end]mid在后半段
+                if(nums[mid]<target&&nums[end]<=target){
+                    start=mid;
+                }else{
+                    end=mid;
+                }
+            }
+            if(nums[start]==target){
+                return start;
+            }
+            if(nums[end]==target){
+                return end;
+            }
+            return -1;
+        }
+    }
+};
+
