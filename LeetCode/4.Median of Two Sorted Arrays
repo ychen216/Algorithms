@@ -117,3 +117,36 @@ public:
     }
 };
 
+update:解释
+class Solution {
+public:
+    // 利用找到第k小的数
+    double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
+        int n1=nums1.size(),n2=nums2.size();
+        int n=n1+n2;
+        // 取中间的一个数字 eg.len=5中位数为下标为2的数字 即第3小的数字
+        if(n&1)
+            return findKthSmallNum(nums1,0,nums2,0,n/2+1);
+        return (findKthSmallNum(nums1,0,nums2,0,n/2)+(findKthSmallNum(nums1,0,nums2,0,n/2+1)))/2.0;
+    }
+private:
+    int findKthSmallNum(vector<int>&nums1,int p1,vector<int>&nums2,int p2,int k){
+        // 边界处理 如果有一个数组已经到尽头了
+        if(p1>=nums1.size())
+            return nums2[p2+k-1];
+        if(p2>=nums2.size())
+            return nums1[p1+k-1];
+        if(k==1) //这里是必要的 是递归出口 当k==1时 k-k/2==1如果没有这一步就死循环了
+            return min(nums1[p1],nums2[p2]);
+        // 比较nums1和nums2向后的k/2个元素
+        // if nums1[p1+k/2-1]<nums2[p2+k/2-1] 说明前k小的元素必然包含[p1,p1+k/2-1] 第k大的元素不会出现在该区间    
+        // if nums1[p1+k/2-1]>=nums2[p2+k/2-1] 说明第k小的元素必然包含[p2,p2+k/2-1]
+        // if nums1[p1+k/2-1]==nums2[p2+k/2-1] 不能说明第k大的元素出现在nums2[p2+k/2-1]
+        // 如果p1+k/2 -1 >=nums1.size()那么nums1当前不足k/2个元素所以可以确保nums2当前的k/2的元素是一定在前k小的范围内 可以将nums2当前k/2的元素都排除 也就是要保证key1>key2所以将key1赋值为INT_MAX
+        int key1=p1+k/2-1>=nums1.size()?INT_MAX:nums1[p1+k/2-1];
+        int key2=p2+k/2-1>=nums2.size()?INT_MAX:nums2[p2+k/2-1];
+        if(key1<key2)
+            return findKthSmallNum(nums1,p1+k/2,nums2,p2,k-k/2);
+        return findKthSmallNum(nums1,p1,nums2,p2+k/2,k-k/2);
+    }
+};
