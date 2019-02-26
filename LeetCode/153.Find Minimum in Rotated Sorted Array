@@ -81,6 +81,34 @@ public:
     }
 };
 
+update: 二分搜索新模板 加上解释
+
+class Solution {
+public:
+    /*
+        重点在于想到sorted rotated array的形式：
+        1. array被minimal分成两节递增的子数组 前半部分比后半部分大 eg. 4 5 1 2 3
+        /
+          /
+        2. 极端情况就是一个递增数组 1 2 3 4 5  / 这样递增的形式 只有情况1中的后半段
+        考虑到情况2  我们利用mid和end比较 因为在情况2中不存在前半段 那么start就有可能出现在两个部分不好处理 我们用end来比较 在1,2中end都在后半段
+    */
+    int findMin(vector<int>& nums) {
+        int start=0,end=nums.size()-1,mid;
+        while(start+1<end){
+            mid=start+(end-start)/2;
+            if(nums[mid]<nums[end]){
+                end=mid;
+            }else{
+                start=mid;
+            }
+        }
+        if(nums[start]<=nums[end])
+            return nums[start];
+        else
+            return nums[end];
+    }
+};
 
 Solution:
 class Solution {
@@ -103,3 +131,4 @@ public:
         return nums[low];
     }
 };
+
