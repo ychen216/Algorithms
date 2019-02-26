@@ -101,8 +101,31 @@ private:
     }
 };
 
-/**
- * Your BSTIterator will be called like this:
- * BSTIterator i = BSTIterator(root);
- * while (i.hasNext()) cout << i.next();
- */
+update:
+class BSTIterator {
+public:
+    BSTIterator(TreeNode* root) {
+        cur=root;
+    }
+    
+    /** @return the next smallest number */
+    int next() {
+        while(cur){
+            st.push(cur);
+            cur=cur->left;
+        }
+        auto small=st.top();
+        st.pop();
+        int res=small->val;
+        cur=small->right;
+        return res;
+    }
+    
+    /** @return whether we have a next smallest number */
+    bool hasNext() {
+        return cur!=NULL || !st.empty();
+    }
+private:
+    TreeNode* cur;
+    stack<TreeNode* > st;
+};
