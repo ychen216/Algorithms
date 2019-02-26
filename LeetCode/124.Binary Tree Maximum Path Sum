@@ -15,7 +15,7 @@ Return 6.
 
 */
 
-Solution:
+Solution 1:
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -49,6 +49,37 @@ private:
         return max(left,right)+root->val;
     }
 };
+
+Solution 2:
+class Solution {
+public:
+    struct Result{
+        int singlePath;
+        int maxPath;
+        Result(int s,int m):singlePath(s),maxPath(m){}
+    };
+    
+    int maxPathSum(TreeNode* root) {
+        Result res=helper(root);
+        return res.maxPath;
+    }
+private:
+    //找到以root为根树的MaxPath
+    Result helper(TreeNode* root){
+        if(root==NULL){
+            return Result(0,INT_MIN);
+        }
+        Result left=helper(root->left);
+        Result right=helper(root->right);
+        int single=max(left.singlePath,right.singlePath);
+        single=max(0,single+root->val);
+        
+        int maxPath=max(left.maxPath,right.maxPath);
+        maxPath=max(maxPath,left.singlePath+right.singlePath+root->val);
+        return Result(single,maxPath);
+    }
+};
+
 
 
 /**
