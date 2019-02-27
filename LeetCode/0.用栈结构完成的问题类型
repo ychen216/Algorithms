@@ -1,12 +1,12 @@
 栈：先进后出
 
-当要找到元素nums[i]前第一个<nums[i]的元素nums[j] 和 找到i之后第一个<nums[i]的元素nums[k] j<i<k 
+当要找到元素nums[i]前第一个<nums[i]的元素nums[j] or/and 找到i之后第一个<nums[i]的元素nums[k] j<i<k 
 这样栈中维护一个递增序列
 e.g.问题Largest rectangle in histogram
 https://www.jiuzhang.com/solution/largest-rectangle-in-histogram/
 
 
-同理如果要找到前后第一个大于nums[i]的元素 那么栈中维护一个递降序列
+同理如果要找到前 or/and 后第一个大于nums[i]的元素 那么栈中维护一个递降序列
 e.g.问题 Construct MaxTree
 http://lintcode.com/en/problem/max-tree/
 
