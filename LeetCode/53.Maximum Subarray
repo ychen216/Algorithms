@@ -7,7 +7,7 @@ For example, given the array [-2,1,-3,4,-1,2,1,-5,4],
 the contiguous subarray [4,-1,2,1] has the largest sum = 6.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     int maxSubArray(vector<int>& nums) {
@@ -54,6 +54,28 @@ public:
         for(int i=1;i<n;i++){
             dp=max(nums[i],nums[i]+dp);
             res=max(dp,res);
+        }
+        return res;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    // 利用sum数组将问题转化为121.Best Time to Buy and Sell Stock
+    // 为每一个元素寻找之前sum最小的点
+    int maxSubArray(vector<int>& nums) {
+        int n=nums.size();
+        if(n==0)
+            return 0;
+        vector<int> sum(n+1,0);
+        for(int i=0;i<n;i++){
+            sum[i+1]=sum[i]+nums[i];
+        }
+        int res=nums[0],minSum=sum[0];//初始化第0个元素单独为subarray的情况
+        for(int i=1;i<n;i++){
+            minSum=min(minSum,sum[i]);
+            res=max(res,sum[i+1]-minSum);
         }
         return res;
     }
