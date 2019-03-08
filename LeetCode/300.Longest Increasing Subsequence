@@ -118,6 +118,39 @@ public:
     }
 };
 
+// 另一个二分查找的模板
+class Solution {
+public:
+    int lengthOfLIS(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> tail;//存长度为i+1的LIS中的最后一个元素最小的
+        for(int i=0;i<n;i++){
+            int start=0,end=tail.size()-1,mid;
+            while(start+1<end){
+                mid=start+(end-start)/2;
+                if(tail[mid]>=nums[i]){
+                    end=mid;
+                }else{
+                    start=mid;
+                }
+            }
+            //tail为空的情况
+            if(start>end){
+                tail.push_back(nums[i]);
+            }
+            else if(tail[start]>=nums[i]){
+                tail[start]=nums[i];
+            }else if(tail[end]>=nums[i]){
+                tail[end]=nums[i];
+            }else{
+                //都<nums[i]
+                tail.push_back(nums[i]);
+            }
+        }
+        return tail.size();
+    }
+};
+
 Solution 3:
 也可以是查找最后一个小于number的数
 class Solution {
@@ -153,3 +186,4 @@ public:
         return curLen;
     }
 };
+
