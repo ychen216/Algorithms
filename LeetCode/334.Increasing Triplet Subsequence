@@ -120,8 +120,7 @@ public:
     }
 };
 
-
-
+update:
 class Solution {
 public:
     /*
@@ -158,4 +157,28 @@ public:
         }
         return false;
     }
-};update:
+};
+
+
+Solution 3:
+class Solution {
+public:
+    // 利用两个数组 left[i]表示在i左边的最小元素 right[i]表示在i右边最大的元素
+    // 遍历[1,n-1]看是否存在 left[i]<nums[i]<right[i]
+    bool increasingTriplet(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> left(n,INT_MAX),right(n,INT_MIN);
+        for(int i=1;i<n;i++){
+            left[i]=min(left[i-1],nums[i-1]);
+        }
+        for(int j=n-2;j>0;j--){
+            right[j]=max(right[j+1],nums[j+1]);
+        }
+        for(int i=1;i<n-1;i++){
+            if(left[i]<nums[i]&&nums[i]<right[i]){
+                return true;
+            }
+        }
+        return false;
+    }
+};
