@@ -66,3 +66,44 @@ private:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    // dp[i][j]表示以i,j结尾的LIP 
+    // dp[i][j]=max(1,max(1+dp[x][y])) xy是ij的上下左右且matrix[i][j]>matrix[x][y]
+    int longestIncreasingPath(vector<vector<int>>& matrix) {
+        int r=matrix.size();
+        if(r==0)
+            return 0;
+        int c=matrix[0].size();
+        if(c==0)
+            return 0;
+        vector<vector<int>> dp(r,vector<int>(c,0));//以ij结尾的LIP
+        vector<vector<bool>> visit(r,vector<bool>(c,false));
+        int maxLen=0;
+        for(int i=0;i<r;i++){
+            for(int j=0;j<c;j++){
+                maxLen=max(maxLen,dfs(matrix,dp,visit,i,j,r,c));
+            }
+        }
+        return maxLen;
+    }
+private:
+    int dx[4]={-1,1,0,0},dy[4]={0,0,-1,1};
+    int dfs(vector<vector<int>>&matrix,vector<vector<int>> &dp,vector<vector<bool>>&visit,int x,int y,int row,int col){
+        if(visit[x][y]){
+            return dp[x][y];
+        }
+        int maxLen=1;
+        for(int i=0;i<4;i++){
+            int xx=x+dx[i];
+            int yy=y+dy[i];
+            if(xx<0||xx>=row||yy<0||yy>=col||matrix[x][y]<=matrix[xx][yy]) continue;
+            maxLen=max(maxLen,1+dfs(matrix,dp,visit,xx,yy,row,col));
+        }
+        dp[x][y]=maxLen;
+        visit[x][y]=true;
+        return dp[x][y];
+    }
+};
