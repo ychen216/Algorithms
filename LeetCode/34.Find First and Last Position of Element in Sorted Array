@@ -1,4 +1,4 @@
-34. Search for a Range
+34.  Find First and Last Position of Element in Sorted Array
 /*
 Given an array of integers sorted in ascending order, find the starting and ending position of a given target value.
 
@@ -116,5 +116,47 @@ public:
             return {-1,-1};
         */
         return {start,high};
+    }
+};
+
+update:另一个二分搜索的模板
+class Solution {
+public:
+    vector<int> searchRange(vector<int>& nums, int target) {
+        int n=nums.size();
+        if(n==0)
+            return {-1,-1};
+        vector<int> res;
+        int start=0,end=n-1,mid;
+        while(start+1<end){
+            mid=start+(end-start)/2;
+            if(nums[mid]>=target){
+                end=mid;
+            }else{
+                start=mid;
+            }
+        }
+        if(nums[start]==target){
+            res.push_back(start);
+        }else if(nums[end]==target){
+            res.push_back(end);
+        }else{
+            return {-1,-1};
+        }
+        start=0,end=n-1;
+        while(start+1<end){
+            mid=start+(end-start)/2;
+            if(nums[mid]<=target){
+                start=mid;
+            }else{
+                end=mid;
+            }
+        }
+        if(nums[end]==target){
+            res.push_back(end);
+        }else{
+            res.push_back(start);
+        }
+        return res;
     }
 };
