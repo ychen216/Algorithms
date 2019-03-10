@@ -105,3 +105,48 @@ public:
         }
     }
 };
+
+update:从右向左遍历 代码更简洁
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val;
+    Node* left;
+    Node* right;
+    Node* next;
+
+    Node() {}
+
+    Node(int _val, Node* _left, Node* _right, Node* _next) {
+        val = _val;
+        left = _left;
+        right = _right;
+        next = _next;
+    }
+};
+*/
+class Solution {
+public:
+    Node* connect(Node* root) {
+        if(!root)
+            return NULL;
+        queue<Node*> q;
+        q.push(root);
+        while(!q.empty()){
+            int n=q.size();
+            Node *next=NULL;
+            for(int i=0;i<n;i++){
+                Node *cur=q.front();
+                q.pop();
+                cur->next=next;
+                next=cur;
+                if(cur->right)
+                    q.push(cur->right);
+                if(cur->left)
+                    q.push(cur->left);
+            }
+        }
+        return root;
+    }
+};
