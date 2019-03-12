@@ -95,9 +95,63 @@ class LRUCache {
     }
 }
 
-/**
- * Your LRUCache object will be instantiated and called as such:
- * LRUCache obj = new LRUCache(capacity);
- * int param_1 = obj.get(key);
- * obj.put(key,value);
- */
+C++ version:
+class LRUCache {
+public:
+    class Node{
+    public:
+        Node *pre,*next;
+        int key,val;
+        Node(int k,int v):key(k),val(v),pre(NULL),next(NULL){}
+    };
+    LRUCache(int capacity) {
+        this->capacity=capacity;
+        this->head=new Node(0,0);
+        this->tail=new Node(0,0);
+        head->next=tail;
+        tail->pre=head;
+    }
+    
+    int get(int key) {
+        if(key_to_pos.find(key)==key_to_pos.end()){
+            return -1;
+        }
+        Node *node=key_to_pos[key];
+        int value=node->val;
+        //把这个节点删掉 然后移到最后
+        node->pre->next=node->next;
+        node->next->pre=node->pre;
+        move_to_tail(node);
+        return value;
+    }
+    
+    //put操作可能插入新节点 也可能改变旧节点的值 put操作的节点也要变成最新节点加在最后
+    void put(int key, int value) {
+        if(get(key)!=-1){
+            key_to_pos[key]->val=value;
+            return;
+        }
+        //要插入一个节点
+        Node *node=new Node(key,value);
+        if(key_to_pos.size()>=capacity){
+            //删除头结点
+            Node *first=head->next;
+            head->next=first->next;
+            first->next->pre=head;
+            key_to_pos.erase(first->key);
+        }
+        key_to_pos[key]=node;
+        move_to_tail(node);
+    }
+    
+private:
+    void move_to_tail(Node *node){
+        tail->pre->next=node;
+        node->pre=tail->pre;
+        node->next=tail;
+        tail->pre=node;
+    }
+    int capacity;
+    unordered_map<int,Node*> key_to_pos;
+    Node *head,*tail;
+};
