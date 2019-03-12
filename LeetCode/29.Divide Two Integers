@@ -37,7 +37,7 @@ public:
             return INT_MAX;
         bool negative=(dividend<0) != (divisor<0);
         long dd=labs(dividend),dr=labs(divisor); //避免dividend==INT_MIN转化后超出INT
-        int res=0;
+        long res=0; //不能用int 避免测试用例 INT_MIN / 1 这样的话res=abs(INT_MIN)超出了INT_MAX的表示范围 无法表示
         while(dd>=dr){
             long tmp_dr=dr, multiple=1;//dd至少是dr的一倍 dr和mutiple每次都翻倍
             while(dd>=(tmp_dr<<1)){
