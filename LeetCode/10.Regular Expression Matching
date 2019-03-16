@@ -144,3 +144,33 @@ public:
         return dp[lens][lenp];
     }
 };
+
+
+update:
+class Solution {
+public:
+    bool isMatch(string s, string p) {
+        int lens=s.length(),lenp=p.length();
+        vector<vector<bool>> dp(lens+1,vector<bool>(lenp+1,false));
+        dp[0][0]=true;
+        // 初始化已包含
+        // for(int i=1;i<=lens;i++){
+        //     dp[i][0]=false;
+        // }
+        for(int j=1;j<=lenp;j++){
+            dp[0][j]=j>1&&p[j-1]=='*'&&dp[0][j-2];
+        }
+        
+        for(int i=1;i<=lens;i++){
+            for(int j=1;j<=lenp;j++){
+                if(p[j-1]!='*'){
+                    dp[i][j]=dp[i-1][j-1]&&(s[i-1]==p[j-1]||p[j-1]=='.');
+                }else{
+                    // 跳过x* 或者x只出现一次s[i-1]和p[j-2]匹配&&dp[i-1][j-2] 或者 x出现多次s[i-1]和p[j-2]匹配且 
+                    dp[i][j]=dp[i][j-2]||(s[i-1]==p[j-2]||p[j-2]=='.')&&(dp[i-1][j-2]||dp[i-1][j]);
+                }
+            }
+        }
+        return dp[lens][lenp];
+    }
+};
