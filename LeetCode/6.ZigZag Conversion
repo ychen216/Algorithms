@@ -11,6 +11,7 @@ Write the code that will take a string and make this conversion given a number o
 string convert(string text, int nRows);
 convert("PAYPALISHIRING", 3) should return "PAHNAPLSIIGYIR".
 */
+
 Solution:
 class Solution {
 public:
@@ -29,5 +30,29 @@ public:
             s.append(str[r]);
         delete[] str;
         return s;
+    }
+};
+
+
+update:
+class Solution {
+public:
+    string convert(string s, int numRows) {
+        vector<string> res(numRows,"");
+        int len=s.length();
+        int i=0;
+        while(i<len){
+            for(int r=0;i<len&&r<numRows;r++){
+                res[r].push_back(s[i++]);
+            }
+            for(int r=numRows-2;r>=1&&i<len;r--){
+                res[r].push_back(s[i++]);
+            }
+        }
+        string res_str;
+        for(int i=0;i<numRows;i++){
+            res_str.append(res[i]);
+        }
+        return res_str;
     }
 };
