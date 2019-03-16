@@ -33,14 +33,6 @@ public:
 };
 
 Solution 2:
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     /*  两个指针 https://leetcode.com/problems/swap-nodes-in-pairs/discuss/11046/My-simple-JAVA-solution-for-share
@@ -62,5 +54,27 @@ public:
         }
         return feakHead->next;
         
+    }
+};
+
+update:
+class Solution {
+public:
+    ListNode* swapPairs(ListNode* head) {
+        if(head==NULL||head->next==NULL){
+            return head;
+        }
+        ListNode *feakHead=new ListNode(0);
+        feakHead->next=head;
+        ListNode *cur=feakHead;
+        while(head!=NULL&&head->next!=NULL){
+            ListNode *first=head;
+            head=head->next->next;
+            cur->next=first->next;
+            cur->next->next=first;
+            first->next=head;
+            cur=cur->next->next;
+        }
+        return feakHead->next;
     }
 };
