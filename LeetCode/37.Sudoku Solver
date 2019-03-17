@@ -49,3 +49,50 @@ private:
         return true;
     }
 };
+
+Solution 2:
+class Solution {
+public:
+    void solveSudoku(vector<vector<char>>& board) {
+        helper(board,0,0);   
+    }
+private:
+    bool helper(vector<vector<char>> &board,int x,int y){
+        if(x>=9){
+            return true;
+        }
+        if(y>=9){
+            //该层遍历结束 遍历下一层
+            return helper(board,x+1,0);
+        }
+        if(board[x][y]!='.'){
+            return helper(board,x,y+1);
+        }
+        for(char c='1';c<='9';c++){
+            if(is_valid(board,x,y,c)){
+                board[x][y]=c;
+                if(helper(board,x,y+1)){
+                    return true;
+                }
+                board[x][y]='.';
+            }
+        }
+        return false;
+    }
+    bool is_valid(vector<vector<char>> &board,int x,int y,char c){
+        for(int i=0;i<9;i++){
+            if(board[i][y]==c||board[x][i]==c){
+                return false;
+            }
+        }
+        int br=x/3*3,bc=y/3*3;
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+                if(board[br+i][bc+j]==c){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+};
