@@ -43,7 +43,8 @@ public:
     */
     int jump(vector<int>& nums) {
         int n=nums.size();
-        int curFar=0,lastFar=0,jump=0;//当前能到的最远距离 上一跳能到达的最远距离
+        int lastFar=0,curFar=0,jump=0;//lastFar上一跳能到达的最远距离 [____lastFar]___curFar 
+        //curFar表示当前跳能到的最远距离，也就是在上一跳能到的最远距离的范围内(方括号的范围)进行下一跳能到的最远距离 
         for(int i=0;i<n;i++){
             if(i>curFar)//无论怎么跳，都不能到达终点或者越过终点
                 return -1;
