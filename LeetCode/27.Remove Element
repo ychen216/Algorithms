@@ -13,7 +13,7 @@ Given input array nums = [3,2,2,3], val = 3
 Your function should return length = 2, with the first two elements of nums being 2.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     int removeElement(vector<int>& nums, int val) {
@@ -27,21 +27,21 @@ public:
     }
 };
 
-// 比较麻烦 但是保留了所有元素 只是将删除元素都放在了数组的最后
+Solution 2：
 class Solution {
 public:
     // 双指针 当当前元素是要删除的元素时就与当前有效的最后一个字符交换
     int removeElement(vector<int>& nums, int val) {
-        int curIndex=0,lastIndex=nums.size()-1;
-        while(curIndex<=lastIndex){
-            if(nums[curIndex]==val){
-                swap(nums[curIndex],nums[lastIndex]);
-                lastIndex--;
+        int start=0,end=nums.size()-1;
+        while(start<=end){
+            if(nums[start]==val){
+                swap(nums[start],nums[end]);
+                end--;
             }else{
-                curIndex++;
+                start++;
             }
         }
-        // lastIndex==-1时所有元素都删完了
-        return lastIndex==-1?0:curIndex;
+        //start是下一个能够放非val元素的位置 也就是长度
+        return start;
     }
 };
