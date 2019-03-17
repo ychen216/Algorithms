@@ -42,14 +42,6 @@ public:
 };
 
 Solution 2:跟上一个一样的思路
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     ListNode* rotateRight(ListNode* head, int k) {
@@ -79,5 +71,47 @@ public:
         cur->next=NULL;
         last->next=feakNode->next;
         return newHead;
+    }
+};
+
+update:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* rotateRight(ListNode* head, int k) {
+        if(!head)
+            return head;
+        int len=0;
+        ListNode *cur=head;
+        while(cur){
+            len++;
+            cur=cur->next;
+        }
+        k=k%len;
+        if(k==0)
+            return head;
+        ListNode *feakHead=new ListNode(0);
+        feakHead->next=head;
+        ListNode *fast=feakHead,*slow=feakHead;
+        for(int i=0;i<k;i++){
+            fast=fast->next;
+        }
+        while(fast->next){
+            slow=slow->next;
+            fast=fast->next;
+        }
+        //slow->next是截断的后半部分链表的表头 fast是后半部分最后一个节点
+        ListNode *head2=slow->next;
+        slow->next=NULL;
+        fast->next=feakHead->next;
+        feakHead->next=head2;
+        return feakHead->next;
     }
 };
