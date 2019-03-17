@@ -64,3 +64,33 @@ public:
         return i;
     }
 };
+
+update:
+class Solution {
+public:
+    //找到第一个>=target的位置
+    int searchInsert(vector<int>& nums, int target) {
+        int start=0,end=nums.size()-1,mid;
+        //数组为空直接返回位置0
+        if(start>end){
+            return 0;
+        }
+        //找到第一个>=target的位置
+        while(start+1<end){
+            mid=start+(end-start)/2;
+            if(nums[mid]>=target){
+                end=mid;
+            }else{
+                start=mid;
+            }
+        }
+        //可能不存在>=target的位置 那么要在最后一个位置nums.size()插入
+        if(nums[start]>=target){
+            return start;
+        }else if(nums[end]>=target){
+            return end;
+        }else{
+            return end+1;
+        }
+    }
+};
