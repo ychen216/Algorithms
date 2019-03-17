@@ -42,34 +42,29 @@ public:
 };
 
 update:
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
 class Solution {
 public:
     vector<Interval> insert(vector<Interval>& ins, Interval newInt) {
         vector<Interval> res;
         int i=0,n=ins.size();
-        //找到需要合并的第一个节点x 即newInterval.start>=x.end
+        //将在newInt之前与其不相交的区间 加入res中 ins[i].end<newInt.start
         while(i<n&&ins[i].end<newInt.start){
-            res.push_back(ins[i]);
-            i++;
+            res.push_back(ins[i++]);
         }
-        //不断合并新区间和有交集的区间 直到不再有交集 x.start>newInterval.end
+        
+        //上一个步骤保证了接下来ins[i].end>=newInt.start 
+        //所以要使得ins[i]和newInt会merge还要满足ins[i].start<=inewInt.end
+        //处理会与newInt合并成一个的区间
         while(i<n&&ins[i].start<=newInt.end){
             newInt.start=min(newInt.start,ins[i].start);
             newInt.end=max(newInt.end,ins[i].end);
             i++;
         }
         res.push_back(newInt);
-        while(i<n)
+        //加入在newInt之后与其不相交的区间 ins[i].start>newInt.end
+        while(i<n){
             res.push_back(ins[i++]);
+        }
         return res;
     }
 };
