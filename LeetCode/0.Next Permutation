@@ -1,0 +1,31 @@
+nums={1,2,3,5,4,0}生成下一个permutation
+步骤： 
+1.找到最后一个递增的pair(index,index+1) eg.1 2 3 5 4 0 最后一个递增的pair是(3,5)对应的下标是(2,3)
+2.从end(最后一个元素)开始找到第一个大于nums[i]的元素nums[big] 这里是nums[big]=nums[4]=4
+3.交换nums[index]和nums[big] eg. 1 2 4 5 3 0
+4.然后对nums[index+1,end)升序排序 eg. 1 2 4 [0,3,5]
+
+代码：
+class Solution {
+public:
+    void nextPermutation(vector<int>& nums) {
+        int n=nums.size();
+        int index=-1;
+        for(int i=n-1;i>=1;i--){
+            if(nums[i]>nums[i-1]){
+                index=i-1;
+                break;
+            }
+        }
+        if(index==-1){//已经是一个降序序列 next permutation是升序序列
+            sort(nums.begin(),nums.end());
+            return;
+        }
+        int big=n-1;
+        while(big>index&&nums[big]<=nums[index]){
+            big--;
+        }
+        swap(nums[big],nums[index]);
+        sort(nums.begin()+index+1,nums.end());
+    }
+};
