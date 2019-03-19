@@ -88,3 +88,24 @@ public:
         return p+1;
     }
 };
+
+
+Solution 3: Solution 2说的很复杂 只要看solution 3和solution 1的update
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int n=nums.size();
+        if(n<3){
+            return n;
+        }
+        int pos=2;//合法数字下一个要放入的位置
+        // nums是排好序的 如果nums[i]==nums[pos-2]那么必然有nums[i]==nums[pos-1]这就说明i之前nums[i]已经放入2次了 不能再加入
+        // 所以只需要check nums[pos-2]和nums[i]即可
+        for(int i=2;i<n;i++){
+            if(nums[i]!=nums[pos-2]){
+                nums[pos++]=nums[i];
+            }
+        }
+        return pos;
+    }
+};
