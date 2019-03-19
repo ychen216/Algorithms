@@ -54,4 +54,48 @@ private:
 };
 
 
+update:
+class Solution {
+public:
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        int row=matrix.size();
+        if(row==0){
+            return 0;
+        }
+        int col=matrix[0].size();
+        if(col==0){
+            return 0;
+        }
+        int res=0;
+        vector<int> heights(col+1,0);
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(matrix[i][j]=='0'){
+                    heights[j]=0;
+                }else{
+                    heights[j]+=1;
+                }
+            }
+            res=max(res,helper(heights));
+        }
+        return res;
+    }
+private:
+    int helper(vector<int>&heights){
+        int n=heights.size();
+        int res=0;
+        stack<int> st;
+        for(int i=0;i<n;i++){
+            while(!st.empty()&&heights[st.top()]>=heights[i]){
+                int h=heights[st.top()];
+                st.pop();
+                int w=st.empty()?i:i-st.top()-1;
+                res=max(res,h*w);
+            }
+            st.push(i);
+        }
+        return res;
+    }
+};
+
 Solution 2: DP 未探索
