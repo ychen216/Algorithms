@@ -39,3 +39,40 @@ public:
         return true;
     }
 };
+
+
+update: 逐一检查 如果不符合就continue
+class Solution {
+public:
+    vector<string> restoreIpAddresses(string s) {
+        vector<string> res;
+        int n=s.length();
+        if(n<4||n>12){
+            return res;
+        }
+        for(int i=0;i<3&&i+3<n;i++){
+            string num1=s.substr(0,i+1);
+            if(!is_valid(num1)) continue;
+            for(int j=i+1;j<=i+3&&j+2<n;j++){
+                string num2=s.substr(i+1,j-i);
+                if(!is_valid(num2)) continue;
+                for(int k=j+1;k<=j+3&&k+1<n;k++){
+                    string num3=s.substr(j+1,k-j);
+                    if(!is_valid(num3)) continue;
+                    string num4=s.substr(k+1);
+                    if(is_valid(num4)){
+                        res.push_back(num1+"."+num2+"."+num3+"."+num4);
+                    }
+                }
+            }
+        }
+        return res;
+    }
+private:
+    bool is_valid(string &num){
+        int len=num.length();
+        if(len==0||len>3||(len>1&&num[0]=='0')||stoi(num)>255)
+            return false;
+        return true;
+    }
+};
