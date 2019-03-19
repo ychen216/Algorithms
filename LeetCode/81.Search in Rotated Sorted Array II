@@ -93,3 +93,40 @@ public:
         return false;
     }
 };
+
+update 另一个模板
+class Solution {
+public:
+    bool search(vector<int>& nums, int target) {
+        int start=0,end=nums.size()-1,mid;
+        if(start>end){
+            return false;
+        }
+        while(start+1<end){
+            mid=start+(end-start)/2;
+            if(nums[mid]==target){
+                return true;
+            }
+            if(nums[mid]<nums[end]){
+                if(nums[mid]<target&&target<=nums[end]){
+                    start=mid;
+                }else{
+                    end=mid;
+                }
+            }else if(nums[mid]>nums[end]){
+                if(nums[mid]>target&&nums[start]<=target){
+                    end=mid;
+                }else{
+                    start=mid;
+                }
+            }else{
+                //nums[mid]==nums[end]不能确定区间内的增减情况 无法缩小一半范围
+                end--;
+            }
+        }
+        if(nums[start]==target||nums[end]==target){
+            return true;
+        }
+        return false;
+    }
+};
