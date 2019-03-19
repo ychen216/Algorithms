@@ -49,14 +49,6 @@ public:
 };
 
 Solution 2:
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     // m~n的节点利用头插法reverse
@@ -84,14 +76,6 @@ public:
 };
 
 update:
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     ListNode* reverseBetween(ListNode* head, int m, int n) {
@@ -109,6 +93,45 @@ public:
             rev=tmp;
         }
         first->next=rev;//完成翻转部分和不需要翻转部分的连接
+        return feakHead->next;
+    }
+};
+
+update:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int m, int n) {
+        if(!head||!head->next){
+            return head;
+        }
+        ListNode *feakHead=new ListNode(0);
+        ListNode *cur=feakHead,*p=head;
+        int i;
+        for(i=1;i<m&&p;i++){
+            cur->next=p;
+            cur=cur->next;
+            p=p->next;
+        }
+        //头插法reverse[m,n] 
+        //第一个插入的节点是reverse后的最后一个节点last
+        ListNode *last=p,*tmp=NULL;
+        for(;i<=n&&p;i++){
+            tmp=p->next;
+            p->next=cur->next;
+            cur->next=p;
+            p=tmp;
+        }
+        //链接reverse后链表的最后一个节点和原链表剩下的部分
+        cur=last;
+        cur->next=p;
         return feakHead->next;
     }
 };
