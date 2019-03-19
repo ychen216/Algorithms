@@ -45,3 +45,43 @@ public:
         }
     }
 };
+
+
+Solution 3:更加清晰的解释
+class Solution {
+public:
+    /*
+        这里要求one pass完成排序，需要利用只有数组元素只有3个数的特性，否则无法完成。
+        排序完成后一定是0...01...12....2，所以可以扫描数组，当遇到0时，交换到前部，当遇到1时，交换到后部。
+        用双指针left, right来记录当前已经就位的0序列和2序列的边界位置(也就是下一个可以放置0和2的合法位置)
+
+        假设已经完成到如下所示的状态：
+
+        0......0   1......1  x1 x2 .... xm   2.....2
+                   |         |           |
+                  left       cur       right
+
+        (1) A[cur] = 1：已经就位，cur++即可
+        (2) A[cur] = 0：交换A[cur]和A[left]。由于A[left]=1或left=cur，所以交换以后A[cur]已经就位，cur++，left++
+        (3) A[cur] = 2：交换A[cur]和A[right]，right--。由于xm的值未知，cur不能增加，继续判断xm。
+        [left,cur)之间都是1,[cur,right]都是未知的
+    */
+    void sortColors(vector<int>& nums) {
+        int n=nums.size();
+        int zero=0,two=n-1;
+        int i=0;
+        //这里条件是i<=two 因为two是下一个可以放置2的位置 
+        //也就是还没有确定该放什么元素的位置 所以需要check
+        while(i<=two){
+            if(nums[i]==0){
+                swap(nums[i++],nums[zero]);
+                zero++;
+            }else if(nums[i]==1){
+                i++;
+            }else{
+                swap(nums[i],nums[two]);
+                two--;
+            }
+        }
+    }
+};
