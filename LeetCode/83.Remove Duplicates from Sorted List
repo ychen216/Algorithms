@@ -40,14 +40,6 @@ public:
 
 
 Solution 2:
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     ListNode* deleteDuplicates(ListNode* head) {
@@ -65,5 +57,28 @@ public:
             }
         }
         return head;
+    }
+};
+
+
+Solution 3:
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        if(!head||!head->next){
+            return head;
+        }
+        ListNode *feakHead=new ListNode(0);;
+        ListNode *cur=feakHead,*p=head;
+        //cur是指向已经确定的不重复链的最后一个节点
+        while(p){
+            if(cur->next==NULL||p->val!=cur->val){
+                cur->next=p;
+                cur=cur->next;
+            }
+            p=p->next;
+        }
+        cur->next=NULL;
+        return feakHead->next;
     }
 };
