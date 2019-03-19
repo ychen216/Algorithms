@@ -41,6 +41,35 @@ public:
     }
 };
 
+update:更清楚
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        if(!head||!head->next){
+            return head;
+        }
+        ListNode *feakHead=new ListNode(0);
+        feakHead->next=head;
+        ListNode *cur=feakHead,*first=NULL,*last=NULL;
+        //cur是当前重复区间的前一个元素 first和last是当前重复区间的第一个和最后一个元素
+        while(cur->next){
+            first=cur->next;
+            last=cur->next;
+            while(last->next&&last->next->val==last->val){
+                last=last->next;
+            }
+            if(last==first){
+                //非重复 加入链表
+                cur=cur->next;
+            }else{
+                //有重复 抛弃[first,last]
+                cur->next=last->next;
+            }
+        }
+        return feakHead->next;
+    }
+};
+
 Solution 2：recursive
 class Solution {
 public:
