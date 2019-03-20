@@ -32,3 +32,18 @@ public:
             return 1+minDepth(root->right);
     }   
 };
+
+or 效率低一些
+
+class Solution {
+public:
+    int minDepth(TreeNode* root) {
+        if(root==NULL)
+            return 0;
+        int left=minDepth(root->left);
+        int right=minDepth(root->right);
+        if(left==0||right==0)
+            return left+right+1;//至多只有left,right中的一个生效
+        return min(left,right)+1;
+    }
+};
