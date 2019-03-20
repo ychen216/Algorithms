@@ -10,7 +10,48 @@ For example, given the following matrix:
 1 0 0 1 0
 Return 6.
 */
+
 Solution 1:
+class Solution {
+public:
+    /*
+        暴力解法 
+        逐行扫描更新当前行每列i的有效高度height[i] 然后以当前列i为终点向前找另一个所有可能的矩形边界j
+        面积为(j-i+1)*min(height[k]) k属于[i,j]
+    */
+    int maximalRectangle(vector<vector<char>>& matrix) {
+        int row=matrix.size();
+        if(row==0){
+            return 0;
+        }
+        int col=matrix[0].size();
+        if(col==0){
+            return 0;
+        }
+        int res=0;
+        vector<int> heights(col,0);
+        for(int i=0;i<row;i++){
+            for(int j=0;j<col;j++){
+                if(matrix[i][j]=='0'){
+                    heights[j]=0;
+                    //高度为0不可能作为矩形的边界
+                    continue;
+                }
+                heights[j]+=1;
+                //以j作为其中一个边界
+                int minHeight=heights[j];
+                for(int k=j;k>=0;k--){
+                    minHeight=min(minHeight,heights[k]);
+                    res=max(res,minHeight*(j-k+1));
+                }
+            }
+        }
+        return res;
+    }
+
+};
+
+Solution 2:
 class Solution {
 public:
     /*
@@ -98,4 +139,4 @@ private:
     }
 };
 
-Solution 2: DP 未探索
+Solution 3: DP 未探索
