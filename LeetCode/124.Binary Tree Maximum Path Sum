@@ -67,7 +67,9 @@ private:
     //找到以root为根树的MaxPath
     Result helper(TreeNode* root){
         if(root==NULL){
-            return Result(0,INT_MIN);
+            return Result(0,INT_MIN); 
+            //这里maxPath赋值为INT_MIN是因为对于一个空节点不可能构成一个树的根也就不可能存在任何的最大路径的
+            //而singlePath的定义是从root向下可以得到的最大路径 可以不包含节点 所以root==NULL可以直接赋值为0
         }
         Result left=helper(root->left);
         Result right=helper(root->right);
