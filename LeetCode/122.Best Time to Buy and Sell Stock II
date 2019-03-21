@@ -29,6 +29,33 @@ public:
     }
 };
 
+update:还是上面的方法更加直观 这个方法是看了LeetCode的Solution2
+class Solution {
+public:
+    // 参考Solution2 把所有的上升沿(valley-->peak) 加入
+    int maxProfit(vector<int>& prices) {
+        int n=prices.size();
+        if(n<2)
+            return 0;
+        int profit=0;
+        int valley=prices[0],peak=prices[0];
+        int i=0;
+        //n-1是因为内部的操作都需要与i+1比较避免i+1越界
+        while(i<n-1){
+            while(i<n-1&&prices[i]>=prices[i+1]){
+                i++;
+            }
+            valley=prices[i];
+            while(i<n-1&&prices[i]<prices[i+1]){
+                i++;
+            }
+            peak=prices[i];
+            profit+=peak-valley;
+        }
+        return profit;
+    }
+};
+
 
 Solution 2:
 class Solution {
