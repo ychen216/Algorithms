@@ -77,3 +77,71 @@ public:
         return res;
     }
 };
+
+update:更好理解的层次遍历
+class Solution {
+public:
+    /* 
+       可以利用这个图进行理解 https://leetcode.com/problems/word-ladder-ii/discuss/172308/A-kind-of-concept-with-diagrams-()
+       这里要注意的是:
+       1.我们进行BFS的是候选路径而不是单个单词
+       2.并不能在某个长度为len的路径中增加一个单词word就将其标记visit,然后不再使用。因为可能其他相同长度len的候选路径下一步转换也可以到达这一个单词word。
+       所以应该在长度为len的所有候选路径都更新完第len+1步时，再将所有在len+1步加入的word全部标记，这样才能避免这些word出现在len+1后的位置 构成非最短路径
+    */
+    vector<vector<string>> findLadders(string startWord, string endWord, vector<string>& wordList) {
+        vector<vector<string>> res;
+        unordered_set<string> dict(wordList.begin(),wordList.end());//词典
+        if(dict.find(endWord)==dict.end()){
+            return res;
+        }
+        unordered_set<string> occurred;//该轮(增加一个单词)添加的新词
+        queue<vector<string>> q;//构造最短路径的队列
+        vector<string> path;
+        path.push_back(startWord);
+        q.push(path);
+        if(dict.find(startWord)!=dict.end()){
+            dict.erase(startWord);
+        }
+        int len=startWord.length();
+        while(!q.empty()){
+            int n=q.size();
+            bool ok=false;
+            //这些都是长度相等的候选path
+            for(int i=0;i<n;i++){
+                auto curPath=q.front();
+                q.pop();
+                string nextWord=curPath.back();//下一个可能的词的原型
+                for(int j=0;j<len;j++){
+                    char origin=nextWord[j];
+                    for(char c='a';c<='z';c++){
+                        if(origin==c){
+                            continue;
+                        }
+                        nextWord[j]=c;
+                        if(dict.find(nextWord)!=dict.end()){
+                            vector<string> nextPath=curPath;
+                            nextPath.push_back(nextWord);
+                            q.push(nextPath);
+                            occurred.insert(nextWord);
+                            if(nextWord==endWord){
+                                ok=true;
+                                res.push_back(nextPath);
+                            }
+                        }
+                    }
+                    nextWord[j]=origin;
+                }
+            }
+            //该长度的拓展已经有满足要求的path了 接下来长度更长的就不可能是最短path
+            if(ok){
+                break;
+            }
+            //把该第i轮拓展的词全部从词表中删去 这些词出现的最早位置就是i,在i之后出现的都不是最短了 
+            for(auto &occur:occurred){
+                dict.erase(occur);
+            }
+            occurred.clear();
+        }
+        return res;
+    }
+};
