@@ -45,3 +45,52 @@ class Solution {
         return result;
     }
 }
+
+update:C++
+class Solution {
+public:
+   // 按照逆序的顺序插入 我们先遇到根节点，根节点是最后一个节点插入在最后
+   // 右子树插入在根节点之前 左子树插入在右子树之前 所以res都是从begin开始插入
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> res;
+        TreeNode *cur=root;
+        stack<TreeNode *> st;
+        while(cur||!st.empty()){
+            if(cur){
+                res.insert(res.begin(),cur->val); //将根节点放在最后
+                st.push(cur); //存下根节点方便取出左子树
+                cur=cur->right;//在根节点前插入右子树
+            }else{
+                cur=st.top();
+                st.pop();
+                cur=cur->left;
+            }
+        }
+        return res;
+    }
+};
+
+update:
+可以直接存下左子树
+class Solution {
+public:
+   // 按照逆序的顺序插入 我们先遇到根节点，根节点是最后一个节点插入在最后
+   // 右子树插入在根节点之前 左子树插入在右子树之前 所以res都是从begin开始插入
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> res;
+        TreeNode *cur=root;
+        stack<TreeNode *> st;
+        while(cur||!st.empty()){
+            if(cur){
+                res.insert(res.begin(),cur->val); //将根节点放在最后
+                if(cur->left)
+                  st.push(cur->left); //存下根节点左子树
+                cur=cur->right;//在根节点前插入右子树
+            }else{
+                cur=st.top();
+                st.pop();
+            }
+        }
+        return res;
+    }
+};
