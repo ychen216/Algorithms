@@ -69,3 +69,62 @@ private:
         return b==0?a:gcd(b,a%b);
     }
 };
+
+update:same idea overwrite
+/**
+ * Definition for a point.
+ * struct Point {
+ *     int x;
+ *     int y;
+ *     Point() : x(0), y(0) {}
+ *     Point(int a, int b) : x(a), y(b) {}
+ * };
+ */
+class Solution {
+public:
+    int maxPoints(vector<Point>& points) {
+        int n=points.size();
+        if(n<3){
+            return n;
+        }
+        int res=2;
+        unordered_map<int,unordered_map<int,int>> ratio_to_cnt;
+        //固定第i个点
+        for(int i=0;i<n-1;i++){
+            ratio_to_cnt.clear();
+            int overlap=0,same_ratio=0;
+            for(int j=i+1;j<n;j++){
+                int x=points[i].x-points[j].x;
+                int y=points[i].y-points[j].y;
+                if(x==0&&y==0){
+                    overlap++;
+                    continue;
+                }
+                int g=gcd(x,y);
+                if(g!=0){
+                    x/=g;
+                    y/=g;
+                }
+                if(ratio_to_cnt.find(x)!=ratio_to_cnt.end()){
+                   if(ratio_to_cnt[x].find(y)!=ratio_to_cnt[x].end()){
+                        ratio_to_cnt[x][y]++;
+                   }else{
+                        ratio_to_cnt[x][y]=1;
+                   }
+                       
+                }else{
+                    unordered_map<int,int> mmp;
+                    mmp[y]=1;
+                    ratio_to_cnt[x]=mmp;
+                }
+                same_ratio=max(same_ratio,ratio_to_cnt[x][y]);
+            }
+            res=max(res,same_ratio+overlap+1);
+        }
+        return res;
+    }
+private:
+    int gcd(int a,int b){
+        return b==0?a:gcd(b,a%b);
+    }
+};
