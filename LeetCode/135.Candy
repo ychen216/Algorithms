@@ -30,3 +30,33 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    int candy(vector<int>& ratings) {
+        int n=ratins.size();
+        if(n<2){
+            return n;
+        }
+        vector<int> candy(n,1);//默认每个人分配1candy 满足每个人至少有一颗糖
+        //check rating比邻居高的是否获得更多的candy
+        //如果不满足就以 1 candy的增量来增加 确保花费最少的candy
+        for(int i=1;i<n;i++){
+            if(ratings[i]>ratings[i-1]){
+                candy[i]=candy[i-1]+1;
+                //这里max(candy[i],candy[i-1]+1)只不过candy起始都赋值为1 candy[i]<=candy[i-1]
+            }
+        }
+        for(int i=n-2;i>=0;i--){
+            if(ratings[i]>ratings[i+1]){
+                candy[i]=max(candy[i],candy[i+1]+1);
+            }
+        }
+        int res=0;
+        for(auto &num:candy){
+            res+=num;
+        }
+        return res;
+    }
+};
