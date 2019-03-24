@@ -13,20 +13,55 @@ You may assume all elements in the array are non-negative integers and fit in th
 Solution 1:
 class Solution {
 public:
-    // 排序后遍历 O(nlgn)
+    // 最直观的想法就是排序 然后遍历相邻元素
     int maximumGap(vector<int>& nums) {
         int n=nums.size();
-        if(n<2)
+        if(n<2){
             return 0;
+        }
+        int res=0;
         sort(nums.begin(),nums.end());
-        int maxGap=0;
-        for(int i=1;i<n;i++)
-            maxGap=max(maxGap,nums[i]-nums[i-1]);
-        return maxGap;
+        for(int i=1;i<n;i++){
+            res=max(res,nums[i]-nums[i-1]);
+        }
+        return res;
     }
 };
 
-Solution 2:
+Solution 2:TLE
+class Solution {
+public:
+    /*  maxGap的范围在[0,maxima-minima]
+        每一个nums[i]和minima进行比较,相对于minima的距离说明了他们之间的相对大小
+        然后计算gap
+    */
+    int maximumGap(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2){
+            return 0;
+        }
+        int maxima=nums[0],minima=nums[0];
+        for(int i=1;i<n;i++){
+            maxima=max(maxima,nums[i]);
+            minima=min(minima,nums[i]);
+        }
+        int gap_size=maxima-minima+1;
+        vector<bool> gap(gap_size,false);
+        for(int i=0;i<n;i++){
+            gap[nums[i]-minima]=true;
+        }
+        int res=0,pre=0;//pre记录上一个有值的地方
+        for(int i=1;i<gap_size;i++){
+            if(gap[i]){
+                res=max(res,i-pre);
+                pre=i;
+            }
+        }
+        return res;
+    }
+};
+
+Solution 3:
 class Solution {
 public:
     /*
