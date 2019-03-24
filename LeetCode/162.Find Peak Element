@@ -61,8 +61,8 @@ public:
         我们利用二分搜索找到 中间元素 mid,比较其前后元素的大小可能情况有：
         / \    /    \     \ /       
               /      \
-        每次取中间元素，如果大于左右，则这就是peek。
-        否则取大的一边，两个都大，可以随便取一边。最终会找到peek。
+        每次取中间元素，如果大于左右，则这就是peak。
+        否则取大的一边，两个都大，可以随便取一边。最终会找到peak。
     */
     int findPeakElement(vector<int>& nums) {
         int start=0,end=nums.size()-1,mid;
@@ -81,8 +81,6 @@ public:
         }
         //跳出循环说明 
         //只有一个元素start==end或者有两个元素start+1==end即start和end是首尾元素
-        if(start==end)
-            return start;
         if(nums[start]<nums[end])
             return end;
         else
