@@ -28,3 +28,18 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    //A-Z其实就是26进制 但是A表示1 而不是A表示0 所以在做转换的时候要先-1
+    string convertToTitle(int n) {
+        string res="";
+        while(n){
+            n--;
+            res=(char)(n%26+'A')+res;
+            n/=26;
+        }
+        return res;
+    }
+};
