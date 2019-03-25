@@ -14,7 +14,7 @@ Return:
 ["AAAAACCCCC", "CCCCCAAAAA"].
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
     vector<string> findRepeatedDnaSequences(string s) {
@@ -28,5 +28,53 @@ public:
                 occurred.insert(temp);
         }
         return vector<string>(repeat.begin(),repeat.end());
+    }
+};
+
+Solution 2：map
+class Solution {
+public:
+    vector<string> findRepeatedDnaSequences(string s) {
+        unordered_map<string,int> mmp;
+        vector<string> res;
+        for(int i=0;i+9<s.length();i++){
+            string cur=s.substr(i,10);
+            mmp[cur]++;
+        }
+        for(auto &p:mmp){
+            if(p.second>1){
+                res.push_back(p.first);
+            }
+        }
+        return res;
+    }
+};
+
+Solution 3:hashmap + bit
+class Solution {
+public:
+    /*
+        我们可以利用string作为key，但是观察到DNA序列只有ACGT自个字符且长度为10
+        那么我们可以尝试将key设置为数字。具体的，ACGT四个字符可以映射到0,1,2,3
+        那么每个字符可以用2 bits表示，长度为10的DNA可以用20bit作为key
+        这样就可以减少存储
+    */
+    vector<string> findRepeatedDnaSequences(string s) {
+        unordered_map<int,int> mmp;
+        unordered_map<char,int> char_to_int;
+        char_to_int['A']=0,char_to_int['C']=1,char_to_int['G']=2,char_to_int['T']=3;
+        vector<string> res;
+        for(int i=0;i+9<s.length();i++){
+            int key=0;
+            for(int j=i;j<i+10;j++){
+                key<<=2;
+                key|=char_to_int[s[j]];
+            }
+            mmp[key]++;
+            if(mmp[key]==2){
+                res.push_back(s.substr(i,10));
+            }
+        }
+        return res;
     }
 };
