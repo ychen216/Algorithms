@@ -10,10 +10,10 @@ You may not engage in multiple transactions at the same time (ie, you must sell 
 
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:
-    /*
+    /* 空间O(n)
     利用背包的思想 背包的容量至多容纳k次交易
     sell[i]=max(sell[i],buy[i]+price[j]) 表示进行至多i次交易后没有持有股票时的最高利润 
     buy[i]是因为一次买一次卖算一次交易 卖出时不增加交易次数
@@ -44,5 +44,52 @@ private:
             if(price[i]>price[i-1])
                 sum+=price[i]-price[i-1];
         return sum;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        这里要注意的是买入算一次交易 卖出和买入是绑定的算一次交易
+        sell[i][k]表示至多进行k次交易在第i天非持有状态下能获得的最大利润
+        i>0:
+        sell[i][k]=max(sell[i-1][k],buy[i-1][k]+prices[i])在i处是卖出状态且交易次数不超过k次下最大的利润
+        buy[i][k]=max(buy[i-1][k],sell[i-1][k-1]-prices[i]);
+        buy[i][0]=sell[i][0]=0 buy[0][k]=-prices[0] k>0  一笔交易都没有的时候buy和sell都设置为0 
+        对于第0天来说不持有的话 无论进行多少次交易可以获得的利润都为0 
+        对于第0天如果持有的话 仅有持有第0天的股票这一种可能所以buy[0][k]=-prices[0] k>1
+    */
+    int maxProfit(int K, vector<int>& prices) {
+        int n=prices.size();
+        if(K>n/2){
+            return easy_profit(prices);
+        }
+        vector<vector<int>> sell(n,vector<int>(K+1,0)),
+                            buy(n,vector<int>(K+1,0));
+        for(int k=1;k<=K;k++){
+            for(int i=0;i<n;i++){
+                if(i==0){
+                    sell[i][k]=0;
+                    buy[i][k]=-prices[i];
+                }else{
+                    sell[i][k]=max(sell[i-1][k],buy[i-1][k]+prices[i]);
+                    buy[i][k]=max(buy[i-1][k],sell[i-1][k-1]-prices[i]);
+                }
+            }
+        }
+        return sell[n-1][K];
+    }
+private:
+    int easy_profit(vector<int>&prices){
+        int n=prices.size();
+        int res=0;
+        for(int i=1;i<n;i++){
+            if(prices[i-1]<prices[i]){
+                res+=prices[i]-prices[i-1];
+            }
+        }
+        return res;
     }
 };
