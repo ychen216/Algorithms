@@ -2,6 +2,7 @@
 /*
 Reverse a singly linked list.
 */
+
 Solution:
 /**
  * Definition for singly-linked list.
@@ -31,19 +32,27 @@ public:
     }
 };
 
-// 头插法
+update:
+class Solution {
+public:
     ListNode* reverseList(ListNode* head) {
-        ListNode *feakNode=new ListNode(0);
-        ListNode *cur=head,*temp=NULL;
-        while(cur){
-            temp=feakNode->next;
-            feakNode->next=cur;
-            cur=cur->next;
-            feakNode->next->next=temp;
+        if(!head||!head->next){
+            return head;
         }
-        return feakNode->next;
+        ListNode *feakHead=new ListNode(0);
+        ListNode *cur=feakHead,*tmp=NULL;
+        //头插法
+        while(head){
+            //先把要插入的元素x的next保存下来 然后插入元素x到头部
+            tmp=head->next;
+            head->next=cur->next;
+            cur->next=head;
+            head=tmp;
+        }
+        return feakHead->next;
     }
-    
+};  
+
 Solution 2:recursive
 class Solution {
 public:
