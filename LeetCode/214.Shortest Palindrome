@@ -1,0 +1,53 @@
+214. Shortest Palindrome
+
+/*
+Given a string s, you are allowed to convert it to a palindrome by adding characters in front of it. 
+Find and return the shortest palindrome you can find by performing this transformation.
+
+Example 1:
+  Input: "aacecaaa"
+  Output: "aaacecaaa"
+
+Example 2:
+  Input: "abcd"
+  Output: "dcbabcd"
+*/
+
+Solution 1:TLE
+class Solution {
+public:
+    /*
+        题目要求在原串s的前面接上最短的串s' 使得s'+s是回文串
+        那么s'是s末尾子串tail的回文 eg. s="abbacd" 那么s'='dc'和tail='cd'互为回文
+        所以为了使得s'最短 那么就要找到最长的回文串s-tail 也就是回文串'abba'
+        暴力法遍历所有可能的s-tail找到最长的
+    */
+    string shortestPalindrome(string s) {
+        int n=s.length();
+        int end=n-1;
+        //从长到短寻找从s[0]为起始位置的最长回文串
+        //end==0时必然满足条件不用check
+        while(end>0){
+            if(is_valid(s,0,end)){
+                break;
+            }
+            end--;
+        }
+        //在s[0,end]之间是回文串
+        string tail=s.substr(end+1);
+        reverse(tail.begin(),tail.end());
+        return tail+s;
+    }
+private:
+    bool is_valid(string &s,int i,int j){
+        while(i<j){
+            if(s[i]!=s[j]){
+                return false;
+            }
+            i++,j--;
+        }
+        return true;
+    }
+};
+
+Solution 2:KMP 未探索
