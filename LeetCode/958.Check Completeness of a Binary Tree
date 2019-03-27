@@ -1,0 +1,43 @@
+958. Check Completeness of a Binary Tree
+
+/*
+Given a binary tree, determine if it is a complete binary tree.
+
+Definition of a complete binary tree from Wikipedia:
+In a complete binary tree every level, except possibly the last, is completely filled, and all nodes in the last level are as far left
+as possible. It can have between 1 and 2h nodes inclusive at the last level h.
+
+*/
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        利用BFS一层一层遍历,直到我们遇到第一个空节点
+        对于完全二叉树来说在遇到第一个空节点后不能再有任何非空节点出现在后面的层次
+    */
+    bool isCompleteTree(TreeNode* root) {
+        queue<TreeNode *> q;
+        q.push(root);
+        while(q.front()!=NULL){
+            auto cur=q.front();
+            q.pop();
+            q.push(cur->left);
+            q.push(cur->right);
+        }
+        //如果在遇到NULL后还有非空节点则不是完全二叉树
+        while(!q.empty()&&q.front()==NULL){
+            q.pop();
+        }
+        return q.empty();
+    }
+};
