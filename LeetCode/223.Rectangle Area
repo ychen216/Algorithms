@@ -1,13 +1,37 @@
 223. Rectangle Area
 
+/*
+Find the total area covered by two rectilinear rectangles in a 2D plane.
+
+Each rectangle is defined by its bottom left corner and top right corner as shown in the figure.
+
+Example:
+    Input: A = -3, B = 0, C = 3, D = 4, E = 0, F = -1, G = 9, H = 2
+    Output: 45
+Note:
+    Assume that the total area is never beyond the maximum possible value of int.
+*/
+
+/*
+这里要注意虽然题目保证最后的结果在int范围 但是在计算的过程中可能会溢出 所以还是要先减去overlap的部分再加上另一个area2
+比如下面这个样例
+0
+0
+50000
+40000
+0
+0
+50000
+40000
+*/
+
 Solution 1:
 class Solution {
 public:
     int computeArea(int A, int B, int C, int D, int E, int F, int G, int H) {
         // 上下左右指 overlap部分的边界
         int area1 = (C - A) * (D - B);
-        int area2 = (G - E) * (H - F);
-        
+        int area2 = (G - E) * (H - F);        
         int left = max(A, E);
         int right = min(C, G);
         int up = min(D, H);
@@ -16,8 +40,8 @@ public:
         int overlap = 0;
         if (left < right && down < up)
             overlap = (right - left) * (up - down);
-        
-        return area1 + area2 - overlap;   
+        //防止溢出 先做减法
+        return area1 - overlap + area2;   
     }
 };
 
@@ -28,6 +52,7 @@ public:
         // 上下左右指 overlap部分的边界
         int left = max(A,E), right = max(min(C,G), left);
         int bottom = max(B,F), top = max(min(D,H), bottom);
+        // 防止溢出先做减法
         return (C-A)*(D-B) - (right-left)*(top-bottom) + (G-E)*(H-F);
     }
 };
