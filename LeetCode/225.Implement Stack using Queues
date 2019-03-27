@@ -53,11 +53,49 @@ private:
     queue<int> q;
 };
 
-/**
- * Your MyStack object will be instantiated and called as such:
- * MyStack obj = new MyStack();
- * obj.push(x);
- * int param_2 = obj.pop();
- * int param_3 = obj.top();
- * bool param_4 = obj.empty();
- */
+
+Solution 2:
+class MyStack {
+public:
+    /** Initialize your data structure here. */
+    MyStack() {
+        
+    }
+    
+    /** Push element x onto stack. */
+    /*
+        利用queue实现stack那么就要保持queue中的元素顺序是先进后出的
+        push新元素x时,可以先加入到queue的后面
+        在queue中元素x之前的元素已经保持先进后出了 
+        可以在此时把queue中在x之前的元素都弹出然后push到queue中x的后面
+        eg.push顺序 1 2 3 4 --> 加入4之前 queue中的顺序是 3 2 1
+        加入4后 3 2 1 4,然后将4之前的push到对尾 --> 4 3 2 1
+    */
+    void push(int x) {
+        q.push(x);
+        int n=q.size();
+        for(int i=0;i<n-1;i++){
+            q.push(q.front());
+            q.pop();
+        }
+    }
+    
+    /** Removes the element on top of the stack and returns that element. */
+    int pop() {
+        int res=q.front();
+        q.pop();
+        return res;
+    }
+    
+    /** Get the top element. */
+    int top() {
+        return q.front();
+    }
+    
+    /** Returns whether the stack is empty. */
+    bool empty() {
+        return q.empty();
+    }
+private:
+    queue<int> q;
+};
