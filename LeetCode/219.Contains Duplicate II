@@ -8,6 +8,7 @@ such that nums[i] = nums[j] and the absolute difference between i and j is at mo
 Solution 1:
 class Solution {
 public:
+    // 题意是check在数组中是否存在两个数nums[i]==nums[j]且j-i<=k 只要存在一对这样的数就返回true
     bool containsNearbyDuplicate(vector<int>& nums, int k) {
         if(k<=0)
             return false;
@@ -59,7 +60,7 @@ public:
             return false;
         if(k>=size)
             k=size-1;
-        unordered_set<int> sset;// 保存i-k~i-1范围的元素
+        unordered_set<int> sset;// 对于第i个元素来说set保存[i-k~i-1]范围的元素保证i和set里的元素距离不超过k
         for(int i=0;i<nums.size();i++){
             if(i>k) sset.erase(nums[i-k-1]);
             if(sset.find(nums[i])!=sset.end())
