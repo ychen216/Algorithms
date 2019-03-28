@@ -95,3 +95,37 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    vector<string> summaryRanges(vector<int>& nums) {
+        int n=nums.size();
+        vector<string> res;
+        if(n==0){
+            return res;
+        }
+        int start=0;
+        for(int i=1;i<n;i++){
+            if(nums[i]!=nums[i-1]+1){
+                string range=to_string(nums[start]);
+                //if(i-1==start)
+                if(i-1!=start){
+                    range+="->"+to_string(nums[i-1]);
+                }
+                res.push_back(range);
+                start=i;
+            }
+        }
+        //最后一个部分
+        if(start<n){
+            string range=to_string(nums[start]);
+                //if(i-1==start)
+                if(n-1!=start){
+                    range+="->"+to_string(nums[n-1]);
+                }
+                res.push_back(range);
+        }
+        return res;
+    }
+};
