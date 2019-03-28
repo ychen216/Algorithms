@@ -1,0 +1,49 @@
+233. Number of Digit One
+
+/*
+Given an integer n, count the total number of digit 1 appearing in all non-negative integers less than or equal to n.
+
+Example:
+  Input: 13
+  Output: 6 
+  Explanation: Digit 1 occurred in the following numbers: 1, 10, 11, 12, 13.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        看了很多种方法 只有这种O(logn)的方法 我觉得最直观、容易理解
+        要统计[0,n]之间所有1的个数，可以逐一按照个位十位百位...上是1的数的个数来统计
+        例如要统计百位上是1的数的个数：也就是把百位置为1 然后看其他位有多少种组合方式使得该数不超过n,那么n在百位上有三种情况：百位==0,==1,>1
+        31456 统计百位时：百位==4,只要前两位的组合不超过31那么后面两位随便怎么组合都可以
+        （0-31） 1 （0-99） 32*100次
+        31156：百位==1 那么当前两位为31时 后两位要注意不能超过56
+        （0-30）1（0-99） + (31)  1  （0-56）  31*100+56+1次
+        31056：百位==0 那么把百位置为1就超过了n，所以前两位只能小于31 这时候后面两位就可以随意设置
+        （0-30）1  （0-99) _31*100 次
+        综上所述，我们可以逐位求该位为1的数的个数 然后加起来
+        在求每一位为1的数的个数时分三种情况求，且在求某一位i时可以将n分为三段：i之前的部分,i,i之后的部分 
+    */
+    int countDigitOne(int n) {
+        //避免溢出用long
+        long pos=1;//代表要求的位数 1代表个位 10代表十位 100代表百位
+        long front,cur,back;//分别指在要求的位置前面,要求的位置,要求的位置后面的部分
+        int res=0;
+        while(pos<=n){
+            front=n/pos/10;
+            cur=n/pos%10;
+            back=n%pos;
+            if(cur>1){
+                res+=(front+1)*pos;
+            }else if(cur==1){
+                res+=front*pos+back+1;
+            }else{
+                //cur==0
+                res+=front*pos;
+            }
+            pos*=10;
+        }
+        return res;
+    }
+};
