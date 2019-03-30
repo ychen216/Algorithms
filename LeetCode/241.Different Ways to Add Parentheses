@@ -98,3 +98,46 @@ public:
 private:
     unordered_map<string,vector<int>> mmp;//存储表达式s 不同加括号方式得出的不同结果
 };
+
+update:
+class Solution {
+public:
+    vector<int> diffWaysToCompute(string input) {
+        unordered_map<string,vector<int>> mmp;
+        return helper(input,mmp);
+    }
+private:
+    vector<int> helper(string input,unordered_map<string,vector<int>>&mmp){
+        if(mmp.find(input)!=mmp.end()){
+            return mmp[input];
+        }
+        vector<int> res;
+        bool onlyNum=true;
+        for(int i=0;i<input.length();i++){
+            char c=input[i];
+            if(c=='+'||c=='-'||c=='*'||c=='/'){
+                onlyNum=false;
+                vector<int> left=helper(input.substr(0,i),mmp);
+                vector<int> right=helper(input.substr(i+1),mmp);
+                for(auto num1:left){
+                    for(auto num2:right){
+                        if(c=='+'){
+                            res.push_back(num1+num2);
+                        }else if(c=='-'){
+                            res.push_back(num1-num2);
+                        }else if(c=='*'){
+                            res.push_back(num1*num2);
+                        }else{
+                            res.push_back(num1/num2);
+                        }
+                    }
+                }
+            }
+        }
+        if(onlyNum){
+            res.push_back(stoi(input));
+        }
+        mmp[input]=res;
+        return res;
+    }
+};
