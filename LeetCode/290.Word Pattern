@@ -67,3 +67,37 @@ class Solution {
         return true;
     }
 }
+
+update:C++ version
+class Solution {
+public:
+    // 字母和字符串要一一映射
+    bool wordPattern(string pattern, string str) {
+        unordered_map<char,int> mmp1;
+        unordered_map<string,int> mmp2;
+        stringstream ss(str);
+        string cur;
+        for(int i=0;i<pattern.length();i++){
+            if(ss>>cur){
+                if(mmp1.find(pattern[i])==mmp1.end()&&mmp2.find(cur)==mmp2.end()){
+                    mmp1[pattern[i]]=i;
+                    mmp2[cur]=i;
+                }else if(mmp1.find(pattern[i])==mmp1.end()||mmp2.find(cur)==mmp2.end()){
+                    return false;       
+                }
+                else if(mmp2[cur]!=mmp1[pattern[i]]){
+                    return false;
+                }
+            }
+            else{
+                return false;
+            }
+        }
+        //还有多余的词
+        if(ss>>cur){
+            return false;
+        }
+        return true;
+        
+    }
+};
