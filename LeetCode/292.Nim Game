@@ -10,7 +10,14 @@ For example, if there are 4 stones in the heap, then you will never win the game
 Solution:
 class Solution {
 public:
-  //all 4n is not satisfied.Mathematical Induction can prove.
+    /*
+      all 4n is not satisfied.Mathematical Induction can prove.
+      如果是4的倍数先手怎么样都不会赢
+      n=1,2,3先手都可以一步获胜
+      n=4无论先手第一步拿多少 都会剩下<=3的石头 后手一步可以获胜
+      n=5,6,7时 先手可以先分别拿1,2,3个石头 那么对于后手来说他就面临n=4的情况 
+      这时后手的角色是先手 无论怎么样在n=4时他都不能获胜 所以先手可以获胜
+    */
     bool canWinNim(int n) {
         return n%4!=0;
     }
