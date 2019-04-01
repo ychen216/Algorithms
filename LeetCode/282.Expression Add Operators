@@ -55,3 +55,50 @@ private:
         }
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        参考 http://www.cnblogs.com/grandyang/p/4814506.html
+        要注意多个零代表的0的情况eg.00+1 不合法
+        注意溢出的问题 转化数字时利用long来保存
+        具体实现中,diff和curRes,分别表示将要变化的值和当前运算后的值
+        对于加和减,diff就是即将要加上的数和即将要减去的数的负值;
+        对于乘来说稍有些复杂,此时的diff应该是上一次的变化的diff乘以即将要乘上的数
+        eg.2+3*2,即将要运算到乘以2的时候,上次循环的curRes = 5, diff = 3,而如果我们要算这个乘2的时候,新的变化值diff应为3*2=6,
+        而我们要把之前+3操作的结果去掉,再加上新的diff,即(5-3)+6=8,即为新表达式2+3*2的值
+    */
+    vector<string> addOperators(string num, int target) {
+        vector<string> res;
+        if(num.length()==0){
+            return res;
+        }
+        helper(res,num,"",target,0,0,0);
+        return res;
+    }
+private:
+    void helper(vector<string>&res,string &num,string path,int target,int start,long diff,long curRes){
+        if(start==num.length()){
+            if(curRes==target){
+                res.push_back(path);
+            }
+            return;
+        }
+        for(int i=start;i<num.length();i++){
+            if(i>start&&num[start]=='0'){
+                //有前导0
+                break;
+            }
+            string curStr=num.substr(start,i-start+1);
+            long curNum=stol(curStr);
+            if(start==0){
+                helper(res,num,path+curStr,target,i+1,curNum,curNum);
+            }else{
+                helper(res,num,path+"+"+curStr,target,i+1,curNum,curNum+curRes);
+                helper(res,num,path+"-"+curStr,target,i+1,-curNum,curRes-curNum);
+                helper(res,num,path+"*"+curStr,target,i+1,diff*curNum,curRes-diff+diff*curNum);
+            }
+        }
+    }
+};
