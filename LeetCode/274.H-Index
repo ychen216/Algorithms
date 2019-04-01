@@ -55,3 +55,33 @@ public:
         return n-low;
     }
 };
+
+Solution 3:
+class Solution {
+public:
+    int hIndex(vector<int>& citations) {
+        int start=0,end=citations.size(),mid;
+        while(start+1<end){
+            mid=start+(end-start)/2;
+            if(num_of_not_less_than_h(citations,mid)>=mid){
+                start=mid;
+            }else{
+                end=mid;
+            }
+        }
+        if(num_of_not_less_than_h(citations,end)>=end){
+            return end;
+        }
+        return start;
+    }
+private:
+    int num_of_not_less_than_h(vector<int>&nums,int h){
+        int cnt=0;
+        for(auto &num:nums){
+            if(num>=h){
+                cnt++;
+            }
+        }
+        return cnt;
+    }
+};
