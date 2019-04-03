@@ -45,5 +45,73 @@ private:
  * int param_2 = obj.sumRange(i,j);
  */
  
- Solution 2:
- 
+Solution 2:
+class NumArray {
+public:
+    //线段树
+    struct Node{
+        int start,end,sum;
+        Node *left,*right;
+        Node(int s,int e):start(s),end(e),sum(0),left(NULL),right(NULL){}
+    };
+    NumArray(vector<int> nums) {
+        root=build_tree(nums,0,nums.size()-1);
+    }
+    
+    void update(int i, int val) {
+        update_helper(root,i,val);
+    }
+    
+    int sumRange(int i, int j) {
+        return range_helper(root,i,j);
+    }
+private:
+    Node *root=NULL;
+    Node *build_tree(vector<int>&nums,int s,int e){
+        if(s>e){
+            return NULL;
+        }
+        Node *root=new Node(s,e);
+        if(s==e){
+            root->sum=nums[s];
+        }
+        else{
+            int mid=s+(e-s)/2;
+            root->left=build_tree(nums,s,mid);
+            root->right=build_tree(nums,mid+1,e);
+            root->sum=root->left->sum+root->right->sum;
+        }
+        return root;
+    }
+    
+    void update_helper(Node *root,int pos,int val){
+        if(root->start==root->end&&root->start==pos){
+            root->sum=val;
+            return;
+        }
+        int mid=root->start+(root->end-root->start)/2;
+        if(pos<=mid){
+            update_helper(root->left,pos,val);
+        }else{
+            update_helper(root->right,pos,val);
+        }
+        root->sum=root->left->sum+root->right->sum;
+    }
+    
+    int range_helper(Node* root,int s,int e){
+        if(root->start==s&&root->end==e){
+            return root->sum;
+        }
+        int mid=root->start+(root->end-root->start)/2;
+        if(e<=mid){
+            return range_helper(root->left,s,e);
+        }
+        else if(s>mid){
+            return range_helper(root->right,s,e);
+        }
+        else{
+            return range_helper(root->left,s,mid)+range_helper(root->right,mid+1,e);
+        }
+    }
+};
+
