@@ -52,6 +52,7 @@ Solution 2:重构Solution1的代码
 class Solution {
 public:
     /*
+        将给定字符串的重复字符删去只保留一个 剩下的字符保持相对顺序 找到字母序最小的字符串
         记录每一个字符出现的次数cnt 且记录栈中已有的字符occur
         当栈顶字符大于当前字符时 top>cur
             如果:cnt[top]>=1且occur[cur]==false那么出栈 因为将其放在cur后面能够构成更小的字母序
