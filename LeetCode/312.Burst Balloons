@@ -40,3 +40,54 @@ class Solution {
         return dp[0][n-1];
     }
 }
+
+update:解释
+/*
+    参考：https://www.cnblogs.com/njufl/p/LeetCode.html
+    题目的大意是：给你一串气球，每个气球上都标了一个数字，这些数字用一个数组nums来表示。如果你扎破第i个气球，
+    你就可以获得 nums[left] * nums[i] * nums[right] 个硬币，其中left和right是与第i个气球相邻的两个气球，
+    当i被扎破后，left和right就变成直接相邻了。找出一个扎破所有气球的顺序，使得最后获得的硬币数量的总和最大。
+
+　　解决这道题的思路是动态规划，这道题和经典的矩阵连乘问题很相似，我的算法分析也借鉴了矩阵连乘的求解思路。
+    首先，我们考虑将问题分解成一个或多个子问题，假设第i个气球是第一个扎破的气球，我们可以得到 nums[i - 1] * nums[i] * nums[i + 1] + maxCoins(int[] newNums) 个硬币，
+    其中newNums表示的是删掉 nums[i] 后由数组nums中剩余元素构成的新数组。如果以这个顺序来分解问题，我们每次都要重新调整数组的结构，并且在这种分解顺序下，原问题和子问题难以用简洁的标识符来表示。因此，我们换一种方式考虑，如果假设第i个气球是最后一个扎破的气球， 剩下的气球不管以什么样的顺序扎破，位于第i个气球的左边的所有气球，它们的“right”值只可能小于等于i，而位于第i个气球右边的所有气球，它们的“left”值只可能大于等于i。因此，如果第i个气球最后扎破，那么它左右两边的气球的扎破顺序可以分开来求(按任何顺序扎破左半边的所有气球不会影响右半边的最大值，右半边同理)，并且在分解问题的过程中我们不需要调整数组nums的结构。所以，以 maxCoins[0][n - 1]表示原问题的解，则可以做如下分解：
+
+    maxCoins[0][n - 1] = maxCoins[0][i - 1] + maxCoins[i + 1][n - 1] + nums[left] * nums[i] * nums[right]
+    
+    接下来需要考虑 left 和 right 的取值以及边界问题。对于最后一个扎破的气球i，得到的硬币数为 nums[-1] * nums[i] * nums[n]，其中 nums[-1] = nums[n] = 1。
+    为了方便计算，我们可以将原数组加上首尾两个元素，即 nums[-1] 和 nums[n]，用一个长度为 n + 2 新的数组，tnums[]，来表示。
+    为了方便计算，我们用 maxCoins[low][high] 表示在数组 tnums 中下标范围为 (low,high)，或者说是 [low + 1,high - 1] 的气球所能获得的最大硬币个数，注意这是个开区间，所以原问题的解即 maxCoins[0][tnums.length - 1]。接下来要确定 left 和 right 的取值，对于 maxCoins[low][high]，当数组中只剩下最后一个气球k时， 根据题目中给出的例子，扎破这个气球得到的硬币个数是： tnums[low] * tnums[k] * tnums[high] 。写出状态转移方程如下：
+
+    maxCoins[low][high] = max{maxCoins[low][k] + maxCoins[k][high] + tnums[low] * tnums[k] * tnums[high] , low < k <high && (high - low) > 2}
+
+                                    or    = tnums[low] * tnums[k] * tnums[high] , (high - low) == 2
+*/
+
+class Solution {
+public:
+    /*
+        核心思想:不要从第一个扎破的气球考虑，而是从最后扎破的气球着手考虑
+        同时dp[i][j]表示(i,j)能获得的最大收益
+        dp[i][j]=max(nums[i]*nums[k]*nums[j]+dp[i][k]+dp[k][j]) i<k<j
+        k是最后一个扎破的气球，在扎破k时他的左右气球是i,j
+        对于在k之前扎破的气球不管以什么样的顺序扎破，位于k气球的左边的所有气球，它们的“right”值只可能小于等于k
+        而位于第i个气球右边的所有气球，它们的“left”值只可能大于等于k。
+        因此，如果k个气球最后扎破，那么它左右两边的气球的扎破顺序可以分开来求(按任何顺序扎破左半边的所有气球不会影响右半边的最大值，右半边同理)
+    */
+    int maxCoins(vector<int>& nums) {
+        int n=nums.size()+2;
+        vector<vector<int>> dp(n,vector<int>(n,0));
+        nums.insert(nums.begin(),1);
+        nums.push_back(1);
+        //j-i>=2
+        for(int L=2;L<n;L++){
+            for(int i=0;i+L<n;i++){
+                int j=i+L;
+                for(int k=i+1;k<j;k++){
+                    dp[i][j]=max(dp[i][j],nums[i]*nums[k]*nums[j]+dp[i][k]+dp[k][j]);
+                }
+            }
+        }
+        return dp[0][n-1];
+    }
+};
