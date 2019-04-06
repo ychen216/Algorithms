@@ -60,6 +60,16 @@ public:
         So just count the square numbers：
         Let R = int(sqrt(n)). That's the root of the largest square in the range [1,n]. And 1 is the smallest root. So you have the roots from 1 to R, that's R roots. Which correspond to the R squares. So int(sqrt(n)) is the answer. (C++ does the conversion to int automatically, because of the specified return type).
     */
+    /*
+        对于每一个灯泡i来说 经过n轮 如果switch的次数：
+            是奇数那么灯泡i就是on
+            是偶数那么灯泡i就是off
+        为了判断经过n轮灯泡i switch的次数，可以计算i的因数个数
+        比如第4个灯泡 在第1轮第2轮和第四轮 3次switch 这和4的因数为1,2,4相一致
+        对于一个数x他的因数个数时奇数当且仅当x是一个完全平方数 eg.9的因子(1,9),(3,3)
+        12的因数个数为偶数：(1,12)(2,6)(3,4)
+        所以只需要计算[1,n]有多少个完全平方数：可以通过sqrt(n)来求解[1,sqrt(n)]的数的平方<=n
+    */
     int bulbSwitch(int n) {
         return sqrt(n);
     }
