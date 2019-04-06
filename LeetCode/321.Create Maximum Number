@@ -97,3 +97,75 @@ private:
         return res;
     }
 };
+
+update:refine 包括传引用
+class Solution {
+public:
+    /* 参考 http://blog.csdn.net/yzhang6_10/article/details/51367533
+    https://www.cnblogs.com/CarryPotMan/p/5384172.html
+    要组成长度为k的数字 那么可以从nums1中取出长度为i的对应数值最大的子序列v1 从nums2中取出长度为k-i的对应数值最大的子序列v2
+    然后把v1 v2 merge成一个数
+    那么如何从数组中取出长度为i的最大子序列：
+        新建一个空栈stack
+        遍历数组 nums
+        如果栈顶元素比nums[i]小则弹出栈顶元素,直到
+            1、栈空
+            2、剩余的数组不足以填满栈至 k
+        如果栈的大小小于k,则压入nums[i]
+        返回栈stack
+        因为栈的长度知道是k，所以可以用数组来实现这个栈。时间复杂度为O(n)，因为每个元素最多被push和pop()一次
+    */
+    vector<int> maxNumber(vector<int>& nums1, vector<int>& nums2, int k) {
+        int n1=nums1.size();
+        int n2=nums2.size();
+        vector<int> res(k);
+        for(int i=max(0,k-n2);i<=min(k,n1);i++){
+            vector<int> v1(i),v2(k-i);
+            findMaxSequence(nums1,i,v1);
+            findMaxSequence(nums2,k-i,v2);
+            vector<int> cur=merge(v1,v2);
+            if(compare(cur,0,res,0)){
+                res=cur;
+            }
+        }
+        return res;
+    }
+private:
+    //求数组中长度为k的最大子序列
+    void findMaxSequence(vector<int> &num,int k,vector<int> &res){
+        int n=num.size();
+        //j是指res中下一个可以放置的位置
+        for(int i=0,j=0;i<n;i++){
+            while(j>0&&j+n-i>k&&res[j-1]<num[i]){
+                j--;
+            }
+            if(j<k){
+                res[j++]=num[i];
+            }
+        }
+    }
+    
+    //判断先放置num1[i]还是num2[j]可以构成较大的结果
+    bool compare(vector<int>& num1,int i,vector<int>&num2,int j){
+        int n1=num1.size(),n2=num2.size();
+        while(i<n1&&j<n2&&num1[i]==num2[j]){
+            i++;
+            j++;
+        }
+        return j==n2||i<n1&&num1[i]>num2[j];
+    }
+    
+    vector<int> merge(vector<int>&num1,vector<int>&num2){
+        int n=num1.size()+num2.size();
+        vector<int> res(n);
+        int i=0,j=0;
+        for(int k=0;k<n;k++){
+            if(compare(num1,i,num2,j)){
+                res[k]=num1[i++];
+            }else{
+                res[k]=num2[j++];
+            }
+        }
+        return res;
+    }
+};
