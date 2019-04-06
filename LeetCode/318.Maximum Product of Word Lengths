@@ -73,3 +73,35 @@ public:
         return maxProduct;
     }
 };
+
+update:加上剪枝操作 更慢...
+class Solution {
+public:
+    int maxProduct(vector<string>& words) {
+        int n=words.size();
+        sort(words.begin(),words.end(),[](string &a,string &b){
+            return a.length()>b.length();
+        });
+        vector<int> contain(n,0);
+        for(int i=0;i<n;i++){
+            for(auto &c:words[i]){
+                contain[i]|=1<<(c-'a');
+            }
+        }
+        int res=0,leni,lenj;
+        for(int i=0;i<n;i++){
+            leni=words[i].length();
+            if(leni*leni<=res)break;
+            for(int j=i+1;j<n;j++){
+                lenj=words[j].length();
+                if((contain[i]&contain[j])==0){
+                    if(res<leni*lenj){
+                        res=leni*lenj;
+                        break;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+};
