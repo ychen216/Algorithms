@@ -1,4 +1,5 @@
-c
+329.Longest Increasing Path in a Matrix
+
 /*
 Given an integer matrix, find the length of the longest increasing path.
 
@@ -30,41 +31,43 @@ public:
     memorized dfs
     不需要visit数组判断是否走过 因为要保证matrix[i][j]<=matrix[x][y] 所以i,j不会重新走到x,y处
     */
-   
+    // dp[i][j]表示以i,j结尾的LIP 
+    // dp[i][j]=max(1,max(1+dp[x][y])) xy是ij的上下左右且matrix[i][j]>matrix[x][y]
     int longestIncreasingPath(vector<vector<int>>& matrix) {
-        int row=matrix.size();
-        if(row==0)
+        int r=matrix.size();
+        if(r==0){
             return 0;
-        int col=matrix[0].size();
-        if(col==0)
+        }
+        int c=matrix[0].size();
+        if(c==0){
             return 0;
-        vector<vector<int>> dp(row,vector<int>(col,0));
-        int res=1,temp;
-        //遍历
-        for(int i=0;i<row;i++)
-            for(int j=0;j<col;j++){
-                temp=dfs(matrix,dp,i,j,row,col);
-                res=max(temp,res);
+        }
+        vector<vector<int>> dp(r,vector<int>(c,0));
+        int res=0;
+        for(int i=0;i<r;i++){
+            for(int j=0;j<c;j++){
+                res=max(res,dfs(matrix,dp,i,j,r,c));
             }
+        }
         return res;
     }
 private:
-    int dfs(vector<vector<int>>&matrix,vector<vector<int>>&dp,int i,int j,int row,int col){
-        if(dp[i][j]!=0)
-            return dp[i][j];
-        int res=1;
-        int dx[]={-1,1,0,0},dy[]={0,0,-1,1};
-        //上下左右
-        for(int k=0;k<4;k++){
-            int x=dx[k]+i;
-            int y=dy[k]+j;
-            if(x<0||x>=row||y<0||y>=col||matrix[x][y]>=matrix[i][j])continue;
-            int len=1+dfs(matrix,dp,x,y,row,col);
-            res=max(res,len);
+    int dx[4]={-1,1,0,0},dy[4]={0,0,-1,1};
+    int dfs(vector<vector<int>> &matrix,vector<vector<int>> &dp,int x,int y,int r,int c){
+        if(dp[x][y]!=0){
+            return dp[x][y];
         }
-        dp[i][j]=res;
-        return res;
+        int res=0,xx,yy;
+        for(int i=0;i<4;i++){
+            xx=x+dx[i];
+            yy=y+dy[i];
+            if(xx<0||xx>=r||yy<0||yy>=c||matrix[xx][yy]>=matrix[x][y]) continue;
+            res=max(res,dfs(matrix,dp,xx,yy,r,c));
+        }
+        dp[x][y]=res+1;
+        return dp[x][y];
     }
+};
 };
 
 update:
