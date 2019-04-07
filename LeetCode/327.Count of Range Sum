@@ -13,7 +13,30 @@ Return 3.
 The three ranges are : [0, 0], [2, 2], [0, 2] and their respective sums are: -2, -1, 2
 */
 
-Solution:
+Solution 1:TLE
+class Solution {
+public:
+    //利用sum数组遍历range(i,j) 时间复杂度O(n^2)
+    int countRangeSum(vector<int>& nums, int lower, int upper) {
+        int n=nums.size();
+        vector<int> sum(n+1,0);
+        for(int i=0;i<n;i++){
+            sum[i+1]=sum[i]+nums[i];
+        }
+        int res=0;
+        for(int i=0;i<n;i++){
+            for(int j=i;j<n;j++){
+                int range_sum=sum[j+1]-sum[i];
+                if(range_sum>=lower&&range_sum<=upper){
+                    res++;
+                }
+            }
+        }
+        return res;
+    }
+};
+
+Solution 2:
 class Solution {
 public:
     /*  sum[i]为0~i元素之和
