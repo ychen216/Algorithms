@@ -46,3 +46,73 @@ public:
         route.push_back(from);
     }
 };
+
+
+update:解释
+class Solution {
+public:
+    /*
+        参考：https://zxi.mytechroad.com/blog/graph/leetcode-332-reconstruct-itinerary/
+        重新安排行程，使得给出的所有航班都得经过一次。如果出现多条可行的路径，那么优先选择的字典序最小的航班路径。出发点一定是JFK，而且题目保证了最少有一个可行的遍历路径。
+        这道题的本质是计算一个最"小"的欧拉路径(Eulerian path)。对于一个节点（当然先从JFK开始)，贪心地访问最小的邻居，访问过的边全部删除。
+        idea:sort children + post order travel
+        将ticket以JFK为根节点构建树，构建时按照孩子节点的字符序大小顺序构建，一旦构建，就删除两个节点之间的边
+        然后遍历的时候按照后序遍历，先访问所有孩子节点 再访问根节点，最后将后序遍历的结果reverse即为所求
+    */
+    vector<string> findItinerary(vector<pair<string, string>> tickets) {
+        unordered_map<string,multiset<string>> graph;
+        for(auto &path:tickets){
+            graph[path.first].insert(path.second);
+        }
+        vector<string> res;
+        travel("JFK",graph,res);
+        return vector<string>(res.rbegin(),res.rend());
+    }
+private:
+    void travel(string root,unordered_map<string,multiset<string>> &graph,vector<string> &res){
+        //后序遍历 先访问所有孩子
+        while(graph[root].size()>0){
+            auto first=graph[root].begin();
+            string child=*first;
+            graph[root].erase(first);
+            travel(child,graph,res);
+        }
+        res.push_back(root);
+    }
+};
+
+update:也可以用deque双端队列保存图 deque支持从前后两个方向插入和删除
+class Solution {
+public:
+    /*
+        参考：https://zxi.mytechroad.com/blog/graph/leetcode-332-reconstruct-itinerary/
+        重新安排行程，使得给出的所有航班都得经过一次。如果出现多条可行的路径，那么优先选择的字典序最小的航班路径。出发点一定是JFK，而且题目保证了最少有一个可行的遍历路径。
+        这道题的本质是计算一个最"小"的欧拉路径(Eulerian path)。对于一个节点（当然先从JFK开始)，贪心地访问最小的邻居，访问过的边全部删除。
+        idea:sort children + post order travel
+        将ticket以JFK为根节点构建树，构建时按照孩子节点的字符序大小顺序构建，一旦构建，就删除两个节点之间的边
+        然后遍历的时候按照后序遍历，先访问所有孩子节点 再访问根节点，最后将后序遍历的结果reverse即为所求
+    */
+    vector<string> findItinerary(vector<pair<string, string>> tickets) {
+        unordered_map<string,deque<string>> graph;
+        for(auto &path:tickets){
+            graph[path.first].push_back(path.second);
+        }
+        for(auto &p:graph){
+            auto &path=p.second;
+            sort(path.begin(),path.end());
+        }
+        vector<string> res;
+        travel("JFK",graph,res);
+        return vector<string>(res.rbegin(),res.rend());
+    }
+private:
+    void travel(string root,unordered_map<string,deque<string>> &graph,vector<string> &res){
+        //后序遍历 先访问所有孩子
+        while(!graph[root].empty()){
+            auto first=graph[root].front();
+            graph[root].pop_front();
+            travel(first,graph,res);
+        }
+        res.push_back(root);
+    }
+};
