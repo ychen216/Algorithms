@@ -59,3 +59,60 @@ private:
         return true;
     }
 };
+
+
+Solution 2:
+class Solution {
+public:
+    /*
+        对于词AB来说，如果A是回文串,那么revsere_B A B是回文串;如果B是回文串,那么A B reverseA是回文串
+        可以遍历每个词找到合适的切分点(应该包括A,B是空串的情况),将词分成AB然后寻找是否存在reverse_A和reverse_B
+        问了方便找到每个词对应的下标 利用map记录string-->index
+        这里要注意生成答案的时候要保证不重复 一种方法是通过下面代码的方式；一种通过set的方式
+    */
+    vector<vector<int>> palindromePairs(vector<string>& words) {
+        vector<vector<int>> res;
+        unordered_map<string,int> mmp;
+        int n=words.size();
+        for(int i=0;i<n;i++){
+            mmp[words[i]]=i;
+        }
+        for(int i=0;i<n;i++){
+            for(int j=0;j<=words[i].length();j++){
+                string A=words[i].substr(0,j);
+                string B=words[i].substr(j);
+                if(is_palindrom(A)){
+                    string revB=B;
+                    reverse(revB.begin(),revB.end());
+                    //这里必须要check A的长度!=0 来避免重复答案的生成
+                    //eg 如果存在两个字符串"abcd","dcba"
+                    //便利到abcd时 划分""abcd 如果存在dcba 这里会生成答案dcba "" abcd
+                    //下面划分为abcd""时 check B 会生成abcd "" dcba
+                    //在遍历到dcba时 会出现划分""dcba--> abcd "" dcba; 划分为dcba""--> dcba "" abcd
+                    if(mmp.find(revB)!=mmp.end()&&mmp[revB]!=i&&A.length()!=0){
+                        res.push_back({mmp[revB],i});
+                    }
+                }
+                if(is_palindrom(B)){
+                    string revA=A;
+                    reverse(revA.begin(),revA.end());
+                    if(mmp.find(revA)!=mmp.end()&&mmp[revA]!=i){
+                        res.push_back({i,mmp[revA]});
+                    }
+                }
+            }
+        }
+        return res;
+    }
+private:
+    bool is_palindrom(string &s){
+        int i=0,j=s.length()-1;
+        while(i<j){
+            if(s[i]!=s[j]){
+                return false;
+            }
+            i++;j--;
+        }
+        return true;
+    }
+};
