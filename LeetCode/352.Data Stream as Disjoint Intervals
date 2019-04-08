@@ -68,3 +68,41 @@ private:
  * obj.addNum(val);
  * vector<Interval> param_2 = obj.getIntervals();
  */
+
+
+update:
+class SummaryRanges {
+public:
+    /** Initialize your data structure here. */
+    SummaryRanges() {
+        
+    }
+    
+    void addNum(int val) {
+        Interval cur(val,val);
+        int i=0,n=v.size();
+        vector<Interval> res;
+        //在cur前面不相交的部分
+        while(i<n&&v[i].end+1<cur.start){
+            res.push_back(v[i++]);
+        }
+        //相交的部分 v[i].end+1>=cur.start
+        while(i<n&&cur.end+1>=v[i].start){
+            cur.start=min(cur.start,v[i].start);
+            cur.end=max(cur.end,v[i].end);
+            i++;
+        }
+        //在cur后不相交的部分
+        res.push_back(cur);
+        while(i<n){
+            res.push_back(v[i++]);
+        }
+        v=res;
+    }
+    
+    vector<Interval> getIntervals() {
+        return v;
+    }
+private:
+    vector<Interval> v;
+};
