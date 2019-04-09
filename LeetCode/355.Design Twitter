@@ -1,0 +1,149 @@
+355. Design Twitter
+
+/*
+Design a simplified version of Twitter where users can post tweets, follow/unfollow another user and is able to see the 10 most recent tweets in the user's news feed. Your design should support the following methods:
+
+postTweet(userId, tweetId): Compose a new tweet.
+getNewsFeed(userId): Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent.
+follow(followerId, followeeId): Follower follows a followee.
+unfollow(followerId, followeeId): Follower unfollows a followee.
+
+Example:
+  Twitter twitter = new Twitter();
+
+  // User 1 posts a new tweet (id = 5).
+  twitter.postTweet(1, 5);
+
+  // User 1's news feed should return a list with 1 tweet id -> [5].
+  twitter.getNewsFeed(1);
+
+  // User 1 follows user 2.
+  twitter.follow(1, 2);
+
+  // User 2 posts a new tweet (id = 6).
+  twitter.postTweet(2, 6);
+
+  // User 1's news feed should return a list with 2 tweet ids -> [6, 5].
+  // Tweet id 6 should precede tweet id 5 because it is posted after tweet id 5.
+  twitter.getNewsFeed(1);
+
+  // User 1 unfollows user 2.
+  twitter.unfollow(1, 2);
+
+  // User 1's news feed should return a list with 1 tweet id -> [5],
+  // since user 1 is no longer following user 2.
+  twitter.getNewsFeed(1);
+*/
+
+Solution:
+class Tweet{
+public:
+    int id,time;
+    Tweet * next;
+    Tweet(int i,int t):id(i),time(t),next(NULL){}
+};
+
+class User{
+public:
+    int id;
+    unordered_set<int> followees;
+    Tweet *tweet;
+    User(){} //是必须的
+    User(int i){
+        id=i;
+        tweet=NULL;
+        follow(i);
+    }
+    void follow(int id){
+        followees.insert(id);
+    }
+    void unfollow(int id){
+        followees.erase(id);
+    }
+    void post(int tweetId,int time){
+        Tweet *old=tweet;
+        Tweet *cur=new Tweet(tweetId,time);
+        cur->next=old;
+        tweet=cur;
+    }
+};
+class Twitter {
+public:
+    /** Initialize your data structure here. */
+    Twitter() {
+        time=0;
+    }
+    
+    /** Compose a new tweet. */
+    void postTweet(int userId, int tweetId) {
+        if(id_to_user.find(userId)==id_to_user.end()){
+            id_to_user[userId]=User(userId);
+        }
+        id_to_user[userId].post(tweetId,time++);
+    }
+    
+    struct cmp{
+        //最大堆
+        bool operator()(Tweet *t1,Tweet *t2){
+            return t1->time < t2->time;
+        }
+    };
+    
+    /** Retrieve the 10 most recent tweet ids in the user's news feed. Each item in the news feed must be posted by users who the user followed or by the user herself. Tweets must be ordered from most recent to least recent. */
+    vector<int> getNewsFeed(int userId) {
+        vector<int> res;
+        if(id_to_user.find(userId)==id_to_user.end()){
+            return res;
+        }
+        auto &followees=id_to_user[userId].followees;
+        priority_queue<Tweet*,vector<Tweet*>,cmp> pq; //最大堆
+        for(auto &id:followees){
+            auto followee=id_to_user[id];
+            if(followee.tweet){
+                pq.push(followee.tweet);
+            }
+        }
+        int k=0;
+        while(!pq.empty()&&k<10){
+            auto recent=pq.top();
+            pq.pop();
+            res.push_back(recent->id);
+            if(recent->next){
+                pq.push(recent->next);
+            }
+            k++;
+        }
+        return res;
+    }
+    
+    /** Follower follows a followee. If the operation is invalid, it should be a no-op. */
+    void follow(int followerId, int followeeId) {
+        if(id_to_user.find(followerId)==id_to_user.end()){
+            id_to_user[followerId]=User(followerId);
+        }
+        if(id_to_user.find(followeeId)==id_to_user.end()){
+            id_to_user[followeeId]=User(followeeId);
+        }
+        id_to_user[followerId].follow(followeeId);
+    }
+    
+    /** Follower unfollows a followee. If the operation is invalid, it should be a no-op. */
+    void unfollow(int followerId, int followeeId) {
+        if(id_to_user.find(followerId)==id_to_user.end()||followerId==followeeId){
+            return;
+        }
+        id_to_user[followerId].unfollow(followeeId);
+    }
+private:
+    int time;
+    unordered_map<int,User> id_to_user;
+};
+
+/**
+ * Your Twitter object will be instantiated and called as such:
+ * Twitter* obj = new Twitter();
+ * obj->postTweet(userId,tweetId);
+ * vector<int> param_2 = obj->getNewsFeed(userId);
+ * obj->follow(followerId,followeeId);
+ * obj->unfollow(followerId,followeeId);
+ */
