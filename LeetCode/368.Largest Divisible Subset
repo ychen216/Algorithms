@@ -105,3 +105,39 @@ public:
         return res;
     }
 };
+
+update;
+class Solution {
+public:
+    vector<int> largestDivisibleSubset(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int n=nums.size();
+        vector<int> dp(n,0),pre(n,-1);//第i个元素结尾的LIS, 第i个元素结尾的LIS的前一个元素下标
+        int maxLen=0,maxId=-1;
+        for(int i=0;i<n;i++){
+            int curLen=0,id=-1;
+            for(int j=0;j<i;j++){
+                if(nums[i]%nums[j]==0&&curLen<dp[j]){
+                    curLen=dp[j];
+                    id=j;
+                }
+            }
+            //更新dp[i] pre[i]
+            dp[i]=curLen+1;
+            if(id!=-1){
+                pre[i]=id;
+            }
+            //更新全局maxLen和LIS的下标
+            if(dp[i]>maxLen){
+                maxLen=dp[i];
+                maxId=i;
+            }
+        }
+        vector<int> res(maxLen);
+        for(int i=maxLen-1;i>=0;i--){
+            res[i]=nums[maxId];
+            maxId=pre[maxId];
+        }
+        return res;
+    }
+};
