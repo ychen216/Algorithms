@@ -86,3 +86,49 @@ public:
         return res;
     }
 };
+
+
+update:
+class Solution {
+public:
+    /*
+        暴力法:枚举所有可能的矩形，即遍历矩形左上角和右下角由此固定矩形上下左右四条边 O((mn)^2)
+        这里做一个改进可以降低复杂度 O[min(m,n)^2 * max(m,n) * log(max(m,n))], space O(max(m, n)):
+        思想是：将二维的问题转化为一维数组中最大子数组和的问题。具体的：
+        我们固定矩形左右两条边 然后计算在左右两条边内每一行的元素和(每行元素和就是一维数组的元素，在左右两条边的包围下可能的矩形就是连续的一段行元素和)；
+        最后我们枚举矩形下面的那条边 去寻找最能满足矩形元素和<=k的上面那条边;
+    */
+    int maxSumSubmatrix(vector<vector<int>>& matrix, int k) {
+        if(matrix.empty()||matrix[0].empty()){
+            return 0;
+        }        
+        int row=matrix.size();
+        int col=matrix[0].size();
+        int res=INT_MIN; //初始化应该是INT_MIN 因为这里不是面积而是元素和 有可能为负
+        //固定左右两条边
+        for(int left=0;left<col;left++){
+            vector<int> row_sum(row,0);
+            for(int right=left;right<col;right++){
+                //计算[left,right]之间第r行元素和
+                for(int r=0;r<row;r++){
+                    row_sum[r]+=matrix[r][right];
+                }
+                
+                int curMax=INT_MIN,sum=0;
+                set<int> sset({0});//标记元素 避免处理栈空的情况
+                //利用set寻找合适的矩形上面的边
+                for(int i=0;i<row;i++){
+                    sum+=row_sum[i];
+                    //pre为上面边以上的行元素和 矩形元素和：sum-pre<=k --> pre>=sum-k
+                    auto it=sset.lower_bound(sum-k);
+                    if(it!=sset.end()){
+                        curMax=max(curMax,sum-*it);
+                    }
+                    sset.insert(sum);
+                }
+                res=max(res,curMax);
+            }
+        }
+        return res;
+    }
+};
