@@ -38,3 +38,35 @@ public:
         return maxLen;
     }
 };
+
+update:NlogN
+class Solution {
+public:
+    /*
+        按照套娃的宽从小到大 高从大到小排序 然后寻找最长递增子序列
+        这么排序是为了利用nlgn的方法查找LIS
+        Since the width is increasing, we only need to consider height.
+        [3, 4] cannot contains [3, 3], so we need to put [3, 4] before [3, 3] when sorting otherwise it will be counted as an increasing number if the order is [3, 3], [3, 4]
+        因为这样可以保证依次遍历数组的时候后面的width始终比前面的大并且如果高度也大于前面的就一定可以包含前面的．如果不对height降序排列形如[6,4]、[6,7]，这样[6,7]会包含[6,4]然而这样是不能包含的．
+    */
+    int maxEnvelopes(vector<pair<int, int>>& envelopes) {
+        sort(envelopes.begin(),envelopes.end(),[](pair<int,int> &p1,pair<int,int> &p2){
+            if(p1.first!=p2.first){
+                return p1.first<p2.first;
+            }
+            return p1.second>p2.second;
+        });
+        int n=envelopes.size();
+        vector<int> tail;
+        for(int i=0;i<n;i++){
+            auto big=lower_bound(tail.begin(),tail.end(),envelopes[i].second);
+            if(big==tail.end()){
+                tail.push_back(envelopes[i].second);
+            }
+            else{
+                *big=envelopes[i].second;
+            }
+        }
+        return tail.size();
+    }
+};
