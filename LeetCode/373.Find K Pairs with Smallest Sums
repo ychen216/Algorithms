@@ -99,9 +99,12 @@ public:
             res.push_back({cur[0],cur[1]});
             // nums1的元素继续和nums2的元素拓展组成较大的pair
             if(cur[2]==nums2.size()-1) continue; //nums1[i]在nums2中没有可以继续扩展的元素了
-            vector<int> next(3);
-            next[0]=cur[0],next[1]=nums2[cur[2]+1],next[2]=cur[2]+1;
-            pq.push(next);
+            //vector<int> next(3);
+            //next[0]=cur[0],next[1]=nums2[cur[2]+1],next[2]=cur[2]+1;
+            //可以不用再生成一次 直接在原来的数组上改
+            cur[2]++;
+            cur[1]=nums2[cur[2]];
+            pq.push(cur);
         }
         return res;
     }
