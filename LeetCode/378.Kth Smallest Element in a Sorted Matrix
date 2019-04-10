@@ -1,26 +1,27 @@
 378. Kth Smallest Element in a Sorted Matrix
+
 /*
 Given a n x n matrix where each of the rows and columns are sorted in ascending order, find the kth smallest element in the matrix.
 
 Note that it is the kth smallest element in the sorted order, not the kth distinct element.
 
 Example:
+   matrix = [
+      [ 1,  5,  9],
+      [10, 11, 13],
+      [12, 13, 15]
+   ],
+   k = 8,
 
-matrix = [
-   [ 1,  5,  9],
-   [10, 11, 13],
-   [12, 13, 15]
-],
-k = 8,
-
-return 13.
+   return 13.
 Note: 
 You may assume k is always valid, 1 ≤ k ≤ n2.
 */
 
 Solution:
 class Solution {
-public:
+public:  
+    // O(k* #(row))
     int kthSmallest(vector<vector<int>>& matrix, int k) {
         int n=matrix.size();
         int first[n]={0};//表示每一行还未选中且最小的元素的下标
@@ -40,6 +41,51 @@ public:
             first[targetRow]++;
         }
         return min_value;
+    }
+};
+
+update:利用最小堆
+class Solution {
+public:
+    //利用最小堆 第k次出队的就是k smallest element O(klg(#row))
+    //起始时将每行第一个元素和他的行列信息入队
+    //出队的元素就是当前最小的元素，那么该元素对应行的下一个元素是下一个最小元素的候选将其加入堆
+    struct Node{
+        int val,r,c;
+        Node(){}
+        Node(int v,int rr,int cc):val(v),c(cc),r(rr){}
+        bool operator<(const Node &n)const{
+            return val>n.val;
+        }
+    };
+    int kthSmallest(vector<vector<int>>& matrix, int k) {
+        if(matrix.empty()||matrix[0].empty()){
+            return 0;
+        }
+        int row=matrix.size();
+        int col=matrix[0].size();
+        priority_queue<Node> pq;//最小堆
+        //最小元素的候选集为所有行的首元素
+        for(int i=0;i<row;i++){
+            pq.push(Node(matrix[i][0],i,0));
+        }
+        int res=0;
+        while(!pq.empty()&&k-->0){
+            auto cur=pq.top();
+            pq.pop();
+            if(k==0){
+                res=cur.val;
+                break;
+            }
+            //该行已经到行末了没有别的可以加入的元素了
+            if(cur.c==col-1){
+                continue;
+            }
+            cur.c++;
+            cur.val=matrix[cur.r][cur.c];
+            pq.push(cur);
+        }
+        return res;
     }
 };
 
@@ -97,7 +143,7 @@ Solution 3: Binary Search
 class Solution {
 public:
     /*
-        同时利用每一行每一列排序好的特点 左上角和右下角一定是矩阵中最大和最小的元素
+        同时利用每一行每一列排序好的特点 左上角和右下角一定是矩阵中最小和最大的元素
         利用二分搜索 每次统计矩阵中小于等于中间值的数字个数cnt 拿它和k比较来确定第k小的数字在左半部分还是右半部分
     */
     int kthSmallest(vector<vector<int>>& matrix, int k) {
