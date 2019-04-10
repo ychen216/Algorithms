@@ -62,3 +62,19 @@ public:
         return x;
     }
 };
+
+Solution 3:
+class Solution {
+public:
+    //也可以利用XOR 除了随机插入的字符 s和t中的字符都是成对出现的 XOR后==0 最后只会留下随机插入的字符
+    char findTheDifference(string s, string t) {
+        char res=0;
+        for(auto &c:s){
+            res^=c;
+        }
+        for(auto &c:t){
+            res^=c;
+        }
+        return res;
+    }
+};
