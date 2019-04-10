@@ -62,6 +62,7 @@ public:
         //交换要删除的元素和最后一个元素
         //判断删除的元素是否是vector中最后一个元素
         int index=pos[val];
+        pos.erase(val);
         if(index!=nums.size()-1){
             //将最后一个元素替换到删除元素的位置 更新map中最后一个元素的位置
             int replace=nums[nums.size()-1];
@@ -70,7 +71,6 @@ public:
         }
         //删除
         nums.pop_back();
-        pos.erase(val);
         return true;
     }
     
