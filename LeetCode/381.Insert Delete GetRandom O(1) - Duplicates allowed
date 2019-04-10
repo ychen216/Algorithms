@@ -89,3 +89,62 @@ private:
  * bool param_2 = obj.remove(val);
  * int param_3 = obj.getRandom();
  */
+
+
+Solution 2:
+class RandomizedCollection {
+public:
+    /*
+        利用vector保存元素
+        unordered_map<int,unordered_set<int>> 保存val的位置集合
+    */
+    /** Initialize your data structure here. */
+    RandomizedCollection() {
+        
+    }
+    
+    /** Inserts a value to the collection. Returns true if the collection did not already contain the specified element. */
+    bool insert(int val) {
+        bool res=false;
+        if(val_pos.find(val)==val_pos.end()){
+            val_pos[val]=unordered_set<int>();
+            res=true;
+        }
+        val_pos[val].insert(v.size());
+        v.push_back(val);
+        return res;
+    }
+    
+    /** Removes a value from the collection. Returns true if the collection contained the specified element. */
+    bool remove(int val) {
+        if(val_pos.find(val)==val_pos.end()){
+            return false;
+        }
+        //采用将要删除的元素和vector最后一个元素替换 然后删除最后一个元素的做法
+        int pos=*(val_pos[val].begin());
+        val_pos[val].erase(pos); //要先删掉 不能放在if结束后 不然有错误比如在4,2,3,4中删除4
+        //要删除的val不在vector的最末位
+        if(pos!=v.size()-1){
+            //和最后一个调换位置
+            v[pos]=v.back();
+            //更新v.back()的位置
+            val_pos[v.back()].erase(v.size()-1);
+            val_pos[v.back()].insert(pos);
+        }
+        v.pop_back();
+        //如果val全部都删完了 要把整个val的位置set erase
+        if(val_pos[val].size()==0){
+            val_pos.erase(val);
+        }
+        return true;
+    }
+    
+    /** Get a random element from the collection. */
+    int getRandom() {
+        return v[rand()%v.size()];
+    }
+private:
+    vector<int> v;
+    unordered_map<int,unordered_set<int>> val_pos;
+};
+
