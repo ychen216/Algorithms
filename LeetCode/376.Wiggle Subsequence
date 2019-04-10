@@ -29,7 +29,9 @@ Output: 2
 Solution 1:
 class Solution {
 public:
-    //DP
+    //DP 这里利用最长公共子序列的思想
+    //pos[i]表示以第i个元素结尾且最后两个元素的差值为正的最长wiggle subsequence长度
+    //neg[i]表示以第i个元素结尾且最后两个元素的差值为负的最长wiggle subsequence长度
     int wiggleMaxLength(vector<int>& nums) {
         int size=nums.size();
         if(size<=1)
@@ -80,7 +82,7 @@ public:
 Solution 3:
 class Solution {
 public:
-    // DP 类似于最长递增子序列 up[i]表示到i为止的最后是上升的最长序列长度 down[i]表示到i为止的最后是下降的最长序列长度
+    // DP 类似于最长递增子序列 up[i]表示到i为止(不一定最后一个元素是i)的最后是上升的最长序列长度 down[i]表示到i为止(不一定最后一个元素是i)的最后是下降的最长序列长度
     // up[0]=down[0]=1 单个元素可以认为是上升或者下降的
     int wiggleMaxLength(vector<int>& nums) {
         int n=nums.size();
