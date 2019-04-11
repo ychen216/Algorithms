@@ -1,0 +1,129 @@
+391. Perfect Rectangle
+
+/*
+Given N axis-aligned rectangles where N > 0, determine if they all together form an exact cover of a rectangular region.
+
+Each rectangle is represented as a bottom-left point and a top-right point. For example, a unit square is represented as [1,1,2,2]. 
+(coordinate of bottom-left point is (1, 1) and top-right point is (2, 2)).
+
+Example 1:
+rectangles = [
+  [1,1,3,3],
+  [3,1,4,2],
+  [3,2,4,4],
+  [1,3,2,4],
+  [2,3,3,4]
+]
+
+Return true. All 5 rectangles together form an exact cover of a rectangular region.
+
+Example 2:
+rectangles = [
+  [1,1,2,3],
+  [1,3,2,4],
+  [3,1,4,2],
+  [3,2,4,4]
+]
+
+Return false. Because there is a gap between the two rectangular regions.
+
+Example 3:
+rectangles = [
+  [1,1,3,3],
+  [3,1,4,2],
+  [1,3,2,4],
+  [3,2,4,4]
+]
+
+Return false. Because there is a gap in the top center.
+ 
+
+Example 4:
+rectangles = [
+  [1,1,3,3],
+  [3,1,4,2],
+  [1,3,2,4],
+  [2,2,4,4]
+]
+
+Return false. Because two of the rectangles overlap with each other.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        参考：
+        https://leetcode.com/problems/perfect-rectangle/discuss/87181/Really-Easy-Understanding-Solution(O(n)-Java)
+        https://leetcode.com/problems/perfect-rectangle/discuss/87180/O(n)-solution-by-counting-corners-with-detailed-explaination
+        https://blog.csdn.net/qq508618087/article/details/52483625
+        
+        题目要求判断给定的所有小矩形能否共同组成一个大矩形，同时要求给定的小矩形不能有重叠、有空隙的地方(所有矩形严丝合缝拼在一起)
+        我们考虑每个矩形的四个角
+        能够组成一个大矩形的话，需要满足两个条件：
+            1.所有小矩形面积的和与大矩形的面积一致
+            2.小矩形组成的大矩形，除了大矩形的四个角只出现过一个，其他内部的点都必须出现偶数次
+        2.中角出现的次数 我们可以用hashset来进行判断 如果已经包含角1那么再次遇到角1时就将角1删除，否则就加入角1;这样可以保证hashset中仅保留出现奇数次的角
+        如果存在大矩形 那么他的角由小矩形中最左下和右上的节点确定
+        3-----2
+        |     |
+        0—————1
+    */
+    bool isRectangleCover(vector<vector<int>>& rectangles) {
+        unordered_set<string> corner_set;
+        int area=0;
+        int x1=INT_MAX,y1=INT_MAX,x2=INT_MIN,y2=INT_MIN;//定义大矩形的左下角和右上角
+        for(auto &rec:rectangles){
+            //更新大矩形的角
+            x1=min(x1,rec[0]);
+            y1=min(y1,rec[1]);
+            x2=max(x2,rec[2]);
+            y2=max(y2,rec[3]);
+            //累积小矩形的面积
+            area+=(rec[2]-rec[0])*(rec[3]-rec[1]);
+            //判断每个角出现的次数
+            string corner0=to_string(rec[0])+","+to_string(rec[1]);
+            string corner1=to_string(rec[2])+","+to_string(rec[1]);
+            string corner2=to_string(rec[2])+","+to_string(rec[3]);
+            string corner3=to_string(rec[0])+","+to_string(rec[3]);
+            if(corner_set.find(corner0)==corner_set.end()){
+                corner_set.insert(corner0);
+            }
+            else{
+                corner_set.erase(corner0);
+            }
+            if(corner_set.find(corner1)==corner_set.end()){
+                corner_set.insert(corner1);
+            }
+            else{
+                corner_set.erase(corner1);
+            }
+            if(corner_set.find(corner2)==corner_set.end()){
+                corner_set.insert(corner2);
+            }
+            else{
+                corner_set.erase(corner2);
+            }
+            if(corner_set.find(corner3)==corner_set.end()){
+                corner_set.insert(corner3);
+            }
+            else{
+                corner_set.erase(corner3);
+            }
+        }
+        //check面积
+        if(area!=(x2-x1)*(y2-y1)){
+            return false;
+        }
+        //check 所有点出现的次数
+        //corner_set中最后应该只剩下大矩形的四个角 且仅出现一次
+        if(corner_set.size()!=4||
+            corner_set.find(to_string(x1)+","+to_string(y1))==corner_set.end()||
+            corner_set.find(to_string(x1)+","+to_string(y2))==corner_set.end()||
+            corner_set.find(to_string(x2)+","+to_string(y1))==corner_set.end()||
+            corner_set.find(to_string(x2)+","+to_string(y2))==corner_set.end()){
+            return false;   
+        }
+        return true;
+    }
+};
