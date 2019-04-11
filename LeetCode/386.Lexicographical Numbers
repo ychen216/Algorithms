@@ -81,3 +81,38 @@ private:
         }
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        利用dfs逐步扩展
+        要求按照字符序的大小顺序生成结果，那么1-n的数字当中:
+            排在最前方的是以1为起始字符的数字，然后是以2、3、4、5...9为起始字符的数字
+                在得到一个数字后，eg:1,我们继续往下拓展 由1往下拓展的串中按照字符序 下一位应该是以0为起始字符的最小，然后是1,2,3，...9 ，也就是10XXX < 11XXX <12XXX
+                这样一直拓展直到以1为起始的数字超过n 那么就可以开始拓展2为起始数字的情况
+    */
+    vector<int> lexicalOrder(int n) {
+        vector<int> res;
+        //探索首位数字
+        for(int i=1;i<=9&&i<=n;i++){
+            dfs(i,n,res);
+        }
+        return res;
+    }
+private:
+    void dfs(int cur,int n, vector<int>&res){
+        if(cur>n){
+            return;
+        }
+        res.push_back(cur);
+        //继续拓展cur的下一位
+        for(int i=0;i<10;i++){
+            int next=cur*10+i;
+            if(next>n){
+                break;
+            }
+            dfs(next,n,res);
+        }
+    }
+};
