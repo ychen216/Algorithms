@@ -52,6 +52,34 @@ public:
     }
 };
 
+update:解释
+class Solution {
+public:
+    /*
+        记录下每一轮的起始元素head和该轮的步长step(指该轮有效元素之间的距离)当剩下的元素只有一个时，起始元素就是最后的结果
+        1.当上一轮是从左向右消除时 或者 2.上一轮是从右向左消除且上一轮剩下的元素个数是奇数时：
+        下一轮的起始元素是上一轮起始元素+step head'=head+step
+        否则 head'=head
+        同时每一轮留下的元素个数为该轮有效元素的一半,步长为该轮步长的两倍 
+        remain'=remain/2 step'=2*step    
+    */
+    int lastRemaining(int n) {
+        int head=1,step=1,remain=n;//第一轮的起始元素、步长、持有的有效元素个数
+        bool left2right=true;//第一轮消除的方向
+        while(remain>1){
+            //利用上一轮的数据 更新当前轮的状态
+            if(left2right||remain&1){
+                head+=step;
+            }
+            step<<=1;
+            remain>>=1;
+            left2right=!left2right;
+        }
+        return head;
+    }
+};
+
+
 Solution 2:
 class Solution {
 public:
