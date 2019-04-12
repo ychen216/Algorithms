@@ -57,6 +57,28 @@ public:
 update:
 class Solution {
 public:
+    // F[k]=F[k-1]+sum-n*A[n-k] k>0 这里将sum F设置为long是因为测试用例里有[INT_MAX,INT_MAX]
+    int maxRotateFunction(vector<int>& A) {
+        long sum=0;
+        long F=0;
+        int n=A.size();
+        for(int i=0;i<n;i++){
+            sum+=A[i];
+            F+=i*A[i];
+        }
+        long res=F;
+        for(int i=1;i<n;i++){
+            F=F-(long)n*A[n-i]+sum;
+            res=max(F,res);
+        }
+        return res;
+    }
+};
+
+
+update：
+class Solution {
+public:
     /*
         F(k) = 0 * Bk[0] + 1 * Bk[1] + ... + (n-1) * Bk[n-1]
         F(k-1) = 0 * Bk-1[0] + 1 * Bk-1[1] + ... + (n-1) * Bk-1[n-1]
