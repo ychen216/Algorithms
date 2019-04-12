@@ -49,6 +49,44 @@ public:
     }
 };
 
+update:
+class Solution {
+private:
+    /*  
+        时针[0,11]最多只有三个灯亮着,分针[0,59]至多只有5个灯亮着
+        设时针有i个灯亮着,一共有n盏灯亮着:
+            (1) 0<=i<=3
+            (2) 0<=n-i<=5 ==>  i<=n i>=n-5
+            ==> i>=0 && i>=n-5 ==> i>=max(n-5,0)
+            ==> i<=3 && i<=n ==> i<=min(3,n)
+    */
+     vector<vector<string>> hour = {{"0"},
+            {"1", "2", "4", "8"},
+            {"3", "5", "6", "9", "10"},
+            {"7", "11"}};
+    vector<vector<string>> minute = {{"00"},
+            {"01", "02", "04", "08", "16", "32"},
+            {"03", "05", "06", "09", "10", "12", "17", "18", "20", "24", "33", "34", "36", "40", "48"},
+            {"07", "11", "13", "14", "19", "21", "22", "25", "26", "28", "35", "37", "38", "41", "42", "44", "49", "50", "52", "56"},
+            {"15", "23", "27", "29", "30", "39", "43", "45", "46", "51", "53", "54", "57", "58"},
+            {"31", "47", "55", "59"}};
+public:
+    vector<string> readBinaryWatch(int n) {
+        vector<string> res;
+        for(int i=max(n-5,0);i<=min(3,n);i++){
+            int sizeh=hour[i].size();
+            int sizem=minute[n-i].size();
+            for(int k=0;k<sizeh;k++){
+                for(int z=0;z<sizem;z++)
+                    res.push_back(hour[i][k]+":"+minute[n-i][z]);
+            }
+            
+        }
+        return res;
+    }
+};
+
+
 Solution 2:
 class Solution {
 public:
