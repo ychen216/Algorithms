@@ -38,6 +38,7 @@ class Solution {
 
 Solution 2：
 class Solution {
+    //idea:先判定第n位所在的数字是几位数 然后再确定第n位在哪个数字上 最后确定第n位是哪个数字
     public int findNthDigit(int n) {
         int digit=1;//一位数
         long count=9;// 必须是long类型 有9个一位数
