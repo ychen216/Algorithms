@@ -238,6 +238,7 @@ public:
         return res;
     }
 private:
+    //这种写法不好 看下一个update
     // res为起始点到当前点的结果
     double dfs(unordered_map<string,unordered_map<string,double>> &graph,unordered_set<string> &visit,const string &cur,const string &e,double res){
         if(visit.find(cur)!=visit.end())
@@ -254,5 +255,67 @@ private:
             }
         }
         return -1.0;
+    }
+};
+
+update:
+class Solution {
+public:
+    vector<double> calcEquation(vector<pair<string, string>> equations, vector<double>& values, vector<pair<string, string>> queries) {
+        //构造图
+        unordered_map<string,unordered_map<string,double>> paths;
+        for(int i=0;i<equations.size();i++){
+            auto &a=equations[i].first;
+            auto &b=equations[i].second;
+            if(paths.find(a)==paths.end()){
+                paths[a]=unordered_map<string,double>();
+            }
+            if(paths.find(b)==paths.end()){
+                paths[b]=unordered_map<string,double>();
+            }
+            paths[a][b]=values[i];
+            paths[b][a]=1/values[i];
+        }
+        vector<double> res;
+        unordered_set<string> visit;
+        for(int i=0;i<queries.size();i++){
+            auto &a=queries[i].first;
+            auto &b=queries[i].second;
+            if(paths.find(a)==paths.end()||paths.find(b)==paths.end()){
+                res.push_back(-1.0);
+            }
+            else{
+                visit.clear();
+                visit.insert(a);
+                res.push_back(dfs(a,b,paths,visit));
+            }
+        }
+        return res;
+    }
+private:
+    double dfs(string a,string b,unordered_map<string,unordered_map<string,double>> &paths,unordered_set<string>&visit){
+        //x/x的情况
+        if(a==b){
+            return 1.0;
+        }
+        // x/y一步能够达到的情况
+        if(paths.find(a)!=paths.end()&&paths[a].find(b)!=paths[a].end()){
+            return paths[a][b];
+        }
+        // x/y 借助 x/t-> t/y 选择t
+        for(auto &path:paths[a]){
+            auto &to=path.first;
+            if(visit.find(to)==visit.end()){
+                visit.insert(to);
+                double res=dfs(to,b,paths,visit);
+                if(res!=-1){
+                    res*=path.second;
+                    paths[a][b]=res;
+                    return res;
+                }
+                visit.erase(to);
+            }
+        }
+        return -1;
     }
 };
