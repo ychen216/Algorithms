@@ -62,3 +62,39 @@ public:
         return !mmap[stones[len-1]].empty();
     }
 };
+
+update:解释
+class Solution {
+public:
+    /*
+        题意：一只不会游泳的青蛙从第0个石头(位置为0)出发开始跳,默认从第0个石头只会跳1 unit
+        后面的跳跃要求若跳到当前石头的那一次跳了K units,这次就只能跳 K-1 或者 K 或者 K+1 units
+        问青蛙是否能够达到最后一块石头从而到达对岸
+        
+        很显然,站在每一个石头x我们可以继续往后拓展K-1,K,K+1步,可以到达不同的下一块石头y
+        接下来y继续向后拓展，这时我们需要知道从x到达y时跳的距离，所以我们需要在x跳到y时记录下跳的距离是K-1,K还是K+1
+        那么对于y来说,可能前面x,x',x''都可以跳到y,我们需要把这些都记录下来,在y处可以选择继续跳的跳跃距离有更多种
+        最后看能不能跳到最后一块石头就看最后一块石头的跳的距离集合是否空
+    */
+    bool canCross(vector<int>& stones) {
+        int n=stones.size();
+        unordered_map<int,unordered_set<int>> mmp;//{pos,{jump_set}}记录跳到pos处的上一跳距离集合
+        for(int i=0;i<n;i++){
+            mmp[stones[i]]=unordered_set<int>();
+        }
+        mmp[0].insert(0);
+        for(int i=0;i<n;i++){
+            //更新从stone[i]能跳到的下一个位置y 以及stone[i]跳到y时跳的距离
+            for(auto &pre_jump:mmp[stones[i]]){
+                for(int cur_jump=pre_jump-1;cur_jump<=pre_jump+1;cur_jump++){
+                    //每一跳>0 且要能够跳到石头上
+                    int next_stone=stones[i]+cur_jump;
+                    if(cur_jump>0&&mmp.find(next_stone)!=mmp.end()){
+                        mmp[next_stone].insert(cur_jump);
+                    }
+                }
+            }
+        }
+        return mmp[stones[n-1]].size()>0;
+    }
+};
