@@ -57,7 +57,55 @@ public:
     }
 };
 
-SOlution 2:
+update:不用排序
+class Solution {
+public:
+    /*
+        要构成回文串 那么至多只有一个字符的个数是奇数放在中间 然后将其他的字符要构造成偶数个向两侧拓展
+        eg,num[a]=1 num[c]=2 num[b]=3 nums[d]=5  num[e]=2
+        那么可以构成的最长回文串为5个d放在中间 然后将2个c,2个b,2个e分别放在两侧 
+        cbd ddddd dbc
+    */
+    int longestPalindrome(string s) {
+        int n=s.length();
+        if(n<2){
+            return n;
+        }
+        unordered_map<char,int> cnt;
+        for(auto &c:s){
+            cnt[c]++;
+        }
+        char maxOdd='1';
+        int oddCnt=0;
+        //确认串中间的奇数个字符
+        for(auto &pair:cnt){
+            if(pair.second&1){
+                if(oddCnt<pair.second){
+                    oddCnt=pair.second;
+                    maxOdd=pair.first;
+                }
+            }
+        }
+        int res=0;
+        for(auto &pair:cnt){
+            if(pair.second&1){
+                if(pair.first==maxOdd){
+                    res+=pair.second;  
+                }
+                else{
+                    //只能有一个奇数个 其他的出现奇数次的字符要进行删减使其有偶数个字符分别放在两侧
+                    res+=pair.second-1;
+                }
+            }
+            else{
+                res+=pair.second;
+            }
+        }
+        return res;
+    }
+};
+
+update:
 class Solution {
 public:
     /*
