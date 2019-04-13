@@ -30,12 +30,15 @@ public:
         bool operator<(const Cell&c)const{return h>c.h;}
     };
     int trapRainWater(vector<vector<int>>& heightMap) {
+        if(heightMap.empty()||heightMap[0].empty()){
+            return 0;
+        }  
         int row=heightMap.size();
-        if(row==0)
-            return 0;
         int col=heightMap[0].size();
-        if(col==0)
+        //只有一行一列存不住水
+        if(row<2||col<2){
             return 0;
+        }
         priority_queue<Cell>pq;
         vector<vector<bool>> visit(row,vector<bool>(col,false));
         int dir[]={-1,0,1,0,-1};
