@@ -69,3 +69,78 @@ private:
         return true;
     }
 };
+
+update:二分查找新模板
+class Solution {
+public:
+    int splitArray(vector<int>& nums, int m) {
+        long start=0,end=0,mid;
+        for(auto &num:nums){
+            end=end+(long)num;
+            start=max((int)start,num);
+        }
+        //二分查找找到满足条件的最小maxSum
+        while(start+1<end){
+            mid=start+(end-start)/2;
+            //能够分成<=m个subarray 说明maxSum太大了
+            if(isvalid(nums,mid,m)){
+                end=mid;
+            }
+            else{
+                //分成>m个subarray 说明maxSum太小了
+                start=mid;
+            }
+        }
+        if(isvalid(nums,start,m)){
+            return start;
+        }
+        return end;
+    }
+private:
+    //在subarray最大和为maxSum时 是否能够将nums分为<=k个subarray
+    bool isvalid(vector<int>& nums,long maxSum,int k){
+        long sum=0,cnt=1;
+        for(auto &num:nums){
+            sum=sum+num;
+            if(sum>maxSum){
+                sum=num;
+                cnt++;
+                if(cnt>k){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+};
+
+Solution 2：
+class Solution {
+public:
+    /*
+        题目求：将nums划分成m个子数组，求子数组中最大和的最小值
+        dp[i][j]表示将[0,j-1]这j个数字划分成i个subarray时的最小的最大sum of subarray
+        dp[i][j]依赖于:j所在的子数组的前一个子数组的末尾元素k 即前i-1个子数组由前k个元素组成
+        dp[i][j]依赖于dp[i-1][k]和sum(k+1,j)的大小
+        dp[i][j]=min(max(dp[i-1][k],sum(k+1,j))) 1<=k<j
+        dp[0][0]=0;
+    */
+    int splitArray(vector<int>& nums, int m) {
+        int n=nums.size();
+        vector<long> sum(n+1,0);
+        vector<vector<long>> dp(m+1,vector<long>(n+1,INT_MAX));
+        dp[0][0]=0;
+        for(int i=1;i<=n;i++){
+            sum[i]=sum[i-1]+nums[i-1];
+        }
+        for(int i=1;i<=m;i++){
+            for(int j=1;j<=n;j++){
+                for(int k=0;k<j;k++){
+                    long maxSum=max(dp[i-1][k],sum[j]-sum[k]);
+                    dp[i][j]=min(dp[i][j],maxSum);
+                }
+            }
+        }
+        return dp[m][n];
+    }
+};
