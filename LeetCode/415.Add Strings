@@ -51,3 +51,32 @@ public:
         return res;
     }
 };
+
+update: refine code
+class Solution {
+public:
+    string addStrings(string num1, string num2) {
+        int n1=num1.length();
+        int n2=num2.length();
+        int n=max(n1,n2)+1;
+        string res(max(n1,n2)+1,'0');
+        int i=n1-1,j=n2-1,p=n-1;
+        int carry=0;
+        while(i>=0||j>=0||carry>0){
+            int sum=carry;
+            if(i>=0){
+                sum+=num1[i--]-'0';
+            }
+            if(j>=0){
+                sum+=num2[j--]-'0';
+            }
+            carry=sum/10;
+            res[p--]=sum%10 + '0';
+        }
+        int pos=res.find_first_not_of('0');
+        if(pos==string::npos){
+            return "0";
+        }
+        return res.substr(pos);
+    }
+};
