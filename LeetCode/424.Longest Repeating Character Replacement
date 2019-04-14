@@ -29,6 +29,38 @@ The substring "BBBB" has the longest repeating letters, which is 4.
 Solution:
 class Solution {
 public:
+    /*
+        如果没有k的限制，让我们求把字符串变成只有一个字符重复的字符串需要的最小置换次数，那么就是字符串的总长度减去出现次数最多的字符的个数。
+        如果加上k的限制，我们其实就是求满足(子字符串的长度减去出现次数最多的字符个数)<=k的最大子字符串长度即可
+        控制滑动窗口结束的位置
+    */
+    int characterReplacement(string s, int k) {
+        int maxLen=0,maxCnt=0;//maxCnt指滑动窗口内出现最多元素的次数
+        vector<int> cnt(26,0);
+        for(int start=0,end=0;end<s.length();end++){
+            cnt[s[end]-'A']++;
+            //更新当前滑动窗口的maxCnt
+            maxCnt=max(maxCnt,cnt[s[end]-'A']);
+            //如果不满足要求 就要收缩窗口
+            while(end-start+1-maxCnt>k){
+                cnt[s[start]-'A']--;
+                start++;
+                //更新当前窗口的maxCnt
+                int curMax=0;
+                for(int i=0;i<26;i++){
+                    curMax=max(curMax,cnt[i]);
+                }
+                maxCnt=curMax;
+            }
+            maxLen=max(maxLen,end-start+1);
+        }
+        return maxLen;
+    }
+};
+
+
+class Solution {
+public:
     /*如果没有k的限制，让我们求把字符串变成只有一个字符重复的字符串需要的最小置换次数，那么就是字符串的总长度减去出现次数最多的字符的个数。
     如果加上k的限制，我们其实就是求满足(子字符串的长度减去出现次数最多的字符个数)<=k的最大子字符串长度即可
     控制滑动窗口结束的位置
@@ -39,11 +71,8 @@ public:
         int maxLen=0,start=0,maxCnt=0;//最大长度 滑动窗口起始 该滑动窗口出现最多字符的个数
         for(int end=0;end<len;end++){
             cnt[s[end]-'A']++;
-            maxCnt=0;
-            for(int i=0;i<26;i++)
-                if(cnt[i]>maxCnt)
-                    maxCnt=cnt[i];
-            //移动滑动窗口的起始位置
+            maxCnt=max(maxCnt,cnt[s[end]-'A']);
+            //移动滑动窗口的起始位置 不理解
             while(end-start+1-maxCnt>k){
                 cnt[s[start]-'A']--;
                 start++;
