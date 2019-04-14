@@ -70,3 +70,70 @@ public:
         return head;
     }
 };
+
+
+update:
+/*
+// Definition for a Node.
+class Node {
+public:
+    int val = NULL;
+    Node* prev = NULL;
+    Node* next = NULL;
+    Node* child = NULL;
+
+    Node() {}
+
+    Node(int _val, Node* _prev, Node* _next, Node* _child) {
+        val = _val;
+        prev = _prev;
+        next = _next;
+        child = _child;
+    }
+};
+*/
+class Solution {
+public:
+    /*  参考 https://leetcode.com/problems/flatten-a-multilevel-doubly-linked-list/discuss/150321/Easy-Understanding-Java-beat-95.7-with-Explanation
+        从头遍历 遇到一个节点p有孩子节点,处理一下,举例来说:
+        1---2---3---4---5---6--NULL
+                |
+                7---8---9---10--NULL
+                    |
+                    11--12--NULL
+        遍历到3,有孩子节点 把7 8 9 10整个接到主链上
+         1---2---3---7---8---9---10--4---5---6--NULL
+                         |
+                         11--12--NULL
+        继续遍历到7 然后遇到8的孩子链  接到主链上 得到1-2-3-7-8-11-12-9-10-4-5-6-NULL
+    */
+    Node* flatten(Node* head) {
+        Node *cur=head;
+        while(cur){
+            //如果该节点有child chain那么找到child chain的尾节点
+            //把整个child chain链接到主链上
+            if(cur->child){
+                Node *nextMain=cur->next;
+                Node *child=cur->child;
+                //要把cur->child置为null
+                cur->child=NULL;
+                //更新prev next
+                child->prev=cur;
+                cur->next=child;
+                Node *tail=child;
+                while(tail->next){
+                    tail=tail->next;
+                }
+                tail->next=nextMain;
+                if(nextMain){
+                    nextMain->prev=tail;
+                }
+                cur=child;
+            }
+            else{
+                cur=cur->next;
+            }
+        }
+        return head;
+    }
+};
