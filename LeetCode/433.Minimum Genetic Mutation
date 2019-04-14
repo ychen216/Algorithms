@@ -144,3 +144,45 @@ public:
     }
 
 };
+
+update:
+class Solution {
+public:
+    //利用bank充当visitset
+    int minMutation(string start, string end, vector<string>& bank) {
+        unordered_set<string> unvisit(bank.begin(),bank.end());
+        if(unvisit.find(end)==unvisit.end()){
+            return -1;
+        }
+        if(unvisit.find(start)!=unvisit.end()){
+            unvisit.erase(start);
+        }
+        queue<string> q({start});
+        int res=0;
+        char gene[]={'A','T','C','G'};
+        while(!q.empty()){
+            int n=q.size();
+            for(int i=0;i<n;i++){
+                string cur=q.front();
+                q.pop();
+                if(cur==end){
+                    return res;
+                }
+                for(int j=0;j<8;j++){
+                    char origin=cur[j];
+                    for(int k=0;k<4;k++){
+                        if(origin==gene[k]) continue;
+                        cur[j]=gene[k];
+                        if(unvisit.find(cur)!=unvisit.end()){
+                            unvisit.erase(cur);
+                            q.push(cur);
+                        }
+                    }
+                    cur[j]=origin;
+                }
+            }
+            res++;
+        }
+        return -1;
+    }
+};
