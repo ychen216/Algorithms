@@ -63,15 +63,6 @@ public:
 };
 
 Solution 2:
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
 class Solution {
 public:
     /*  
@@ -97,16 +88,38 @@ public:
     }
 };
 
+update:解释
+class Solution {
+public:
+    /*
+        题目要求的是:对于每一个intervals[i]找到一个intervals[j]
+        使得intervals[j].start>=intervals[i].end且这个start是最小的
+        最简单的方式就是对每一个intervals[i]遍历整个数组找到>=intervals[i].end的最小的start 时间复杂度O(n^2)
+        抽象出问题就是:给定一个end找到最小的start满足 start>=end
+        我们可以记录下pair(start,index) 按照start排序 然后利用二分法找到index.可以利用map完成这个操作
+    */
+    vector<int> findRightInterval(vector<Interval>& intervals) {
+        map<int,int> start_index;
+        int n=intervals.size();
+        for(int i=0;i<n;i++){
+            start_index[intervals[i].start]=i;
+        }
+        vector<int> res;
+        for(int i=0;i<n;i++){
+            auto it=start_index.lower_bound(intervals[i].end);
+            if(it==start_index.end()){
+                res.push_back(-1);
+            }
+            else{
+                res.push_back(it->second);
+            }
+        }
+        return res;
+    }
+};
+
+
 // 手工实现二分查找
-/**
- * Definition for an interval.
- * struct Interval {
- *     int start;
- *     int end;
- *     Interval() : start(0), end(0) {}
- *     Interval(int s, int e) : start(s), end(e) {}
- * };
- */
 class Solution {
 public:
     /*  
