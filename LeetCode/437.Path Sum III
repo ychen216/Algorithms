@@ -50,6 +50,7 @@ public:
             return find(root->left,sum-root->val)+find(root->right,sum-root->val);
         
     }
+    //类似于先序遍历 先访问根节点 在访问左子树和右子树
     int pathSum(TreeNode* root, int sum) {
         
         if(root)//遍历每个节点
