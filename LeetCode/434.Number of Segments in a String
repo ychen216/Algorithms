@@ -51,6 +51,7 @@ public:
 Solution 3:
 class Solution {
 public:
+    //找到每一个segment的首字符并计数
     int countSegments(string s) {
         int ans=0;
         for(int i=0;i<s.length();i++){
