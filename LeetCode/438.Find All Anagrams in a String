@@ -99,3 +99,40 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    vector<int> findAnagrams(string s, string p) {
+        vector<int> res;
+        int lenp=p.length(),lens=s.length();
+        if(lenp>lens){
+            return res;
+        }
+        vector<int> need(26,0),has(26,0);
+        for(auto &c:p){
+            need[c-'a']++;
+        }
+        //check[left...right]是否是一个有效的anagram [left...right]维护和p相同长度的子串
+        for(int left=0,right=0;right<lens;right++){
+            has[s[right]-'a']++;
+            //s[left...right]和p长度相同的时候才有必要check 否则直接加入当前元素即可
+            if(right+1<lenp) continue;
+            //right-left+1==lenp
+            bool ok=true;
+            for(int i=0;i<26;i++){
+                if(need[i]!=has[i]){
+                    ok=false;
+                    break;
+                }
+            }
+            if(ok){
+                res.push_back(left);
+            }
+            //将left元素弹出 使得下一轮[left,right]的长度依旧是lenp
+            has[s[left]-'a']--;
+            left++;
+        }
+        return res;
+    }
+};
