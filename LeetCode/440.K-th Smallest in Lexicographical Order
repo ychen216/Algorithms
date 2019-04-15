@@ -1,0 +1,124 @@
+440. K-th Smallest in Lexicographical Order
+
+/*
+Given integers n and k, find the lexicographically k-th smallest integer in the range from 1 to n.
+
+Note: 1 ≤ k ≤ n ≤ 109.
+
+Example:
+  Input:
+  n: 13   k: 2
+  Output:
+  10
+
+Explanation:
+The lexicographical order is [1, 10, 11, 12, 13, 2, 3, 4, 5, 6, 7, 8, 9], so the second smallest number is 10.
+
+*/
+
+
+Solution 1:TEL 按照386.Lexicographical Numbers的思路
+class Solution {
+public:
+    /* 
+        利用dfs逐步扩展
+        要求按照字符序的大小顺序生成结果，那么1-n的数字当中:
+            排在最前方的是以1为起始字符的数字，然后是以2、3、4、5...9为起始字符的数字
+                在得到一个数字后，eg:1,我们继续往下拓展 由1往下拓展的串中按照字符序 下一位应该是以0为起始字符的最小，然后是1,2,3，...9 ，也就是10XXX < 11XXX <12XXX
+                这样一直拓展直到以1为起始的数字超过n 那么就可以开始拓展2为起始数字的情况
+        这里要求第k小的，那么也就是求第k个被拓展到的数字
+    */
+    int findKthNumber(int n, int k) {
+        int res=-1;
+        //遍历以1,2,3,..9起始的可能数字
+        for(int i=1;i<10&&i<=n;i++){
+            res=dfs(i,n,k);
+            if(res!=-1){
+                break;
+            }
+        }
+        return res;
+    }
+private:
+    //当前数字cur,max:n,求从cur开始拓展字母序为k的数字
+    int dfs(long cur,int n,int &k){
+        if(k==1){
+            return cur;
+        }
+        k--;
+        //在cur的基础上继续拓展下一位
+        for(int i=0;i<10;i++){
+            long next=cur*10+i;
+            if(next>n){
+                break;
+            }
+            int res=dfs(next,n,k);
+            if(res!=-1){
+                return res;
+            }
+        }
+        return -1;
+    }
+};
+
+Solution 2:如何计算step还不理解
+class Solution {
+public:
+    /*  参考：https://leetcode.com/problems/k-th-smallest-in-lexicographical-order/discuss/92242/ConciseEasy-to-understand-Java-5ms-solution-with-Explaination
+        这道题Lexicographical Numbers的延伸(让按字典顺序打印1~n)
+        这道题让我们快速定位某一个位置，就不能像之前那道题一样，一个一个的遍历，这样会超时无法通过OJ
+        这道题可以转化为十叉树的先序遍历来完成，找到该树第k个遍历的数字即为所求
+        具体的：十叉树Denary Tree，就是每个节点的子节点至多可以有十个，比如数字1的子节点就是10到19
+        数字10的子节点可以是100到109，但是由于n大小的限制，构成的并不是一个满十叉树
+        我们分析题目中给的例子可以知道，数字1的子节点有4个(10,11,12,13)，而后面的数字2到9都没有子节点，
+        所以道题实际上是一个先序遍历十叉树的问题，那么难点就变成了如何计算出每个节点的子节点的个数
+        
+        一、Main function
+        Firstly, calculate how many steps curr need to move to curr + 1.
+
+            1.if the steps <= k, we know we can move to curr + 1, and narrow down k to k - steps. 我们向同一层的右兄弟移动1->2
+
+            2.else if the steps > k, that means the curr + 1 is actually behind the target node x in the preorder path, 
+            we can't jump to curr + 1. What we have to do is to move forward only 1 step 
+            (curr * 10 is always next preorder node) and repeat the iteration. 我们向当前节点的下一层移动 1->10
+        
+        二、calSteps function 不太理解
+        how to calculate the steps between curr and curr + 1?
+        Here we come up a idea to calculate by level.
+            1.Let n1 = curr, n2 = curr + 1.
+            n2 is always the next right node beside n1's right most node (who shares the same ancestor "curr")
+            (refer to the pic, 2 is right next to 1, 20 is right next to 19, 200 is right next to 199).
+
+            2.so, if n2 <= n, what means n1's right most node exists, we can simply add the number of nodes from n1 to n2 to steps.
+
+            3.else if n2 > n, what means n (the biggest node) is on the path between n1 to n2, add (n + 1 - n1) to steps.
+
+            4.organize this flow to "steps += Math.min(n + 1, n2) - n1; n1 *= 10; n2 *= 10;"
+    */
+    int findKthNumber(int n, int k) {
+        int cur=1;
+        k--;
+        while(k>0){
+            int step=calSteps(cur,cur+1,n);
+            if(step<=k){
+                k-=step;
+                cur=cur+1;
+            }
+            else{
+                cur*=10;
+                k--;//减掉的是cur->cur*10这一步
+            }
+        }
+        return cur;
+    }
+private:
+    int calSteps(long n1,long n2,long n){
+        int step=0;
+        while(n1<=n){
+            step+=min(n2,n+1)-n1;
+            n1*=10;
+            n2*=10;
+        }
+        return step;
+    }
+};
