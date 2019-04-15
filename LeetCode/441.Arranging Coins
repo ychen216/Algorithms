@@ -44,6 +44,19 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    int arrangeCoins(int n) {
+        int row=0;//第i层实际有i+1个cell
+        while(row<n){
+            row++;//得到该层的元素个数 以及当前合法层数
+            n-=row;
+        }
+        return row;
+    }
+};
+
 Solution 2：
 class Solution {
 public:
@@ -61,6 +74,38 @@ public:
                 high=mid-1;
         }
         return low-1;
+    }
+};
+
+update:BS新模板。。。写了好几次才通过 要注意边界条件 即跳出循环之后的start end的判断
+class Solution {
+public:
+    //找到第一个0.5*k*(1+k) >n 那么符合条件的行数=k-1
+    int arrangeCoins(long n) {
+        long start=1,end=sqrt(2*n),mid,tmp;
+        while(start+1<end){
+            mid=start+(end-start)/2;
+            tmp=mid*(mid+1)/2;
+            if(tmp>n){
+                end=mid;
+            }
+            else{
+                start=mid;
+            }
+        }
+        long res1=start*(start+1)/2,res2=end*(end+1)/2;
+        if(res1>=n){
+            if(res1==n)
+                return start;
+            return start-1;
+        }
+        if(res2>=n){
+            if(res2==n)
+                return end;
+            return end-1;
+        }
+        // res2<n
+        return end;
     }
 };
 
