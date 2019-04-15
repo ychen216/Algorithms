@@ -66,3 +66,36 @@ public:
         return res;
     }
 };
+
+update:解释
+class Solution {
+public:
+    /*
+        题目的要求是找到满足distance(points[i],points[j])==distance(points[i],points[k])的(i,j,k)的个数
+        其中i!=j!=k,i,j,k之间的大小不做要求
+        最简单的方法就是三重循环 固定i找合适的j,k 时间复杂度O(n^3) 其中i!=j!=k
+        另一种想法是固定i 计算i,j之间的距离d 同时统计与i距离为d的点的个数cnt(i,d) 这样固定i可以得到的(i,j,k)个数=cnt(i,d)*(cnt(i,d)-1) cnt(i,d)>1 可以将时间复杂度降为O(n^2)
+        
+    */
+    int numberOfBoomerangs(vector<pair<int, int>>& points) {
+        unordered_map<int,unordered_map<long,int>> mmp;
+        int n=points.size();
+        //计算任意两点之间的距离
+        for(int i=0;i<n;i++){
+            for(int j=i+1;j<n;j++){
+                long dis=pow(points[i].first-points[j].first,2)+pow(points[i].second-points[j].second,2);
+                mmp[i][dis]++;
+                mmp[j][dis]++;
+            }
+        }
+        int res=0;
+        //固定i得到它的distance_cnt map
+        for(auto &dist_map:mmp){
+            for(auto &dist_cnt:dist_map.second){
+                if(dist_cnt.second==1) continue;
+                res+=dist_cnt.second*(dist_cnt.second-1);
+            }
+        }
+        return res;
+    }
+};
