@@ -68,3 +68,80 @@ public:
         return res;
     }
 };
+
+update:解释
+class Solution {
+public:
+    /*
+        T(i,d)表示以A[i]结尾diff=d的长度大于等于2的子序列数目
+        T(0,d)=0
+        遍历0<=j<i 若存在T(j,d)>0那么就存在序列使得...A[j]..A[i]构成新的Arithmetic Slices
+        res+=T(j,d)
+        更新T(i,d)=sum(T(j,d)+1),加一是因为A[j]A[i]又构成了一个新的长度为2的新序列
+        但是题目定义的slice的长度要>=3所以最后计算结果的时候要将以i元素结尾diff=d的序列中长度为2的删去
+    */
+    int numberOfArithmeticSlices(vector<int>& A) {
+        int n=A.size();
+        if(n<3){
+            return 0;
+        }
+        int res=0;
+        vector<unordered_map<int,int>> dp(n);
+        for(int i=0;i<n;i++){
+            //寻找所有以i结尾的序列可能的前一个元素j
+            for(int j=0;j<i;j++){
+                long diff=(long)A[i]-(long)A[j];
+                if(diff>INT_MAX||diff<INT_MIN) continue;
+                int d=diff;
+                //j,i构成一个新的长度为2的子序列
+                dp[i][d]+=1;
+                //如果存在以j结尾 公差==d的长度>=2的序列 那么 ...j..i能构成新的长度>2的序列
+                if(dp[j].find(d)!=dp[j].end()){
+                    dp[i][d]+=dp[j][d];
+                }
+            }
+            //统计所有以i结尾的有效slice:加上所有dp[i][d]且去掉长度为2的
+            for(auto &pair:dp[i]){
+                res+=pair.second-1;
+            }
+        }
+        return res;
+    }
+};
+
+下面这种方法将res的计算整合到上一个for循环中
+class Solution {
+public:
+    /*
+        T(i,d)表示以A[i]结尾diff=d的长度大于等于2的子序列数目
+        T(0,d)=0
+        遍历0<=j<i 若存在T(j,d)>0那么就存在序列使得...A[j]..A[i]构成新的Arithmetic Slices
+        res+=T(j,d)
+        更新T(i,d)=sum(T(j,d)+1),加一是因为A[j]A[i]又构成了一个新的长度为2的新序列
+        但是题目定义的slice的长度要>=3所以最后计算结果的时候要将以i元素结尾diff=d的序列中长度为2的删去
+    */
+    int numberOfArithmeticSlices(vector<int>& A) {
+        int n=A.size();
+        if(n<3){
+            return 0;
+        }
+        int res=0;
+        vector<unordered_map<int,int>> dp(n);
+        for(int i=0;i<n;i++){
+            //寻找所有以i结尾的序列可能的前一个元素j
+            for(int j=0;j<i;j++){
+                long diff=(long)A[i]-(long)A[j];
+                if(diff>INT_MAX||diff<INT_MIN) continue;
+                int d=diff;
+                //j,i构成一个新的长度为2的子序列
+                dp[i][d]+=1;
+                //如果存在以j结尾 公差==d的长度>=2的序列 那么 ...j..i能构成新的长度>2的序列
+                if(dp[j].find(d)!=dp[j].end()){
+                    dp[i][d]+=dp[j][d];
+                    res+=dp[j][d];//以i结尾diff=d且长度>2的序列是基于以j结尾diff=d的
+                }
+            }
+        }
+        return res;
+    }
+};
