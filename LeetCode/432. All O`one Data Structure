@@ -12,4 +12,108 @@ Challenge: Perform all these in O(1) time complexity.
 
 
 Solution:
-参考：https://zxi.mytechroad.com/blog/list/leetcode-432-all-oone-data-structure/
+class AllOne {
+public:
+    /*  参考：https://zxi.mytechroad.com/blog/list/leetcode-432-all-oone-data-structure/
+        Inc Dec有根据key进行查找的需求，所以需要一个hashtable完成key->value的O(1)查找
+        GetMax\Min需要维护一个有序的结构eg.vector,list，第一个元素是Min 最后一个元素是Max
+        同时Inc Dec时还需要对上述有序结构进行修改，也就是Dec以后最后一个元素可能改变，时间要求O(1)
+        如果用vector移动元素的操作O(n) 使用list，双向链表对任意一个位置的插入删除都只要O(1) 选择list结构
+        所以我们需要一个hashtable: key--> pointer to list node
+        list node:存放有相同value的key_set value指Inc(key) Dec(key)的结果
+        
+        当getMin\Max时，我们返回list的第一个、最后一个节点中key_set的任意一个元素
+        Inc\Dec:涉及到hashtable和list的维护，要考虑在list中当前value的后一个节点\前一个节点是否为空以及value是否和Inc\Dec之后相匹配 做对应的插入新节点或是直接在后一个节点\前一个节点中插入新的key
+        改变hashtable key的指向
+        list中原节点移除key 如果该节点的key_set为空要删除该节点
+    */
+    /** Initialize your data structure here. */
+    AllOne() {
+        
+    }
+    
+    /** Inserts a new key <Key> with value 1. Or increments an existing key by 1. */
+    void inc(string key) {
+        auto it=mmp.find(key);
+        if(it==mmp.end()){
+            //需要增加一个新的node
+            if(llist.empty()||llist.front().value!=1){
+                llist.push_front(Node(1));
+            }
+            llist.front().keys.insert(key);
+            mmp[key]=llist.begin();
+        }
+        else{
+            auto list_it=it->second;
+            auto nextit=next(list_it);
+            //需要增加一个node
+            if(nextit==llist.end()||nextit->value!=list_it->value+1){
+                nextit=llist.insert(nextit,Node(list_it->value+1));
+            }
+            nextit->keys.insert(key);
+            mmp[key]=nextit;
+            list_it->keys.erase(key);
+            if(list_it->keys.size()==0){
+                llist.erase(list_it);
+            }
+        }
+    }
+    
+    /** Decrements an existing key by 1. If Key's value is 1, remove it from the data structure. */
+    void dec(string key) {
+        auto it=mmp.find(key);
+        //key不存在
+        if(it==mmp.end()){
+            return;
+        }
+        //如果value=1要删除
+        auto list_it=it->second;
+        if(list_it->value==1){
+            mmp.erase(key);            
+        }
+        else{
+            //value要减小1
+            auto previt=prev(list_it);
+            //需要插入一个新的节点
+            if(list_it==llist.begin()||previt->value!=list_it->value-1){
+                previt=llist.insert(list_it,Node(list_it->value-1));
+            }
+            previt->keys.insert(key);
+            mmp[key]=previt;
+        }
+        //共同操作 将it中的key移除
+        list_it->keys.erase(key);
+        if(list_it->keys.size()==0){
+            llist.erase(list_it);
+        }
+    }
+    
+    /** Returns one of the keys with maximal value. */
+    string getMaxKey() {
+        return llist.empty() ? "" : *llist.back().keys.cbegin();
+    }
+    
+    /** Returns one of the keys with Minimal value. */
+    string getMinKey() {
+        return llist.empty() ? "" : *llist.front().keys.cbegin();
+    }
+private:
+    struct Node{
+        int value;
+        unordered_set<string> keys;
+        Node(int v){
+            value=v;
+        }
+    };
+    unordered_map<string,list<Node>::iterator> mmp;
+    list<Node> llist;
+};
+
+/**
+ * Your AllOne object will be instantiated and called as such:
+ * AllOne* obj = new AllOne();
+ * obj->inc(key);
+ * obj->dec(key);
+ * string param_3 = obj->getMaxKey();
+ * string param_4 = obj->getMinKey();
+ */
