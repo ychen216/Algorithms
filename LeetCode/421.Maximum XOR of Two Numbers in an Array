@@ -128,12 +128,14 @@ public:
         }
         
         // findMax
+        //为每一个num找到他对应num' 使得固定num==> num^num'最大
         for(auto num:nums){
             Trie *cur=root;
             int temp=0;
             for(int i=31;i>=0;i--){
                 int curBit=(num>>i)&1;
                 // 是否存在兄弟节点 存在则该位异或就可以获得1
+                //check 是否存在num'在第i位的数字和bit不同 如果不同则选择bit^1这一分支使得这一位的异或结果为1 
                 if(cur->bits[curBit ^ 1]!=NULL){
                     temp+=(1<<i);
                     cur=cur->bits[curBit ^ 1];
