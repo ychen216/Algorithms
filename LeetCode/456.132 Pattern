@@ -57,7 +57,8 @@ public:
     /*
         依次寻找ai,aj,ak三个数 类似于greedy
         是否存在132pattern我们只需要找到一个pattern就行
-        对于ai我们需要找到第一个降序的数字(找尽可能小的) a>b>c>d<e 我们就要选取d作为ai 因为d作为a,b,c,d当中最小的,如果a能够找到132pattern组成 a aj' ak'那么必然有aj'>ak'>a>d也能组成132pattern
+        对于ai我们需要找到最后一个降序的数字(找尽可能小的) a>b>c>d<e 我们就要选取d作为ai 
+        因为d作为a,b,c,d当中最小，如果a能够找到132pattern组成 a aj' ak'那么必然有aj'>ak'>a>d也能组成132pattern
         同理选择最后一个升序的元素作为aj(找尽可能大的)
         然后顺序遍历ak看是否有符合条件的ak
         如果这样找到的ai,aj找不到132pattern 那么将i设置为j+1 因为在当前的[i,j]中ai很小都没有这样的pattern [i+1,j]当中都是比ai大的数字就更不可能了
