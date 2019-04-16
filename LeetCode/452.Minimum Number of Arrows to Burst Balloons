@@ -76,3 +76,28 @@ public:
         return res;
     }
 };
+
+
+update:
+class Solution {
+public:
+    //按照end从小到大排序 每次射击end
+    int findMinArrowShots(vector<pair<int, int>>& points) {
+        int n=points.size();
+        if(n<2){
+            return n;
+        }
+        sort(points.begin(),points.end(),[&](pair<int,int> &p1,pair<int,int> &p2){
+            return p1.second<p2.second;
+        });
+        int res=1;
+        int preShot=points[0].second;
+        for(int i=1;i<n;i++){
+            if(points[i].first>preShot){
+                res++;
+                preShot=points[i].second;
+            }
+        }
+        return res;
+    }
+};
