@@ -155,3 +155,48 @@ private:
     unordered_map<int,Node*> key_to_pos;
     Node *head,*tail;
 };
+
+update:利用C++ list实现双向链表
+class LRUCache {
+public:
+    LRUCache(int capacity) {
+        capacity_=capacity;
+    }
+    
+    int get(int key) {
+        auto it=mmp_.find(key);//it是指向{key,iterator}pair的指针
+        if(it==mmp_.end()){
+            return -1;
+        }
+        int val=it->second->second;//it->second指向iterator
+        //将该节点移到链表的最后面表示这个key是最新被访问的
+        list_.erase(it->second);
+        list_.push_back({key,val});
+        //更新mmp
+        mmp_[key]=prev(list_.end());
+        return val;
+    }
+    
+    void put(int key, int value) {
+        if(get(key)!=-1){
+            //执行get以后key对应的节点已经移到最后一个了 要修改它的值
+            //back()返回的最后一个节点元素 而不是iterator
+            auto &last=list_.back();
+            last.second=value;
+            return;
+        }
+        //还没有这个key 加入相应的节点 并增加map映射
+        if(mmp_.size()==capacity_){
+            //超过容量 把最近最不常使用(在链表的最前方)的删除
+            auto begin=list_.begin();
+            mmp_.erase(begin->first);
+            list_.pop_front();
+        }
+        list_.push_back({key,value});
+        mmp_[key]=prev(list_.end());
+    }
+private:
+    list<pair<int,int>> list_; //{key,value}
+    unordered_map<int,list<pair<int,int>>::iterator> mmp_;
+    int capacity_;
+};
