@@ -23,9 +23,9 @@ Explanation: It's the substring "abc" four times. (And the substring "abcabc" tw
 Solution:
 class Solution {
     /*
-    s是repeatedSubstring那么他的repeatedSubstringPattern出现的次数至少2次
-    所以repeatedSubstringPattern的长度为1~s.length()/2
-    枚举可能的每一个子串
+        s是repeatedSubstring那么他的repeatedSubstringPattern出现的次数至少2次
+        所以repeatedSubstringPattern的长度为1~s.length()/2
+        枚举可能的每一个子串
     */
     public boolean repeatedSubstringPattern(String s) {
         int len=s.length();
@@ -63,5 +63,26 @@ public:
             }
         }
         return false;
+    }
+};
+
+Solution 2:
+class Solution {
+public:
+    /*
+        参考 https://leetcode.com/problems/repeated-substring-pattern/discuss/94334/Easy-python-solution-with-explaination
+        假设输入字符串为S,如果他是repeated string,重复结为S',那么S至少由两个S'拼接而成。
+        且S'的第一个字符一定是S的第一个字符,S'的最后一个字符一定是S的最后一个字符
+        假设S由k个S'组成 k>=2
+        令S1=S+S 那么S1由2k个S'组成，令S2=S1[1:-1]即,将S1的第一个字符和最后一个字符删去得到S2
+        那么S2破坏了S1中第一个和最后一个重复结S' 现在只有2k-2个重复结S'
+        因为k>=2 ==> 2k-2>=k 所以可以通过在S2中查找是否存在S来判断S是否是repeated string
+        i=S2.find(S) if i!=string::npos 那么S'=S.substr(0.,i+1)
+    */
+    bool repeatedSubstringPattern(string s) {
+        string s1=s+s;
+        int n=s.length();
+        string s2=s.substr(1)+s.substr(0,n-1);
+        return s2.find(s)!=string::npos;
     }
 };
