@@ -96,6 +96,54 @@ private:
     }
 };
 
+update:解释
+class Solution {
+public:
+    bool makesquare(vector<int>& nums) {
+        int n=nums.size();
+        if(n<4){
+            return false;
+        }
+        int sum=0;
+        for(auto &num:nums){
+            sum+=num;
+        }
+        if(sum%4!=0){
+            return false;
+        }
+        int edge=sum/4;
+        vector<bool> visit(n,false);
+        return helper(nums,visit,0,0,edge,4);
+    }
+private:
+    //判断是否可以将nums分成k组 每组的元素和都是target
+    bool helper(vector<int> &nums,vector<bool> &visit,int start,int curSum,int target,int k){
+        //之前的k-1的和都是target且nums的元素和为k*target所以最后一组的和必然为target
+        if(k==1){
+            return true;
+        }
+        //当前和==target说明已经找到了一组满足条件的 继续从头寻找剩下的k-1组
+        if(curSum==target){
+            return helper(nums,visit,0,0,target,k-1);
+        }
+        int n=nums.size();
+        //已经到尽头了 不能再加入了 该组不满足条件
+        if(start>=n){
+            return false;
+        }
+        for(int i=start;i<n;i++){
+            if(visit[i]) continue;
+            if(nums[i]+curSum>target) continue;
+            visit[i]=true;
+            if(helper(nums,visit,i+1,curSum+nums[i],target,k)){
+                return true;
+            }
+            visit[i]=false;
+        }
+        return false;
+    }
+};
+
 Solution 2:
 class Solution {
 public:
