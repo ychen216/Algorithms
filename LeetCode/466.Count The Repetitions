@@ -74,3 +74,82 @@ public:
         return cnt2/n2;
     }
 };
+
+Solution 2:
+class Solution {
+public:
+    /*
+        定义S1=[s1,n1]代表S1由n1个s1拼接起来,e.g.s1="abc" n1=4 S1="abcabcabcabc"
+        题目问：对S1=[s1,n1]最多可以构造出多少个S2=[s2,n2]
+        构造的手段：可以从S1中删除一些字符
+        那么这个问题可以转化为S1中包含多少个S2序列，可以构造出S1,S2寻找
+        但是这里的S1,S2很特殊我们不需要构造出来 可以节省空间
+        我们可以check在n1个s1中有多少个s2序列 假设有cnt2个,那么S1最多可以构造出cnt2/n2个S2
+        
+        上述直接求s2在S1中出现的次数cnt2是可行的,但我们希望减少计算量,可以采用另一种方法来获得cnt2:
+        我们对n1个s1逐一进行扫描,在每次扫描完第i个s1后,记录下:
+            1.repeat_cnt:第i个s1扫描结束累计获得的s2的个数
+            2.next_index:扫描下一个(第i+1)s1时需要寻找的第一个字符,这个字符是要匹配的s2中的字符s2[next_index]
+        Suppose s1="abc", s2="bac", nextIndex will be 1(a,s1扫描完匹配了s2的b,下一个要匹配a)
+        s1="abca", s2="bac", nextIndex will be 2(c,s1扫描完匹配了s2的ba,下一个要匹配c)
+
+        next_index的取值范围为[0,s2.length()-1],根据鸽巢定理,当n1>s2.length时,必然会遇到两个next_index相同的位置i,j     
+        设i,j表示第i,j个s1.那么,[i+1,j]就是一个循环节会重复出现,循环节长度为j-i。那么可以将n1个s1划分成三个部分:
+        0,1,2..i|[i+1,i+2...j][j+1,....2j-i] .....| k,k+1,..n1
+        第一部分prefix是在循环节之前的部分，第二部分repeative pattern由多个循环节构成，第三部分suffix是最后不完整的循环节
+        如果我们找到了i,j根据上面三个部分,可以计算出[s1,n1]包含的s2数目由这三个部分包含s2的个数累积起来
+        prefix中包含的s2数量：prefix_cnt=repeat_cnt[i]
+        repeative pattern包含循环节个数: num=(n1-i)/(j-i),所以这部分将会累积num*(repeat_cnt[j]-repeat_cnt[i])
+        suffix包含的s2数量 repeat[(n1-i)%(j-i) + i] - repeat_cnt[i]=repeat[(n1-i)%(j-i) + i] - prefix_cnt;
+        
+        Example:
+        Input:
+        s1="abacb", n1=6
+        s2="bcaa", n2=1
+
+        Return:
+        3
+                            0 1    2 3 0      1    2 3 0      1    2 3 0  
+        S1 --------------> abacb | abacb | abacb | abacb | abacb | abacb 
+
+        repeatCount ----->    0  |   1   |   1   |   2   |   2   |   3
+
+        Increment of 
+        repeatCount     ->    0  |   1   |   0   |   1   |   0   |   1
+
+        nextIndex ------->    2  |   1   |   2   |   1   |   2   |   1
+                                             ^
+                                             |
+                                             repetitive pattern found here (we've met 2 before)!
+                                             The pattern repeated 3 times
+    */
+    int getMaxRepetitions(string s1, int n1, string s2, int n2) {
+        unordered_map<int,int> repeat_cnt;
+        unordered_map<int,int> next_index;//s2_index,遍历的s1个数
+        int cnt=0;//累积获得的s2的数目 
+        int j=0;//下一个要匹配的s2的位置
+        for(int k=1;k<=n1;k++){
+            for(int i=0;i<s1.length();i++){
+                if(s1[i]==s2[j]){
+                    j++;
+                }
+                if(j==s2.length()){
+                    j=0;
+                    cnt++;
+                }
+            }
+            //前几轮遍历s1时已经遇到了next_index==j的情况 找到循环节
+            if(next_index.find(j)!=next_index.end()){
+                int preJ=next_index[j];
+                int repeat_len=k-preJ;
+                int prefix_s2_cnt=repeat_cnt[preJ];
+                int repeative_s2_cnt=(n1-preJ)/repeat_len * (cnt-repeat_cnt[preJ]);
+                int suffix_s2_cnt=repeat_cnt[(n1-preJ)%repeat_len+preJ] - repeat_cnt[preJ];
+                return (prefix_s2_cnt+repeative_s2_cnt+suffix_s2_cnt)/n2;
+            }
+            repeat_cnt[k]=cnt;
+            next_index[j]=k;
+        }
+        return cnt/n2;
+    }
+};
