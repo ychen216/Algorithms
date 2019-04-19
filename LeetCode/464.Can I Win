@@ -28,9 +28,47 @@ If the first player choose 1, the second player can only choose integers from 2 
 The second player will win by choosing 10 and get a total = 11, which is >= desiredTotal.
 Same with other integers chosen by the first player, the second player will always win.
 */
-Solution:
+
+Solution 1:
 class Solution {
-    
+public:
+    //设置每个数字是否使用过的visit数组作为状态
+    bool canIWin(int maxChoosableInteger, int desiredTotal) {
+        if(maxChoosableInteger>=desiredTotal){
+            return true;
+        }
+        if((1+maxChoosableInteger)*maxChoosableInteger/2<desiredTotal){
+            return false;
+        }
+        vector<bool> visit(maxChoosableInteger+1,false);
+        unordered_map<vector<bool>,bool> mmp;
+        return helper(mmp,visit,0,desiredTotal);
+    }
+private:
+    //判断在当前visit情况下 先手能否获胜
+    bool helper(unordered_map<vector<bool>,bool> &mmp,vector<bool> &visit,int curSum,int target){
+        if(mmp.find(visit)!=mmp.end()){
+            return mmp[visit];
+        }
+        for(int i=1;i<visit.size();i++){
+            if(visit[i]) continue;
+            visit[i]=true;
+            if(curSum+i>=target||!helper(mmp,visit,curSum+i,target)){
+                //将visit恢复到使用i之前的情况
+                visit[i]=false;
+                //在未使用i时原始的visit下 先手可以获胜
+                mmp[visit]=true;
+                return true;
+            }
+            visit[i]=false;
+        }
+        mmp[visit]=false;
+        return false;
+    }
+};
+
+Solution 2:
+class Solution {    
 public:
     /*
         memorized dfs  
