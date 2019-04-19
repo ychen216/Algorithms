@@ -25,3 +25,94 @@ Example:
 */
 
 Solution:
+class LFUCache {
+public:
+    /*
+        利用三个hashtable完成
+        unordered_map<int,pair<int,int>> key_to_val_freq;记录key->{value,frequency}
+        unordered_map<int,list<int>::iterator> key_to_it;记录key对应频率链表中的位置 便于进行删除操作
+        unordered_map<int,list<int>> freq_to_keylist;记录频率和它对应的key链表
+    */
+    LFUCache(int capacity) {
+        cap=capacity;
+    }
+    
+    int get(int key) {
+        auto it=key_to_val_freq.find(key);
+        if(it==key_to_val_freq.end()){
+            return -1;
+        }
+        int val=it->second.first;
+        int origin_freq=it->second.second;
+        //修改freq相关的结构
+        //1.从原来freq所在的链表中移除key
+        auto origin_list_it=key_to_it[key];
+        freq_to_keylist[origin_freq].erase(origin_list_it);
+        //原来的频率链表如果为空则移除 且 要判断这次更新频率的操作是否会改变min_freq
+        if(freq_to_keylist[origin_freq].size()==0){
+            freq_to_keylist.erase(origin_freq);
+            if(origin_freq==min_freq){
+                //orgin_freq==min_freq说明origin_freq是最小的 
+                //而下一个最小值就是origin_freq+1对应的链表中至少包含当前key
+                min_freq=origin_freq+1;
+            }
+        }
+        //2.更新频率 且将key加入到新的频率链表中
+        key_to_val_freq[key].second++;
+        int new_freq=origin_freq+1;
+        if(freq_to_keylist.find(new_freq)==freq_to_keylist.end()){
+            freq_to_keylist[new_freq]=list<int>();
+        }
+        freq_to_keylist[new_freq].push_back(key);
+        key_to_it[key]=prev(freq_to_keylist[new_freq].end());
+        return val;
+    }
+    
+    void put(int key, int value) {
+        if(cap<=0){
+            //有测试用例设置cap=0这样就不能包含元素 也不能加入新元素
+            return;
+        }
+        if(get(key)!=-1){
+            //已经存在key的情况 需要改变value freq及key所在的频率链表
+            //在get操作中已经做完了有关于freq相关的操作 在这里只需要改变value
+            key_to_val_freq[key].first=value;
+            return;
+        }
+        //需要加入新的元素 那么最小的freq必然会变成1
+        //是否需要移除旧的元素
+        if(cap==key_to_val_freq.size()){
+            //将min freq且最近没使用(在list的最前端)的过的key删除
+            auto& min_freq_list=freq_to_keylist[min_freq];
+            auto min_freq_key=min_freq_list.front();
+            min_freq_list.pop_front();
+            //在其他结构中移除该key
+            key_to_val_freq.erase(min_freq_key);
+            key_to_it.erase(min_freq_key);
+            if(min_freq_list.size()==0){
+                freq_to_keylist.erase(min_freq);
+            }
+        }
+        //加入新元素 修改min_freq
+        min_freq=1;
+        key_to_val_freq[key]={value,min_freq};
+        if(freq_to_keylist.find(min_freq)==freq_to_keylist.end()){
+            freq_to_keylist[min_freq]=list<int>();
+        }
+        freq_to_keylist[min_freq].push_back(key);
+        key_to_it[key]=prev(freq_to_keylist[min_freq].end());
+    }
+private:
+    int cap;
+    int min_freq;
+    unordered_map<int,pair<int,int>> key_to_val_freq;
+    unordered_map<int,list<int>::iterator> key_to_it;
+    unordered_map<int,list<int>> freq_to_keylist;
+};
+
+/**
+ * Your LFUCache object will be instantiated and called as such:
+ * LFUCache* obj = new LFUCache(capacity);
+ * int param_1 = obj->get(key);
+ * obj->put(key,value);
+ */
