@@ -61,9 +61,10 @@ public:
         int house_num=houses.size();
         sort(heaters.begin(),heaters.end());
         sort(houses.begin(),houses.end());
-        int radius=INT_MIN;
-        int j=0;
-        for(int i=0;i<house_num;i++){
+        int radius=0;
+        //为每一个house确定他的heater 将house分配给离他最近的heater
+        for(int i=0,j=0;i<house_num;i++){
+            //例子house=[1,1,999,999,999],heater=[499,500,501]
             //找到离houses[i]最近heater
             //离第i+1house最近的heater一定坐标不小于 离第i个house最近的heater
             while(j+1<heater_num&&abs(heaters[j+1]-houses[i])<=abs(heaters[j]-houses[i]))
@@ -73,3 +74,25 @@ public:
         return radius;
     }
 };
+
+Solution 3:
+public class Solution {
+    //只对heater排序 利用二分查找为每一个house找到离他最近的heater 来确定radius
+    public int findRadius(int[] houses, int[] heaters) {
+        Arrays.sort(heaters);
+        int result = Integer.MIN_VALUE;
+        
+        for (int house : houses) {
+            int index = Arrays.binarySearch(heaters, house);
+            if (index < 0) {
+        	index = -(index + 1);
+            }
+            int dist1 = index - 1 >= 0 ? house - heaters[index - 1] : Integer.MAX_VALUE;
+            int dist2 = index < heaters.length ? heaters[index] - house : Integer.MAX_VALUE;
+        
+            result = Math.max(result, Math.min(dist1, dist2));
+        }
+        
+        return result;
+    }
+}
