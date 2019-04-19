@@ -14,8 +14,8 @@ class Solution {
 public:
     int rand10() {
         int i,j;
-        while(i=rand7()>6); // i may be 1 2 3 4 5 6, P(i is odd)=P(i is even)=0.5;
-        while(j=rand7()>5); // j may be 1 2 3 4 5 P(j=1)=P(j=2)=P(j=3)=P(j=4)=P(j=5)=0.2
+        while((i=rand7())>6); // i may be 1 2 3 4 5 6, P(i is odd)=P(i is even)=0.5;
+        while((j=rand7())>5); // j may be 1 2 3 4 5 P(j=1)=P(j=2)=P(j=3)=P(j=4)=P(j=5)=0.2
         return (i&1)? j : j+5;
     }
 };
