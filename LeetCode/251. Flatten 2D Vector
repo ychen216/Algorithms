@@ -1,0 +1,103 @@
+251. Flatten 2D Vector 付费题
+
+/*
+Implement an iterator to flatten a 2d vector.
+
+For example,
+Given 2d vector =
+
+[
+  [1,2],
+  [3],
+  [4,5,6]
+]
+By calling next repeatedly until hasNext returns false, the order of elements returned by next should be: [1,2,3,4,5,6].
+
+Hint:
+  How many variables do you need to keep track?
+  Two variables is all you need. Try with x and y.
+  Beware of empty rows. It could be the first few rows.
+  To write correct code, think about the invariant to maintain. What is it?
+  The invariant is x and y must always point to a valid point in the 2d vector. Should you maintain your invariant ahead of time or right when you need it?
+  Not sure? Think about how you would implement hasNext(). Which is more complex?
+  Common logic in two different places should be refactored into a common method.
+ 
+*/
+
+Solution 1:
+将所有非空数组的元素加入到一个数组里 然后一个个弹出
+public class Vector2D {
+    private Queue<Integer> vec1d;
+    
+    public Vector2D(List<List<Integer>> vec2d) {
+        vec1d = new LinkedList<>();
+        for(List<Integer> list : vec2d) {
+            for(int i : list) {
+                vec1d.offer(i);
+            }
+        }
+    }
+
+    public int next() {
+        if(hasNext())
+            return vec1d.poll();
+        else
+            return Integer.MAX_VALUE;
+    }
+
+    public boolean hasNext() {
+        return vec1d.size() > 0;
+    }
+}
+
+/**
+ * Your Vector2D object will be instantiated and called as such:
+ * Vector2D i = new Vector2D(vec2d);
+ * while (i.hasNext()) v[f()] = i.next();
+ */
+ 
+ 
+ Solution 2:
+ 利用iterator来完成 这里要设置两个行列iterator,一个指向行(非空数组v),一个指向列(非空数组v下一个要访问的位置)
+ http://www.voidcn.com/article/p-qxkyrjri-zo.html
+ class Vector2D {
+public:
+    Vector2D(vector<vector<int>>& vec2d) {
+        row = vec2d.begin();
+        end = vec2d.end();
+        while(row != end) {
+            if((*row).size() > 0) {
+                col = (*row).begin();
+                break;
+            }
+            row++;
+        }
+    }
+
+    int next() {
+        int lastValue = *col;
+        col++;
+        return lastValue;
+    }
+
+    bool hasNext() {
+        if(row == end)
+            return false;
+        if(col != (*row).end()) {
+            return true;
+        } else {
+            while(row != end) {
+                row++;
+                if(row != end && (*row).size() != 0) {
+                    col = (*row).begin();
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    
+private:
+    vector<vector<int>>::iterator row, end;
+    vector<int>::iterator col;
+};
