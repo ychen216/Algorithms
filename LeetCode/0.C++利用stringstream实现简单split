@@ -1,0 +1,15 @@
+C++利用stringstream实现简单split
+
+1.使用stringstream要引入<sstream>头文件
+2. getline (istream& is, string& str, char delim)
+
+stringstream ss("aa,vv,cc");
+string cur;
+while (getline(ss, cur, ',')) {
+  cout << cur << endl;
+}
+
+output:
+aa
+vv
+cc
