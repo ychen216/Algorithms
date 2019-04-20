@@ -116,3 +116,31 @@ private:
         return true;
     }
 };
+
+update:可以将第二重循环中 if(is_palindrom(A))的判断条件A.length()!=0提到外面
+if(is_palindrom(A)){ 
+    string revB=B;
+    reverse(revB.begin(),revB.end());
+    //这里必须要check A的长度!=0 来避免重复答案的生成
+    //eg 如果存在两个字符串"abcd","dcba"
+    //便利到abcd时 划分""abcd 如果存在dcba 这里会生成答案dcba "" abcd
+    //下面划分为abcd""时 check B 会生成abcd "" dcba
+    //在遍历到dcba时 会出现划分""dcba--> abcd "" dcba; 划分为dcba""--> dcba "" abcd
+    if(mmp.find(revB)!=mmp.end()&&mmp[revB]!=i&&A.length()!=0){
+        res.push_back({mmp[revB],i});
+    }
+}
+
+改为：
+if(is_palindrom(A)&&A.length()!=0){
+    string revB=B;
+    reverse(revB.begin(),revB.end());
+    //这里必须要check A的长度!=0 来避免重复答案的生成
+    //eg 如果存在两个字符串"abcd","dcba"
+    //便利到abcd时 划分""abcd 如果存在dcba 这里会生成答案dcba "" abcd
+    //下面划分为abcd""时 check B 会生成abcd "" dcba
+    //在遍历到dcba时 会出现划分""dcba--> abcd "" dcba; 划分为dcba""--> dcba "" abcd
+    if(mmp.find(revB)!=mmp.end()&&mmp[revB]!=i){
+        res.push_back({mmp[revB],i});
+    }
+}
