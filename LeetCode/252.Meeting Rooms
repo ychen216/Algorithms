@@ -1,0 +1,33 @@
+252.Meeting Rooms
+
+/*
+Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), determine if a person 
+could attend all meetings.
+
+For example,
+Given [[0, 30],[5, 10],[15, 20]]
+return false.
+
+*/
+
+Solution:
+就是判断这些区间是否有交集，如果有交集，那么就不能全部参加
+可以先按照起始区间的大小进行排序然后进行判断
+class Solution {
+public:
+    bool canAttendMeetings(vector<Interval>& intervals) {
+        int n=intervals.size();
+        if(n<2){
+          return true;
+        }
+        sort(intervals.begin(), intervals.end(), [](const Interval &a, const Interval &b){return a.start < b.start;});
+        int last=intervals[0].end;
+        for (int i = 1; i < intervals.size(); ++i) {
+            if (intervals[i].start < last){
+                return false;
+            }
+            last=intervals[i].end;
+        }
+        return true;
+    }
+};
