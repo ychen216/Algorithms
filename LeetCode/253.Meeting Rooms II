@@ -1,4 +1,4 @@
-253.Meeting Rooms II
+253.Meeting Rooms II 付费
 
 /*
 Given an array of meeting time intervals consisting of start and end times [[s1,e1],[s2,e2],...] (si < ei), 
@@ -9,4 +9,74 @@ Given [[0, 30],[5, 10],[15, 20]],
 return 2.
 */
 
-Solution:
+题目给定多个会议的时间区间，要求至少需要多少间会议室才能满足要求。考虑real life中安排会议的方法，先按会议的开始时间排序，然后逐个安排。
+如果当前要安排的会议的开始时间在某个会议的结束时间之后，那么就可以用那一间会议室，而不用另开房间。如果当前要安排的会议的开始时间比所有房间的结束时间都早，
+那么需要另开一个新房间。注意在安排的新的会议之后，要更新这个房间的结束时间。
+
+
+Solution 1:利用sort + minHeap
+按照会议开始时间排序，之后维护一个minHeap，minHeap中维护的是当前所有已经开辟的会议室的结束时间,堆顶的是最早结束的会议室。
+如果当前会议的开始时间小于堆顶元素，则需要新安排一间房，否则将当前会议安排到堆顶元素所在的会议室中。
+要注意每一个会议安排好房间时,无论是新开还是安排在已有的房间，都需要更新该房间的会议结束时间为当前会议的结束时间。
+class Solution {
+public:
+    int minMeetingRooms(vector<Interval>& intervals) {
+        sort(intervals.begin(), intervals.end(), [](const Interval &a, const Interval &b){return a.start < b.start;});
+        priority_queue<int, vector<int>, greater<int>> q;
+        for (auto a : intervals) {
+            //可以安排到已有的会议室
+            if (!q.empty() && q.top() <= a.start) q.pop();
+            //更新会议室的结束时间
+            q.push(a.end);
+        }
+        return q.size();
+    }
+};
+
+这里也可以改写成：
+1.
+for (auto a : intervals) {
+    if (!q.empty() && q.top() <= a.start) {
+      q.pop();
+    }
+    else{
+      room++;
+    }
+    q.push(a.end);
+}
+return room;
+2.
+for (auto a : intervals) {
+    q.push(a.end);//先更新当前结束时间
+    if(q.top()<=a.start){
+      q.pop();
+    }
+}
+return q.size();
+
+
+Solution 2：利用map 需要好好理解
+每一个时间区间[start,end],start意味着区域的开始,end意味着区域的结束。扫描所有会议安排,对所有start都做map[start]++操作，这样重叠部分就会增加，对所有end都做map[end]--操作
+那么按照key从小打到大扫描map,不断累计value值记为unfinish，unfinish指的是到目前这个时间点还有多少会议没有完成(同时在进行)，这些会议需要安排在不同的房间。
+这个过程中unfinish最大值即为要安排的会议室数目
+画图示意:
+start1 start2 end2 end1  start3 end3
+遍历到start2时，有2个会议1,2在同时进行，需要两个房间；在end2后只有会议1在进行，此时需要一个房间；在end1之后当前会议结束，在start3后开始新的会议需要一个房间
+在这个过程中最多会议有交叠同时进行的有两个，所以最少需要两个房间
+
+class Solution {
+public:
+    int minMeetingRooms(vector<Interval>& intervals) {
+        map<int, int> mp;
+        for (auto val : intervals) {
+            mp[val.start]++;
+            mp[val.end]--;
+        }
+        int max_room = 0, crt_room = 0;
+        for (auto val : mp) {
+            crt_room += val.second;
+            max_room = max(max_room, crt_room);
+        }
+        return max_room;
+    }
+}
