@@ -1,0 +1,115 @@
+269.Alien Dictionary 付费
+
+/*
+There is a new alien language which uses the latin alphabet. However, the order among letters are unknown to you. 
+You receive a list of non-empty words from the dictionary, where words are sorted lexicographically by the rules of this new language. 
+Derive the order of letters in this language.
+
+Example 1:
+Given the following words in dictionary,
+[
+  "wrt",
+  "wrf",
+  "er",
+  "ett",
+  "rftt"
+]
+The correct order is: "wertf".
+
+Example 2:
+Given the following words in dictionary,
+[
+  "z",
+  "x"
+]
+The correct order is: "zx".
+
+Example 3:
+Given the following words in dictionary,
+[
+  "z",
+  "x",
+  "z"
+]
+The order is invalid, so return "".
+
+Note:
+  You may assume all letters are in lowercase.
+  You may assume that if a is a prefix of b, then a must appear before b in the given dictionary.
+  If the order is invalid, return an empty string.
+  There may be multiple valid order of letters, return any one of them is fine.
+*/
+
+
+Solution:
+这道题的意思是：定义了一个新的语言，这个语言中26个字母之间的相对顺序并不知道。现在给你一组字符串，这些字符串的顺序是按照新语言的规则进行lexicographically
+排序后的结果，要我们求出在这组字符串中出现的字母，在新语言中的相对顺序（rule）。如果能够确定所有出现字母的顺序则输出这个顺序，否则输出空串。
+
+这道题要考察的是拓扑排序：首先根据输入信息构建一个图-->找入度为零的点-->BFS
+可以参考 https://www.youtube.com/watch?v=RIrTuf4DfPE
+
+思路：因为给定的字符串组的顺序是按照新规则进行字符序排序后的结果，所以排在前面的字符串比在后面的字符串字符序小,比如，"wrt"排在"wrf"前面说明t<f;
+所以我们通过比较前后两个字符串就可以得到至多一个相对次序，来建立边。构建图
+为什么说是至多一个：因为两个字符串之间有相对次序，仅出现在如果两个字符前面的字符都相同，然后出现第一个不同的字符，这个字符对之间告诉了我们相对次序；
+如果有多个不同，也只能计算一个,eg wrta vs wrfb 只能说明t<f,不能说明ab之间的关系。
+同时比较的时候要以两个字符串中短的字符串为基准，eg. xa vs xab,xa已经遍历结束了还没找到不同的字符,也没有办法得到一个次序关系xab中的b没人比较
+
+同时这道题中没有直接给出节点个数，我们需要自己遍历寻找出现过的字符。这样才能最后才能判断是否找出了规则，也就是拓扑排序的元素个数是否等于出现过的字符
+不能直接用indegree[i]==0判断入度为零，还需要结合其是否在字符串出现过的信息进行判断，否则在BFS时会将没出现过的字符加入
+
+以下代码没有在LeetCode中测试过，思路是对的，跟一些代码对比过，应该没啥问题
+string alienOrder(vector<string>& words) {
+	unordered_map<char, unordered_set<char>> graph;
+	unordered_set<char> occur;
+	vector<int> indegree(26, 0);//最多26个字母
+	//寻找出现过的字符
+	for (auto &word : words) {
+		for (auto &c : word) {
+			if (occur.find(c) != occur.end()) continue;
+			occur.insert(c);
+		}
+	}
+	//构建图：根据word顺序 寻找字符的相对次序 两两word比较
+	for (int i = 1; i < words.size(); i++) {
+		const string & out = words[i - 1];
+		const string & in = words[i];
+		int len = min(out.length(), in.length());
+		//找到第一个不同的字符
+		for (int j = 0; j < len; j++) {
+			if (out[j] != in[j]) {
+				if (graph.find(out[j]) == graph.end()) {
+					graph[out[j]] = unordered_set<char>();
+				}
+				//不要多次加入已有的次序关系(边)
+				if (graph[out[j]].find(in[j]) == graph[out[j]].end()) {
+					graph[out[j]].insert(in[j]);
+					indegree[in[j] - 'a']++;
+				}
+				break;//一旦找到一个就要跳出 后面的次序关系并不能确定
+			}
+		}
+	}
+	//拓扑排序
+	string res;
+	queue<char> q;
+	for (auto& c : occur) {
+		if (indegree[c - 'a'] == 0) {
+			q.push(c);
+		}
+	}
+
+	while (!q.empty()) {
+		auto &out = q.front();
+		q.pop();
+		res.push_back(out);
+		if (graph.find(out) == graph.end()) continue;
+		for (auto &in : graph[out]) {
+			indegree[in - 'a']--;
+			if (indegree[in - 'a'] == 0) {
+				q.push(in);
+			}
+		}
+	}
+	return res.length() == occur.size() ? res : "";
+}
+
