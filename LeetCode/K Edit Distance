@@ -1,0 +1,142 @@
+K Edit Distance
+
+Given a list of word and a target word, output all the words for each the edit distance with the target no greater than k.
+
+e.g. ["abc", "abd", "abcd", "adc"], target ="ac", k = 1,
+
+output = [abc, adc]
+
+Naive Solution:对list中所有word都和target计算一下 edit distance
+A naive solution would be, for each word in the list, calculate the edit distance with the target word. 
+If it is equal or less than k, output to the result list. If we assume that the average length of the words is m, 
+and the total number of words in the list is n, the total time complexity is O(n * m^2).
+
+Trie tree:
+The problem with the previous solution is if the given list of the words is like ab, abc, abcd, 
+each time we need to repeatedly calculate the edit distance with the target word. 
+If we can combine the prefix of all words together, we can save lots of time.
+
+这题是将所有的原串放进一棵字典树，然后遍历这棵字典树(相当于遍历所有的前缀)，dp[i] 表示从Trie的root节点走到当前node节点形成的Prefix和 target的
+前i个字符的最小编辑距离。最后通过dp[i]就可以得到和target的最小距离。
+eg. target="c"
+     c
+   / | \
+  b  s  t
+ /
+y
+
+我们访问完cb后我们就可以利用cb得到的dp值来获得 cby和target的dp 如下图中方框部分的值都是计算过的,可以重复利用。我们可以利用pre去计算cur
+       c  b  y
+    0  1  2  3
+  0 |---- |  "
+c 1 |____ |  "
+         pre cur 
+
+每一次在前缀的基础上增加某一个字符X,eg:cb-->cby,我们记cb和target计算得到的dp数组为pre。
+此时计算新的cur数组,cur[i]表示当前字符串和target前i个字符之间的编辑距离。
+由于当前字符串增加了一个字符长度增加1，所以cur[0]=pre[0]+1, 然后遍历target字符串，计算cur其他位置的值。
+这里需要搞清楚Edit Distance的dp方程：计算串s,t的编辑距离按照下列方式
+dp[i][j]=dp[i-1][j-1] if s[i-1]==t[j-1] else dp[i][j]=min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1 //分别对应s串删除元素i s串增加1个元素 s串替换一个元素
+
+这里pre和cur拥有相同的前缀，cur比pre多一个字符.假设target就是上面的串t,pre相当于dp[i-1][0...len(t)]而cur就是dp[i][0..len(s)],可以得到下面的代码：
+cur=pre;
+cur[0]++;
+for(int j=1;j<=target.length();j++){
+  if(target[j-1]==X){
+    cur[j]=pre[j-1]; //对应dp[i][j]=dp[i-1][j-1]
+  }else{
+    cur[j]=min(pre[j],cur[j-1],pre[j-1])+1; //对应dp[i][j]=min(dp[i-1][j],dp[i][j-1],dp[i-1][j-1])+1
+  }
+}
+
+完整的代码：
+// CppUse.cpp : This file contains the 'main' function. Program execution begins and ends there.
+//
+
+#include "pch.h"
+#include <iostream>
+#include <vector>
+#include<list>
+#include<string>
+#include<sstream>
+#include<unordered_set>
+#include<math.h>
+#include<algorithm>
+using namespace std;
+
+struct TrieNode {
+	TrieNode *children[26]{ NULL };
+	bool isWord{ false };
+};
+
+TrieNode *buildTree(const vector<string>& words) {
+	TrieNode *root = new TrieNode();
+	TrieNode *cur = NULL;
+	for (auto &word : words) {
+		cur = root;
+		for (auto &c : word) {
+			if (!cur->children[c - 'a']) {
+				cur->children[c - 'a'] = new TrieNode();
+			}
+			cur = cur->children[c - 'a'];
+		}
+		cur->isWord = true;
+	}
+	return root;
+}
+
+void search(TrieNode *root, const string &target, vector<int> &pre_dp, vector<string> &res, string prefix, const int k) {
+	if (root->isWord&&pre_dp.back() <= k) {
+		res.push_back(prefix);
+	}
+	//在原来的prefix基础上继续往下拓展一个字符
+	for (int i = 0; i < 26; i++) {
+		if (!root->children[i]) continue;
+		char X = i + 'a';
+		//新前缀和target各个字符之间的编辑距离
+		vector<int> cur_dp = pre_dp;
+		cur_dp[0]++;
+		bool canExpand = cur_dp[0] <= k;//用来指示是否可以往该节点下一层继续拓展 如果已经超过k就不需要往下拓展了 更长的prefix只会有更大的Edit distance
+		for (int j = 1; j <= target.length(); j++) {
+			if (target[j - 1] == X) {
+				cur_dp[j] = pre_dp[j - 1];
+			}
+			else {
+				cur_dp[j] = min(min(pre_dp[j], cur_dp[j - 1]), pre_dp[j - 1]) + 1;
+			}
+			canExpand = cur_dp[j] <= k;
+		}
+		if (canExpand) {
+			search(root->children[i], target, cur_dp, res, prefix + X, k);
+		}
+	}
+}
+
+int main()
+{	
+	vector<string> words{ "abc", "abd", "abcd", "adc" };
+	string target = "ac";
+	int k = 1;
+	//初始化prefix是空串时的dp[0,len(target)]
+	vector<int> dp(target.length() + 1, 0);
+	for (int i = 1; i <= target.length(); i++) {
+		dp[i] = i;
+	}
+	TrieNode *root = buildTree(words);
+	vector<string> res;
+	search(root, target, dp, res, "", k);
+	for (auto &str : res) {
+		cout << str << endl;
+	}
+}
+
+// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
+// Debug program: F5 or Debug > Start Debugging menu
+
+// Tips for Getting Started: 
+//   1. Use the Solution Explorer window to add/manage files
+//   2. Use the Team Explorer window to connect to source control
+//   3. Use the Output window to see build output and other messages
+//   4. Use the Error List window to view errors
+//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
+//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
