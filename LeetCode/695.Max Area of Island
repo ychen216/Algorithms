@@ -96,33 +96,31 @@ private:
 class Solution {
 public:
     int maxAreaOfIsland(vector<vector<int>>& grid) {
-        int row=grid.size();
-        if(row==0)
+        if(grid.empty()||grid[0].empty()){
             return 0;
+        }
+        int row=grid.size();
         int col=grid[0].size();
-        int maxArea=0,curArea;
+        int res=0;
         for(int i=0;i<row;i++){
             for(int j=0;j<col;j++){
-                if(grid[i][j]==1){
-                    curArea=dfs(grid,i,j,row,col,0);
-                    maxArea=max(maxArea,curArea);
-                }
+                if(grid[i][j]==0) continue;
+                res=max(res,dfs(grid,i,j,row,col));
             }
         }
-        return maxArea;
+        return res;
     }
-    
 private:
-    int dx[4]={-1,1,0,0},dy[4]={0,0,-1,1};
-    int dfs(vector<vector<int>>&grid,int i,int j,int row,int col,int curArea){
-        curArea++;
-        grid[i][j]=0;
-        for(int k=0;k<4;k++){
-            int x=i+dx[k];
-            int y=j+dy[k];
-            if(x<0||x>=row||y<0||y>=col||grid[x][y]==0)continue;
-            curArea+=dfs(grid,x,y,row,col,0);
+    int dfs(vector<vector<int>>& grid, int x,int y,int row,int col){
+        if(x<0||x>=row||y<0||y>=col||grid[x][y]==0){
+            return 0;
         }
-        return curArea;
+        int area=1;
+        grid[x][y]=0;
+        area+=dfs(grid,x-1,y,row,col);
+        area+=dfs(grid,x+1,y,row,col);
+        area+=dfs(grid,x,y-1,row,col);
+        area+=dfs(grid,x,y+1,row,col);
+        return area;
     }
 };
