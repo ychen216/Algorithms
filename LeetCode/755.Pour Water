@@ -1,4 +1,5 @@
-756. Pour Water
+755. Pour Water 付费
+
 /*
 We are given an elevation map, heights[i] representing the height of the terrain at that index. The width at each index is 1. 
 After V units of water fall at index K, how much water is at each index?
@@ -120,9 +121,46 @@ Note:
 给定一个组高度值，代表一个水槽的底部高度分布情况。在K点处倒入V体积的水，求倒水之后的高度分布。
 
 倒入的每一体积的水按照如下规则进行流动
-
-如果在K点左侧存在地势较低且可达的位置，则水优先向左流动。
-否则，在K点右侧存在地势较低且可达的位置，则水向右侧流动。
-否则，水停留在K处。
+  如果在K点左侧存在地势较低且可达的位置，则水优先向左流动。
+  否则，在K点右侧存在地势较低且可达的位置，则水向右侧流动。
+  否则，水停留在K处。
 
 Solution:
+参考：http://zxi.mytechroad.com/blog/simulation/leetcode-755-pour-water/
+模拟题 一滴滴水来模拟。
+假设这个水槽两侧有无限高的墙，如果向左向右都可以使得该滴水落到一个比起始点K处更低的一个位置，那么优先向左流，再向右边流。
+每一滴水都会落到最低点，如果有连续的一段平原会优先流到第一个到达的地方意思是会
+       ---A  
+      /    
+\___ /
+  D C
+从A开始流,最后会流到C,height_C==height_D并不会落到D处
+
+// Author: Huahua
+// Running time: 3 ms
+class Solution {
+public:
+    vector<int> pourWater(vector<int>& heights, int V, int K) {
+        while (V--) drop(heights, K);
+        return heights;    
+    }
+private:
+    void drop(vector<int>& heights, int K) {
+        int best = K; //初始化默认该滴水落在K处
+        //d是移动的步长 -1表示向左 1表示向右 这样将向左流和向右流的逻辑结合到一起
+        for (int d = -1; d <= 1; d += 2) {
+            int i = K + d; //第一步
+            //找到左边或右边的最低点
+            while (i >= 0 && i < heights.size() 
+                   && heights[i] <= heights[i - d]) {
+                //必须要有这一步判断 因为循环条件是<= 所以有可能是相邻位置高度相等
+                //而我们只希望找到更低的位置才改变best,如果高度相同优先留在原地    
+                if (heights[i] < heights[best]) best = i;
+                i += d;
+            }
+            //只要找到一处低于K点的就跳出 否则可能找完左边又找右边
+            if (best != K) break;
+        }
+        ++heights[best];
+    }
+};
