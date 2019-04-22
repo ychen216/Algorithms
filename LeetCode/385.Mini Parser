@@ -1,0 +1,114 @@
+385. Mini Parser
+
+/*
+Given a nested list of integers represented as a string, implement a parser to deserialize it.
+
+Each element is either an integer, or a list -- whose elements may also be integers or other lists.
+
+Note: You may assume that the string is well-formed:
+  String is non-empty.
+  String does not contain white spaces.
+  String contains only digits 0-9, [, - ,, ].
+
+Example 1:
+Given s = "324",
+You should return a NestedInteger object which contains a single integer 324.
+
+Example 2:
+Given s = "[123,[456,[789]]]",
+Return a NestedInteger object containing a nested list with 2 elements:
+1. An integer containing value 123.
+2. A nested list containing two elements:
+    i.  An integer containing value 456.
+    ii. A nested list with one element:
+         a. An integer containing value 789.
+
+*/
+
+Solution:
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * class NestedInteger {
+ *   public:
+ *     // Constructor initializes an empty nested list.
+ *     NestedInteger();
+ *
+ *     // Constructor initializes a single integer.
+ *     NestedInteger(int value);
+ *
+ *     // Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     bool isInteger() const;
+ *
+ *     // Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     // The result is undefined if this NestedInteger holds a nested list
+ *     int getInteger() const;
+ *
+ *     // Set this NestedInteger to hold a single integer.
+ *     void setInteger(int value);
+ *
+ *     // Set this NestedInteger to hold a nested list and adds a nested integer to it.
+ *     void add(const NestedInteger &ni);
+ *
+ *     // Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     // The result is undefined if this NestedInteger holds a single integer
+ *     const vector<NestedInteger> &getList() const;
+ * };
+ */
+class Solution {
+public:
+    /*
+      参考：https://blog.csdn.net/magicbean2/article/details/77816795 
+      一道字符串解析的题目，根据NestedInteger的定义，我们一定是需要用到DFS的。具体思路是：
+
+      1）如果要解析的字符串的首字母不是'['，那么一定是一个整数，直接返回对应的整数就可以；
+
+      2）否则首先根据逗号分割出list中的每个元素，然后递归调用函数，将返回结果赋给parent即可。
+
+    */
+    NestedInteger deserialize(string s) {
+        int n=s.length();
+        if(n==0){
+            return NestedInteger();
+        }
+        return helper(s,0,n-1);
+    }
+private:
+    NestedInteger helper(string &s,int left,int right){
+        if(s[left]=='['){
+            //是一个list s[left+1,..,right-1]构成list中的元素
+            //这个list里有多个元素嵌套 所以我们定义一个父亲节点 然后将其内部的元素逐个加入
+            NestedInteger parent;
+            if(left+1==right){
+                //是一个空list
+                return parent;
+            }
+            int nestedpair=0;
+            int start=left+1;
+            //逐个寻找list的每一个元素,每一个元素以逗号分隔
+            //如果该元素是一个数字对应nestedpair=0直接构造NestedInteger加入
+            //如果该元素是一个list,那么我们要确保找到这个子list的起止位置 构造这个list
+            for(int end=left+1;end<right;end++){
+                if(s[end]=='['){
+                    nestedpair++;   
+                }
+                else if(s[end]==']'){
+                    nestedpair--;
+                }
+                else if(s[end]==','&&nestedpair==0){
+                    NestedInteger ni=helper(s,start,end-1);//要跳过这个逗号
+                    parent.add(ni);
+                    start=end+1;
+                }
+            }
+            //最后一个元素没有逗号分隔 要加入
+            NestedInteger ni=helper(s,start,right-1);
+            parent.add(ni);
+            return parent;
+        }
+        else{
+            //只是一个数字 可以直接返回
+            return NestedInteger(stoi(s.substr(left,right-left+1)));
+        }
+    }
+};
