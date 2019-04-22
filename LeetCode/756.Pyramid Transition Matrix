@@ -31,7 +31,54 @@ Note that there could be allowed triples (A, B, C) and (A, B, D) with C != D.
   allowed will have length in range [0, 200].
   Letters in all strings will be chosen from the set {'A', 'B', 'C', 'D', 'E', 'F', 'G'}.
 */
-Solution:
+
+Solution 1: 将上层字符串全部构造出来验证
+class Solution {
+public:
+    bool pyramidTransition(string bottom, vector<string>& allowed) {
+        unordered_map<string,vector<char>> rules;
+        for(auto &str:allowed){
+            rules[str.substr(0,2)].push_back(str[2]);
+        }
+        return helper(bottom,rules);
+    }
+private:
+    bool helper(string &base,unordered_map<string,vector<char>>&mmp){
+        if(base.length()==1){
+            return true;
+        }
+        //构造所有可能的上层字符串
+        //验证可以构成完整的上层字符串
+        for(int i=0;i<base.length()-1;i++){
+            if(mmp.find(base.substr(i,2))==mmp.end()){
+                return false;
+            }
+        }
+        vector<string> ups;
+        string up;
+        generator(base,0,up,ups,mmp);
+        for(auto &str:ups){
+            if(helper(str,mmp)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    void generator(string &base,int start,string &up,vector<string>&res,unordered_map<string,vector<char>>&mmp){
+        if(start==base.length()-1){
+            res.push_back(up);
+            return;
+        }
+        for(auto &c:mmp[base.substr(start,2)]){
+            up.push_back(c);
+            generator(base,start+1,up,res,mmp);
+            up.pop_back();
+        }
+    }
+};
+
+Solution 2:不构造出所有上层字符串才check，构造出一个就check一个 避免不必要的构造
 class Solution {
 public:
     /*
@@ -71,5 +118,43 @@ private:
             }
             return false;
         }
+    }
+};
+
+update:
+class Solution {
+public:
+    bool pyramidTransition(string bottom, vector<string>& allowed) {
+        unordered_map<string,vector<char>> rules;
+        for(auto &str:allowed){
+            rules[str.substr(0,2)].push_back(str[2]);
+        }
+        string next;
+        return helper(bottom,0,next,rules);
+    }
+private:
+    bool helper(string &cur,int start,string &up,unordered_map<string,vector<char>>&mmp){
+        if(cur.length()==1){
+            return true;
+        }
+        //上一层已经构造结束 检查上一层
+        if(start==cur.length()-1){
+            string next="";
+            return helper(up,0,next,mmp);
+        }
+        //否则继续构造上一层
+        string base=cur.substr(start,2);
+        //cur[start,start+1]没有可以构造的上一层字符
+        if(mmp.find(base)==mmp.end()){
+            return false;
+        }
+        for(auto &c:mmp[base]){
+            up.push_back(c);
+            if(helper(cur,start+1,up,mmp)){
+                return true;
+            }
+            up.pop_back();
+        }
+        return false;
     }
 };
