@@ -43,7 +43,7 @@ public:
         在获得当前window的中位数后，我们要为一下window提供长度为k-1的有序数组，所以要删掉该窗口最早一个元素
         可以利用二分查找lower_bound找到要删除的位置erase即可
         
-        还有利用BST multiset实现的方法，时间复杂度为O((n-k+1)*logk)还未尝试
+        还有利用BST multiset实现的方法，时间复杂度为O((n-k+1)*logk)
     */
     vector<double> medianSlidingWindow(vector<int>& nums, int k) {
         vector<double> res;
@@ -57,6 +57,27 @@ public:
             rotate(insert_it,last_it,window.end());//rotate(区间起始,rotate结束后区间的第一个元素,区间终止)
             res.push_back((static_cast<double>(window[k/2])+window[(k-1)/2])/2.0);
             window.erase(lower_bound(window.begin(),window.end(),nums[i-k+1]));
+        }
+        return res;
+    }
+};
+
+
+Solution 2:
+class Solution {
+public:
+    //可以利用multiset来维护有序的window 同时也可以方便的删除最早加入的元素 时间复杂度为O((n-k+1)*logk)
+    vector<double> medianSlidingWindow(vector<int>& nums, int k) {
+        vector<double> res;
+        multiset<int> window(nums.begin(),nums.begin()+k-1);
+        for(int i=k-1;i<nums.size();i++){
+            window.insert(nums[i]);
+            auto mid1=next(window.begin(),k/2);
+            auto mid2=prev(mid1,k&1?0:1);//如果k是奇数的话就不需要向前移动
+            res.push_back((static_cast<double>(*mid1)+*mid2)/2);
+            //window.erase(nums[i-k+1]);不能直接erase(val)这样会把所有val都删掉 而我们只希望删除一个   
+            auto it=window.find(nums[i-k+1]);
+            window.erase(it);
         }
         return res;
     }
