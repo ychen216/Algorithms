@@ -46,6 +46,18 @@ public:
         还有利用BST multiset实现的方法，时间复杂度为O((n-k+1)*logk)还未尝试
     */
     vector<double> medianSlidingWindow(vector<int>& nums, int k) {
-        
+        vector<double> res;
+        vector<int> window(nums.begin(),nums.begin()+k-1);//k-1个元素
+        sort(window.begin(),window.end());
+        for(int i=k-1;i<nums.size();i++){
+            window.push_back(nums[i]);
+            auto last_it=prev(window.end());
+            auto insert_it=upper_bound(window.begin(),last_it,nums[i]);
+            //终止点必须是last_it 如果是window.end() 可能找不到大于nums[i]的地方 就没法插入 所以必须是起始到终止之间的一个位置
+            rotate(insert_it,last_it,window.end());//rotate(区间起始,rotate结束后区间的第一个元素,区间终止)
+            res.push_back((static_cast<double>(window[k/2])+window[(k-1)/2])/2.0);
+            window.erase(lower_bound(window.begin(),window.end(),nums[i-k+1]));
+        }
+        return res;
     }
 };
