@@ -78,3 +78,25 @@ public:
         return maxOnes;
     }
 };
+
+
+Solution 4: 简化版dp
+class Solution {
+public:
+    int findMaxConsecutiveOnes(vector<int>& nums) {
+        int res=0;
+        int cur=0;//在i之前连续的1的个数
+        for(int i=0;i<nums.size();i++){
+            if(nums[i]==1){
+                cur++;
+            }
+            else{
+                res=max(res,cur);
+                cur=0;
+            }
+        }
+        //最后一部分连续的1
+        res=max(res,cur);
+        return res;
+    }
+};
