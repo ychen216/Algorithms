@@ -22,16 +22,20 @@ public:
         if(n==1)
             return 9;
         long high=(long)pow(10,n)-1,low=high/10;
-        
+        int res=-1;
         for(long i=high;i>low;i--){
             long palindrome=create(i);
             for(long j=high;j>low;j--){
                 if(palindrome/j>high)
                     break;
                 if(palindrome%j==0)
-                    return (int)(palindrome%1337);
+                    res=palindrome%1337;
+            }
+            if(res!=-1){
+                break;
             }
         }
+        return res;
     }
     
     long create(long num){
