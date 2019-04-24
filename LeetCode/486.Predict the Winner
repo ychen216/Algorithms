@@ -31,7 +31,7 @@ public:
     The dp[i][j] saves how much more scores that the first-in-action player will get 
     from i to j than the second player. First-in-action means whomever moves first. 
         dp[i][i]=nums[i]
-        dp[i][j]=max(nums[i],dp[i+1][j],num[j]-dp[i][j-1])
+        dp[i][j]=max(nums[i]-dp[i+1][j],num[j]-dp[i][j-1])
         意思是 在区间[i,j]中first-in-action player可以比second-in-action player多获得的分数为
         nums[i](or nums[j])-second-in-action player 在[i+1,j](or [i~j-1])可以比first-in-action player多获得的分数
         也就是dp[i+1][j](or dp[i][j-1])
@@ -45,6 +45,28 @@ public:
         for(int len=1;len<n;len++){
             for(int i=0;i<n-len;i++){
                 int j=i+len;
+                dp[i][j]=max(nums[i]-dp[i+1][j],nums[j]-dp[i][j-1]);
+            }
+        }
+        return dp[0][n-1]>=0;
+    }
+};
+
+update:
+class Solution {
+public:
+    // dp[i][j]表示在可选区间为[i,j]时先手玩家可以比后手玩家多赢的分数
+    // dp[i][i]=nums[i],dp[i][j]=max(nums[i]-dp[i+1][j],nums[j]-dp[i][j-1])
+    bool PredictTheWinner(vector<int>& nums) {
+        int n=nums.size();
+        vector<vector<int>> dp(n,vector<int>(n,0));
+        for(int i=0;i<n;i++){
+            dp[i][i]=nums[i];
+        }
+        for(int L=1;L<n;L++){
+            for(int i=0;i+L<n;i++){
+      
+      int j=i+L;
                 dp[i][j]=max(nums[i]-dp[i+1][j],nums[j]-dp[i][j-1]);
             }
         }
