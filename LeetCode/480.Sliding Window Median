@@ -1,0 +1,51 @@
+480. Sliding Window Median
+
+/*
+Median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value. So the median is the mean of the two middle value.
+
+Examples: 
+[2,3,4] , the median is 3
+
+[2,3], the median is (2 + 3) / 2 = 2.5
+
+Given an array nums, there is a sliding window of size k which is moving from the very left of the array to the very right. You can only see the k numbers in the window. Each time the sliding window moves right by one position. Your job is to output the median array for each window in the original array.
+
+For example,
+Given nums = [1,3,-1,-3,5,3,6,7], and k = 3.
+
+Window position                Median
+---------------               -----
+[1  3  -1] -3  5  3  6  7       1
+ 1 [3  -1  -3] 5  3  6  7       -1
+ 1  3 [-1  -3  5] 3  6  7       -1
+ 1  3  -1 [-3  5  3] 6  7       3
+ 1  3  -1  -3 [5  3  6] 7       5
+ 1  3  -1  -3  5 [3  6  7]      6
+Therefore, return the median sliding window as [1,-1,-1,3,5,6].
+
+Note: 
+  You may assume k is always valid, ie: k is always smaller than input array's size for non-empty array.
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        参考http://zxi.mytechroad.com/blog/difficulty/hard/leetcode-480-sliding-window-median/
+        最简单的暴力法，每k个元素排序一次找到中位数，长度为n的数组有n-k+1个长度为k的window，时间复杂度为O((n-k+1)*klogk)
+        为了优化时间复杂度，我们利用插入排序来完成(二分查找插入点 rotate:在正确位置插入数字)，时间复杂度可以降为O((n-k+1)*k)
+        我们先维护一个长度为k-1的有序数组，然后需要加入一个元素构造长度为k的window，先把该元素放在尾部
+        我们可以用二分查找找到新元素插入的位置upper_bound，然后利用std::rotate函数完成shift操作把新元素放置在正确的位置 
+        eg. 0 1 2 3 4 [2]要加入一个2,那么要插入在3的位置 
+        利用rotate可以完成3,4,2区间的shift操作,把2放置在该区间的第一个元素，变成0 1 2 [2] 3 4
+        这样就完成了第k个元素的插入 同时这个window还是一个有序的 我们可以方便的查找中位数了
+        不考虑k的奇偶影响，可以将有序的k-window中位数统一成=(window[k/2]+wnidow[(k-1)/2])/2.0
+        在获得当前window的中位数后，我们要为一下window提供长度为k-1的有序数组，所以要删掉该窗口最早一个元素
+        可以利用二分查找lower_bound找到要删除的位置erase即可
+        
+        还有利用BST multiset实现的方法，时间复杂度为O((n-k+1)*logk)还未尝试
+    */
+    vector<double> medianSlidingWindow(vector<int>& nums, int k) {
+        
+    }
+};
