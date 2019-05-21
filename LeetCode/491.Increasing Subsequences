@@ -85,3 +85,33 @@ private:
         }
     }
 };
+
+update:
+class Solution {
+public:
+    vector<vector<int>> findSubsequences(vector<int>& nums) {
+        vector<vector<int>> res;
+        vector<int> cand;
+        helper(res,cand,nums,0);
+        return res;
+    }
+private:
+    //从nums[start,...]开始选一个数字加入到cand中
+    void helper(vector<vector<int>>& res,vector<int> &cand,vector<int> &nums,int start){
+        if(cand.size()>1){
+            res.push_back(cand);
+        }
+        unordered_set<int> visit;
+        for(int i=start;i<nums.size();i++){
+            //不能直接用这种方法来去重因为这里我们不能保证数组是有序的 可能两个相同数数组出现在不同位置
+            //if(i!=start&&nums[i]==nums[i-1]) continue;
+            //利用set来保存在该位已经尝试过的数字避免重复结果的产生
+            if(visit.find(nums[i])!=visit.end()) continue;//避免重复
+            if(!cand.empty()&&nums[i]<cand.back()) continue;//要求非递减
+            cand.push_back(nums[i]);
+            visit.insert(nums[i]);
+            helper(res,cand,nums,i+1);
+            cand.pop_back();
+        }
+    }
+};
