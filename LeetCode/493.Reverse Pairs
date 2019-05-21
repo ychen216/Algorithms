@@ -45,3 +45,34 @@ private:
         }
     }
 };
+
+update:
+class Solution {
+public:
+    //利用归并排序的思想进行归并排序 然后再check左右两部分元素中满足条件的pair数目
+    int reversePairs(vector<int>& nums) {
+        int n=nums.size();
+        return mergeSort(nums,0,n-1);
+    }
+private:   
+    int mergeSort(vector<int>&nums,int s,int e){
+        if(s>=e){
+            return 0;
+        }
+        int mid=s+(e-s)/2;
+        int res=mergeSort(nums,s,mid)+mergeSort(nums,mid+1,e);
+        int i=s,j=mid+1;
+        // check pair
+        //为[s,mid]中的每一个元素i找到在[mid+1,e]中符合的j,满足nums[i]>nums[j]*2
+        while(i<=mid){
+            while(j<=e&&nums[i]/2.0>nums[j]){
+                j++;
+            }
+            res+=j-mid-1;
+            i++;
+        }
+        //merge操作 将[s,e]整合成有序数组
+        sort(nums.begin()+s,nums.begin()+e+1);
+        return res;
+    }
+};
