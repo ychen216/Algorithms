@@ -100,3 +100,22 @@ public:
         return res;
     }
 };
+
+
+update:
+class Solution {
+public:
+    int findMaxConsecutiveOnes(vector<int>& nums) {
+        int  res=0,cur=0;//cur到当前位最长的连续的1的长度
+        for(auto &num:nums){
+            if(num==1){
+                cur++;
+            }
+            else{
+                cur=0;
+            }
+            res=max(res,cur);
+        }
+        return res;
+    }
+};
