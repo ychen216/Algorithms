@@ -101,3 +101,30 @@ public:
         return res;
     }
 };
+
+Solution 3:
+class Solution {
+public:
+    //对角线遍历 m*n的矩阵有m+n-1条对角线 且解析式分别为 x+y=k k=0.1.2...m+n-2
+    //按照对角线遍历,且默认按照一个方向（向右上或向左下）遍历,然后按照需要翻转
+    //按照解析式确定每一条对角线遍历的起始位置
+    vector<int> findDiagonalOrder(vector<vector<int>>& matrix) {
+        vector<int> res;
+        if(matrix.empty()||matrix[0].empty()){
+            return res;
+        }
+        int m=matrix.size(),n=matrix[0].size();
+        for(int k=0;k<m+n-1;k++){
+            int begin_pos=res.size();
+            //默认按照向右上方遍历的顺序加入 
+            for(int x=min(k,m-1),y=k-x;x>=0&&y<n;x--,y++){
+                res.push_back(matrix[x][y]);
+            }
+            //如果实际的遍历顺序是向左下遍历 那么需要翻转
+            if(k&1){
+                reverse(res.begin()+begin_pos,res.end());      
+            }
+        }
+        return res;
+    }
+};
