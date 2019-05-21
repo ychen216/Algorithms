@@ -30,3 +30,22 @@ class Solution {
         return res;
     }
 }
+
+update:
+class Solution {
+public:
+    string convertToBase7(int num) {
+        if(num==0){
+            return "0";
+        }
+        bool is_neg=num<0;
+        num=abs(num);
+        string res;
+        while(num){
+            char r=num%7 + '0';
+            res=r+res;
+            num/=7;
+        }
+        return is_neg? "-"+res:res;
+    }
+};
