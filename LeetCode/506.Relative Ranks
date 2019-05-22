@@ -96,3 +96,37 @@ public:
         return res;
     }
 };
+
+Solution 4:
+class Solution {
+public:
+    // 利用分数对排名间接排序
+    vector<string> findRelativeRanks(vector<int>& nums) {
+        int n=nums.size();
+        vector<int> pos(n);
+        //记录每一个分数原来的index 然后利用分数对该index排序 
+        //eg. score: 3 1 2 origin pos: 0 1 2
+        //排序后 pos: 0 2 1
+        for(int i=0;i<n;i++)
+            pos[i]=i;
+        sort(pos.begin(),pos.end(),[&](int i,int j){return nums[i]>=nums[j];});
+        vector<string> res(n);
+        string rank;
+        for(int i=0;i<n;i++){
+            if(i==0){
+               rank="Gold Medal";
+            }
+            else if(i==1){
+                rank="Silver Medal";
+            }
+            else if(i==2){
+                rank="Bronze Medal";
+            }
+            else{
+                rank=to_string(i+1);
+            }
+            res[pos[i]]=rank;
+        }
+        return res;
+    }
+};
