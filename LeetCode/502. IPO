@@ -55,3 +55,45 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    // 每次都选择当前可以启动的项目中可以获得利润最大的项目
+    // 先对项目按照需要的capital排序 然后将可以启动的项目都加入到队列中 然后每次弹出利润最大的那一个
+    struct cmp{
+        //最大堆 利润小的优先级小
+        bool operator()(pair<int,int>&p1,pair<int,int>&p2)const{
+            return p1.second<p2.second;
+        }
+    };
+    int findMaximizedCapital(int k, int W, vector<int>& Profits, vector<int>& Capital) {
+        if(k==0){
+            return 0;
+        }
+        vector<pair<int,int>> cap2pro;
+        int n=Profits.size();
+        for(int i=0;i<n;i++){
+            cap2pro.push_back({Capital[i],Profits[i]});
+        }
+        //按照需要的启动资本递增排序
+        sort(cap2pro.begin(),cap2pro.end(),[&](pair<int,int>&p1,pair<int,int>&p2){
+            return p1.first<p2.first;
+        });
+        priority_queue<pair<int,int>,vector<pair<int,int>>,cmp> pq;//最大堆
+        int pos=0;
+        int res=W;
+        for(int i=0;i<k;i++){
+            //将所有可以启动的项目加入队列 然后选出一个利润最高的
+            while(pos<n&&cap2pro[pos].first<=res){
+                pq.push(cap2pro[pos++]);
+            }
+            //要处理没有可以启动的项目的情况
+            //当前没有可以启动的项目则没有收益 且后面的项目需要的启动资金更多就更不可能执行了 直接跳出
+            if(pq.empty()) break;
+            res+=pq.top().second;
+            pq.pop();
+        }
+        return res;
+    }
+};
