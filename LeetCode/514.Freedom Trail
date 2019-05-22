@@ -56,3 +56,42 @@ public:
         return ans+lenk;
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        相当于做两个字符串的匹配
+        dp[k][i]当前匹配到key的第k个字母，ring的第i个字母在12点方向
+        匹配第一个字符直接选择在ring上旋转：
+        dp[0][i] = min(i,len(ring)-i) key[0]==ring[i]
+        匹配后续字符需要基于前一个字符匹配后ring的状态：
+        dp[k][i] = min(dp[k][i], dp[k - 1][j] + min(abs(i - j), len(ring) - abs(i - j))) 满足key[k]==ring[i]且遍历ring[j]==key[k-1]的所有j k>0
+        其中k表示当前字符在key中的下标，i表示当前字符在ring中的下标，j表示上一个字符在ring中的下标
+        最后要加上每一次按下button的操作 key.length()次
+    */
+    int findRotateSteps(string ring, string key) {
+        int lenr=ring.length(),lenk=key.length();
+        vector<vector<int>> dp(lenk,vector<int>(lenr,INT_MAX));
+        for(int k=0;k<lenk;k++){
+            for(int i=0;i<lenr;i++){
+                if(key[k]!=ring[i]) continue;
+                if(k==0){
+                    dp[k][i]=min(i,lenr-i);
+                }
+                else{
+                    for(int j=0;j<lenr;j++){
+                        if(dp[k-1][j]!=INT_MAX){
+                            dp[k][i]=min(dp[k][i],dp[k-1][j]+min(abs(i-j),lenr-abs(i-j)));
+                        }
+                    }
+                }
+            }
+        }
+        int res=dp[lenk-1][0];
+        for(int i=1;i<lenr;i++){
+            res=min(res,dp[lenk-1][i]);
+        }
+        return res+lenk;
+    }
+};
