@@ -76,3 +76,41 @@ private:
         return 60*stoi(t.substr(0,2))+stoi(t.substr(3));
     }
 };
+
+update: 相同思路 调整代码结构
+
+class Solution {
+public:
+    /* 一天只有24*60种时钟组合 可以利用桶排序
+        要注意最小的和最大的时钟有可能组合出min time distance = 24*60 - (max-min)
+        eg.00:00 2:00 23:59 -> min 00:00-23:59+24*60
+    */
+    int findMinDifference(vector<string>& timePoints) {
+        int maxTime=24*60;
+        vector<bool> bucket(maxTime,false);
+        int firstValidTime=maxTime+1,lastValidTime=-1;//最小,最大的有效时间
+        for(auto &time:timePoints){
+            int t=getTime(time);
+            // 有相同的时钟出现过 检查是否min time diff==0
+            if(bucket[t])
+                return 0;
+            bucket[t]=true;
+            firstValidTime=min(firstValidTime,t);
+            lastValidTime=max(lastValidTime,t);
+        }
+        int preValid=firstValidTime;
+        int res=maxTime+1;
+        for(int i=preValid+1;i<=lastValidTime;i++){
+            if(!bucket[i]) continue;
+            res=min(res,i-preValid);
+            preValid=i;
+        }
+        //判断最大时间和最小时间之间是否可以构成更小的time diff
+        res=min(res,maxTime-lastValidTime+firstValidTime);
+        return res;
+    }
+private:
+    int getTime(string &t){
+        return 60*stoi(t.substr(0,2))+stoi(t.substr(3));
+    }
+};
