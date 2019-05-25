@@ -56,15 +56,6 @@ public:
 };
 
 Solution 2:
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
 class Solution {
 private:
     int minDis,pre;
@@ -84,5 +75,42 @@ public:
         pre=-1;
         inOrder(root);
         return minDis;
+    }
+};
+
+update:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    int getMinimumDifference(TreeNode* root) {
+        pre=NULL;
+        minDis=INT_MAX;
+        inorder(root);
+        return minDis;
+    }
+private:
+    TreeNode *pre=NULL;
+    int minDis=INT_MAX;
+    // 这里要注意preNode一定要用全局变量
+    // minDis可以是全局变量也可以是inorder的引用参数
+    // 中序遍历得到递增序列 访问的前一个节点就是小于该节点的前一个节点
+    void inorder(TreeNode *root){
+        if(!root){
+            return;
+        }
+        inorder(root->left);
+        if(pre){
+            minDis=min(minDis,root->val-pre->val);
+        }
+        pre=root;
+        inorder(root->right);
     }
 };
