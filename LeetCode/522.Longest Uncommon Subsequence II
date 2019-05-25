@@ -52,8 +52,57 @@ public:
         return false;
     }
 };
-
 update:
+class Solution {
+public:
+    int findLUSlength(vector<string>& strs) {
+        sort(strs.begin(),strs.end(),[](string &a,string &b){
+            return a.length()>b.length();
+        });
+        int res=-1;
+        for(int i=0;i<strs.size();i++){
+            bool ok=true;
+            for(int j=0;j<strs.size();j++){
+                if(i==j) continue;
+                //i比j长 那么i必然不是j的subseqeuence
+                //由于字符串排序了 所以也不会是后续串的subsequence
+                if(strs[i].length()>strs[j].length()){
+                    break;
+                }
+                //check长度>=i的串j 判断i是否是j的subseqence
+                if(isSub(strs[i],strs[j])){
+                    ok=false;
+                    break;
+                }
+            }
+            if(ok){
+                res=strs[i].length();
+                break;
+            }
+        }
+        return res;
+    }
+private:
+    //a是否是b的subsequence
+    bool isSub(const string &a,const string &b){
+        int lena=a.length(),lenb=b.length();
+        if(lena==lenb){
+            return a==b;
+        }
+        int i=0,j=0;
+        while(i<lena&&j<lenb){
+            if(a[i]==b[j]){
+                i++;j++;
+            }
+            else{
+                j++;
+            }
+        }
+        return i==lena;//说明a是b的子序列
+    }
+};
+
+Solution 2:
 class Solution {
 public:
     /*
