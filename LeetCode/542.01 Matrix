@@ -70,7 +70,8 @@ public:
         最短距离 可以想到用BFS
         matrix[i][j]==0那么 dis[i][j]=0,到最近的0就是自身
         那么对于matrix[i][j]!=0 最近的0 
-        可以利用BFS利用已经确定最短距离的点 来拓展这些未确定的节点最近的0的距离
+        可以利用BFS利用已经确定最短距离的点 来拓展这些未确定的节点最近的0的距离 
+        BFS保证了先拓展到的节点到最近的0 cell的距离一定不大于后拓展的节点到最近0 cell的距离
         为了节省空间 我们在in-place改动distance, 同时将还未拓展,还未确定距离的节点值设为INT_MAX
     */
     vector<vector<int>> updateMatrix(vector<vector<int>>& matrix) {
@@ -82,7 +83,7 @@ public:
                     // distance[i][j]=0 不用更改
                     q.push({i,j});
                 }else{
-                    matrix[i][j]=INT_MAX;
+                    matrix[i][j]=INT_MAX;//INT_MAX指示还未确定距离的节点
                 }
             }
         }
@@ -94,8 +95,9 @@ public:
             for(int i=0;i<4;i++){
                 int x=cur.first+dx[i];
                 int y=cur.second+dy[i];
-                if(x<0||x>=m||y<0||y>=n||matrix[x][y]!=INT_MAX)
-                    continue;
+                // 保证拓展的节点没有超过边界 且 之前还未被确定距离
+                // 在此之前确定距离的位置(i,j)距离最近0 cell的距离必然不大于当前要确定的位置(x,y)
+                if(x<0||x>=m||y<0||y>=n||matrix[x][y]!=INT_MAX)continue;
                 matrix[x][y]=matrix[cur.first][cur.second]+1;
                 q.push({x,y});
             }
