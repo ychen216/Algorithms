@@ -15,8 +15,7 @@ Note: The length of path between two nodes is represented by the number of edges
 
 */
 
-Solution:
-
+Solution 1:
 /**
  * Definition for a binary tree node.
  * struct TreeNode {
@@ -27,11 +26,34 @@ Solution:
  * };
  */
 class Solution {
+public:
+    // 遍历每一个节点 经过每一个节点的最长路径就是他的左子树深度+右子树深度
+    int diameterOfBinaryTree(TreeNode* root) {
+        if(!root){
+            return 0;
+        }
+        int left=getDepth(root->left);
+        int right=getDepth(root->right);
+        int res=left+right;
+        res=max(res,max(diameterOfBinaryTree(root->left),diameterOfBinaryTree(root->right)));
+        return res;
+    }
+private:
+    int getDepth(TreeNode *root){
+        if(!root){
+            return 0;
+        }
+        return 1+max(getDepth(root->left),getDepth(root->right));
+    }
+};
+
+Solution 2:
+class Solution {
 private:
     int longestPath;
 public:
     /*
-    对每一个节点来说 经过它的最长路径就是左子树的深度+右子树的深度
+          对每一个节点来说 经过它的最长路径就是左子树的深度+右子树的深度
     */
     int getMaxDeep(TreeNode* root){
         if(root==NULL)
@@ -45,5 +67,57 @@ public:
         longestPath=0;
         getMaxDeep(root);
         return longestPath;
+    }
+};
+
+
+Solution 3:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*  
+        最长路径只有可能出现两种情况：
+            1.经过根节点,此时最长路径为左子树深度+右子树深度
+            2.不经过根节点,在其两个子树中;这样问题又划分为两个子问题
+        利用vector来保存两个信息：
+            1. 经过根节点单侧的最长路径,空节点初始化为-1
+            eg: \     \
+                 \    /
+            2. 双侧形状的最长路径,空节点初始化为0
+            eg. /\   /\
+                       \
+            
+    */
+    int diameterOfBinaryTree(TreeNode* root) {
+        if(!root){
+            return 0;
+        }
+        vector<int> res=helper(root);
+        return max(res[0],res[1]);
+    }
+private:
+    vector<int> helper(TreeNode *root){
+        if(!root){
+            return {-1,0};
+        }
+        vector<int> left=helper(root->left);
+        vector<int> right=helper(root->right);
+        vector<int> res(2,0);
+        //经过root的单侧最长路径为:左右子树中单侧最长路径+1
+        //如果root左右子树为空 那么其实她单侧最长路径上只有root自己一个节点所以长度为0
+        //所以将空节点的单侧路径长度初始化为-1 这样+1之后root的单侧路径长度才能==0
+        res[0]=max(left[0],right[0])+1;
+        //root的双侧路径可以由左右子树的单侧路径拼接起来+两条连接的边
+        //也可以是左右子树本来包含的最长双侧路径
+        res[1]=max(left[0]+right[0]+2,max(left[1],right[1]));
+        return res;
     }
 };
