@@ -114,3 +114,40 @@ public:
 private:
     vector<int> sum;// sum[i]记录0~i的和
 };
+
+
+update:
+class Solution {
+public:
+    /*  统计sum[i]为[0,i]之间的weight和
+        随机数生成为[0,allsum)之间的数
+        那么按照weight概率选择一个index，相当于找第一个累加和>随机数的下标 累加和是递增的 可以利用二分查找
+    */
+    Solution(vector<int> w) {
+        sum=w;
+        for(int i=1;i<w.size();i++)
+            sum[i]+=sum[i-1];
+    }
+    
+    int pickIndex() {
+        int score=rand()%sum.back(); // 随机数 大小为[0,allSum)
+        int low=0,high=sum.size()-1;
+        // 找到第一个>score
+        /*
+        while(low<=high){
+            int mid=low+(high-low)/2;
+            if(sum[mid]>score){
+                high=mid-1;
+            }else{
+                low=mid+1;
+            }
+        }
+        return low;
+        */
+        //也可以直接调用stl
+        int pos=upper_bound(sum.begin(),sum.end(),score) - sum.begin();
+        return pos;
+    }
+private:
+    vector<int> sum;// sum[i]记录0~i的和
+};
