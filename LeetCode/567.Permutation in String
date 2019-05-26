@@ -142,3 +142,47 @@ public:
         return false;
     }
 };
+
+
+Solution 5:
+class Solution {
+public:
+    // str是s1的permutation只需要满足str中包含s1中的所有字符
+    // 可以利用双指针check window范围内的子串是否满足条件
+    bool checkInclusion(string s1, string s2) {
+        int len2=s2.length();
+        int len1=s1.length(),counter=len1;//counter指示当前区间还需要多少个s1中的字符
+        if(len2<len1){
+            return false;
+        }
+        unordered_map<char,int> need;//表示每个字符还需要多少 若为负数则说明该字符有富余
+        for(auto &c:s1){
+            need[c]++;
+        }
+        for(int left=0,right=0;right<len2;right++){
+            if(need.find(s2[right])!=need.end()){
+                //对right还有需求 counter--
+                if(need[s2[right]]>0){
+                    counter--;
+                }
+                need[s2[right]]--;
+            }
+            // 验证区间合法性及收缩left
+            while(counter==0){
+                //长度相等且不缺少字符 说明[left,right]包含一个permutation
+                if(right-left+1==len1){
+                    return true;
+                }
+                // 收缩左侧字符 看是否对left的需求增加 counter++
+                if(need.find(s2[left])!=need.end()){
+                    need[s2[left]]++;
+                    if(need[s2[left]]>0){
+                        counter++;
+                    }
+                }
+                left++;
+            }
+        }
+        return false;
+    }
+};
