@@ -26,19 +26,19 @@ class Solution {
 public:
     /*参考http://blog.csdn.net/yy254117440/article/details/67638980
     三维dp
-    dp[i][j][k]表示可获得的最大分数 其中ij是左右边界 k是和右边界相等的后缀长度
+    dp[i][j][k]表示可获得的最大分数 其中ij是左右边界 k是和右边界相等的后缀长度 原始问题的解为dp[0][n-1][0]因为最后一个元素后面没有别的元素和n-1相同
     对于固定的i,j,k可以有两种分割方式
     eg.1 2 3 4 2 2 
-        1 2 3 4 2 2
-        i       j   即dp[i][j][1]
+       1 2 3 4 2 2
+       i       j   即dp[i][j][1]
     分割1 合并右侧相等的k个元素 dp[i][j][k]=dp[i][j-1][0]+(k+1)*(k+1)
-    分割2 在[i,j)找一个下标r 使得boxes[j]==boxes[r] 那么可以把数组划分为两个部分
+    分割2 在[i,j)找一个下标r 使得boxes[j]==boxes[r] 那么可以把数组划分为两个部分 
         1 2 2 2 左右两部分合并
-        i j    dp[i][j][2] 
+        i r    dp[i][r][2] 
         3 4    中间的部分
-        i j    dp[i][j][0]
+      r+1 j-1  dp[r+1][j-1][0]
+        
         dp[i][j][k]=dp[r+1][j-1][0]+dp[i][r][k+1]
-    
     */
     int removeBoxes(vector<int>& box) {
         int size=box.size();
@@ -63,5 +63,101 @@ private:
             }
         }
         return dp[l][r][k];
+    }
+};
+
+update:
+下面这种方法是T(i,j,k)中k表示在i左侧还有k个元素和元素i颜色相同
+https://leetcode.com/problems/remove-boxes/discuss/101310/Java-top-down-and-bottom-up-DP-solutions
+
+T(i, j, k) which denotes the maximum points possible by removing the boxes of subarray boxes[i, j] with k boxes attached to its left of the same color as boxes[i]. Lastly let's reexamine some of the statements above:
+
+Our original problem now becomes T(0, n - 1, 0), since there is no boxes attached to the left of the input array at the beginning.
+
+The termination conditions now will be:
+    a. T(i, i - 1, k) = 0: no boxes so no points, and this is true for any k (you can interpret it as nowhere to attach the boxes).
+    b. T(i, i, k) = (k + 1) * (k + 1): only one box left in the subarray but we've already got k boxes of the same color attached to its left, so the total number of boxes of the same color is (k + 1) and the maximum point is (k + 1) * (k + 1).
+
+The recurrence relation is as follows and the maximum points will be the larger of the two cases:
+    a. If we remove boxes[i] first, we get (k + 1) * (k + 1) + T(i + 1, j, 0) points, where for the first term, 
+        instead of 1 we again get (k + 1) * (k + 1) points for removing boxes[i] due to the attached boxes to its left; 
+        and for the second term there will be no attached boxes so we have the 0 in this term.
+    b. If we decide to attach boxes[i] to some other box of the same color, say boxes[m], then from our analyses above, 
+        the total points will be T(i + 1, m - 1, 0) + T(m, j, k + 1), where for the first term, since there is no attached boxes 
+        for subarray boxes[i + 1, m - 1], we have k = 0 for this part; while for the second term, the total number of attached boxes 
+        for subarray boxes[m, j] will increase by 1 because apart from the original k boxes, we have to account for boxes[i]now, 
+        so we have k + 1 for this term. But we are not done yet. What if there are multiple boxes of the same color as boxes[i] 
+        within subarray boxes[i + 1, j]? We have to try each of them and choose the one that yields the maximum points. 
+        Therefore the final answer for this case will be: max(T(i + 1, m - 1, 0) + T(m, j, k + 1))
+        where i < m <= j && boxes[i] == boxes[m].
+
+Before we get to the actual code, it's not hard to discover that there is overlapping among the subproblems T(i, j, k),
+therefore it's qualified as a DP problem and its intermediate results should be cached for future lookup.
+Here each subproblem is characterized by three integers (i, j, k), all of which are bounded, i.e, 0 <= i, j, k < n, 
+so a three-dimensional array (n x n x n) will be good enough for the cache.
+
+Finally here are the two solutions, one for top-down DP and the other for bottom-up DP. 
+From the bottom-up solution, the time complexity will be O(n^4) and the space complexity will be O(n^3).
+
+class Solution {
+public:
+    /*
+        下面这种方法是T(i,j,k)中k表示在i左侧还有k个元素和元素i颜色相同
+        https://leetcode.com/problems/remove-boxes/discuss/101310/Java-top-down-and-bottom-up-DP-solutions
+
+        T(i, j, k) which denotes the maximum points possible by removing the boxes of subarray boxes[i, j] with k boxes attached to its left of the same color as boxes[i]. Lastly let's reexamine some of the statements above:
+
+        Our original problem now becomes T(0, n - 1, 0), since there is no boxes attached to the left of the input array at the beginning.
+
+        The termination conditions now will be:
+            a. T(i, i - 1, k) = 0: no boxes so no points, and this is true for any k (you can interpret it as nowhere to attach the boxes).
+            b. T(i, i, k) = (k + 1) * (k + 1): only one box left in the subarray but we've already got k boxes of the same color attached to its left, so the total number of boxes of the same color is (k + 1) and the maximum point is (k + 1) * (k + 1).
+
+        The recurrence relation is as follows and the maximum points will be the larger of the two cases:
+            a. If we remove boxes[i] first, we get (k + 1) * (k + 1) + T(i + 1, j, 0) points, where for the first term, 
+                instead of 1 we again get (k + 1) * (k + 1) points for removing boxes[i] due to the attached boxes to its left; 
+                and for the second term there will be no attached boxes so we have the 0 in this term.
+            b. If we decide to attach boxes[i] to some other box of the same color, say boxes[m], then from our analyses above, 
+                the total points will be T(i + 1, m - 1, 0) + T(m, j, k + 1), where for the first term, since there is no attached boxes 
+                for subarray boxes[i + 1, m - 1], we have k = 0 for this part; while for the second term, the total number of attached boxes 
+                for subarray boxes[m, j] will increase by 1 because apart from the original k boxes, we have to account for boxes[i]now, 
+                so we have k + 1 for this term. But we are not done yet. What if there are multiple boxes of the same color as boxes[i] 
+                within subarray boxes[i + 1, j]? We have to try each of them and choose the one that yields the maximum points. 
+                Therefore the final answer for this case will be: max(T(i + 1, m - 1, 0) + T(m, j, k + 1))
+                where i < m <= j && boxes[i] == boxes[m].
+
+        Before we get to the actual code, it's not hard to discover that there is overlapping among the subproblems T(i, j, k),
+        therefore it's qualified as a DP problem and its intermediate results should be cached for future lookup.
+        Here each subproblem is characterized by three integers (i, j, k), all of which are bounded, i.e, 0 <= i, j, k < n, 
+        so a three-dimensional array (n x n x n) will be good enough for the cache.
+    */
+    int removeBoxes(vector<int>& boxes) {
+        int n=boxes.size();
+        vector<vector<vector<int>>> dp(n,vector<vector<int>>(n,vector<int>(n,0)));
+        return helper(boxes,dp,0,n-1,0);
+    }
+private:
+    int helper(vector<int>&box,vector<vector<vector<int>>> &dp,int i,int j,int k){
+        if(i>j){
+            return 0;
+        }
+        if(dp[i][j][k]!=0){
+            return dp[i][j][k];
+        }
+        //optimization: all boxes of the same color counted continuously from the first box should be grouped together
+        //如果i右侧的元素和i元素颜色一样 那么可以把这部分的元素合并到一起计算
+        //eg 1 1 1 2 3
+        //id 0 1 2 3 4 那么(0,4,0)的最优解和(2,4,2)是等价的 他们表示的就是同一种情况
+        for(;i+1<=j && box[i+1]==box[i];i++,k++);
+        //1.先合并左边相同的元素
+        int res=(k+1)*(k+1)+helper(box,dp,i+1,j,0);
+        //2.先处理中间元素,将左侧元素和右边相同颜色的元素合并起来处理
+        for(int m=i+1;m<=j;m++){
+            if(box[i]==box[m]){
+                res=max(res,helper(box,dp,i+1,m-1,0)+helper(box,dp,m,j,k+1));
+            }
+        }
+        dp[i][j][k]=res;
+        return dp[i][j][k];
     }
 };
