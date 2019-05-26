@@ -90,3 +90,28 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        优化代码，将计算累积元素和的步骤合并到计数的过程中，只需要一次遍历one-pass
+        同时将累积元素和记录在一个变量sum中，不用改变nums数组
+    */
+    int subarraySum(vector<int>& nums, int k) {
+        int n=nums.size();
+        if(n==0)
+            return 0;
+        int res=0;
+        int sum=0;
+        unordered_map<int,int> mmp; // sum,occur_num
+        mmp[0]=1;
+        for(int j=0;j<n;j++){
+            sum+=nums[j];
+            if(mmp.find(sum-k)!=mmp.end())
+                res+=mmp[sum-k];
+            mmp[sum]++;
+        }
+        return res;
+    }
+};
