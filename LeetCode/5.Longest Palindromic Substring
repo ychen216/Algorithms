@@ -81,7 +81,7 @@ private:
     }
 };
 
-update:
+update:增加剪枝操作，这一步操作可以极大提升性能 from beat 79.2%(20ms) to  94.7%(8ms)
 class Solution {
 public:
     string longestPalindrome(string s) {
@@ -112,6 +112,36 @@ private:
         if(maxLen<curLen){
             maxLen=curLen;
             start=i+1;
+        }
+    }
+};
+
+update:修改验证及计算回文串长度的代码 直接利用有效回文串起始终止位置计算回文串的长度
+class Solution {
+public:
+    string longestPalindrome(string s) {
+        int res=0,begin=-1;
+        int n=s.length();
+        for(int i=0;i<n;i++){
+            if(n-i<=res/2) break;
+            extend(s,i,i,res,begin);
+            extend(s,i,i+1,res,begin);
+        }
+        return res==0?"":s.substr(begin,res);
+    }
+private:
+    void extend(const string& s,int i,int j,int &maxLen,int &begin){
+        int n=s.length();
+        while(i>=0&&j<n){
+            if(s[i]!=s[j]){
+                break;
+            }
+            i--;
+            j++;
+        }
+        if(j-i-1>maxLen){
+            maxLen=j-i-1;
+            begin=i+1;
         }
     }
 };
