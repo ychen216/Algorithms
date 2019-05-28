@@ -62,3 +62,51 @@ public:
         return feakHead->next;
     }
 };
+
+update:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //利用feak节点 每次将k个节点头插法插到feak 然后更新feak的指针到最末尾
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if(!head||k==1){
+            return head;
+        }
+        ListNode *feak=new ListNode(0);
+        ListNode *feakp=feak, *begin=head;
+        while(true){
+            ListNode *end=begin;
+            //选取k个节点[begin,end]
+            for(int i=1;i<k&&end;i++){
+                end=end->next;
+            }
+            //不足k个 直接链接
+            if(end==NULL){
+                feakp->next=begin;
+                break;
+            }
+            //需要翻转 
+            ListNode *tail=begin;//翻转后最后一个节点是该段的首节点
+            ListNode *nextBegin=end->next;
+            ListNode *insert=begin;
+            //头插法
+            while(insert!=nextBegin){
+                ListNode *tmp=feakp->next;
+                ListNode *nextInsert=insert->next;
+                insert->next=tmp;
+                feakp->next=insert;
+                insert=nextInsert;
+            }
+            feakp=tail;
+            begin=nextBegin;
+        }
+        return feak->next;
+    }
+};
