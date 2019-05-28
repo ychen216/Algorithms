@@ -95,6 +95,7 @@ public:
         for(int i=1;i<=lens;i++){
             for(int j=1;j<=lenp;j++){
                 if(p[j-1]=='*')
+
                     dp[i][j]=dp[i][j-2]||(s[i-1]==p[j-2]||p[j-2]=='.')&&dp[i-1][j];
                 else// 字母或.
                     dp[i][j]=(s[i-1]==p[j-1]||p[j-1]=='.')&&dp[i-1][j-1];
@@ -136,6 +137,8 @@ public:
             for (int j = 1; j <= lenp; j++) {
                 if(p[j-1]=='*')
                     // 跳过X*或者s[i-1]和p[j-2]匹配
+                    //直接跳过x* or 增加一个x那么就要看s[0,i-2]和p[0,j-1]的匹配情况
+                    //只有dp[i-1][j]==true 也就是s[0,i-2]和p[0,j-1]匹配上了 才可以往s后面继续加一个x
                     dp[i][j]=dp[i][j-2]||(s[i-1]==p[j-2]||p[j-2]=='.')&&dp[i-1][j];
                 else
                     dp[i][j]=dp[i-1][j-1]&&(s[i-1]==p[j-1]||p[j-1]=='.');
