@@ -50,3 +50,32 @@ public:
         return negative?-res:res;
     }
 };
+
+update:
+class Solution {
+public:
+    int divide(int dividend, int divisor) {
+        if(dividend==0){
+            return 0;
+        }
+        if(divisor==1){
+            return dividend;
+        }
+        if(dividend==INT_MIN&&divisor==-1){
+            return INT_MAX;
+        }
+        bool is_neg=(dividend<0)^(divisor<0);
+        int res=0;
+        long dd=labs(dividend),dr=labs(divisor); //这里一定要用long 避免abs(INT_MIN)
+        while(dd>=dr){
+            long tmp=dr,mul=1;
+            while(dd>=(tmp<<1)){
+                tmp<<=1;
+                mul<<=1;
+            }
+            res+=mul;
+            dd-=tmp;
+        }
+        return is_neg?-res:res;
+    }
+};
