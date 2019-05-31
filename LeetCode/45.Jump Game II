@@ -33,6 +33,26 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    int jump(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2){
+            return 0;
+        }
+        vector<int> dp(n,INT_MAX);
+        dp[0]=0;
+        for(int i=0;i<n;i++){
+            if(dp[i]==INT_MAX) continue;
+            for(int j=1+i;j<=min(i+nums[i],n-1);j++){
+                dp[j]=min(dp[j],dp[i]+1);
+            }
+        }
+        return dp[n-1];
+    }
+};
+
 Solution 2：
 class Solution {
 public:
@@ -44,9 +64,10 @@ public:
     int jump(vector<int>& nums) {
         int n=nums.size();
         int lastFar=0,curFar=0,jump=0;//lastFar上一跳能到达的最远距离 [____lastFar]___curFar 
-        //curFar表示当前跳能到的最远距离，也就是在上一跳能到的最远距离的范围内(方括号的范围)进行下一跳能到的最远距离 
+        //curFar表示当前跳能到的最远距离，也就是在上一跳能到的最远距离的范围内(方括号的范围)进行下一跳能到的最远距离
         for(int i=0;i<n;i++){
-            if(i>curFar)//无论怎么跳，都不能到达终点或者越过终点
+            //如果当前已经超过现在可能到达的最远的距离了 说明无论怎么跳，都不能到达终点或者越过终点
+            if(i>curFar)
                 return -1;
             if(i>lastFar){ //需要进行下次跳跃，则更新last和当执行的跳数ret   
                 jump++;
