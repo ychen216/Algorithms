@@ -95,3 +95,29 @@ public:
             return start;
     }
 };
+
+class Solution {
+public:
+    //第一个乘积>=x的
+    int mySqrt(int x) {
+        if(x<2){
+            return x;
+        }
+        int start=0,end=x;
+        while(start<=end){
+            int mid=start+(end-start)/2;
+            int div=x/mid;
+            if(div==mid){
+                return mid;
+            }
+            else if(div>mid){
+                start=mid+1;
+            }
+            else{
+                end=mid-1;
+            }
+        }
+        //退出循环时start指向第一个平方>x的数 所以结果需要-1
+        return start-1;
+    }
+};
