@@ -84,6 +84,7 @@ private:
 };
 
 Solution 3:
+中序遍历 如果是一个valid bst就一定能保证是递增序列
 class Solution {
 public:
     bool isFirst=true;
@@ -107,6 +108,50 @@ public:
     }
 };
 
+
+update:
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        pre=NULL;
+        return check(root);
+    }
+private:
+    TreeNode *pre=NULL;
+    bool check(TreeNode *cur){
+        if(!cur){
+            return true;
+        }
+        if(!check(cur->left)){
+            return false;
+        }
+        if(pre&&pre->val>=cur->val){
+            return false;
+        }
+        pre=cur;
+        return check(cur->right);
+    }
+};
+
+update:
+class Solution {
+public:
+    bool isValidBST(TreeNode* root) {
+        if(!root){
+            return true;
+        }
+        if(!isValidBST(root->left)){
+            return false;
+        }
+        if(pre&&pre->val>=root->val){
+            return false;
+        }
+        pre=root;
+        return isValidBST(root->right);
+    }
+private:
+    TreeNode *pre=NULL;
+};
 
 Solution 4:非递归中序遍历
 class Solution {
