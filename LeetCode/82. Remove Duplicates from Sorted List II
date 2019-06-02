@@ -70,6 +70,34 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    ListNode* deleteDuplicates(ListNode* head) {
+        if(!head||!head->next){
+            return head;
+        }
+        ListNode *feak=new ListNode(0);
+        ListNode *cur=feak;
+        ListNode *start=head, *end=NULL;
+        while(start){
+            //重复的部分为[start,end)
+            end=start->next;
+            while(end&&end->val==start->val){
+                end=end->next;
+            }
+            //只有一个非重复节点
+            if(end==start->next){
+                cur->next=start;
+                cur=cur->next;
+                cur->next=NULL;
+            }
+            start=end;
+        }
+        return feak->next;
+    }
+};
+
 Solution 2：recursive
 class Solution {
 public:
