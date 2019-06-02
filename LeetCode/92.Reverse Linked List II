@@ -98,14 +98,6 @@ public:
 };
 
 update:
-/**
- * Definition for singly-linked list.
- * struct ListNode {
- *     int val;
- *     ListNode *next;
- *     ListNode(int x) : val(x), next(NULL) {}
- * };
- */
 class Solution {
 public:
     ListNode* reverseBetween(ListNode* head, int m, int n) {
@@ -133,5 +125,38 @@ public:
         cur=last;
         cur->next=p;
         return feakHead->next;
+    }
+};
+
+update:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* reverseBetween(ListNode* head, int m, int n) {
+        ListNode *feak=new ListNode(0);
+        ListNode *cur=feak,*p=head;
+        for(int i=1;i<m;i++){
+            cur->next=p;
+            p=p->next;
+            cur=cur->next;
+        }
+        ListNode *tail=p;//插入翻转部分后 链表的最后一个节点就是第一个头插入的节点
+        cur->next=NULL;//将头插法的头结点下一个节点设置为NULL
+        for(int i=m;i<=n;i++){
+            ListNode *tmp=p->next;
+            p->next=cur->next;
+            cur->next=p;
+            p=tmp;
+        }
+        //链接剩下的部分
+        tail->next=p;
+        return feak->next;
     }
 };
