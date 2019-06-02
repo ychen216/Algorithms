@@ -82,3 +82,32 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        变换一个思路:固定候选矩形的高度h,然后向两侧拓展找到两侧第一个低于h的直方体来确定矩形的宽w
+        像这样找到左边\右边第一个 大于\小于 xx元素的问题，要想到用栈来完成
+        这里我们要找到两侧第一个<h的元素 所以我们构建一个元素递增的栈
+        具体的：对于栈顶元素来说（假设高度为h），在栈顶的前一个元素就是第一个<h的直方体
+        同时,由于栈顶元素来说，找到后续遍历的元素中第一个<栈顶元素即可
+        这样我们就找到了候选矩形的宽w
+        为了处理方便 在heights中增加一个哨兵元素
+    */
+    int largestRectangleArea(vector<int>& heights) {
+        heights.push_back(0);
+        stack<int> st;
+        int res=0;
+        for(int i=0;i<heights.size();i++){
+            while(!st.empty()&&heights[st.top()]>heights[i]){
+                int h=heights[st.top()];
+                st.pop();
+                int w=st.empty()?i:i-st.top()-1;
+                res=max(res,w*h);
+            }
+            st.push(i);
+        }
+        return res;
+    }
+};
