@@ -90,3 +90,36 @@ private:
         }
     }
 };
+
+update: 直接在sum上做减法操作,当sum==0时,路径和为目标值
+class Solution {
+public:
+    vector<vector<int>> pathSum(TreeNode* root, int sum) {
+        vector<vector<int>> res;
+        vector<int> cand;
+        helper(res,cand,root,sum);
+        return res;
+    }
+private:
+    void helper(vector<vector<int>> &res,vector<int>&path,TreeNode *root,int sum){
+        if(root==nullptr){
+            return;
+        }
+        sum-=root->val;
+        path.push_back(root->val);
+        if(!root->left&&!root->right){
+            if(sum==0){
+                res.push_back(path);
+            }
+            return;
+        }
+        if(root->left){
+            helper(res,path,root->left,sum);
+            path.pop_back();
+        }
+        if(root->right){
+            helper(res,path,root->right,sum);
+            path.pop_back();
+        }
+    }
+};
