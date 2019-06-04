@@ -127,6 +127,31 @@ public class Solution {
     }
 }
 
+update解释：
+class Solution {
+public:
+    // res[0]表示以root为起点的单向路径和的最大值,其最小值为0即一个元素都不包含
+    // res[1]表示以root为根的子树 包含的最大和路径,要求至少包含一个节点 如果为null则设为INT_MIN 即空节点树 不可能包含任何路径
+    int maxPathSum(TreeNode* root) {
+        vector<int> res=helper(root);
+        return res[1];
+    }
+private:
+    vector<int> helper(TreeNode *root){
+        if(root==nullptr){
+            return {0,INT_MIN};
+        }
+        vector<int> left=helper(root->left);
+        vector<int> right=helper(root->right);
+        vector<int> res(2,0);
+        res[0]=max(left[0],right[0])+root->val;
+        res[0]=max(0,res[0]);//res[0]的最小值为0 所以还要跟0比较
+        //而最大和路径则没有要求 可能是原来子树中的路径 也有可能是左右子树单向路径和root一同构成的新最大和路径
+        res[1]=max(left[0]+right[0]+root->val,max(left[1],right[1]));
+        return res;
+    }
+};
+
 
 // Version 2:
 // SinglePath也定义为，至少包含一个点。
