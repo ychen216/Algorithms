@@ -43,4 +43,34 @@ public:
     }
 };
 
-
+update:
+class Solution {
+public:
+    //可以优化空间复杂度 O(m*n)-->O(n)
+    int numDistinct(string s, string t) {
+        int lens=s.length();
+        int lent=t.length();
+        if(lent==0){
+            return 1;
+        }
+        if(lens==0){
+            return 0;
+        }
+        vector<long> dp(lent+1,0); //初始化s长度为0时的情况
+        dp[0]=1;//dp[0][0]=1
+        for(int i=1;i<=lens;i++){
+            //逆向遍历 使得dp[j]保存的是dp[i-1][j]的值
+            for(int j=lent;j>=1;j--){
+                if(s[i-1]==t[j-1]){
+                    //dp[j]=dp[i-1][j-1]+dp[i-1][j];
+                    dp[j]+=dp[j-1];
+                }
+                // if s[i-1]!=t[j-1]
+                // dp[i][j]=dp[i-1][j];
+                // dp[j]=dp[j]
+                
+            }
+        }
+        return dp[lent];
+    }
+};
