@@ -35,28 +35,32 @@ update:
 class Solution {
 public:
     int candy(vector<int>& ratings) {
-        int n=ratins.size();
-        if(n<2){
-            return n;
-        }
-        vector<int> candy(n,1);//默认每个人分配1candy 满足每个人至少有一颗糖
+        int n=ratings.size();
+        int min_candy=0;
+        vector<int> candy(n,1);
         //check rating比邻居高的是否获得更多的candy
         //如果不满足就以 1 candy的增量来增加 确保花费最少的candy
+        //每个人和他左邻居作比较 从左向右这样遍历下来 
+        //可以保证如果一个人比左邻居的优先级高 那么他的糖果数比左邻居多
         for(int i=1;i<n;i++){
             if(ratings[i]>ratings[i-1]){
+                //candy[i]=max(candy[i],candy[i-1]+1);//candy[i]至少要比i-1多1个
                 candy[i]=candy[i-1]+1;
-                //这里max(candy[i],candy[i-1]+1)只不过candy起始都赋值为1 candy[i]<=candy[i-1]
             }
         }
+        //确保了每个人和左邻居之间糖果数是正确的之后 我们比较每个人和右邻居的优先级情况
+        //从右向左遍历
         for(int i=n-2;i>=0;i--){
             if(ratings[i]>ratings[i+1]){
                 candy[i]=max(candy[i],candy[i+1]+1);
+                //candy[i]至少要比i+1多一个 但是可能在上一轮跟左邻居比较的过程中 
+                //可能使得candy[i]>candy[i+1]+1 我们需要继续保有跟左邻居比较的约束
+                //所以candy[i]=max(candy[i],candy[i+1]+1);
             }
         }
-        int res=0;
         for(auto &num:candy){
-            res+=num;
+            min_candy+=num;
         }
-        return res;
+        return min_candy;
     }
 };
