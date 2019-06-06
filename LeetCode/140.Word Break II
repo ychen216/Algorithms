@@ -11,7 +11,40 @@ dict = ["cat", "cats", "and", "sand", "dog"].
 A solution is ["cats and dog", "cat sand dog"].
 */
 
-Solution:
+Solution 1: recursive TLE
+class Solution {
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        vector<string> res;
+        string cand;
+        unordered_set<string> dict(wordDict.begin(),wordDict.end());
+        helper(res,dict,cand,s,0);
+        return res;
+    }
+private:
+    void helper(vector<string>&res,unordered_set<string> &dict,string &cand,string &s,int start){
+        if(start==s.length()){
+            res.push_back(cand);
+            return;
+        }
+        for(int i=start;i<s.length();i++){
+            string sub=s.substr(start,i-start+1);
+            if(dict.find(sub)!=dict.end()){
+                int last_index=cand.length();
+                if(last_index==0){
+                    cand+=sub;
+                }
+                else{
+                    cand+=" "+sub;
+                }
+                helper(res,dict,cand,s,i+1);
+                cand=cand.substr(0,last_index);//将加入的sub弹出
+            }
+        }
+    }
+};
+
+Solution 2: memorized dfs
 class Solution {
 public:
     vector<string> wordBreak(string s, vector<string>& wordDict) {
