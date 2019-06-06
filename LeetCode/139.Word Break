@@ -43,7 +43,7 @@ public:
     */
     bool wordBreak(string s, vector<string>& wordDict) {
         int n=s.length();
-        set<string> sset(wordDict.begin(),wordDict.end());
+        unordered_set<string> sset(wordDict.begin(),wordDict.end());
         vector<bool> dp(n+1,false);
         dp[0]=true; //在第0个字符之前的字符串(即空串,初始状态)能够被划分完成 
         // 遍历[0~n-1]范围的字符串是否能被划分 i属于[1,n]
