@@ -82,3 +82,50 @@ private:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    vector<string> wordBreak(string s, vector<string>& wordDict) {
+        unordered_map<string,vector<string>> dp;
+        //将字符串按照长度排序 便于后面做剪枝操作
+        sort(wordDict.begin(),wordDict.end(),[](const string&a,const string &b){
+            return a.length()<b.length();
+        });
+        return helper(dp,wordDict,s);
+    }
+private:
+    vector<string> helper(unordered_map<string,vector<string>> &dp,vector<string>&dict,string s){
+        if(dp.find(s)!=dp.end()){
+            return dp[s];
+        }
+        vector<string> res;
+        int lens=s.length();
+        //这种情况是符合条件的 s就是一个空字符串(代表他的父字符串已经遍历到了字符串尾,构造他的父串是成功的)
+        //返回{""}是为了和 没有任何词能组合出s的情况相区别 这种情况返回的是{}
+        if(lens==0){
+            res.push_back("");
+            return res;
+        }
+        //遍历dict 看是否有word 可以和s的起始字符match
+        for(auto &word:dict){
+            int lenw=word.length();
+            //剪枝
+            if(lenw>lens){
+                break;
+            }
+            if(word[0]!=s[0]) continue;
+            if(word!=s.substr(0,lenw)) continue;
+            //word==s[0...lenw-1]
+            //利用dict构造s[lenw..end]
+            vector<string> next_cands=helper(dp,dict,s.substr(lenw));
+            //next_cands为空说明: dict不能构造出s[lenw...end]
+            if(next_cands.empty()) continue;
+            for(auto &next: next_cands){
+                res.push_back(word+(next==""?"":" "+next));
+            }
+        }
+        dp[s]=res;
+        return res;
+    }
+};
