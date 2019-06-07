@@ -1,10 +1,9 @@
 148. Sort List
 /*
-Sort a linked list in O(n log n) time using constant space complexity.
-
+    Sort a linked list in O(n log n) time using constant space complexity.
 */
 
-Solution:
+Solution 1:
 /**
  * Definition for singly-linked list.
  * struct ListNode {
@@ -98,4 +97,59 @@ private:
             cur->next=l2;
         return feakNode->next;
     }
+};
+
+
+Solution 2:
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    //利用快速排序
+    ListNode* sortList(ListNode* head) {
+        if(!head||!head->next){
+            return head;
+        }
+        ListNode *pivot=head;//选择中轴点
+        //按照轴值 划分元素到左右两部分
+        ListNode *leftHead=new ListNode(0),*rightHead=new ListNode(0);
+        ListNode *left=leftHead,*right=rightHead,*p=head->next;
+        while(p){
+            if(p->val<=pivot->val){
+                left->next=p;
+                left=left->next;
+            }
+            else{
+                right->next=p;
+                right=right->next;
+            }
+            p=p->next;
+        }
+        //左右两部分链表尾元素置为nullptr
+        left->next=nullptr;
+        pivot->next=nullptr;
+        right->next=nullptr;
+        //分别对两路链表排序
+        ListNode *sortHead1=sortList(leftHead->next);
+        ListNode *sortHead2=sortList(rightHead->next);
+        //将轴值、左右两路有序链表链接起来
+        ListNode *newHead=new ListNode(0);
+        newHead->next=sortHead1;
+        p=newHead;
+        //找到左链表的尾元素
+        while(p->next){
+            p=p->next;
+        }
+        p->next=pivot;
+        pivot->next=sortHead2;
+        return newHead->next;
+        
+    }
+
 };
