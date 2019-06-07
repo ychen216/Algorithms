@@ -94,3 +94,41 @@ public:
         return res;
     }
 };
+
+update:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        后序遍历的顺序:左、右、根
+        我们可以仿造先序遍历：按照根、右、左，只是在构造结果时我们逆序构造
+        先插入根节点、然后往前插入右子树、然后再往前插入左子树，这样就能构造出左右根的顺序
+    */
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int> res;
+        TreeNode* cur=root;
+        stack<TreeNode *> st;
+        while(cur||!st.empty()){
+            if(cur){
+                res.insert(res.begin(),cur->val);
+                //先遍历右子树 把左子树存起来
+                if(cur->left)
+                    st.push(cur->left);
+                cur=cur->right;
+            }
+            else{
+                cur=st.top();
+                st.pop();
+            }
+        }
+        return res;
+    }
+};
