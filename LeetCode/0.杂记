@@ -1,0 +1,14 @@
+1. 利用快慢指针找链表中点
+  //空链表 or 单节点链表
+  if(!head||!head->next){
+    return head;
+  }
+  Node *fast=head,*slow=head;
+  //注意跳出循环的条件
+  while(fast->next&&fast->next->next){
+    slow=slow->next;
+    fast=fast->next->next;
+  }
+  //此时slow是前半段链表的最后一个元素 [head,...slow][slow->next...]
+  //要小心判断是否需要把前半段链表的之后一个元素指向nullptr,即, slow->next=nullptr;
+  
