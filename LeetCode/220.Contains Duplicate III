@@ -59,8 +59,46 @@ public:
             if (i > k) window.erase(nums[i-k-1]); // keep the set contains nums i j at most k
             // |x - nums[i]| <= t  ==> -t <= x - nums[i] <= t;
             auto pos = window.lower_bound((long)nums[i] - t); // x-nums[i] >= -t ==> x >= nums[i]-t 
-            // x - nums[i] <= t ==> |x - nums[i]| <= t    
+            //pos指向>=nums[i]-t的第一个元素
+            // x - nums[i] <= t ==> |x - nums[i]| <= t
+            // 直接验证pos是否满足pos<=nums[i]+t 因为pos是有可能满足条件的最小值 如果他都不满足<=nums[i]+t 那么后面更大的数更不可能满足
             if (pos != window.end() && *pos - nums[i] <= t) return true;
+            window.insert(nums[i]);
+        }
+        return false;
+    }
+};
+
+update: 同一种思路 不同的实现方式 较上面这种实现更复杂一些
+class Solution {
+public:
+    bool containsNearbyAlmostDuplicate(vector<int>& nums, int k, int t) {
+        int n=nums.size();
+        if(n<2||k<1){
+            return false;
+        }
+        set<long> window;//维护一个k-1大小的window 这里的数字和nums[i]都满足距离上的要求 即dis(i,j)<=k
+        //这个window的数字升序排列 从这个window里找有没有符合条件的x 使得-t <= x-nums[i] <=t
+        for(int i=0;i<n;i++){
+            //abs(nums[i]-x)<=t; -t<=x-nums[i]<=t 
+            //nums[i]-t<=x<=t+nums[i]
+            auto small=window.lower_bound((long)nums[i]-t);//这是x的最小值
+            if(small!=window.end()){
+                auto big=window.upper_bound((long)nums[i]+t);
+                //big是>t+nums[i]的第一个值 如果已经是第一个元素 说明没有<=t+nums[i]的元素
+                if(big!=window.begin()){
+                    //往前走一个就是<=t+nums[i]的最大值 也就是符合要求的x的最大值
+                    big=prev(big);
+                    //比较nums[i]-t 和 nums[i]+t
+                    if(*big>=*small){
+                        return true;
+                    }
+                }
+                
+            }
+            if(i>=k){
+                window.erase(nums[i-k]);
+            }
             window.insert(nums[i]);
         }
         return false;
