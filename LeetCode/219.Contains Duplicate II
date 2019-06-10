@@ -70,3 +70,28 @@ public:
         return false;
     }
 };
+
+update:
+class Solution {
+public:
+    //维护一个大小为k-1的window 保存当前元素之前k-1个元素
+    //然后判断当前数字和window中的数字是否有重复 当前数字和window中的数字difference最大是k
+    bool containsNearbyDuplicate(vector<int>& nums, int k) {
+        int n=nums.size();
+        if(n<2||k<1){
+            return false;
+        }
+        unordered_set<int> window;
+        for(int i=0;i<n;i++){
+            if(window.find(nums[i])!=window.end()){
+                return true;
+            }
+            //此时window里包含至多k-1个数 最早加入的元素是nums[i-k]
+            if(i>=k) {
+                window.erase(nums[i-k]);
+            }
+            window.insert(nums[i]);
+        }
+        return false;
+    }
+};
