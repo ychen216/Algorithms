@@ -19,7 +19,7 @@ public:
     /*
         题目要求在原串s的前面接上最短的串s' 使得s'+s是回文串
         那么s'是s末尾子串tail的回文 eg. s="abbacd" 那么s'='dc'和tail='cd'互为回文
-        所以为了使得s'最短 那么就要找到最长的回文串s-tail 也就是回文串'abba'
+        所以为了使得s'最短 那么就要找到s起始位置开始最长的回文串s - tail 也就是回文串'abba'
         暴力法遍历所有可能的s-tail找到最长的
     */
     string shortestPalindrome(string s) {
@@ -45,6 +45,42 @@ private:
                 return false;
             }
             i++,j--;
+        }
+        return true;
+    }
+};
+
+update:
+class Solution {
+public:
+    string shortestPalindrome(string s) {
+        string res;
+        int len=s.length();
+        if(len<2){
+            return s;
+        }
+        // s分成两部分: [first-str][second-str]
+        //i表示前半段子串的长度 找到前半部分最长回文子串 
+        //那么此时要拼接到前方的字符数必定是最少的 其长度==len(second-str)
+        for(int i=len;i>=0;i--){
+            //string first=s.substr(0,i);
+            //string second=s.substr(i);
+            if(is_palindrome(s,0,i-1)){
+                string rev=s.substr(i);
+                reverse(rev.begin(),rev.end());
+                res=rev+s;
+                break;
+            }
+        }
+        return res;
+    }
+private:
+    bool is_palindrome(string &s,int i,int j){
+        while(i<j){
+            if(s[i]!=s[j]){
+                return false;
+            }
+            i++;j--;
         }
         return true;
     }
