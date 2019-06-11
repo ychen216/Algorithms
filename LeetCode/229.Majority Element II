@@ -30,10 +30,13 @@ public:
     /*
     借助于Majority Element中的Boyer Moore算法，可以在O(1)的空间和线性时间内求解问题。
     因为出现次数大于n/3的元素最多只有两个，所以最开始可以维护两个数字(num1,num2)和两个计数器(counter1,counter2)。
-    遍历数组，当数组中元素和num1或者num2相同，对应的counter1或者counter2加1；
-    如果counter1或counter2为0，将遍历到的该元素赋给num1或者nums2；
-    否则counter1和counter2都减1。
+    1.遍历数组，当数组中元素和num1或者num2相同，对应的counter1或者counter2加1；
+    2.如果counter1或counter2为0，将遍历到的该元素赋给num1或者nums2；
+    3.否则counter1和counter2都减1。
     其中第3步是算法的核心，就是每次删除三个不相同的数，最后留下的一定是出现次数超过1/3的数，这个思想可以推广到出现次数超过1/k次的元素有哪些。
+    这里的1~3步可以这么考虑：先判断x和num1,num2是否相等，如果都不相等，那么就考虑要删除一组互不相同的三个数，
+    那么这时候要保证num1、num2的个数counter1,counter2是>0的(这才说明存在至少一个num1,num2)，所以要先检查counter1,counter2的值
+    如果counter为0，那么将x赋给对应的num
     */
     vector<int> majorityElement(vector<int>& nums) {
         int len=nums.size();
