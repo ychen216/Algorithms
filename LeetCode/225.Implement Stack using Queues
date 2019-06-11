@@ -99,3 +99,53 @@ public:
 private:
     queue<int> q;
 };
+
+Solution 3:与上面方法的不同之处在于 push时正常按照queue的情况加入，在top(),pop()时取出最后加入的元素
+class MyStack {
+public:
+    /** Initialize your data structure here. */
+    MyStack() {
+        
+    }
+    
+    /** Push element x onto stack. */
+    void push(int x) {
+        q.push(x);
+    }
+    
+    /** Removes the element on top of the stack and returns that element. */
+    int pop() {
+        queue<int> tmp;
+        int last=0;
+        while(!q.empty()){
+            last=q.front();
+            q.pop();
+            if(q.size()>0){
+                tmp.push(last);
+            }
+        }
+        q=tmp;
+        return last;
+    }
+    
+    /** Get the top element. */
+    int top() {
+        queue<int> tmp;
+        int last=0;
+        while(!q.empty()){
+            last=q.front();
+            q.pop();
+            tmp.push(last);
+        }
+        q=tmp;
+        return last;
+    }
+    
+    /** Returns whether the stack is empty. */
+    bool empty() {
+        return q.empty();
+    }
+private:
+    queue<int> q;
+};
+
