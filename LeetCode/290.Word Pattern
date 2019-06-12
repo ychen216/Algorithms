@@ -101,3 +101,43 @@ public:
         
     }
 };
+
+update:
+pattern和str中的letter一一映射，只是现在把它们映射到最早配对上的位置
+同时要考虑pattern长度和letter数目是否一致
+class Solution {
+public:
+    bool wordPattern(string pattern, string str) {
+        int len=pattern.length();
+        stringstream ss(str);
+        string cur;
+        int i=0;
+        unordered_map<char,int> map1;//映射到出现的位置
+        unordered_map<string,int> map2;//映射到位置
+        while(ss>>cur){
+            //str中单词多于pattern
+            if(i>=len){
+                return false;
+            }
+            //pattern[i]和当前letter都没有使用过 匹配在一起 映射到同一个位置
+            if(map1.find(pattern[i])==map1.end()&&map2.find(cur)==map2.end()){
+                map1[pattern[i]]=i;
+                map2[cur]=i;
+            }
+            //pattern[i]和当前letter都匹配过了
+            else if(map1.find(pattern[i])!=map1.end()&&map2.find(cur)!=map2.end()){
+                //如果pattern[i]和letter不是映射到同一个位置 则不匹配
+                if(map1[pattern[i]]!=map2[cur]){
+                    return false;
+                }
+            }
+            //一个匹配过 一个未匹配过
+            else{
+                return false;
+            }
+            i++;
+        }
+        //保证patter的长度和str中letter长度一致
+        return i==len;
+    }
+};
