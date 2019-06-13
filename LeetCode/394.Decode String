@@ -19,32 +19,37 @@ s = "2[abc]3[cd]ef", return "abcabccdcdcdef".
 Solution:
 class Solution {
 public:
+    //利用递归 最重要的一个观察室如果有数字那么数字后面一定跟着一个带有[]的pattern
     string decodeString(string s) {
-        int i=0;
-        return helper(s,i);
+        int start=0;
+        return helper(s,start);
     }
-    //pos应该用引用
-    string helper(string &s,int& pos){
-        int len=s.length();
-        string res="";
-        while(pos<len&&s[pos]!=']'){
-            if(!isdigit(s[pos]))
-                res+=s[pos++];
-            else{
-                //计算次数
-                int cnt=0;
-                while(pos<len&&isdigit(s[pos])){
-                    cnt=cnt*10+s[pos]-'0';
-                    pos++;
+private:
+    //将string[i,..end]decode出来
+    //i要用引用 因为这个解码的过程是不断向后延伸的
+    string helper(string &s,int &i){
+        string res;
+        while(i<s.length()&&s[i]!=']'){
+            if(isdigit(s[i])){
+                int repeat=0;
+                //把repeat数字截取出来
+                while(i<s.length()&&isdigit(s[i])){
+                    repeat=repeat*10+s[i]-'0';
+                    i++;
                 }
-                pos++;//'['
-                //找pattern
-                string pattern=helper(s,pos);
-                pos++;//']'
-                while(cnt>0){
-                    cnt--;
+                //数字后面一定跟了一个'['
+                i++;//skip '['
+                //把数字后面[...]中的内容解码出来
+                string pattern=helper(s,i);
+                i++;//skip pattern[...]中的']'
+                while(repeat>0){
                     res+=pattern;
+                    repeat--;
                 }
+            }
+            else{
+                //字符
+                res+=s[i++];
             }
         }
         return res;
@@ -126,5 +131,51 @@ public:
             i++;
         }
         return res.top();
+    }
+};
+
+update:
+class Solution {
+public:
+    string decodeString(string s) {
+        stack<int> repeat;
+        stack<string> pattern;
+        pattern.push("");
+        int i=0;
+        while(i<s.length()){
+            if(isdigit(s[i])){
+                int rep_time=0;
+                while(i<s.length()&&isdigit(s[i])){
+                    rep_time=rep_time*10+s[i]-'0';
+                    i++;
+                }
+                repeat.push(rep_time);
+                //i指向[ 需要回退到[之前 因为最后我们在ifelse循环外还有一个i++
+                i--;
+            }
+            else if(s[i]=='['){
+                //要构建一个新的pattern
+                pattern.push("");
+            }
+            else if(s[i]==']'){
+                string patt=pattern.top();
+                pattern.pop();
+                string new_patt;
+                int rep_time=repeat.top();
+                repeat.pop();
+                while(rep_time-->0){
+                    new_patt+=patt;
+                }
+                //将新的解码出来的pattern和前一个pattern合并
+                string &pre_patt=pattern.top();
+                pre_patt+=new_patt;
+            }
+            else{
+                string &patt=pattern.top();
+                patt+=s[i];
+            }
+            i++;
+        }
+        return pattern.top();
     }
 };
