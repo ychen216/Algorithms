@@ -16,6 +16,9 @@ s = "3[a2[c]]", return "accaccacc".
 s = "2[abc]3[cd]ef", return "abcabccdcdcdef".
 */
 
+//这道题是谷歌 Next Program推荐的练习题目 这道题的进阶题是 LeetCode471.Encode String with Shortest Length
+//解决方法是http://massivealgorithms.blogspot.tw/2016/12/leetcode-471-encode-string-with.html
+
 Solution:
 class Solution {
 public:
