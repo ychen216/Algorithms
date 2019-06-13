@@ -6,7 +6,67 @@ Given n non-negative integers representing an elevation map where the width of e
 For example, 
 Given [0,1,0,2,1,0,1,3,2,1,2,1], return 6.
 */
-Solution:
+
+Solution 1:
+class Solution {
+public:
+    /*
+        这道题有多重解法 具体可以看Solution
+        下面是最直观的一种做法：
+        考虑每一个位置index能够储水的量取决于:index左侧和右侧中最高的bar中较低的那一个和index处bar的高度差,必须两侧都存在比index高的bar才能储水
+        所以我们可以用两个数组分别记录index左侧最高的bar和右侧最高的bar的高度
+        然后逐一遍历，累加每个位置储水的量为
+        max(0,min(max_left[index],max_right[index])-height[index]) max(0,)是为了处理index处不能储水的情况
+        为了便于处理index处的bar比她左右两侧最高的bar还要高的情况（也就是不能够储水的情况）
+        如果还是沿用上面的定义 那么该处的储水量是负数
+        所以将max_left[index]定义成：在index左侧且包含index的最高的bar的高度，max_right[index]也是类似的
+        这样无论是否能够储水 都能利用min(max_left[index],max_right[index])-height[index]计算
+        当index处的高度比左右两侧高时max_left or max_right的值就是height[index]最后计算的结果也是0
+    */
+    int trap(vector<int>& height) {
+        int n=height.size();
+        if(n<=2){
+            return 0;
+        }
+        int res=0;
+        vector<int> max_left(n,0),max_right(n,0);
+        max_left[0]=height[0],max_right[n-1]=height[n-1];
+        for(int i=1;i<n-1;i++){
+            max_left[i]=max(max_left[i-1],height[i]);
+        }
+        for(int i=n-2;i>0;i--){
+            max_right[i]=max(max_right[i+1],height[i]);
+        }
+        for(int i=1;i<n-1;i++){
+            res+=min(max_left[i],max_right[i])-height[i];
+        }
+        return res;
+    }
+};
+
+upate:可以减少一个数组的空间开销
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        int n=height.size();
+        if(n<=2){
+            return 0;
+        }
+        int res=0;
+        vector<int> max_left(n,0);
+        max_left[0]=height[0];
+        for(int i=1;i<n-1;i++){
+            max_left[i]=max(max_left[i-1],height[i]);
+        }
+        int max_right=height[n-1];
+        for(int i=n-2;i>0;i--){
+            max_right=max(max_right,height[i]);
+            res+=min(max_right,max_left[i])-height[i];
+        }
+        return res;
+    }
+};
+Solution 2:
 class Solution {
 public:
     /*
