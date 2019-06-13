@@ -62,37 +62,55 @@ public:
         如果这个字符串之前没有遇到过，将其排入队中，我们用哈希集合记录一个字符串是否出现过
         我们对队列中的每个元素都进行相同的操作，直到队列为空还没找到合法的字符串的话，那就返回空集，
     */
-    vector<string> removeInvalidParentheses(string s) {    
+    vector<string> removeInvalidParentheses(string s) {
         vector<string> res;
-        unordered_set<string> visited({s});
+        unordered_set<string> visit;
         queue<string> q;
         q.push(s);
-        bool found = false;
+        visit.insert(s);
         while(!q.empty()){
-            string t = q.front(); q.pop();
-            if (isValid(t)) {
-                res.push_back(t);
-                found = true;
-            }
-            if (found) continue;
-            for (int i = 0; i < t.size(); ++i) {
-                if (t[i] != '(' && t[i] != ')') continue;
-                string str = t.substr(0, i) + t.substr(i + 1);
-                if (visited.find(str)==visited.end()) {
-                    q.push(str);
-                    visited.insert(str);
+            bool found=false;//该轮就出现了删除最少字符能得到的合法字符串
+            int n=q.size();
+            for(int i=0;i<n;i++){
+                string cur=q.front();
+                q.pop();
+                if(is_valid(cur)){
+                    found=true;
+                    res.push_back(cur);
                 }
+                if(found){
+                    //该项不需要继续拓展了 该轮已经出现了答案 继续往下拓展就不是删除最少字符了
+                    continue;
+                }
+                //继续拓展 删除一个括号
+                for(int j=0;j<cur.length();j++){
+                    //非括号的字符不需要考虑
+                    if(cur[j]!='('&&cur[j]!=')') continue;
+                    string next=cur.substr(0,j)+cur.substr(j+1);
+                    if(visit.find(next)!=visit.end()) continue;
+                    q.push(next);
+                    visit.insert(next);
+                }
+            }
+            //下一轮就不再是删除最少字符的答案了
+            if(found){
+                break;
             }
         }
         return res;
     }
-private:    
-    bool isValid(string t) {
-        int cnt = 0;
-        for (int i = 0; i < t.size(); ++i) {
-            if (t[i] == '(') ++cnt;
-            else if (t[i] == ')' && --cnt < 0) return false;
+private:
+    //合法的括号串 要求时刻左括号不少于右括号 遍历完整个串 左括号和右括号数目相同
+    bool is_valid(const string &s){
+        int cnt=0;//记录左括号比右括号多的数目
+        for(auto &c:s){
+            if(c=='(') cnt++;
+            else if(c==')'){
+                if(--cnt<0){
+                    return false;
+                }
+            }
         }
-        return cnt == 0;
+        return cnt==0;
     }
 };
