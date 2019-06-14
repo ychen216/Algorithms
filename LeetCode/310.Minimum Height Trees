@@ -183,3 +183,50 @@ class Solution {
         return leaves;
     }
 }
+
+Solution 3:一样的思想只是统计度来判断是否是叶子节点
+class Solution {
+public:
+    vector<int> findMinHeightTrees(int n, vector<vector<int>>& edges) {
+        if(n==0){
+            return {};
+        }
+        //n==1时 只有一个度为0的节点
+        if(n==1){
+            return {0};
+        }
+        //n>1 当至少有两个节点是不断删除度为1的节点
+        vector<int> degree(n,0);
+        unordered_map<int,vector<int>> point2edge;
+        for(auto &edge:edges){
+            degree[edge[0]]++;
+            degree[edge[1]]++;
+            point2edge[edge[0]].push_back(edge[1]);
+            point2edge[edge[1]].push_back(edge[0]);
+        }
+        vector<int> leaf;
+        for(int i=0;i<n;i++){
+            if(degree[i]==1){
+                leaf.push_back(i);
+            }
+        }
+        while(leaf.size()>=2){
+            vector<int> newleaf;
+            for(auto &todelete:leaf){
+                for(auto& next:point2edge[todelete]){
+                    if(--degree[next]==1){
+                        newleaf.push_back(next);
+                    }
+                }
+            }
+            if(!newleaf.empty()){
+                leaf=newleaf;
+            }
+            //不能产生新的叶子 说明已经到根了
+            else{
+                break;
+            }
+        }
+        return leaf;
+    }
+};
