@@ -80,3 +80,31 @@ public:
         return res.substr(1);
     }
 };
+
+update:
+class Solution {
+public:
+    string removeDuplicateLetters(string s) {
+        vector<int> cnt(26,0);//为了保证每个字符都出现
+        vector<bool> used(26,false);//为了保证每个字符只出现一次
+        for(auto &c:s){
+            cnt[c-'a']++;
+        }
+        vector<char> st;//模拟栈
+        for(auto c:s){
+            cnt[c-'a']--;
+            //c想加入就必须在前面没有用过
+            if(used[c-'a'])continue;
+            //确定要加入c的位置
+            //c的字母序比前一个小 且前一个字符还有机会在后面出现 那么可以替代这个字符 放在前面构成更小的字符序
+            while(!st.empty()&&c<st.back()&&cnt[st.back()-'a']>0){
+                used[st.back()-'a']=false;
+                st.pop_back();
+            }
+            st.push_back(c);
+            used[c-'a']=true;
+            
+        }
+        return string(st.begin(),st.end());
+    }
+};
