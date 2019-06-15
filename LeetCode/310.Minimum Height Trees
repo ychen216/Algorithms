@@ -142,7 +142,7 @@ public:
     }
 };
 
-Solution 2: 一样的思想 java
+Solution 2: 一样的思想 java 这种用还没有被删去(也就是还剩下的节点数)的方法还判定是否跳出循环的方法比较好
 class Solution {
     public List<Integer> findMinHeightTrees(int n, int[][] edges) {
         List<Integer> leaves = new ArrayList<>();
