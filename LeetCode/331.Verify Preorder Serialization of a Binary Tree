@@ -86,16 +86,21 @@ public:
 
      case 2.1: you see a #, while top of stack is a number, you know this # is a left null child, put it there as a mark for 
      next coming node k to know it is being the right child.
-
+          
      case 2.2: you see a #, while top of stack is #, you know you meet this # as right null child, you now cancel the sub tree
      (rooted as t, for example) with these two-# children. But wait, after the cancellation, you continue to check top of stack is
      whether # or a number:
 
           ---- if a number, say u, you know you just cancelled a node t which is left child of u. You need to leave a # mark to 
-          the top of stack. So that the next node know it is a right child.
+          the top of stack. So that the next node know it is a right child.如下左图
 
           ---- if a #, you know you just cancelled a tree whose root, t, is the right child of u. So you continue to cancel sub tree of u, 
-          and the process goes on and on.
+          and the process goes on and on.如下右图
+          u          u
+         / \        / \ 
+        t          #   t
+       / \            / \
+      #   #          #   #
     
     */
     bool isValidSerialization(string preorder) {
@@ -108,6 +113,8 @@ public:
             if (val_str != "#") {
                 s.push(val_str);
             } else {  // val_str == "#"
+               // 不断检查是否完成了当前根的右子树的遍历 如果完成了右子树的遍历 那么不断把左子树的null pop
+               // 并且将该根节点设置为# 表示已经完成以该节点为根的子树的遍历 并且提示后续遍历的节点你们是在右子树当中 因为当前节点被标记为#是左子树 
                 while (!s.empty() && s.top() == "#") {
                     s.pop();
                     if (s.empty()) {
