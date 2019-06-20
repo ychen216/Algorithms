@@ -62,3 +62,13 @@ public:
         return num>0 && (num&(num-1))==0 && num&(0x55555555);
     }
 };
+
+update:同样的思想不同的实现方式
+class Solution {
+public:
+    bool isPowerOfFour(int num) {
+        // 4次幂必然是正数 且是2的幂 所以num的二进制表示有且只有一个1 
+        // 同时4^n=2^(2n) 那么唯一的一个1 在0,2,4..2n位上 所以1,3,5..2n-1上应该都是0 所以num&(0x aaaaaaaa)==0 a(16)==1010(2)
+        return num>0 && ((num-1)&num)==0 && (num&0xaaaaaaaa)==0;
+    }
+};
