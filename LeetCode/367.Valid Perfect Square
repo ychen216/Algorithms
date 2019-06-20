@@ -87,7 +87,8 @@ public:
 update:
 class Solution {
 public:
-    // long->int
+    // long->int 在判定的时候用除法 num/mid和mid作比较 
+    // 除法会损失精度 所以num/mid==mid不能说明mid*mid==num 比如5/2==2 还要加上一个条件判断是否能整除 num%mid==0;
     bool isPerfectSquare(int num) {
         int start=1,end=num,mid,tmp;
         while(start+1<end){
