@@ -65,18 +65,45 @@ private:
             
     }
 };
+update:
+class Solution {
+public:
+    int combinationSum4(vector<int>& nums, int target) {
+        unordered_map<int,unsigned long long> dp;
+        return helper(dp,nums,target);
+    }
+private:
+    int helper(unordered_map<int,unsigned long long> &dp, vector<int> &nums,int target){
+        if(target<0){
+            return 0;
+        }
+        if(target==0){
+            return 1;
+        }
+        if(dp.find(target)!=dp.end()){
+            return dp[target];
+        }
+        unsigned long long res=0;
+        for(auto &num:nums){
+            res+=helper(dp,nums,target-num);
+        }
+        dp[target]=res;
+        return res;
+    }
+};
 
 Solution 3:DP
 class Solution {
 public:
     /*
+        dp[i]表示sum==i的combination数
         dp[target]=sum(dp[target-nums[i]]) (for i=0..num.size()-1)
         dp[target] 利用nums数组 target一共有多少种可能的combination
     */
     int combinationSum4(vector<int>& nums, int target) {
         if(target==0)
             return 1;
-        vector<int> dp(target+1,0);
+        vector<unsigned long long> dp(target+1,0);
         dp[0]=1;
         for(int i=1;i<=target;i++){
             for(int j=0;j<nums.size();j++){
