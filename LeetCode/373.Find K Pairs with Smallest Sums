@@ -116,3 +116,38 @@ private:
         }  
     };
 };
+
+update:
+class Solution {
+public:
+    struct Node{
+        int a,b,id;//a:num1,b:num2,id:b在num2中的下标
+        Node(int aa,int bb,int ii):a(aa),b(bb),id(ii){}
+        //最小堆 大的优先级小
+        bool operator < (const Node &n)const{
+            return a+b > n.a+n.b;
+        }
+    };
+    vector<vector<int>> kSmallestPairs(vector<int>& nums1, vector<int>& nums2, int k) {
+        if(nums1.empty()||nums2.empty()){
+            return {};
+        }
+        vector<vector<int>> res;
+        int n1=nums1.size();
+        int n2=nums2.size();
+        int n=min(n1*n2,k);
+        priority_queue<Node> pq;
+        for(int i=0;i<n1;i++){
+            pq.push(Node(nums1[i],nums2[0],0));
+        }
+        while(k-->0 && !pq.empty()){
+            auto node=pq.top();
+            pq.pop();
+            res.push_back({node.a,node.b});
+            if(node.id==n2-1) continue;
+            node.id++;
+            pq.push(Node(node.a,nums2[node.id],node.id));
+        }
+        return res;
+    }
+};
