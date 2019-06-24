@@ -73,7 +73,26 @@ public:
         nums.pop_back();
         return true;
     }
+    /*
+        refine remove func
+        bool remove(int val) {
+            if(key2index.find(val)==key2index.end()){
+                return false;
+            }
+            int id=key2index[val];
+            //要删除的元素和最后一个元素交换位置 然后删除最后一个元素
+            if(id!=nums.size()-1){
+                int last=nums.back();
+                key2index[last]=id;
+                swap(nums[nums.size()-1],nums[id]);
+            }
+            key2index.erase(val);
+            nums.pop_back();
+            return true;
+        }
     
+    
+    */
     /** Get a random element from the set. */
     int getRandom() {
         return nums[rand()%nums.size()];
