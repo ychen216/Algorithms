@@ -148,3 +148,57 @@ private:
     unordered_map<int,unordered_set<int>> val_pos;
 };
 
+update:
+class RandomizedCollection {
+public:
+    /** Initialize your data structure here. */
+    RandomizedCollection() {
+        
+    }
+    
+    /** Inserts a value to the collection. Returns true if the collection did not already contain the specified element. */
+    bool insert(int val) {
+        bool not_contain=true;
+        if(key2index.find(val)!=key2index.end()){
+            not_contain=false;
+        }
+        key2index[val].insert(nums.size());
+        nums.push_back(val);
+        return not_contain;
+    }
+    
+    /** Removes a value from the collection. Returns true if the collection contained the specified element. */
+    bool remove(int val) {
+        //不包含val
+        if(key2index.find(val)==key2index.end()){
+            return false;
+        }
+        auto delete_it=key2index[val].begin();//随便删除一个val
+        int delete_id=*delete_it;
+        int last_id=nums.size()-1;
+        if(delete_id == last_id){
+            key2index[val].erase(delete_it);
+        }
+        else{
+            //将要删除的和nums最后一个元素交换位置 同时更新在map中记录的位置信息
+            auto last=nums.back();
+            key2index[val].erase(delete_it);//删除val的位置
+            key2index[last].erase(last_id);//删去最后一个元素的位置
+            key2index[last].insert(delete_id);//将最后一个元素的位置更新为val的位置
+            swap(nums[last_id],nums[delete_id]);
+        }
+        nums.pop_back();
+        if(key2index[val].size()==0){
+            key2index.erase(val);
+        }
+        return true;
+    }
+    
+    /** Get a random element from the collection. */
+    int getRandom() {
+        return nums[rand()%nums.size()];
+    }
+private:
+    vector<int> nums;
+    unordered_map<int,unordered_set<int>> key2index;
+};
