@@ -106,6 +106,37 @@ public:
     }
 };
 
+
+update: up[i],down[i]只依赖前一个状态即i-1所以可以将空间开销降低到O(1)
+class Solution {
+public:
+    int wiggleMaxLength(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2){
+            return n;
+        }
+        int up=1,down=1;
+        for(int i=1;i<n;i++){
+            if(nums[i]>nums[i-1]){
+                //简化空间
+                up=max(up,down+1);
+                //up[i]=max(up[i-1],down[i-1]+1);
+                //down[i]=down[i-1];
+            }
+            else if(nums[i]<nums[i-1]){
+                //down[i]=max(down[i-1],up[i-1]+1);
+                //up[i]=up[i-1];
+                down=max(down,up+1);
+            }
+            //else{
+                //up[i]=up[i-1];
+                //down[i]=down[i-1];
+            //}
+        }
+        return max(up,down);
+    }
+};
+
 update:
 class Solution {
 public:
