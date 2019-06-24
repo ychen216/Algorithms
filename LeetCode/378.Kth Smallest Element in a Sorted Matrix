@@ -18,10 +18,10 @@ Note:
 You may assume k is always valid, 1 ≤ k ≤ n2.
 */
 
-Solution:
+Solution 1:
 class Solution {
 public:  
-    // O(k* #(row))
+    // O(k* #(row)) 类似ugly number
     int kthSmallest(vector<vector<int>>& matrix, int k) {
         int n=matrix.size();
         int first[n]={0};//表示每一行还未选中且最小的元素的下标
@@ -44,7 +44,7 @@ public:
     }
 };
 
-update:利用最小堆
+Solution 2:利用最小堆
 class Solution {
 public:
     //利用最小堆 第k次出队的就是k smallest element O(klg(#row))
@@ -89,10 +89,11 @@ public:
     }
 };
 
-Solution 2: Heap
+Solution 3: 最大堆
 class Solution {
 public:
     /*
+       n^2 * log(k)
        用大根堆来存储当前最小的k个数字，然后遍历矩阵
        如果遍历位置数字大于等于堆顶元素，跳过该行继续遍历,否则将数字存入堆中并删除堆顶数字（保证堆中有k个数字）
        最终堆顶数字即是第k小的数字
@@ -139,7 +140,7 @@ public:
     }
 };
 
-Solution 3: Binary Search
+Solution 4: Binary Search
 class Solution {
 public:
     /*
