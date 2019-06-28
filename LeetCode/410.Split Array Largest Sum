@@ -70,6 +70,47 @@ private:
     }
 };
 
+update:
+class Solution {
+public:
+    int splitArray(vector<int>& nums, int m) {
+        long start=INT_MIN,end=0,mid;
+        for(long num:nums){
+            start=max(num,start);
+            end+=num;
+        }
+        while(start<end){
+            mid=start+(end-start)/2;
+            int group=check(nums,mid);
+            //以mid来划分nums
+            if(group>m){
+                start=mid+1;
+            }
+            else if(group<m){
+                end=mid-1;
+            }
+            else{
+                end--;
+            }
+        }
+        return start;
+    }
+private:
+    int check(vector<int> &nums,int sum_limit){
+        if(nums.size()==0){
+            return 0;
+        }
+        long cur_sum=0,group=1;
+        for(auto num:nums){
+            cur_sum+=num;
+            if(cur_sum>sum_limit){
+                group++;
+                cur_sum=num;
+            }
+        }
+        return group;
+    }
+};
 update:二分查找新模板
 class Solution {
 public:
