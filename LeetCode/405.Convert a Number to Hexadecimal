@@ -44,3 +44,24 @@ public:
 private:
     const string HEX="0123456789abcdef";
 };
+
+update:
+class Solution {
+public:
+    string toHex(int num) {
+        string dict="0123456789abcdef";
+        string res;
+        int flag=0xf;
+        //每四位2进制对应一位16进制
+        for(int i=0;i<8;i++){
+            res=dict[num&flag]+res;
+            num>>=4;
+        }
+        //去除前导零
+        auto pos=res.find_first_not_of('0');
+        if(pos==string::npos){
+            return "0";
+        }
+        return res.substr(pos);
+    }
+};
