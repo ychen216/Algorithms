@@ -28,7 +28,30 @@ public:
         return cnt;
     }
 };
-
+update:
+class Solution {
+public:
+    int countSegments(string s) {
+        int n=s.length();
+        int i=0;
+        int res=0;
+        while(i<n){
+            //跳过连续的空格
+            while(i<n&&s[i]==' '){
+                i++;
+            }
+            //如果有非空格字符记一个segment
+            if(i<n){
+                res++;
+            }
+            //跳过一个segment
+            while(i<n&&s[i]!=' '){
+                i++;
+            }
+        }
+        return res;
+    }
+};
 
 Solution 2:
 class Solution {
