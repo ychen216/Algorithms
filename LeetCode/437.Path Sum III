@@ -59,3 +59,37 @@ public:
         return 0;    
     }
 };
+
+update:解释
+class Solution {
+public:
+    //以root为根的树有多少条和为sum的路径
+    int pathSum(TreeNode* root, int sum) {
+        if(root==nullptr){
+            return 0;
+        }
+        int res=helper(root,sum);
+        if(root->left){
+            res+=pathSum(root->left,sum);
+        }
+        if(root->right){
+            res+=pathSum(root->right,sum);
+        }
+        return res;
+    }
+private:
+    //以root为起点 sum为t的路径数目
+    int helper(TreeNode *root,int t){
+        if(root==nullptr){
+            return 0;
+        }
+        int res=0;
+        if(root->val==t){
+            res++;
+        }
+        t-=root->val;
+        res+=helper(root->left,t);
+        res+=helper(root->right,t);
+        return res;
+    }
+};
