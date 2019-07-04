@@ -50,6 +50,7 @@ public:
         return cnt;
     }
 };
+
 Solution 3:
 class Solution {
 public:
@@ -67,5 +68,29 @@ public:
         for(auto num:nums)
             cnt+=abs(num-nums[mid]);
         return cnt;
+    }
+};
+
+
+update:解释
+
+class Solution {
+public: 
+    /*
+        思路就是将小的数增大，将大的数减小到一个数x，假设所有的数都变成x时需要的操作数最少
+        那么对于一个有序数组 1 2 5 6假设最后这个数组经过变化后变成x x x x
+        那么对于(1,6)pair来说需要的操作数为x-1+6-x = 6-1
+        所以最后需要的操作数为所有首尾pair(1,6)、(2,5)之间的差值
+        其实对于一个长度为奇数的数组来说x就是中位数，长度为偶数的数组x可以是两个中间数任意一个
+    */
+    int minMoves2(vector<int>& nums) {
+        sort(nums.begin(),nums.end());
+        int i=0,j=nums.size()-1;
+        int res=0;
+        while(i<j){
+            res+=nums[j]-nums[i];
+            i++;j--;
+        }
+        return res;
     }
 };
