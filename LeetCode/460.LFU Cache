@@ -116,3 +116,96 @@ private:
  * int param_1 = obj->get(key);
  * obj->put(key,value);
  */
+ 
+update:
+class LFUCache {
+public:
+    LFUCache(int capacity) {
+        cap=capacity;
+        min_freq=0;
+    }
+    
+    int get(int key) {
+        if(mmp1.find(key)==mmp1.end()){
+            return -1;
+        }
+        int val=mmp1[key].first;
+        int origin_freq=mmp1[key].second;
+        int cur_freq=origin_freq+1;
+        //freq增加1
+        mmp1[key].second=cur_freq;
+        //从原有的freq链表中删除这个节点 
+        auto origin_it=mmp3[key];
+        mmp2[origin_freq].erase(origin_it);
+        if(mmp2[origin_freq].empty()){
+            mmp2.erase(origin_freq);
+            if(origin_freq==min_freq){
+                min_freq++;
+            }
+        }
+        //然后加入freq+1队列的节点
+        if(mmp2.find(cur_freq)==mmp2.end()){
+            mmp2[cur_freq]=list<int>();
+        }
+        mmp2[cur_freq].push_back(key);
+        //更新key对应的节点it
+        mmp3[key]=prev(mmp2[cur_freq].end());
+        return val;
+    }
+    
+    void put(int key, int value) {
+        if(cap<=0){
+            return;
+        }
+        if(mmp1.find(key)==mmp1.end()){
+            if(mmp1.size()==cap){
+                //删除最少出现且最早的节点
+                auto list_it=mmp2[min_freq];
+                auto d_it=list_it.begin();
+                auto d_key=*d_it;
+                mmp2[min_freq].pop_front();
+                mmp1.erase(d_key);
+                mmp3.erase(d_key);
+                if(mmp2[min_freq].empty()){
+                    mmp2.erase(min_freq);
+                }
+            }
+            mmp1[key]={value,1};
+            min_freq=1;
+            if(mmp2.find(1)==mmp2.end()){
+                mmp2[1]=list<int>();
+            }
+            mmp2[1].push_back(key);
+            mmp3[key]=prev(mmp2[1].end());
+            
+            return;
+        }
+        int origin_freq=mmp1[key].second;
+        mmp1[key].first=value;
+        int cur_freq=origin_freq+1;
+        //freq增加1
+        mmp1[key].second=cur_freq;
+        //从原有的freq链表中删除这个节点 
+        auto origin_it=mmp3[key];
+        mmp2[origin_freq].erase(origin_it);
+        if(mmp2[origin_freq].empty()){
+            mmp2.erase(origin_freq);
+            if(origin_freq==min_freq){
+                min_freq++;
+            }
+        }
+        //然后加入freq+1队列的节点
+        if(mmp2.find(cur_freq)==mmp2.end()){
+            mmp2[cur_freq]=list<int>();
+        }
+        mmp2[cur_freq].push_back(key);
+        //更新key对应的节点it
+        mmp3[key]=prev(mmp2[cur_freq].end());
+    }
+private:
+    unordered_map<int,pair<int,int>> mmp1;//{key,(val,freq)}
+    unordered_map<int,list<int>> mmp2;//freq to list
+    unordered_map<int,list<int>::iterator> mmp3;//key to it
+    int cap;
+    int min_freq;
+};
