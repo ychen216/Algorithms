@@ -19,6 +19,28 @@ Explanation: The binary representation of 1 is 1 (no leading zero bits), and its
 */
 
 Solution 1:
+//逐步模拟
+class Solution {
+public:
+    int findComplement(int num) {
+        int res=0;
+        int flag=1;
+        //题目确保正数 且这里求补要求忽略前导0 所以在不断右移得到0后即可跳出
+        // 00101-> 00010 -> 00001 -> 00000跳出
+        while(num!=0){
+            //如果该位为0则补数该位为1
+            if((num&1)==0){
+                res|=flag;
+            }
+            flag<<=1;
+            num>>=1;
+        }
+        return res;
+    }
+};
+
+
+Solution 2:
 class Solution {
 public:
     // 找到正整数最高位的1 从该位开始取反
@@ -34,7 +56,7 @@ public:
     }
 };
 
-Solution 2:
+Solution 3:
 class Solution {
 public:
     // 找到正整数最高位的1 从该位开始取反
