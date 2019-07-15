@@ -54,5 +54,41 @@ public:
         }
         return to_string(num - 1);
     }
+};
 
+update:
+class Solution {
+public:
+    string smallestGoodBase(string n) {
+        long long num=stoll(n);
+        for(int m=log(num+1)/log(2);m>=2;m--){
+            long long start=2,end=pow(num,1.0/(m-1)),mid;
+            while(start+1<end){
+                mid=start+(end-start)/2;
+                long long sum=getSum(mid,m);
+                if(sum<num){
+                    start=mid;
+                }
+                else{
+                    end=mid;
+                }
+            }
+            if(getSum(start,m)==num){
+                return to_string(start);
+            }
+            if(getSum(end,m)==num){
+                return to_string(end);
+            }
+        }
+        return to_string(num-1);
+    }
+private:
+    //给定base和长度m计算1+base+...+base^(m-1)的和
+    long long getSum(long long base,long long m){
+        long long sum=0;
+        for(int i=0;i<m;i++){
+            sum=sum*base+1;
+        }
+        return sum;
+    }
 };
