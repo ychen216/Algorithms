@@ -29,12 +29,12 @@ public:
             一个数最大的符合条件的base是n-1 n=1*(n-1)^0+1(n-1)^1
             可以用在[2,n-1]之间搜索合理的值 O(NlgN)
             但此题的数据范围很大 TLE
-        Solution 2:
-            n = 1 + k + k^2 + k^3 + ... + k^(m-1) > k^(m-1)
-            k < n^(1 / (m-1))
+        
+        Solution 2: 从n转化为k进制后的数字长度m入手 m的范围就很有限了
             base的范围在[2,n-1] base越小转化后的位数m越大 当base=2时m最大 m=log(n)+1 base=n-1时 m=2 对应串"11"
-            确定了m的范围后 可以确定base值[2,n^(1 / (m-1))]利用二分搜索
-            
+            如果这个k进制数长度为m，那么n可以表示为:
+            n = 1 + k + k^2 + k^3 + ... + k^(m-1) > k^(m-1)
+            k < n^(1 / (m-1))  这样可以确定base k值范围[2,n^(1 / (m-1))]然后利用二分搜索确定k值     
     */
     string smallestGoodBase(string n) {
         long long num = stol(n);
