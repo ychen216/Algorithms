@@ -50,6 +50,11 @@ update:
 class Solution {
 public:
     //利用归并排序的思想进行归并排序 然后再check左右两部分元素中满足条件的pair数目
+    //求一个数组num[a,...b,c...d]中满足要求的pair我们可以拆分成3个步骤来检查：
+    //1.查找[a...b]中满足要求的pair,然后排序 2.查找[c...d]中满足要求的pair，然后排序
+    //3.查找pair的第一个数在[a..b]中pair的第二个数在[c..d]中的pair
+    //此时[a..b],[c..d]都已经排好序，对于x属于[a..b]可以方便的在[c..d]中连续查找到满足条件的最后一个数是y
+    //那么在[a..b]中排好序后在x后面的数必然和[c...y]满足要求，可以直接从y后面开始查找
     int reversePairs(vector<int>& nums) {
         int n=nums.size();
         return mergeSort(nums,0,n-1);
@@ -60,9 +65,10 @@ private:
             return 0;
         }
         int mid=s+(e-s)/2;
+        //分别超找[s..mid] [mid+1,..e]中满足条件的pair
         int res=mergeSort(nums,s,mid)+mergeSort(nums,mid+1,e);
         int i=s,j=mid+1;
-        // check pair
+        // check pair第一个数在[s..mid] 第二个数在[mid+1..e]的pair
         //为[s,mid]中的每一个元素i找到在[mid+1,e]中符合的j,满足nums[i]>nums[j]*2
         while(i<=mid){
             while(j<=e&&nums[i]/2.0>nums[j]){
@@ -71,7 +77,7 @@ private:
             res+=j-mid-1;
             i++;
         }
-        //merge操作 将[s,e]整合成有序数组
+        //merge操作 将[s,e]整合成有序数组 这里要注意排序是[s,e]但是sort(begin(),end())这里的end是指有效元素的下一个位置
         sort(nums.begin()+s,nums.begin()+e+1);
         return res;
     }
