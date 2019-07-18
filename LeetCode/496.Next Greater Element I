@@ -116,3 +116,30 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    //利用栈找到nums2中每一个数字右侧第一个大于该元素的数字
+    vector<int> nextGreaterElement(vector<int>& nums1, vector<int>& nums2) {
+        unordered_map<int,int> idx;
+        int n=nums1.size();
+        //记录nums1数字的位置
+        for(int i=0;i<n;i++){
+            idx[nums1[i]]=i;
+        }
+        vector<int> res(n,-1);
+        stack<int> st;
+        //找到nums2中每一个元素右侧第一个大于该元素的数字 同时如果出现在nums1中就更新到res对应位置
+        for(int i=0;i<nums2.size();i++){
+            while(!st.empty()&&nums2[st.top()]<nums2[i]){
+                if(idx.find(nums2[st.top()])!=idx.end()){
+                    res[idx[nums2[st.top()]]]=nums2[i];
+                }
+                st.pop();
+            }
+            st.push(i);
+        }
+        return res;
+    }
+};
