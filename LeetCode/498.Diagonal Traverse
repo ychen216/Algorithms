@@ -128,3 +128,55 @@ public:
         return res;
     }
 };
+
+update:
+class Solution {
+public:
+    //每次都在对角线上走 x+y=step
+    vector<int> findDiagonalOrder(vector<vector<int>>& matrix) {
+        if(matrix.empty()||matrix[0].empty()){
+            return {};
+        }
+        vector<int> res;
+        int m=matrix.size(),n=matrix[0].size();
+        int x=0,y=0,step=1;
+        while(step<m+n){
+            cout<<step<<" "<<x<<" "<<y<<endl;
+            if(step&1){
+                //向上走
+                while(x>=0&&y<n){
+                    res.push_back(matrix[x][y]);
+                    x--;
+                    y++;
+                }
+                //更新新一条对角线的x,y起始位置 注意判断的先后顺序
+                if(y>=n){
+                    y=n-1;
+                    x=step-y;
+                }
+                else{
+                    x=0;
+                    y=step;
+                }
+            }
+            else{
+                //向下走
+                while(x<m&&y>=0){
+                    res.push_back(matrix[x][y]);
+                    x++;
+                    y--;
+                }
+                if(x>=m){
+                    x=m-1;
+                    y=step-x;
+                }
+                else{
+                    y=0;
+                    x=step-y;
+                }
+            }
+            step++;
+        }
+        return res;
+    }
+};
