@@ -99,3 +99,37 @@ private:
         return curSum;
     }
 };
+
+update:加注释
+class Solution {
+public:
+    vector<int> findFrequentTreeSum(TreeNode* root) {
+        int max_cnt=0;
+        vector<int> res;
+        unordered_map<int,int> mmp;
+        helper(root,res,mmp,max_cnt);
+        return res;
+    }
+private:
+    //get sum
+    int helper(TreeNode *root,vector<int>&res,unordered_map<int,int> &mmp,int &max_cnt){
+        if(root==nullptr){
+            return 0;
+        }
+        //计算root左右子树的和 同时在这个过程中已经将以左右子树中节点为根的树的sum也都计算统计了
+        int left=0,right=0;
+        left=helper(root->left,res,mmp,max_cnt);
+        right=helper(root->right,res,mmp,max_cnt);
+        int sum=root->val+left+right;
+        mmp[sum]++;
+        if(mmp[sum]>max_cnt){
+            max_cnt=mmp[sum];
+            res.clear();
+            res.push_back(sum);
+        }
+        else if(mmp[sum]==max_cnt){
+            res.push_back(sum);
+        }
+        return sum;
+    }
+};
