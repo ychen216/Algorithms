@@ -48,3 +48,27 @@ public:
         return root;
     }
 };
+
+update:
+class Solution {
+public:
+    //中序遍历 右中左
+    TreeNode* convertBST(TreeNode* root) {
+        if(root==nullptr){
+            return nullptr;
+        }
+        int sum=0;
+        helper(root,sum);
+        return root;
+    }
+private:
+    void helper(TreeNode *cur,int &sum){
+        if(cur==nullptr){
+            return;
+        }
+        helper(cur->right,sum);
+        sum+=cur->val;
+        cur->val=sum;
+        helper(cur->left,sum);
+    }
+};
