@@ -58,3 +58,33 @@ private:
         }
     }
 };
+
+Solution 3:
+class Solution {
+public:
+    string reverseWords(string s) {
+        int n=s.length();
+        int i=0,j;
+        //逐步找到每个单词的区间 逐个单词reverse
+        while(i<n){
+            //跳过词前空格
+            while(i<n&&s[i]==' '){ i++; }
+            if(i==n){
+                break;
+            }
+            j=i+1;
+            while(j<n&&s[j]!=' '){ j++; }
+            //[i, j)是一个完整的词
+            //reverse
+            reverse(s,i,j-1);
+            i=j;
+        }
+        return s;
+    }
+private:
+    void reverse(string &str,int s,int e){
+        while(s<e){
+            swap(str[s++],str[e--]);
+        }
+    }
+};
