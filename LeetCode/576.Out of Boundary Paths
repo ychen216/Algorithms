@@ -21,7 +21,7 @@ N is in range [0,50].
 Solution:
 class Solution {
 public:
-    //DP dp[step][i][j] 从i,j走step步到出边界的路径数 注意要用long 或者unsigned
+    //DP dp[step][i][j] 从i,j至多走step步到出边界的路径数 注意要用long 或者unsigned
     int findPaths(int m, int n, int N, int i, int j) {
         unsigned int dp[N + 1][m][n] = {};
         for(int step = 1; step <= N; step++){
