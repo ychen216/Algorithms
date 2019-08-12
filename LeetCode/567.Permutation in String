@@ -186,3 +186,39 @@ public:
         return false;
     }
 };
+
+Solution 5: slide window + map
+class Solution {
+public:
+    bool checkInclusion(string s1, string s2) {
+        int n1=s1.length();
+        int n2=s2.length();
+        if(n1>n2){
+            return false;
+        }
+        unordered_map<char,int> target;
+        for(auto &c:s1){
+            target[c]++;
+        }
+        unordered_map<char,int> cur(target.begin(),target.end());
+        for(int left=0,right=0;right<n2;right++){
+            //如果出现不在s1中的字符 所有区间应该直接跳过这个字符
+            if(target.find(s2[right])==target.end()){
+                left=right+1;
+                cur=target;
+            }
+            else { //s1中包含s2[right]
+                cur[s2[right]]--;
+                // 保持cur中的任何一个字符还需要的个数都>=0 这样可以保证[left,right]的长度不超过n1
+                while(cur[s2[right]]<0){
+                    cur[s2[left]]++;
+                    left++;
+                }
+                if(right-left+1==n1){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+};
