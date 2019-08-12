@@ -64,15 +64,7 @@ public:
 };
 
 Solution 2:
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
+//较好 divide-conquer分治法，每个节点只遍历一次
 class Solution {
 private:
     int sum;
@@ -93,16 +85,28 @@ public:
     }
 };
 
+update:
+class Solution {
+public:
+    int findTilt(TreeNode* root) {
+        int tilt=0;
+        getSum(root,tilt);
+        return tilt;
+    }
+private:
+    // 计算每个节点的左右子树的元素sum的同时计算每个节点的tilt
+    int getSum(TreeNode *cur,int &tilt){
+        if(cur==nullptr){
+            return 0;
+        }
+        int left=getSum(cur->left,tilt);
+        int right=getSum(cur->right,tilt);
+        tilt+=abs(left-right);
+        return left+right+cur->val;
+    }
+};
+
 Solution 3:
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
 class Solution {
 public:
     int sum=0;
