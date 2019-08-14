@@ -97,15 +97,6 @@ public:
 
 
 Solution 2：
-/**
- * Definition for a binary tree node.
- * struct TreeNode {
- *     int val;
- *     TreeNode *left;
- *     TreeNode *right;
- *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
- * };
- */
 class Solution {
 public:
     /*
@@ -138,8 +129,8 @@ public:
     }
     
 };
-update:
 
+update:
 class Solution {
 public:
     // BFS
@@ -168,5 +159,46 @@ public:
             maxWidth=max(maxWidth,lastId-firstId+1);
         }
         return maxWidth;
+    }
+};
+
+update:
+class Solution {
+public:
+    int widthOfBinaryTree(TreeNode* root) {
+        if(!root){
+            return 0;
+        }
+        long res=1;//第一层只有root一个节点
+        queue<pair<TreeNode *,long>> q;//指针,节点id
+        q.push({root,1});//初始化第一层根节点
+        //逐层统计下一层的宽度，通过记录下一层最左边和最右边的节点编号
+        while(!q.empty()){
+            int n=q.size();//当前层的节点数
+            long left_most=-1,right_most=-1;
+            //统计下一层最左最右的节点编号
+            for(int i=0;i<n;i++){
+                auto cur=q.front();
+                q.pop();
+                auto p=cur.first;//指针
+                auto id=cur.second;//该节点id
+                if(p->left){
+                    q.push({p->left,id*2});
+                    if(left_most==-1){
+                        left_most=2*id;
+                    }
+                    right_most=2*id;
+                }
+                if(p->right){
+                    q.push({p->right,id*2+1});
+                    if(left_most==-1){
+                        left_most=2*id+1;
+                    }
+                    right_most=2*id+1;
+                }
+            }
+            res=max(res,right_most-left_most+1);
+        }
+        return res;
     }
 };
