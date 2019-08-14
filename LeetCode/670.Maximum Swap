@@ -16,7 +16,53 @@ Note:
 The given number is in the range [0, 108]
 */
 
-Solution:
+Solution 1:很直观的做法
+class Solution {
+public:
+    /*
+        如果是一个不升序的数字 eg.9988、987,那么已经是这些数字能组成的最大数字了,不需要交换
+        否则，我们需要交换一次，原则是：
+        1.我们希望越高位的数字越大，所以我们优先交换高位的数字(从左开始遍历)
+        2.由于只交换一次,交换的时候我们应该把位低中的最大的数字(也就是在右侧的)交换到该位
+        3.当低位中有多个最大数字eg.9, 那么我们优先交换其中最低位的最大数字(原因和1相同，希望高位的数字尽可能大)
+        所以我们需要从右向左统计出，该位数字右侧最大且处在最低位的数字
+        然后从左向右开始遍历，比较、交换
+    */
+    int maximumSwap(int num) {
+        string num_str=to_string(num);
+        int n=num_str.length();
+        if(n<2){
+            return num;
+        }
+        string sort_num=num_str;
+        sort(sort_num.rbegin(),sort_num.rend());
+        //如果是不升序的数字 已经是最大的了
+        if(num_str==sort_num){
+            return num;
+        }
+        vector<pair<char,int>> to_swap(n);//存储第i个元素右侧包括自身，最大且最低的数字 和下标
+        //找右侧低位最大的数字
+        for(int i=n-1;i>=0;i--){
+            if(i==n-1||num_str[i]>to_swap[i+1].first){
+                to_swap[i].first=num_str[i];
+                to_swap[i].second=i;
+            }
+            else{
+                to_swap[i]=to_swap[i+1];
+            }
+        }
+        //交换一次
+        for(int i=0;i<n-1;i++){
+            if(to_swap[i].first>num_str[i]){
+                swap(num_str[i],num_str[to_swap[i].second]);
+                break;
+            }
+        }
+        return stoi(num_str);
+    }
+};
+
+Solution 2:trick 记录每一个数字出现的最低位位置
 class Solution {
 public:
     /*
