@@ -27,10 +27,10 @@ The knight always initially starts on the board.
 Solution:
 class Solution {
     /*
-    dp[k][i][j]代表从坐标为(i,j)的地方走k步，还在棋盘内的概率
-    状态方程：dp[k][i][j] += dp[k-1][x][y]/8 (x,y)为经过一步移动能够到达(i,j)的位置
-    一步也不走即 k=0时 dp[0][i][j]=1
-    那么结果就是dp[k][r][c]
+        dp[k][i][j]代表从坐标为(i,j)的地方走k步，还在棋盘内的概率。那么他的状态取决于(i,j)能够一步到达的位置(x,y)走k-1步还保留在棋盘内的概率
+        状态方程：dp[k][i][j] += dp[k-1][x][y]/8 (x,y)是从(i,j)走一步能够到达的位置
+        一步也不走即 k=0时 dp[0][i][j]=1
+        那么结果就是dp[k][r][c]
     */
     
     public double knightProbability(int N, int K, int r, int c) {
