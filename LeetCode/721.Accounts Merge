@@ -78,7 +78,7 @@ public:
     vector<vector<string>> accountsMerge(vector<vector<string>>& accs) {
         unordered_map<string,string> parent;
         unordered_map<string,string> owner;
-        // 并查集初始化
+        // 并查集初始化 将每个email的根节点设置为自身 同时记录下每个email的拥有者
         for(int i=0;i<accs.size();i++){
             for(int j=1;j<accs[i].size();j++){
                 parent[accs[i][j]]=accs[i][j];
@@ -86,7 +86,7 @@ public:
             }
         }
         
-        // 并查操作
+        // 并查操作。将每一个账户下的email连接到第一个email上，使第一个email成为根。
         for(int i=0;i<accs.size();i++){
             string p=find(accs[i][1],parent);
             for(int j=2;j<accs[i].size();j++){
@@ -94,7 +94,7 @@ public:
                 parent[pj]=p;
             }
         }
-        // 将同一个连通集的email放在一起
+        // 将同一个连通集的email放在一起(也就是根是相同的email)
         unordered_map<string,set<string>> group;
         for(int i=0;i<accs.size();i++){
             for(int j=1;j<accs[i].size();j++){
@@ -104,7 +104,9 @@ public:
         vector<vector<string>> res;
         for(auto &it: group){
             vector<string> v;
+            //插入该连通集所属的用户名
             v.push_back(owner[it.first]);
+            //插入该连通集的email
             v.insert(v.begin()+1,it.second.begin(),it.second.end());
             res.push_back(v);
         }
