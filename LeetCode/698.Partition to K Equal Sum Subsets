@@ -94,7 +94,7 @@ update:
 题设中
 1 <= k <= len(nums) <= 16.
 0 < nums[i] < 10000 
-len(nums)>0
+len(nums)>0,sum(nums)>0, sum(nums)/k > 0
 nums[i]>0 --> curSum越加越大在超过target的时候就不可能了
 class Solution {
 public:
@@ -126,6 +126,49 @@ private:
                     return true;
                 visit[i]=false;
             }
+        }
+        return false;
+    }
+};
+
+update:
+class Solution {
+public:
+    bool canPartitionKSubsets(vector<int>& nums, int k) {
+        int n=nums.size();
+        if(n<k){
+            return false;
+        }
+        int sum=0;
+        for(auto &num:nums){
+            sum+=num;
+        }
+        if(sum%k!=0){
+            return false;
+        }
+        int target=sum/k;
+        vector<bool> visit(n,false);
+        return helper(nums,visit,target,k,0,0);
+    }
+private:
+    //该组元素现在的和为cur_sum，从nums的pos位置开始向后加入元素使得该组元素和为target
+    bool helper(vector<int>&nums,vector<bool>&visit,const int target,int k,int pos, int cur_sum){
+        if(k==1){
+            return true;
+        }
+        //k>1
+        if(cur_sum==target){
+            return helper(nums,visit,target,k-1,0,0);
+        }
+        // cur_sum<target
+        for(int i=pos;i<nums.size();i++){
+            if(visit[i]) continue;
+            if(nums[i]+cur_sum>target) continue;
+            visit[i]=true;
+            if(helper(nums,visit,target,k,i+1,cur_sum+nums[i])){
+                return true;
+            }
+            visit[i]=false;
         }
         return false;
     }
