@@ -84,10 +84,18 @@ public:
             while(!st.empty()&&st.back()>0&&st.back()<-star){
                 st.pop_back();
             }
-            if(st.empty()||st.back()<0 || star>0)
+            
+            //跳出循环时表示current star不会继续向右前进了，止步于此，要判断该元素是被保留还是和栈顶元素一起爆炸
+            
+            //当栈为空 or 栈顶元素向左飞时(star无论向哪个方向飞都不会引发碰撞) or 栈顶元素和current star都是相同向右飞的
+            //那么current star现在不会再引发爆炸且可以保留下来
+            if(st.empty()||st.back()<0 || star>0){
                 st.push_back(star);
-            else if(star<0&&-star==st.back())
+            }
+            //否则只存在栈顶元素向右飞 current star向左飞 会发生爆炸，且会炸掉自身
+            else if(star<0&&-star==st.back()){
                 st.pop_back();
+            }
         }
         return st;
     }
