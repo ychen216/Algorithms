@@ -31,7 +31,7 @@ Solution:
 class MyCalendarTwo {
     /*
         参考 https://www.cnblogs.com/FannyChung/p/7896415.html
-        利用TreeMap记录开始时间及出现的次数 和 结束时间及出现的次数记为负数
+        利用TreeMap记录开始时间及出现的次数 和 结束时间及出现的次数记为负数，将各个事件的开始和结束时间 按照大小排序
         当某个时间节点开始事件的出现比结束事件出现的次数多于2次 那么该区间的插入使得triple overlap出现
     */
     private TreeMap<Integer,Integer> map;
@@ -104,6 +104,38 @@ private:
     map<int,int> books;
 };
 
+update:
+class MyCalendarTwo {
+public:
+    MyCalendarTwo() {
+        
+    }
+    
+    bool book(int start, int end) {
+        //先将该区间加入books
+        books[start]++;
+        books[end]--;
+        int unfinish=0;
+        for(auto &p:books){
+            unfinish+=p.second;
+            //不满足条件则删去该event
+            if(unfinish>2){
+                books[start]--;
+                books[end]++;
+                if(books[start]==0){
+                    books.erase(start);
+                }
+                if(books[end]==0){
+                    books.erase(end);
+                }
+                return false;
+            }
+        }
+        return true;
+    }
+private:
+    map<int,int> books;
+};
 
 Solution 2:
 class MyCalendarTwo {
