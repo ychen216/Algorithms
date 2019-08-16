@@ -70,3 +70,42 @@ public:
         return true;
     }
 };
+
+update:
+class Solution {
+public:
+    /*
+        主要思想就是利用染色法来判断是否所有的边的两个端点都分属于两个颜色集。
+        如果遇到一条边两个端点颜色相同，冲突，则不是二部图。
+        具体的:通过对还未染色的节点进行染色，将与他相邻接的节点颜色设置为不同颜色。判断这么操作后会不会产生冲突(不断拓展、遍历所有这个节点可达的通路上的节点是否有冲突)
+        可以通过BFS、DFS来拓展。
+    */
+    // DFS
+    bool isBipartite(vector<vector<int>>& graph) {
+        int n=graph.size();
+        vector<int> colors(n,0);//0:unvisit,1:blue,-1:red
+        for(int i=0;i<n;i++){
+            //还未染色,默认染成1,进行染色后、拓展检查这样是否会造成冲突
+            if(colors[i]==0&&!check(graph,colors,i,1)){
+                return false;
+            }
+        }
+        return true;
+    }
+private:
+    //希望colors[cur_node]的颜色是color
+    bool check(vector<vector<int>>&graph, vector<int>&colors,int cur_node,int color){
+        if(colors[cur_node]!=0){
+            return colors[cur_node]==color;
+        }
+        //还未染色
+        colors[cur_node]=color;
+        //判断是否会对其他联通的节点造成冲突
+        for(auto &next_node: graph[cur_node]){
+            if(!check(graph,colors,next_node,-color)){
+                return false;
+            }
+        }
+        return true;
+    }
+};
