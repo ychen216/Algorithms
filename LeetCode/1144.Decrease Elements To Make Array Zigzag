@@ -1,0 +1,102 @@
+1144. Decrease Elements To Make Array Zigzag
+
+/*
+Given an array nums of integers, a move consists of choosing any element and decreasing it by 1.
+
+An array A is a zigzag array if either:
+
+Every even-indexed element is greater than adjacent elements, ie. A[0] > A[1] < A[2] > A[3] < A[4] > ...
+OR, every odd-indexed element is greater than adjacent elements, ie. A[0] < A[1] > A[2] < A[3] > A[4] < ...
+Return the minimum number of moves to transform the given array nums into a zigzag array.
+
+
+Example 1:
+Input: nums = [1,2,3]
+Output: 2
+Explanation: We can decrease 2 to 0 or 3 to 1.
+
+Example 2:
+Input: nums = [9,6,1,6,2]
+Output: 4
+ 
+
+Constraints:
+  1 <= nums.length <= 1000
+  1 <= nums[i] <= 1000
+*/
+
+Solution 1:
+class Solution {
+public:
+    /*  
+        这里构成zigzag array有两种情况，请每个操作是选一个元素-1,所以我们能做的是把较大的数减小
+            1.array index是奇数的元素小于index是偶数的元素，那么我们只要把index奇数的元素设置成min(nums[i-1],nums[i+1])-1 if nums[i]>=nums[i-1] or nums[i]>=nums[i+1]
+            2.array index是偶数的元素小于index是奇数的元素
+        那么我们只需要遍历两次，把这两种情况下需要的最少move计算出来
+    */
+    int movesToMakeZigzag(vector<int>& nums) {
+        int n=nums.size();
+        if(n<2){
+            return 0;
+        }
+        int res1=0,res2=0;
+        //1 将奇数index的数减小
+        for(int i=1;i<n;i+=2){
+            if(i==n-1){
+                if(nums[i]>=nums[i-1]){
+                    res1+=nums[i]-nums[i-1]+1;
+                }
+            }
+            else{
+                if(nums[i]>=nums[i-1] || nums[i]>=nums[i+1]){
+                    res1+=nums[i]-min(nums[i-1],nums[i+1])+1;
+                }
+            }
+        }
+        //2 将偶数index的数减小
+        for(int i=0;i<n;i+=2){
+            if(i==0){
+                if(nums[i]>=nums[i+1]){
+                    res2+=nums[i]-nums[i+1]+1;
+                }
+            }
+            else if(i==n-1){
+                if(nums[i]>=nums[i-1]){
+                    res2+=nums[i]-nums[i-1]+1;
+                }
+            }
+            else{
+                if(nums[i]>=nums[i-1] || nums[i]>=nums[i+1]){
+                    res2+=nums[i]-min(nums[i-1],nums[i+1])+1;
+                }
+            }
+        }
+        return min(res1,res2);
+    }
+};
+
+Solution 2:
+相同的思想，只是代码更简洁，将两个loop合并到一起
+Explanation
+Two options, either make A[even] smaller or make A[odd] smaller.
+Loop on the whole array A,
+find the min(A[i - 1],A[i + 1]),
+calculate that the moves need to make smaller than both side.
+If it's negative, it means it's already smaller than both side, no moved needed.
+Add the moves need to res[i%i].
+In the end return the smaller option.
+
+
+Complexity
+Time O(N) for one pass
+Space O(2) for two options
+
+int movesToMakeZigzag(vector<int>& A) {
+    int res[2] = {0, 0},  n = A.size(), left, right;
+    for (int i = 0; i < n; ++i) {
+        left = i > 0 ? A[i - 1] : 1001;
+        right = i + 1 < n ? A[i + 1] : 1001;
+        res[i % 2] += max(0, A[i] - min(left, right) + 1);
+    }
+    return min(res[0], res[1]);
+}
