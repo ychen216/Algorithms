@@ -1,0 +1,86 @@
+1145. Binary Tree Coloring Game
+
+/*
+Two players play a turn based game on a binary tree.  We are given the root of this binary tree, and the number of nodes n in the tree.  n is odd, and each node has a distinct value from 1 to n.
+
+Initially, the first player names a value x with 1 <= x <= n, and the second player names a value y with 1 <= y <= n and y != x.  The first player colors the node with value x red, and the second player colors the node with value y blue.
+
+Then, the players take turns starting with the first player.  In each turn, that player chooses a node of their color (red if player 1, blue if player 2) and colors an uncolored neighbor of the chosen node (either the left child, right child, or parent of the chosen node.)
+
+If (and only if) a player cannot choose such a node in this way, they must pass their turn.  If both players pass their turn, the game ends, and the winner is the player that colored more nodes.
+
+You are the second player.  If it is possible to choose such a y to ensure you win the game, return true.  If it is not possible, return false.
+
+
+Example 1:
+Input: root = [1,2,3,4,5,6,7,8,9,10,11], n = 11, x = 3
+Output: true
+Explanation: The second player can choose the node with value 2.
+
+
+Constraints:
+  root is the root of a binary tree with n nodes and distinct node values from 1 to n.
+  n is odd.
+  1 <= x <= n <= 100
+
+*/
+
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+ 
+Solution 1:
+class Solution {
+public:
+    /*
+      可以参考视频讲解 https://www.bilibili.com/video/av62224724/
+      题意
+      有一颗二叉树，Alex和Lee轮流在树上用红色和蓝色对结点染色，在他们分别染完第一个点后，接下来染色的点必须与之前自己染过的对应颜色的点相邻。
+      最后自己染色的结点数量超过总结点数量一半的人获胜。假设两人都以最优策略染色，Alex已经染了第一个红点，问此时Lee是否有必胜策略？
+      如果有，他此时应该把哪个点染成蓝色？
+
+      Follow-up[1]：如果游戏从头开始，如何判断Alex是否有必胜策略？请给出他染色后必胜的结点集合。
+
+      分析
+      似乎很多人一开始都直接把题目给理解成Follow-up了，没看见已经染了一个点。不过反正Follow-up也很简单……
+
+      对于树这种数据结构，如果移除一个结点，显然会把树分成（大约，有些部分可能为空）不连通的三份：
+      左子树，右子树，以及树中除了以该结点为根的子树剩下的部分，如下图所示：
+
+
+      原图来自Leetcode题目
+      对一个结点进行红色染色对蓝色结点来说相当于把树分割了，Lee最多只能对这三部分之中的一部分进行染色；
+      为了防止红色结点继续进入这一部分，他应该首先染最靠近红色结点的那个结点。如果有一部分的结点数量超过总结点数量的一半，则Lee有必胜策略；
+      否则没有。计算结点数量的方法很简单，做一次DFS计算每个结点对应子树的大小，然后就可以立刻得到结点左子树大小、右子树大小和（总结点个数-结点子树大小）了。
+
+      Follow-up就是对每个结点算一遍上述三部分的大小，如果结果是Lee无法获胜，则这个结点对Alex来说是获胜结点。
+    */
+    int max_blue_cnt;//染蓝色的子树最多能够拥有的节点数
+    bool btreeGameWinningMove(TreeNode* root, int n, int x) {
+        max_blue_cnt=0;
+        dfs(root,n,x);
+        return max_blue_cnt > n/2;
+    }
+private:
+    //计算以cur为根的子树节点个数
+    int dfs(TreeNode *cur,int n,int x){
+        if(cur==nullptr){
+            return 0;
+        }
+        int left_cnt=dfs(cur->left,n,x),right_cnt=dfs(cur->right,n,x);
+        int cnt=left_cnt+right_cnt+1;
+        if(cur->val==x){
+            max_blue_cnt=max(max_blue_cnt,n-cnt);//染蓝色的节点是初始红节点的父节点
+            //染蓝色节点的是初始红节点的左右孩子
+            max_blue_cnt=max(max_blue_cnt,left_cnt);
+            max_blue_cnt=max(max_blue_cnt,right_cnt);
+        }
+        return cnt;
+    }
+};
