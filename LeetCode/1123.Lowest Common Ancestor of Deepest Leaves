@@ -1,0 +1,125 @@
+1123. Lowest Common Ancestor of Deepest Leaves
+
+/*
+Given a rooted binary tree, return the lowest common ancestor of its deepest leaves.
+
+Recall that:
+  The node of a binary tree is a leaf if and only if it has no children
+  The depth of the root of the tree is 0, and if the depth of a node is d, the depth of each of its children is d+1.
+  The lowest common ancestor of a set S of nodes is the node A with the largest depth such that every node in S is in the subtree with root A.
+
+
+Example 1:
+Input: root = [1,2,3]
+Output: [1,2,3]
+Explanation: 
+  The deepest leaves are the nodes with values 2 and 3.
+  The lowest common ancestor of these leaves is the node with value 1.
+  The answer returned is a TreeNode object (not an array) with serialization "[1,2,3]".
+
+Example 2:
+Input: root = [1,2,3,4]
+Output: [4]
+
+Example 3:
+Input: root = [1,2,3,4,5]
+Output: [2,4,5]
+ 
+
+Constraints:
+  The given tree will have between 1 and 1000 nodes.
+  Each node of the tree will have a distinct value between 1 and 1000.
+
+*/
+
+Solution:
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    /*
+        找到一棵树最深叶子节点们的LCA最低公共祖先
+        如果一个节点cur是最深叶节点们的LCA，那么cur的:
+            1.左右子树的深度应该是最深
+            2.左右子树深度相等
+        eg:
+         A
+        / \
+       B   C  这棵树的深度为1，节点A是最深叶节点们(B,C)的LCA,观察节点A的左、右子树深度均为1
+       
+         A
+        / \
+       B   C
+       /\
+       D E     这棵树深度为2,节点B是最深叶节点(D、E)的LCA,观察节点B的左右子树深度均为2
+       
+         A
+        / \
+       B   C
+       /\
+      D     
+      这棵树深度为2,节点D是最深叶节点自身的LCA,观察节点D的左右子树均为null,他们的深度都定义为D的深度2，这样也是左右子树深度和树的深度一致，且左右子树深度相同
+      
+      所以我们需要记录树的深度，以及每一个节点左右子树的深度。
+       
+    */
+    int deepest=0;//树的深度
+    TreeNode* lca=nullptr;
+    TreeNode* lcaDeepestLeaves(TreeNode* root) {
+        getDepth(root,0);
+        return lca;
+    }
+private:
+    //返回cur节点的子孙中 最深的深度
+    //cur_depth表示cur节点在以root为根的树中的深度
+    //这里会多计算一层深度 叶节点下的null节点，便于计算深度
+    int getDepth(TreeNode *cur,int cur_depth){
+        deepest=max(deepest,cur_depth);
+        if(cur==nullptr){
+            return cur_depth;
+        }
+        int left=getDepth(cur->left,cur_depth+1);
+        int right=getDepth(cur->right,cur_depth+1);
+        if(left==deepest&&right==deepest){
+            lca=cur;
+        }
+        return max(left,right);
+        
+    }
+};
+
+or
+修改deep的初始值和后续处理空节点的深度的逻辑
+
+class Solution {
+public:
+    int deepest=-1;//树的深度 树为空时的深度
+    TreeNode* lca=nullptr;
+    TreeNode* lcaDeepestLeaves(TreeNode* root) {
+        getDepth(root,0);
+        return lca;
+    }
+private:
+    //返回cur节点的子孙中 最深的深度
+    //cur_depth表示cur节点在以root为根的树中的深度
+    int getDepth(TreeNode *cur,int cur_depth){
+        if(cur==nullptr){
+            return cur_depth-1;
+        }
+        deepest=max(deepest,cur_depth);
+        int left=getDepth(cur->left,cur_depth+1);
+        int right=getDepth(cur->right,cur_depth+1);
+        if(left==deepest&&right==deepest){
+            lca=cur;
+        }
+        return max(left,right);
+        
+    }
+};
