@@ -1,0 +1,63 @@
+1139. Largest 1-Bordered Square
+
+/*
+
+Given a 2D grid of 0s and 1s, return the number of elements in the largest square subgrid that has all 1s on its border, 
+or 0 if such a subgrid doesn't exist in the grid.
+
+ 
+Example 1:
+Input: grid = [[1,1,1],[1,0,1],[1,1,1]]
+Output: 9
+
+Example 2:
+Input: grid = [[1,1,0,0]]
+Output: 1
+
+Constraints:
+  1 <= grid.length <= 100
+  1 <= grid[0].length <= 100
+  grid[i][j] is 0 or 1
+*/
+
+Solution:
+class Solution {
+public:
+    /*
+        找到最大面积的一个正方形，这个正方形的边界必须都是由1构成的，不能包含0
+        而正方形内部是0 or 1无所谓
+        我们利用两个矩阵top(i,j),left(i,j)记录以(i,j)为起点向上、左延伸都是1的边长
+        
+        那么以(i,j)为右下角的正方形的边长取决于top(i,j), left(i,j)中较小的那个长度smaller
+        以及由smaller计算出的该正方形的另外两个点的边长是否符合条件
+    */
+    int largest1BorderedSquare(vector<vector<int>>& grid) {
+        if(grid.empty()||grid[0].empty()){
+            return 0;
+        }
+        int m=grid.size(),n=grid[0].size();
+        vector<vector<int>> top(m,vector<int>(n,0)),left(m,vector<int>(n,0));
+        for(int i=0;i<m;i++){
+            for(int j=0;j<n;j++){
+                if(grid[i][j]==0)continue;
+                top[i][j]= (i>0 ? top[i-1][j]+1:1);
+                left[i][j]= (j>0 ?left[i][j-1]+1:1);
+            }
+        }
+        int res=0;//最长的边长
+        for(int i=m-1;i>=0;i--){
+            for(int j=n-1;j>=0;j--){
+                if(grid[i][j]==0)continue;
+                int smaller=min(top[i][j],left[i][j]);
+                while(smaller>res){
+                    if(left[i-smaller+1][j]>=smaller&&top[i][j-smaller+1]>=smaller){
+                        res=smaller;
+                        break;
+                    }
+                    smaller--;
+                }
+            }
+        }
+        return res*res;
+    }
+};
