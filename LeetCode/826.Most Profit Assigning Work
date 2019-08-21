@@ -96,3 +96,33 @@ public:
     }
 };
 
+update:利用优先队列找到当前可以完成的work中profit最大的 没有上一种处理方法节省时间
+class Solution {
+public:
+    //为每一个worker分配可以完成且profit最大的work
+    //对worker排序，然后逐步加入difficulty不超过worker的work,然后从中选择profit最大的
+    //可以结合优先队列完成
+    int maxProfitAssignment(vector<int>& difficulty, vector<int>& profit, vector<int>& worker) {
+        sort(worker.begin(),worker.end());
+        vector<pair<int,int>> diff_profit;
+        for(int i=0;i<profit.size();i++){
+            diff_profit.push_back({difficulty[i],profit[i]});
+        }
+        //按照难度递增
+        sort(diff_profit.begin(),diff_profit.end(),[&](pair<int,int>&p1,pair<int,int>&p2){
+            return p1.first<p2.first;
+        });
+        int res=0;
+        priority_queue<int> q;//最大堆
+        int j=0;//difficulty要继续加入的起始index
+        for(int i=0;i<worker.size();i++){
+            for(;j<difficulty.size()&&diff_profit[j].first<=worker[i];j++){
+                q.push(diff_profit[j].second);
+            }
+            if(!q.empty()){
+                res+=q.top();
+            }
+        }
+        return res;
+    }
+};
