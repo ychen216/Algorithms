@@ -122,3 +122,33 @@ public:
         return res;
     }
 };
+
+Solution 3: 实际运行比solution 2慢
+class Solution {
+public:
+    // 贪心 为B的每一个数字B[i]找到A中现存的>B[i]的最小数字
+    vector<int> advantageCount(vector<int>& A, vector<int>& B) {
+        vector<int> res;
+        map<int,int> map_a;
+        for(auto &num:A){
+            map_a[num]++;
+        }
+        for(auto &num:B){
+            auto big=map_a.upper_bound(num);
+            int candidate_a=-1;
+            // 没有找到>B[i]的数字 那么加入最小的一个数字
+            if(big==map_a.end()){
+                candidate_a=map_a.begin()->first;
+            }
+            else{
+                // 否则在A[i]放入 > B[i]的最小数字
+                candidate_a=big->first;
+            }
+            if(--map_a[candidate_a]==0){
+                map_a.erase(candidate_a);
+            }
+            res.push_back(candidate_a);
+        }
+        return res;
+    }
+};
