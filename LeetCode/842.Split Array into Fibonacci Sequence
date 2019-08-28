@@ -78,3 +78,56 @@ private:
         return false;
     }
 };
+
+不那么简练但是一步步很清楚的代码
+class Solution {
+public:
+    vector<int> splitIntoFibonacci(string S) {
+        vector<int> path;
+        check(S,0,path);
+        return path;
+    }
+private:
+    bool check(string &s,int start,vector<int>&path){
+        if(start>=s.length()){
+            return path.size()>=3;
+        }
+        for(int i=start;i<s.length();i++){
+            // leading zero
+            if(i>start && s[start]=='0') break;
+            int cur_len=i-start+1;
+            if(cur_len>s.length()/2) break;
+            long cur_sum=stol(s.substr(start,cur_len));
+            if(cur_sum>INT_MAX){
+                break;
+            }
+            if(path.size()>=2){
+                long preone=path.back();
+                long presecond=path[path.size()-2];
+                long presum=preone+presecond;
+                if(presum==cur_sum){
+                    path.push_back(cur_sum);
+                    if(check(s,i+1,path)){
+                        return true;
+                    }
+                    path.pop_back();
+                    break;
+                }
+                else if(presum<cur_sum){
+                    break;
+                }
+                else{
+                    ;
+                }
+            }
+            else{
+                path.push_back(cur_sum);
+                if(check(s,i+1,path)){
+                    return true;
+                }
+                path.pop_back();
+            }
+        }
+        return false;
+    }
+};
