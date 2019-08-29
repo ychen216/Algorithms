@@ -72,7 +72,41 @@ private:
     int cols;
 };
 
+
 Solution 2:
+class Solution {
+public:
+    Solution(int n_rows, int n_cols) {
+        col=n_cols;
+        n=n_cols*n_rows;
+        for(int i=0;i<n;i++){
+            avaliable.push_back(i);
+        }
+    }
+    
+    vector<int> flip() {
+        int size=avaliable.size();
+        int ava_id=rand()%size;//avaliable数组中的id
+        int pos=avaliable[ava_id];//实际指向的数字
+        //删除该位置 通过和最后一个元素调换位置 然后删除最后一个元素 达到
+        swap(avaliable[ava_id],avaliable.back());
+        avaliable.pop_back();
+        return {pos/col,pos%col};
+    }
+    
+    void reset() {
+        avaliable.clear();
+        for(int i=0;i<n;i++){
+            avaliable.push_back(i);
+        }
+    }
+private:
+    int col,n;
+    vector<int> avaliable;//存储还是0的位置
+};
+
+
+Solution 3:
 class Solution {
 public:
     /*
