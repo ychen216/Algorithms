@@ -47,7 +47,8 @@ public:
         this->rects=rectangles;
         totalArea=0;
         for(auto &v: rectangles)
-            totalArea+=(v[2]-v[0]+1)*(v[3]-v[1]+1); // 不知道为什么要+1
+            // 要+1是因为我们这里要pick的都是整数点且包含边界 所以一条边上可以选的点个数是右端点-左端点+1
+            totalArea+=(v[2]-v[0]+1)*(v[3]-v[1]+1); 
     }
     
     vector<int> pick() {
@@ -73,8 +74,10 @@ update:
 class Solution {
 public:
     /*
-        在不重叠的矩形中随机选取一个点 weighted probability
-        那么点落在每一个矩形x的概率应该是area(x)/totalArea x的面积/所有矩形的面积和
+        在不重叠的矩形中随机选取一个点(整数点) weighted probability
+        那么点落在每一个矩形x的概率应该是area(x)/totalArea x的面积/所有矩形的面积和 
+        --> 这里写错了 应该是每一个矩形可以被枚举的整数点/所有可以被枚举的整数点
+        --> 所以一个矩形拥有的整数点=(长+1)*(宽+1)因为要考虑边界
         按照概率选定一个矩形 然后在该矩形中随机选择一个点P(x,y)
         按照概率选择矩形的思路:在[0,totalArea)范围随机生成一个数r 遍历不同矩形累积面积值sum 当sum>r时 选择该矩形
         eg. 矩形面积[3,5,2] totalArea=10 每个矩形的概率为[0.3,0.5,0.2]
@@ -106,3 +109,33 @@ private:
     int totalArea;
 };
 
+update:可以直接用vector完成map的操作 因为累积的面积是一个递增序列 可以直接用upper_bound二分查找
+class Solution {
+public:
+    Solution(vector<vector<int>>& rects) {
+        rect=rects;
+        for(int i=0;i<rects.size();i++){
+            int cur_dots=(rects[i][2]-rects[i][0]+1)*(rects[i][3]-rects[i][1]+1);  
+            if(i==0){
+                acc_sum.push_back(cur_dots);
+            }
+            else{
+                acc_sum.push_back(acc_sum[i-1]+cur_dots);
+            }
+        }
+        total_dots=acc_sum.back();
+    }
+    
+    vector<int> pick() {
+        int score=rand()%total_dots;
+        //找到第一个>score的id
+        auto id=(int)(upper_bound(acc_sum.begin(),acc_sum.end(),score)-acc_sum.begin());
+        int x=rand()%(rect[id][2]-rect[id][0]+1)+rect[id][0];
+        int y=rand()%(rect[id][3]-rect[id][1]+1)+rect[id][1];
+        return {x,y};
+    }
+private:
+    vector<int> acc_sum;
+    vector<vector<int>> rect;
+    int total_dots;
+};
